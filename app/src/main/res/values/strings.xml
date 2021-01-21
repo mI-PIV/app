@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">mI-PIV</string>
+    <string name="uploadImages">Set your image</string>
+    <string name="msg_loading">Loading...Please wait as we process your request</string>
+    <string name="buffering_string">Buffering&#8230;</string>
+    <string name="toast_message">Playback completed.</string>
+    <string name="pick_file">Pick file</string>
+    <string name="upload_file">Upload file</string>
+    <string name="toast_pick_file_error">Unable to pick file. Check status of file manager.</string>
+    <string name="permission_read_phone_state_rationale">need_value</string>
+    <string name="permissions_not_granted_read_phone_state">permission_denied</string>
+    <string name="final_display">Please check the vector outputs and if you notice areas where the
+        displacement of vectors is unexpectedly bigger than the surrounding vectors, kindly
+        move <b><i>BACK</i></b> a little and perform the experiment
+        again. You can also change the window size and overlap and repeat the experiment</string>
+    <string name="move_forward">Please be advised that you can get a better vector output and display
+        if you move <b><i>FORWARD</i></b> and perform the experiment again. You can also change the
+        window size and overlap and repeat the experiment</string>
+</resources>

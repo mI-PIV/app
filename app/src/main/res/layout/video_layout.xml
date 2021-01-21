@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <VideoView
+        android:id="@+id/videoview"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_margin="8dp"
+        />
+
+    <TextView
+        android:id="@+id/buffering_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        />
+
+    <Button
+        android:id="@+id/recordVideo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#243EDF"
+        android:textColor="#FFFFFF"
+        android:text="Record Video" />
+
+    <Button
+        android:id="@+id/pickVideo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#243EDF"
+        android:textColor="#FFFFFF"
+        android:text="Pick a video" />
+
+    <Button
+        android:id="@+id/generateFrames"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#243EDF"
+        android:textColor="#FFFFFF"
+        android:text="Generate Frames" />
+
+</LinearLayout>
