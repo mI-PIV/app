@@ -1,0 +1,4 @@
+#Fri Dec 04 16:43:21 MST 2020
+base.0=/home/sarbajit-laptop/AndroidStudioProjects/mI-PIV_Sep8_2020/javaOpenCV/build/intermediates/dex/debug/mergeDexDebug/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
