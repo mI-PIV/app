@@ -7,58 +7,62 @@
     tools:context=".Pos12_Activity">
 
     <ScrollView
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="7.5dp"
         android:layout_marginBottom="60dp"
+        android:scrollbarStyle="outsideInset"
         tools:ignore="MissingConstraints">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/pos12TextView0"
-            android:textStyle="bold"
-            android:layout_centerHorizontal="true"
-            android:textSize="20sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints" />
+            <TextView
+                android:id="@+id/pos12TextView0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:ignore="MissingConstraints" />
 
 
-        <TextView
-        android:id="@+id/pos12TextView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints"
-        android:layout_below="@+id/pos12TextView0"/>
+            <TextView
+                android:id="@+id/pos12TextView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@+id/pos12TextView0"
+                tools:ignore="MissingConstraints" />
 
-        <com.zolad.zoominimageview.ZoomInImageView
-            android:id="@+id/pos12ImageView1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/laminar_pipe_flow_image"
-            android:layout_below="@id/pos12TextView1"
-            tools:ignore="MissingConstraints" />
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/pos12ImageView1"
+                android:layout_width="match_parent"
+                android:layout_height="419dp"
+                android:layout_below="@id/pos12TextView1"
+                android:src="@drawable/laminar_pipe_flow_image"
+                tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/pos12TextView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            android:layout_below="@+id/pos12ImageView1"/>
+            <TextView
+                android:id="@+id/pos12TextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@+id/pos12ImageView1"
+                tools:ignore="MissingConstraints" />
 
-        <com.zolad.zoominimageview.ZoomInImageView
-            android:id="@+id/pos12ImageView2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/new_externalflowimage"
-            android:layout_below="@id/pos12TextView2"
-            tools:ignore="MissingConstraints" />
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/pos12ImageView2"
+                android:layout_width="match_parent"
+                android:layout_height="128dp"
+                android:layout_below="@id/pos12TextView2"
+                android:src="@drawable/new_externalflowimage"
+                tools:ignore="MissingConstraints" />
 
-    </RelativeLayout>
+        </RelativeLayout>
     </ScrollView>
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
