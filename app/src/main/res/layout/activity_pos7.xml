@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Pos7_Activity">
+
+    <ScrollView
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="60dp"
+        tools:ignore="MissingConstraints">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/pos7TextView0"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints" />
+
+
+        <TextView
+            android:id="@+id/pos7TextView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@+id/pos7TextView0"/>
+
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/pos7ImageView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/new_stresstensor"
+            android:layout_below="@id/pos7TextView1"
+            tools:ignore="MissingConstraints" />
+
+
+        <TextView
+            android:id="@+id/pos7TextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pos7ImageView1"
+            tools:ignore="MissingConstraints" />
+
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/pos7ImageView2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/stresstensor_eq1"
+            android:layout_below="@id/pos7TextView2"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/pos7TextView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pos7ImageView2"
+            tools:ignore="MissingConstraints" />
+
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/pos7ImageView3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/shear_eq"
+            android:layout_below="@id/pos7TextView3"
+            tools:ignore="MissingConstraints" />
+
+    </RelativeLayout>
+    </ScrollView>
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/bottom_navigation2"
+        app:itemBackground="@android:color/white"
+        />
+
+
+
+</RelativeLayout>

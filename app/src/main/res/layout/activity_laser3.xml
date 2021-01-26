@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Laser3">
+
+    <ScrollView
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="60dp"
+        tools:ignore="MissingConstraints">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/laserSafetyTextView0"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/laserSafetyTextView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:drawableBottom="@drawable/lasersafety_cautions"
+            android:layout_below="@id/laserSafetyTextView0"/>
+
+
+        <TextView
+            android:id="@+id/laserSafetyTextView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:drawableBottom="@drawable/lasersafety_classtable"
+            android:layout_below="@id/laserSafetyTextView4"/>
+
+        <TextView
+            android:id="@+id/laserSafetyTextView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:drawableBottom="@drawable/lasersafety_donotlook"
+            android:layout_below="@id/laserSafetyTextView5"/>
+
+        <TextView
+            android:id="@+id/laserSafetyTextView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@id/laserSafetyTextView6"/>
+
+    </RelativeLayout>
+    </ScrollView>
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/bottom_navigation2"
+        app:itemBackground="@android:color/white"
+        />
+
+
+</RelativeLayout>

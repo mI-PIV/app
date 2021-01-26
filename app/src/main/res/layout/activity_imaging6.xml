@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Imaging6">
+
+    <ScrollView
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="60dp"
+        tools:ignore="MissingConstraints">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/learnImagingTextView0"
+                android:textStyle="bold"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/learnImagingTextView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints"
+                android:layout_below="@id/learnImagingTextView0"/>
+
+
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/imaging6ImageView1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/res1080"
+                android:layout_below="@id/learnImagingTextView9"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/learnImagingTextView32"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints"
+                android:layout_below="@id/imaging6ImageView1"/>
+
+
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/learnImagingImageView29"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/res540"
+                android:layout_below="@id/learnImagingTextView32"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/learnImagingTextView33"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints"
+                android:layout_below="@id/learnImagingImageView29"/>
+
+
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/learnImagingImageView30"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/res270"
+                android:layout_below="@id/learnImagingTextView33"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/learnImagingTextView34"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints"
+                android:layout_below="@id/learnImagingImageView30"/>
+
+
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/learnImagingImageView31"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/res120"
+                android:layout_below="@id/learnImagingTextView34"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/learnImagingTextView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints"
+                android:layout_below="@id/learnImagingImageView31"/>
+
+
+        </RelativeLayout>
+    </ScrollView>
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/bottom_navigation2"
+        app:itemBackground="@android:color/white"
+        />
+
+
+</RelativeLayout>
