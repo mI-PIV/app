@@ -6,6 +6,8 @@
     <string name="toast_message">Playback completed.</string>
     <string name="pick_file">Pick file</string>
     <string name="upload_file">Upload file</string>
+    <string name="start_an_experiment">start an experiment</string>
+    <string name="learn_about_fluids">learn about fluids</string>
     <string name="toast_pick_file_error">Unable to pick file. Check status of file manager.</string>
     <string name="permission_read_phone_state_rationale">need_value</string>
     <string name="permissions_not_granted_read_phone_state">permission_denied</string>
