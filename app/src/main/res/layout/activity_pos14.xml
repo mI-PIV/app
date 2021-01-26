@@ -7,88 +7,94 @@
     tools:context=".Pos14_Activity">
 
     <ScrollView
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="7.5dp"
         android:layout_marginBottom="60dp"
+        android:scrollbarStyle="outsideInset"
         tools:ignore="MissingConstraints">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/pos14TextView0"
-            android:textStyle="bold"
-            android:layout_centerHorizontal="true"
-            android:textSize="20sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints" />
+            <TextView
+                android:id="@+id/pos14TextView0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/pos14TextView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            android:layout_below="@+id/pos14TextView0"/>
+            <TextView
+                android:id="@+id/pos14TextView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@+id/pos14TextView0"
+                tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/pos14TextView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            android:layout_below="@+id/pos14TextView1"/>
+            <TextView
+                android:id="@+id/pos14TextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@+id/pos14TextView1"
+                tools:ignore="MissingConstraints" />
 
-        <com.zolad.zoominimageview.ZoomInImageView
-            android:id="@+id/pos14ImageView1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/divergence_eq1"
-            android:layout_below="@id/pos14TextView2"
-            tools:ignore="MissingConstraints" />
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/pos14ImageView1"
+                android:layout_width="match_parent"
+                android:layout_height="105dp"
+                android:layout_below="@id/pos14TextView2"
+                android:src="@drawable/divergence_eq1"
+                tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/pos14TextView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            android:layout_below="@+id/pos14ImageView1"/>
+            <TextView
+                android:id="@+id/pos14TextView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@+id/pos14ImageView1"
+                tools:ignore="MissingConstraints" />
 
-        <com.zolad.zoominimageview.ZoomInImageView
-            android:id="@+id/pos14ImageView2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/divergence_eq2"
-            android:layout_below="@id/pos14TextView3"
-            tools:ignore="MissingConstraints" />
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/pos14ImageView2"
+                android:layout_width="match_parent"
+                android:layout_height="127dp"
+                android:layout_below="@id/pos14TextView3"
+                android:src="@drawable/divergence_eq2"
+                tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/pos14TextView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            android:layout_below="@+id/pos14ImageView2"/>
+            <TextView
+                android:id="@+id/pos14TextView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@+id/pos14ImageView2"
+                tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/pos14TextView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            android:layout_below="@+id/pos14TextView4"/>
+            <TextView
+                android:id="@+id/pos14TextView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@+id/pos14TextView4"
+                tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/pos14TextView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            android:layout_below="@+id/pos14TextView5"/>
+            <TextView
+                android:id="@+id/pos14TextView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@+id/pos14TextView5"
+                tools:ignore="MissingConstraints" />
 
 
-
-
-    </RelativeLayout>
+        </RelativeLayout>
     </ScrollView>
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
