@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/nav_startExperiment"
+        android:icon="@drawable/ic_cached_black_24dp"
+        android:title="Start Experiment"
+        />
+
+    <item
+        android:id="@+id/nav_Home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Home"/>
+
+    <item
+        android:id="@+id/nav_feedback"
+        android:icon="@drawable/ic_feedback_black_24dp"
+        android:title="Feedback"/>
+
+</menu>
