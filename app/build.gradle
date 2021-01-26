@@ -33,7 +33,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.0.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.0.0'
     implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
-    //implementation files('libs\\YouTubeAndroidPlayerApi.jar')
+    implementation files('libs\\YouTubeAndroidPlayerApi.jar')
     testImplementation 'junit:junit:4.12'
     implementation 'com.jsibbold:zoomage:1.2.0'
     implementation group: 'net.imglib2', name: 'imglib2', version: '5.8.0'
