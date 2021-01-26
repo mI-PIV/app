@@ -23,17 +23,54 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".Experiment1"/>
+        <activity android:name=".FluidGlossary"/>
+        <activity android:name=".LaserSafetyDummy"/>
+        <activity android:name=".LearnImagingDummy"/>
+        <activity android:name=".Imaging1"/>
+        <activity android:name=".Imaging2"/>
+        <activity android:name=".Imaging3"/>
+        <activity android:name=".Imaging4"/>
+        <activity android:name=".Imaging5"/>
+        <activity android:name=".Imaging6"/>
+        <activity android:name=".Imaging7"/>
+        <activity android:name=".Imaging8"/>
+        <activity android:name=".Imaging9"/>
+        <activity android:name=".Laser1"/>
+        <activity android:name=".Laser2"/>
+        <activity android:name=".Laser3"/>
+        <activity android:name=".Pos1_Activity"/>
+        <activity android:name=".Pos2_Activity"/>
+        <activity android:name=".Pos3_Activity"/>
+        <activity android:name=".Pos4_Activity"/>
+        <activity android:name=".Pos5_Activity"/>
+        <activity android:name=".Pos6_Activity"/>
+        <activity android:name=".Pos7_Activity"/>
+        <activity android:name=".Pos8_Activity"/>
+        <activity android:name=".Pos9_Activity"/>
+        <activity android:name=".Pos10_Activity"/>
+        <activity android:name=".Pos11_Activity"/>
+        <activity android:name=".Pos12_Activity"/>
+        <activity android:name=".Pos13_Activity"/>
+        <activity android:name=".Pos14_Activity"/>
+        <activity android:name=".TryExperiments"/>
+        <activity android:name=".LearnFluids"/>
+        <activity android:name=".LearnPIV"/>
+        <activity android:name=".PIVBasics"/>
         <activity android:name=".ImageActivity"/>
+        <activity android:name=".VideoTutorial"/>
         <activity android:name=".VideoActivity"/>
         <activity android:name=".ViewResultsActivity"/>
         <activity android:name=".ViewPagerActivity"/>
+        <activity android:name=".MainActivity"/>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
