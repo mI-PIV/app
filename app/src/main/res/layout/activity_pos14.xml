@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Pos14_Activity">
+
+    <ScrollView
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="60dp"
+        tools:ignore="MissingConstraints">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/pos14TextView0"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/pos14TextView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@+id/pos14TextView0"/>
+
+        <TextView
+            android:id="@+id/pos14TextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@+id/pos14TextView1"/>
+
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/pos14ImageView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/divergence_eq1"
+            android:layout_below="@id/pos14TextView2"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/pos14TextView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@+id/pos14ImageView1"/>
+
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/pos14ImageView2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/divergence_eq2"
+            android:layout_below="@id/pos14TextView3"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/pos14TextView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@+id/pos14ImageView2"/>
+
+        <TextView
+            android:id="@+id/pos14TextView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@+id/pos14TextView4"/>
+
+        <TextView
+            android:id="@+id/pos14TextView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@+id/pos14TextView5"/>
+
+
+
+
+    </RelativeLayout>
+    </ScrollView>
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/bottom_navigation2"
+        app:itemBackground="@android:color/white"
+        />
+
+
+</RelativeLayout>

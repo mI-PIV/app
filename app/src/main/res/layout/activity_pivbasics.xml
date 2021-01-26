@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PIVBasics">
+
+    <ScrollView
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="60dp"
+        tools:ignore="MissingConstraints">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/headingTextview"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/pivBasicsTextView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@id/headingTextview"/>
+
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/pivBasicsImageView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/piv_basic1"
+            android:layout_below="@id/pivBasicsTextView1"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/pivBasicsTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@id/pivBasicsImageView1"/>
+
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/pivBasicsImageView2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/piv_basic2"
+            android:layout_below="@id/pivBasicsTextView2"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/pivBasicsTextView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@id/pivBasicsImageView2"/>
+
+        <TextView
+            android:id="@+id/pivBasicsTextView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@id/pivBasicsTextView3"/>
+
+        <TextView
+            android:id="@+id/pivBasicsTextView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:textStyle="bold"
+            android:layout_below="@id/pivBasicsTextView4"/>
+
+        <TextView
+            android:id="@+id/pivBasicsTextView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@id/pivBasicsTextView5"/>
+
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/pivBasicsImageView3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/piv_basic3"
+            android:layout_below="@id/pivBasicsTextView6"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/pivBasicsTextView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@id/pivBasicsImageView3"/>
+
+        <TextView
+            android:id="@+id/pivBasicsTextView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:textStyle="bold"
+            android:layout_below="@id/pivBasicsTextView7"/>
+
+        <TextView
+            android:id="@+id/pivBasicsTextView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@id/pivBasicsTextView8"/>
+
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/pivBasicsImageView4"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/piv_basic4"
+            android:layout_below="@id/pivBasicsTextView9"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/pivBasicsTextView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@id/pivBasicsImageView4"/>
+
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/pivBasicsImageView5"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/piv_basic5"
+            android:layout_below="@id/pivBasicsTextView10"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/pivBasicsTextView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@id/pivBasicsImageView5"/>
+
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/pivBasicsImageView6"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/piv_basic6"
+            android:layout_below="@id/pivBasicsTextView11"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/pivBasicsTextView12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:layout_below="@id/pivBasicsImageView6"/>
+
+
+
+    </RelativeLayout>
+    </ScrollView>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/bottom_navigation2"
+        app:itemBackground="@android:color/white"
+        />
+
+</RelativeLayout>
