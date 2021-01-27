@@ -7,11 +7,12 @@
     tools:context=".Imaging5">
 
     <ScrollView
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="7.5dp"
         android:layout_marginBottom="60dp"
+        android:scrollbarStyle="outsideInset"
         tools:ignore="MissingConstraints">
 
         <RelativeLayout
@@ -20,232 +21,247 @@
 
             <TextView
                 android:id="@+id/learnImagingTextView0"
-                android:textStyle="bold"
-                android:layout_centerHorizontal="true"
-                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:layout_below="@id/learnImagingTextView0"/>
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingTextView0"
+                tools:ignore="MissingConstraints" />
 
 
             <TextView
                 android:id="@+id/learnImagingTextView38"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingTextView8"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:layout_below="@id/learnImagingTextView8"/>
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/learnImagingImageView17"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ss1_30"
+                android:layout_width="match_parent"
+                android:layout_height="272dp"
                 android:layout_below="@id/learnImagingTextView38"
+                android:src="@drawable/ss1_30"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView22"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:textStyle="bold"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView17"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/learnImagingImageView17"/>
+                android:textStyle="bold"
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/learnImagingImageView18"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ss1_50"
+                android:layout_width="match_parent"
+                android:layout_height="272dp"
                 android:layout_below="@id/learnImagingTextView22"
+                android:src="@drawable/ss1_50"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView23"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView18"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:layout_below="@id/learnImagingImageView18"/>
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/learnImagingImageView19"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ss1_80"
+                android:layout_width="match_parent"
+                android:layout_height="277dp"
                 android:layout_below="@id/learnImagingTextView23"
+                android:src="@drawable/ss1_80"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView19"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:layout_below="@id/learnImagingImageView19"/>
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/learnImagingImageView20"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ss1_125"
+                android:layout_width="match_parent"
+                android:layout_height="273dp"
                 android:layout_below="@id/learnImagingTextView24"
+                android:src="@drawable/ss1_125"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView25"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView20"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:layout_below="@id/learnImagingImageView20"/>
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/learnImagingImageView21"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ss1_200"
+                android:layout_width="match_parent"
+                android:layout_height="275dp"
                 android:layout_below="@id/learnImagingTextView25"
+                android:src="@drawable/ss1_200"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView26"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:layout_below="@id/learnImagingImageView21"/>
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView21"
+                tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView39"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingTextView26"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                tools:ignore="MissingConstraints"
-                android:layout_below="@id/learnImagingTextView26"/>
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/learnImagingImageView22"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ss1_30iso_c"
+                android:layout_width="match_parent"
+                android:layout_height="277dp"
                 android:layout_below="@id/learnImagingTextView39"
+                android:src="@drawable/ss1_30iso_c"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView27"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView22"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:layout_below="@id/learnImagingImageView22"/>
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/learnImagingImageView23"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ss1_50iso_c"
+                android:layout_width="match_parent"
+                android:layout_height="278dp"
                 android:layout_below="@id/learnImagingTextView27"
+                android:src="@drawable/ss1_50iso_c"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView28"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView23"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:layout_below="@id/learnImagingImageView23"/>
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/learnImagingImageView24"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ss1_80iso_c"
+                android:layout_width="match_parent"
+                android:layout_height="276dp"
                 android:layout_below="@id/learnImagingTextView28"
+                android:src="@drawable/ss1_80iso_c"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView29"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView24"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:layout_below="@id/learnImagingImageView24"/>
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/learnImagingImageView25"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ss1_125iso_c"
+                android:layout_width="match_parent"
+                android:layout_height="273dp"
                 android:layout_below="@id/learnImagingTextView29"
+                android:src="@drawable/ss1_125iso_c"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView30"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView25"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:layout_below="@id/learnImagingImageView25"/>
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/learnImagingImageView26"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ss1_200iso_c"
+                android:layout_width="match_parent"
+                android:layout_height="269dp"
                 android:layout_below="@id/learnImagingTextView30"
+                android:src="@drawable/ss1_200iso_c"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView31"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView26"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:layout_below="@id/learnImagingImageView26"/>
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/learnImagingImageView27"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ss1_320iso_c"
+                android:layout_width="match_parent"
+                android:layout_height="269dp"
                 android:layout_below="@id/learnImagingTextView31"
+                android:src="@drawable/ss1_320iso_c"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:layout_below="@id/learnImagingImageView27"/>
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView27"
+                tools:ignore="MissingConstraints" />
 
 
         </RelativeLayout>
