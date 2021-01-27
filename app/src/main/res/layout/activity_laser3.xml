@@ -7,58 +7,84 @@
     tools:context=".Laser3">
 
     <ScrollView
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="7.5dp"
         android:layout_marginBottom="60dp"
+        android:scrollbarStyle="outsideInset"
         tools:ignore="MissingConstraints">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/laserSafetyTextView0"
-            android:textStyle="bold"
-            android:layout_centerHorizontal="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints" />
+            <TextView
+                android:id="@+id/laserSafetyTextView0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_centerHorizontal="true"
+                android:textStyle="bold"
+                tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/laserSafetyTextView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            android:drawableBottom="@drawable/lasersafety_cautions"
-            android:layout_below="@id/laserSafetyTextView0"/>
+            <TextView
+                android:id="@+id/laserSafetyTextView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/laserSafetyTextView0"
+                tools:ignore="MissingConstraints" />
 
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/laserSafety3"
+                android:layout_width="match_parent"
+                android:layout_height="325dp"
+                android:layout_below="@id/laserSafetyTextView4"
+                android:src="@drawable/lasersafety_cautions"
+                tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/laserSafetyTextView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            android:drawableBottom="@drawable/lasersafety_classtable"
-            android:layout_below="@id/laserSafetyTextView4"/>
+            <TextView
+                android:id="@+id/laserSafetyTextView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/laserSafety3"
+                tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/laserSafetyTextView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            android:drawableBottom="@drawable/lasersafety_donotlook"
-            android:layout_below="@id/laserSafetyTextView5"/>
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/laserSafety4"
+                android:layout_width="match_parent"
+                android:layout_height="278dp"
+                android:layout_below="@id/laserSafetyTextView5"
+                android:src="@drawable/lasersafety_classtable"
+                tools:ignore="MissingConstraints" />
 
-        <TextView
-            android:id="@+id/laserSafetyTextView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            android:layout_below="@id/laserSafetyTextView6"/>
+            <TextView
+                android:id="@+id/laserSafetyTextView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/laserSafety4"
+                tools:ignore="MissingConstraints" />
 
-    </RelativeLayout>
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/laserSafety5"
+                android:layout_width="281dp"
+                android:layout_height="257dp"
+                android:layout_below="@id/laserSafetyTextView6"
+                android:src="@drawable/lasersafety_donotlook"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/laserSafetyTextView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/laserSafety5"
+                tools:ignore="MissingConstraints" />
+
+        </RelativeLayout>
     </ScrollView>
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"

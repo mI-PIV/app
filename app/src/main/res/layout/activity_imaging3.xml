@@ -7,11 +7,12 @@
     tools:context=".Imaging3">
 
     <ScrollView
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="7.5dp"
         android:layout_marginBottom="60dp"
+        android:scrollbarStyle="outsideInset"
         tools:ignore="MissingConstraints">
 
         <RelativeLayout
@@ -20,34 +21,37 @@
 
             <TextView
                 android:id="@+id/imaging3TextView0"
-                android:textStyle="bold"
-                android:layout_centerHorizontal="true"
-                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/imaging3TextView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:layout_below="@id/imaging3TextView0"/>
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/imaging3TextView0"
+                tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/imaging3ImageView1"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/pixel"
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
                 android:layout_below="@id/imaging3TextView1"
+                android:src="@drawable/pixel"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/imaging3TextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:layout_below="@id/imaging3ImageView1"/>
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/imaging3ImageView1"
+                tools:ignore="MissingConstraints" />
 
 
         </RelativeLayout>
