@@ -7,11 +7,12 @@
     tools:context=".Imaging4">
 
     <ScrollView
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="7.5dp"
         android:layout_marginBottom="60dp"
+        android:scrollbarStyle="outsideInset"
         tools:ignore="MissingConstraints">
 
         <RelativeLayout
@@ -20,11 +21,12 @@
 
             <TextView
                 android:id="@+id/imaging4TextView0"
-                android:textStyle="bold"
-                android:layout_centerHorizontal="true"
-                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
 
@@ -32,43 +34,46 @@
                 android:id="@+id/imaging4TextView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:layout_below="@id/imaging4TextView0"/>
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/imaging4TextView0"
+                tools:ignore="MissingConstraints" />
 
 
             <TextView
                 android:id="@+id/imaging4TextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:textStyle="bold"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/imaging4TextView1"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/imaging4TextView1"/>
+                android:textStyle="bold"
+                tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/imaging4ImageView2"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/iso200"
+                android:layout_width="match_parent"
+                android:layout_height="274dp"
                 android:layout_below="@id/imaging4TextView2"
+                android:src="@drawable/iso200"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/imaging4TextView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:textStyle="bold"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/imaging4ImageView2"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/imaging4ImageView2"/>
+                android:textStyle="bold"
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/imaging4ImageView3"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/iso400"
+                android:layout_width="match_parent"
+                android:layout_height="275dp"
                 android:layout_below="@id/imaging4TextView3"
+                android:src="@drawable/iso400"
                 tools:ignore="MissingConstraints" />
 
 
@@ -76,17 +81,18 @@
                 android:id="@+id/imaging4TextView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:textStyle="bold"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/imaging4ImageView3"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/imaging4ImageView3"/>
+                android:textStyle="bold"
+                tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/imaging4ImageView4"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/iso800"
+                android:layout_width="match_parent"
+                android:layout_height="276dp"
                 android:layout_below="@id/imaging4TextView4"
+                android:src="@drawable/iso800"
                 tools:ignore="MissingConstraints" />
 
 
@@ -94,18 +100,19 @@
                 android:id="@+id/imaging4TextView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:textStyle="bold"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/imaging4ImageView4"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/imaging4ImageView4"/>
+                android:textStyle="bold"
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/imaging4ImageView5"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/iso1200"
+                android:layout_width="match_parent"
+                android:layout_height="274dp"
                 android:layout_below="@id/imaging4TextView5"
+                android:src="@drawable/iso1200"
                 tools:ignore="MissingConstraints" />
 
 
@@ -113,18 +120,19 @@
                 android:id="@+id/imaging4TextView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:textStyle="bold"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/imaging4ImageView5"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/imaging4ImageView5"/>
+                android:textStyle="bold"
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/imaging4ImageView6"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/iso1600"
+                android:layout_width="match_parent"
+                android:layout_height="269dp"
                 android:layout_below="@id/imaging4TextView6"
+                android:src="@drawable/iso1600"
                 tools:ignore="MissingConstraints" />
 
 
@@ -132,28 +140,28 @@
                 android:id="@+id/imaging4TextView7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/imaging4ImageView6"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:layout_below="@id/imaging4ImageView6"/>
+                tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/imaging4ImageView7"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/iso2400"
+                android:layout_width="match_parent"
+                android:layout_height="271dp"
                 android:layout_below="@id/imaging4TextView7"
+                android:src="@drawable/iso2400"
                 tools:ignore="MissingConstraints" />
-
 
 
             <TextView
                 android:id="@+id/imaging4TextView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:layout_below="@id/imaging4ImageView7"/>
-
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/imaging4ImageView7"
+                tools:ignore="MissingConstraints" />
 
 
         </RelativeLayout>
