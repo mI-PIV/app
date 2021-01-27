@@ -7,11 +7,12 @@
     tools:context=".Imaging7">
 
     <ScrollView
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="7.5dp"
         android:layout_marginBottom="60dp"
+        android:scrollbarStyle="outsideInset"
         tools:ignore="MissingConstraints">
 
         <RelativeLayout
@@ -20,27 +21,29 @@
 
             <TextView
                 android:id="@+id/learnImagingTextView0"
-                android:textStyle="bold"
-                android:layout_centerHorizontal="true"
-                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:layout_below="@id/learnImagingTextView0"/>
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingTextView0"
+                tools:ignore="MissingConstraints" />
 
 
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/learnImagingImageView37"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/focus_image"
+                android:layout_width="match_parent"
+                android:layout_height="340dp"
                 android:layout_below="@id/learnImagingTextView10"
+                android:src="@drawable/focus_image"
                 tools:ignore="MissingConstraints" />
 
 
@@ -48,28 +51,52 @@
                 android:id="@+id/learnImagingTextView11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
-                android:drawableBottom="@drawable/focusex1"
-                android:layout_below="@id/learnImagingImageView37"/>
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView37"
+                tools:ignore="MissingConstraints" />
+
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/learnImagingImageView38"
+                android:layout_width="match_parent"
+                android:layout_height="264dp"
+                android:layout_below="@id/learnImagingTextView11"
+                android:src="@drawable/focusex1"
+                tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView35"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView38"
                 android:text="\nAn image slightly out of focus. Where the particle edges are blurred andnon-distinct."
-                android:drawableBottom="@drawable/focusex2"
-                android:layout_below="@id/learnImagingTextView11"/>
+                tools:ignore="MissingConstraints" />
+
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/learnImagingImageView39"
+                android:layout_width="match_parent"
+                android:layout_height="266dp"
+                android:layout_below="@id/learnImagingTextView35"
+                android:src="@drawable/focusex2"
+                tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/learnImagingTextView36"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/learnImagingImageView39"
                 android:layout_centerHorizontal="true"
                 android:text="\nAn image in focus, with distinct particles and no blurring."
-                android:drawableBottom="@drawable/focusex3"
-                android:layout_below="@id/learnImagingTextView35"/>
+                tools:ignore="MissingConstraints" />
+
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/learnImagingImageView40"
+                android:layout_width="match_parent"
+                android:layout_height="267dp"
+                android:layout_below="@id/learnImagingTextView36"
+                android:src="@drawable/focusex3"
+                tools:ignore="MissingConstraints" />
 
         </RelativeLayout>
     </ScrollView>
