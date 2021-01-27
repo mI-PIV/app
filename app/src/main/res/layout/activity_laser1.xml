@@ -37,7 +37,7 @@
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/learnImagingImageView43"
+                android:id="@+id/laserSafety0"
                 android:layout_width="316dp"
                 android:layout_height="342dp"
                 android:layout_below="@id/laserSafetyTextView1"
