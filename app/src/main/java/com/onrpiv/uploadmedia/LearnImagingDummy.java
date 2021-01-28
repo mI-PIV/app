@@ -10,7 +10,7 @@ import android.widget.ListView;
 
 public class LearnImagingDummy extends LearnPIV {
 
-    String[] imagingArray = {"How does a digital Video Camera Work","Bit Depth","Pixel","ISO",
+    String[] imagingArray = {"How Does a Digital Video Camera Work?","Bit Depth","Pixel","ISO",
             "Shutter Speed","Resolution","Focus","Frame Rate","Aperture"};
 
     @Override

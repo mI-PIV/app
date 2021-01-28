@@ -21,7 +21,7 @@ public class Imaging9 extends LearnImagingDummy {
         t0.setText("Aperture");
         t0.setTextSize(headerTextSize);
         TextView t12 = (TextView)findViewById(R.id.learnImagingTextView12);
-        String html10 = "The aperture is a variably sized opening the light passes through before reaching the sensors. The aperture allows more and less light to reach the sensors and is another way to adjust the brightness of the final image as shown below.";
+        String html10 = "The aperture is a variably sized opening where the light passes through before reaching the sensors. The aperture allows more and less light to reach the sensors and is another way to adjust the brightness of the final image as shown below.";
         t12.setText(Html.fromHtml(html10));
         t12.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
         //image
