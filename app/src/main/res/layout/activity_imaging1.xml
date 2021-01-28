@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbarStyle="outsideInset"
-    tools:context=".Imaging1">
+    tools:context=".Learn.Imaging1">
 
     <ScrollView
         android:layout_width="fill_parent"

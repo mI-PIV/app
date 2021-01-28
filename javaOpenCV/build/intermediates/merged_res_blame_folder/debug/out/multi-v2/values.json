@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/home/sarbajit-laptop/AndroidStudioProjects/mI-PIV_Sep8_2020/javaOpenCV/build/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
+            "outputFile": "C:\\Users\\Toffer\\Desktop\\mI-PIV-app\\javaOpenCV\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
             "map": [
                 {
-                    "source": "/home/sarbajit-laptop/AndroidStudioProjects/mI-PIV_Sep8_2020/javaOpenCV/src/main/res/values/attrs.xml",
+                    "source": "C:\\Users\\Toffer\\Desktop\\mI-PIV-app\\javaOpenCV\\src\\main\\res\\values\\attrs.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
