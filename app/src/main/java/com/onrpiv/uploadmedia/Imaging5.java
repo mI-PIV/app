@@ -22,7 +22,7 @@ public class Imaging5 extends LearnImagingDummy {
         t0.setText("Shutter Speed");
         t0.setTextSize(headerTextSize);
         TextView t8 = (TextView)findViewById(R.id.learnImagingTextView8);
-        String html6 = "To allow light to reach the sensor, the shutter has to open and then close(or in the case of electronic shutter, the sensors must be turned on and then off). The amount of time the shutter spends open is referred to as shutter speed and is measured by the amount of time open(on)in seconds.<br><br>Shutter speed has several important implications in PIV.One important consideration is particle image streaking or simply <b>streaking</b>. The amount of distance a particle moves while the shutter is open is recorded by the camera.As PIV measures movement between frames, particles which are “streaked” make the movement between frames harder to correlate.By decreasing the shutter speed,streaking is reduced. However, the amount of light which hits each sensor is decreased, as the time each sensor is exposed is decreased. The following images have a decreasing shutter speed. To keep the particles visible,the ISO has been adjusted across these images.<br>";
+        String html6 = "To allow light to reach the sensor, the shutter has to open and then close (or in the case of electronic shutter, the sensors must be turned on and then off). The amount of time the shutter spends open is referred to as shutter speed and is measured by the amount of time open (on) in seconds.<br><br>Shutter speed has several important implications in PIV. One important consideration is particle image streaking or simply <b>streaking</b>. The amount of distance a particle moves while the shutter is open is recorded by the camera. As PIV measures movement between frames, particles which are “streaked” make the movement between frames harder to correlate. By decreasing the shutter speed, streaking is reduced. However, the amount of light which hits each sensor is decreased, as the time each sensor is exposed is decreased. The following images have a decreasing shutter speed. To keep the particles visible, the ISO has been adjusted across these images.<br>";
         t8.setText(Html.fromHtml(html6));
         t8.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
         TextView t36 = (TextView)findViewById(R.id.learnImagingTextView38);
@@ -63,7 +63,7 @@ public class Imaging5 extends LearnImagingDummy {
         t31.setText("Shutter Speed: 1/320s");
         //image
         TextView t9 = (TextView)findViewById(R.id.learnImagingTextView9);
-        String html7 = "For these reasons, the shutter speed should be reduced as much as necessary to eliminate streaking, while still allowing the particles to be seen. The light is also impacted by the aperture and ISO. Another important consideration is that as the framerate decreases,the maximum shutter speed decreases, as the shutter must open and shut for each frame to be recorded.";
+        String html7 = "For these reasons, the shutter speed should be reduced as much as necessary to eliminate streaking, while still allowing the particles to be seen. The light is also impacted by the aperture and ISO. Another important consideration is that as the framerate decreases, the maximum shutter speed decreases, as the shutter must open and shut for each frame to be recorded.";
         t9.setText(Html.fromHtml(html7));
         t9.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
         TextView[] textViews = {t8,t36,t22,t23,t24,t25,t26,t37,t27,t28,t29,t30,t31,t9,};

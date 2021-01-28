@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/learnImagingImageView38"
-                android:text="\nAn image slightly out of focus. Where the particle edges are blurred andnon-distinct."
+                android:text="\nAn image slightly out of focus. Where the particle edges are blurred and non-distinct."
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView

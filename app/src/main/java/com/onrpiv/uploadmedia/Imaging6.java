@@ -21,18 +21,18 @@ public class Imaging6 extends LearnImagingDummy {
         t0.setText("Resolution");
         t0.setTextSize(headerTextSize);
         TextView t9 = (TextView)findViewById(R.id.learnImagingTextView9);
-        String html7 = "The resolution of an image is a measurement of how many pixels make up a single image. Resolution is described by the number of pixels in each direction (x and y). For example, if an image has 720 pixels along the short axis, and 1280 pixels along the long axis, the image is 1280x720. (Short reference to resolution often picks the lowest number, so for 720x1280, the image would be 720p. 1080 video is 1920x1080.)<br><br>To see how resolution impacts an image, the following example shows a square image in increasing resolution.<br><br>This piece of a mI-PIV image was 1080x1080.";
+        String html7 = "The resolution of an image is a measurement of how many pixels make up a single image. Resolution is described by the number of pixels in each direction (x and y). For example, if an image has 720 pixels along the short axis, and 1280 pixels along the long axis, the image is 1280x720. (Short reference to resolution often picks the lowest number, so for 720x1280, the image would be 720p. 1080 video is 1920x1080.)<br><br>To see how resolution impacts an image, the following example shows a square image in increasing resolution.<br><br>This piece of a mI-PIV image was 1080x1080:";
         t9.setText(Html.fromHtml(html7));
         t9.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
         //image
         TextView t32 = (TextView)findViewById(R.id.learnImagingTextView32);
-        t32.setText("This is the same image with a resolution of540x540");
+        t32.setText("This is the same image with a resolution of 540x540:");
         //image
         TextView t33 = (TextView)findViewById(R.id.learnImagingTextView33);
-        t33.setText("This is the same image with a resolution of 270x270");
+        t33.setText("This is the same image with a resolution of 270x270:");
         //image
         TextView t34 = (TextView)findViewById(R.id.learnImagingTextView34);
-        t34.setText("This is the same image with a resolution of 120x120");
+        t34.setText("This is the same image with a resolution of 120x120:");
         //image
         TextView t10 = (TextView)findViewById(R.id.learnImagingTextView10);
         String html8 = "An interesting point to note is that the error in mI-PIV measurements is highly dependent on the resolution, as particles (and resultantly velocities) may only be “resolved” down to pixel size.";
