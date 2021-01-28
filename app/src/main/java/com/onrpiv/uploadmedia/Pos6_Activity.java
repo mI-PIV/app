@@ -20,7 +20,7 @@ public class Pos6_Activity extends FluidGlossary {
         t0.setText("Wake");
         t0.setTextSize(headerTextSize);
         TextView t1 = (TextView)findViewById(R.id.pos6TextView1);
-        t1.setText("A wake is a region of flow downstream of a solid body moving through a fluid, caused by the flow of the fluid around the body. A common observation of a wake is the path left by a bird moving in calm water");
+        t1.setText("A wake is a region of flow downstream of a solid body moving through a fluid, caused by the flow of the fluid around the body. A common observation of a wake is the path left by a bird moving in calm water.");
         t1.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
         TextView[] textViews = {t1};
         for(int i = 0; i<textViews.length; i++){
