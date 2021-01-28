@@ -23,7 +23,7 @@ public class Laser2 extends LaserSafetyDummy {
         t0.setText("Lasers in PIV");
         t0.setTextSize(headerTextSize);
         TextView t2 = (TextView)findViewById(R.id.laserSafetyTextView2);
-        String html2 = "Lasers are used in PIV to illuminate neutrally buoyant particles within a flow field.These particles are typically made of silica (glass) and are designed to scatter light so cameras can capture their position accurately. Check out the Learn About PIV page to learn more.";
+        String html2 = "Lasers are used in PIV to illuminate neutrally buoyant particles within a flow field. These particles are typically made of silica (glass) and are designed to scatter light so cameras can capture their position accurately. Check out the Learn About PIV page to learn more.";
         t2.setText(Html.fromHtml(html2));
         t2.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
         TextView t3 = (TextView)findViewById(R.id.laserSafetyTextView3);
