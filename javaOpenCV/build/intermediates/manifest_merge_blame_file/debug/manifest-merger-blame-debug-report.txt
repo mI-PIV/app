@@ -5,7 +5,7 @@
 5    android:versionName="4.1.1" >
 6
 7    <uses-sdk android:minSdkVersion="1" />
-7-->/home/sarbajit-laptop/AndroidStudioProjects/mI-PIV_Sep8_2020/javaOpenCV/src/main/AndroidManifest.xml
+7-->C:\Users\Toffer\Desktop\mI-PIV-app\javaOpenCV\src\main\AndroidManifest.xml
 8
 9    <application />
 10
