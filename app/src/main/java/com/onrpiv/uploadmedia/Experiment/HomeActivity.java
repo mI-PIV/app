@@ -11,13 +11,17 @@ import com.onrpiv.uploadmedia.Learn.LearnPIV;
 import com.onrpiv.uploadmedia.R;
 
 public class HomeActivity extends AppCompatActivity {
+
     private Button startExperimentButton;
     private Button learnAboutFluidsButton;
     private Button learnPIVButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         startExperimentButton = (Button)findViewById(R.id.startExperimentButton);
         startExperimentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -26,6 +30,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(mIPIVOpen);
             }
         });
+
         learnAboutFluidsButton = (Button)findViewById(R.id.learnFluidsButton);
         learnAboutFluidsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,6 +39,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(fluidsOpen);
             }
         });
+
         learnPIVButton = (Button)findViewById(R.id.learnPIVButton);
         learnPIVButton.setOnClickListener(new View.OnClickListener() {
             @Override
