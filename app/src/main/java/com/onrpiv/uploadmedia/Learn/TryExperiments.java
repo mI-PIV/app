@@ -13,11 +13,13 @@ import com.onrpiv.uploadmedia.Learn.FluidGlossary;
 import com.onrpiv.uploadmedia.R;
 
 public class TryExperiments extends FluidGlossary {
+
     String[] experimentList = {"Bubble Curtain","Deep Sea Vent","Flow Over Propeller Hulls","Fully Developed Pipe Flow",
             "Laminar Transition Pipe Flow","Pipe Flow Vortex Generator","Seed Particle Size Effects"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.try_experiments);
 
@@ -26,15 +28,17 @@ public class TryExperiments extends FluidGlossary {
 
         ListView listView = (ListView) findViewById(R.id.experimentList);
         listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if(position == 5){
+                if (position == 5) {
                     Intent myIntent = new Intent(view.getContext(), Experiment1.class);
                     startActivityForResult(myIntent,0);
                 }
             }
         });
+
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
 
