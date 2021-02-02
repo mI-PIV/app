@@ -5,6 +5,8 @@
 /.idea/libraries
 .DS_Store
 /build
+javaOpenCV/build
+openCVLibrary344/build
 /captures
 .externalNativeBuild
 /.idea/
