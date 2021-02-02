@@ -28,13 +28,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/imaging1ImageView0"
-                android:layout_width="378dp"
-                android:layout_height="304dp"
-                android:layout_below="@id/imaging1TextView0"
-                android:src="@drawable/sensor_array"
-                tools:ignore="MissingConstraints" />
+
 
             <!--            <TextView-->
             <!--                android:id="@+id/imaging1TextView1"-->
@@ -49,7 +43,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/imaging1ImageView0"
+                android:layout_below="@id/imaging1TextView0"
+                tools:ignore="MissingConstraints" />
+
+            <com.zolad.zoominimageview.ZoomInImageView
+                android:id="@+id/imaging1ImageView0"
+                android:layout_width="378dp"
+                android:layout_height="304dp"
+                android:layout_below="@id/imaging1TextView2"
+                android:src="@drawable/sensor_array"
                 tools:ignore="MissingConstraints" />
 
             <TextView
@@ -57,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/imaging1TextView2"
+                android:layout_below="@id/imaging1ImageView0"
 
                 tools:ignore="MissingConstraints" />
 
