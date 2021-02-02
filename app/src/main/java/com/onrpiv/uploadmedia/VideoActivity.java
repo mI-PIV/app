@@ -395,15 +395,9 @@ public class VideoActivity extends AppCompatActivity{
         storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/PIV_Frames_" + userName);
 
         // Then we create the storage directory if does not exists
-        if (!storageDirectory.exists()) {
-            if (!storageDirectory.mkdir()) {
-                // TODO debug delete
-                Toast.makeText(VideoActivity.this, "Output directory was NOT created!", Toast.LENGTH_SHORT).show();
-            }
-        }
-//        jpegFile = new File(storageDirectory, filePrefix + "%03d" + fileExtn);
-        jpegFile = new File(storageDirectory, filePrefix + "%03d" + fileExtn);
+        if (!storageDirectory.exists()) storageDirectory.mkdir();
 
+        jpegFile = new File(storageDirectory, filePrefix + "%03d" + fileExtn);
 
         /* https://ffmpeg.org/ffmpeg.html
         ffmpeg command line options
