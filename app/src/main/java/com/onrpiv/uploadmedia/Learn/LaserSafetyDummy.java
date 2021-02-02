@@ -19,6 +19,7 @@ public class LaserSafetyDummy extends LearnPIV {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.laser_safety_dummy);
+
         TextView t1 = (TextView)findViewById(R.id.laserSafetytextview1);
         t1.setText("Do NOT look at the laser beam!");
 
@@ -27,23 +28,25 @@ public class LaserSafetyDummy extends LearnPIV {
 
         ListView listView = (ListView) findViewById(R.id.laserSafety_list);
         listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if(position == 0){
+                if (position == 0) {
                     Intent myIntent = new Intent(view.getContext(), Laser1.class);
                     startActivityForResult(myIntent,0);
                 }
-                if(position == 1){
+                if (position == 1) {
                     Intent myIntent = new Intent(view.getContext(), Laser2.class);
                     startActivityForResult(myIntent,1);
                 }
-                if(position == 2){
+                if (position == 2) {
                     Intent myIntent = new Intent(view.getContext(), Laser3.class);
                     startActivityForResult(myIntent,2);
                 }
             }
         });
+
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
     }

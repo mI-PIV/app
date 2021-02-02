@@ -10,15 +10,18 @@ import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.YoutubeConfig;
 
 public class Experiment1 extends YouTubeBaseActivity {
+
     YouTubePlayerView mYoutubePlayerView;
-//    Button btnPlay;
+    // Button btnPlay;
     YouTubePlayer.OnInitializedListener mOnInitializedListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment1);
-//        btnPlay = (Button)findViewById(R.id.playButton);
+
+        //  btnPlay = (Button)findViewById(R.id.playButton);
         mYoutubePlayerView = (YouTubePlayerView) findViewById(R.id.youtubePlay);
         mOnInitializedListener = new YouTubePlayer.OnInitializedListener() {
             @Override
@@ -32,6 +35,7 @@ public class Experiment1 extends YouTubeBaseActivity {
 
             }
         };
+
         mYoutubePlayerView.initialize(YoutubeConfig.getApiKey(), mOnInitializedListener);
 //        btnPlay.setOnClickListener(new View.OnClickListener() {
 //            @Override

@@ -15,6 +15,7 @@ import com.onrpiv.uploadmedia.Experiment.VideoActivity;
 import com.onrpiv.uploadmedia.R;
 
 public class LearnPIV extends AppCompatActivity {
+
     private Button pivBasicsButton;
     private Button learnAboutImaging;
     private Button videoTutorialButton;
@@ -22,8 +23,10 @@ public class LearnPIV extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.learn_piv);
+
         pivBasicsButton = (Button)findViewById(R.id.pivBasicsButton);
         pivBasicsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,6 +35,7 @@ public class LearnPIV extends AppCompatActivity {
                 startActivity(pivBasics);
             }
         });
+
         learnAboutImaging = (Button)findViewById(R.id.learnAboutImagingButton);
         learnAboutImaging.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,6 +44,7 @@ public class LearnPIV extends AppCompatActivity {
                 startActivity(learnImaging);
             }
         });
+
         videoTutorialButton = (Button)findViewById(R.id.videoTutorialButton);
         videoTutorialButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,6 +53,7 @@ public class LearnPIV extends AppCompatActivity {
                 startActivity(videoTutorial);
             }
         });
+
         laserSafetyButton = (Button)findViewById(R.id.laserSafetyButton);
         laserSafetyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,11 +62,11 @@ public class LearnPIV extends AppCompatActivity {
                 startActivity(laserSafety);
             }
         });
+
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
-
-
     }
+
     public BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -69,11 +75,13 @@ public class LearnPIV extends AppCompatActivity {
                     Intent intent1 = new Intent(LearnPIV.this, VideoActivity.class);
                     startActivity(intent1);
                     break;
+
                 case R.id.nav_Home:
                     System.out.println("Home it is");
                     Intent intent2 = new Intent(LearnPIV.this, HomeActivity.class);
                     startActivity(intent2);
                     break;
+
                 case R.id.nav_feedback:
                     System.out.println("Feedback it is");
                     Intent intent3 = new Intent("android.intent.action.VIEW", Uri.parse("https://usu.co1.qualtrics.com/jfe/form/SV_3WtfQHquWuN0ujj"));

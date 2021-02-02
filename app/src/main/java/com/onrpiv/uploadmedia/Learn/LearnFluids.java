@@ -14,13 +14,16 @@ import com.onrpiv.uploadmedia.Experiment.VideoActivity;
 import com.onrpiv.uploadmedia.R;
 
 public class LearnFluids extends AppCompatActivity {
+
     private Button fluidGlossaryButton;
     private Button tryExperimentButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.learn_fluids);
+
         fluidGlossaryButton = (Button)findViewById(R.id.fluidGlossaryButton);
         fluidGlossaryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -29,6 +32,7 @@ public class LearnFluids extends AppCompatActivity {
                 startActivity(mIPIVOpen);
             }
         });
+
         tryExperimentButton = (Button)findViewById(R.id.tryExperimentButton);
         tryExperimentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,6 +41,7 @@ public class LearnFluids extends AppCompatActivity {
                 startActivity(tryExperiment);
             }
         });
+
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
     }
@@ -49,11 +54,13 @@ public class LearnFluids extends AppCompatActivity {
                     Intent intent1 = new Intent(LearnFluids.this, VideoActivity.class);
                     startActivity(intent1);
                     break;
+
                 case R.id.nav_Home:
                     System.out.println("Home it is");
                     Intent intent2 = new Intent(LearnFluids.this, HomeActivity.class);
                     startActivity(intent2);
                     break;
+
                 case R.id.nav_feedback:
                     System.out.println("Feedback it is");
 //                    Intent intent3 = new Intent(LearnFluids.this, HomeActivity.class);
