@@ -36,59 +36,59 @@ public class FluidGlossary extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if(position == 0){
+                if (position == 0) {
                     Intent myIntent = new Intent(view.getContext(), Pos1_Activity.class);
                     startActivityForResult(myIntent,0);
                 }
-                if(position == 1){
+                if (position == 1) {
                     Intent myIntent = new Intent(view.getContext(), Pos2_Activity.class);
                     startActivityForResult(myIntent,1);
                 }
-                if(position == 2){
+                if (position == 2) {
                     Intent myIntent = new Intent(view.getContext(), Pos3_Activity.class);
                     startActivityForResult(myIntent,2);
                 }
-                if(position == 3){
+                if (position == 3) {
                     Intent myIntent = new Intent(view.getContext(), Pos4_Activity.class);
                     startActivityForResult(myIntent,3);
                 }
-                if(position == 4){
+                if (position == 4) {
                     Intent myIntent = new Intent(view.getContext(), Pos5_Activity.class);
                     startActivityForResult(myIntent,4);
                 }
-                if(position == 5){
+                if (position == 5) {
                     Intent myIntent = new Intent(view.getContext(), Pos6_Activity.class);
                     startActivityForResult(myIntent,5);
                 }
-                if(position == 6){
+                if (position == 6) {
                     Intent myIntent = new Intent(view.getContext(), Pos7_Activity.class);
                     startActivityForResult(myIntent,6);
                 }
-                if(position == 7){
+                if (position == 7) {
                     Intent myIntent = new Intent(view.getContext(), Pos8_Activity.class);
                     startActivityForResult(myIntent,7);
                 }
-                if(position == 8){
+                if (position == 8) {
                     Intent myIntent = new Intent(view.getContext(), Pos9_Activity.class);
                     startActivityForResult(myIntent,8);
                 }
-                if(position == 9){
+                if (position == 9) {
                     Intent myIntent = new Intent(view.getContext(), Pos10_Activity.class);
                     startActivityForResult(myIntent,9);
                 }
-                if(position == 10){
+                if (position == 10) {
                     Intent myIntent = new Intent(view.getContext(), Pos11_Activity.class);
                     startActivityForResult(myIntent,10);
                 }
-                if(position == 11){
+                if (position == 11) {
                     Intent myIntent = new Intent(view.getContext(), Pos12_Activity.class);
                     startActivityForResult(myIntent,11);
                 }
-                if(position == 12){
+                if (position == 12) {
                     Intent myIntent = new Intent(view.getContext(), Pos13_Activity.class);
                     startActivityForResult(myIntent,12);
                 }
-                if(position == 13){
+                if (position == 13) {
                     Intent myIntent = new Intent(view.getContext(), Pos14_Activity.class);
                     startActivityForResult(myIntent,13);
                 }
