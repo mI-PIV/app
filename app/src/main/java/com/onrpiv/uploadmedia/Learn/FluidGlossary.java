@@ -23,6 +23,7 @@ public class FluidGlossary extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fluid_gloassary);
 
@@ -31,6 +32,7 @@ public class FluidGlossary extends Activity {
 
         ListView listView = (ListView) findViewById(R.id.mobile_list);
         listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -92,22 +94,27 @@ public class FluidGlossary extends Activity {
                 }
             }
         });
+
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
     }
+
     public BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             switch (menuItem.getItemId()){
+
                 case R.id.nav_startExperiment:
                     Intent intent1 = new Intent(FluidGlossary.this, VideoActivity.class);
                     startActivity(intent1);
                     break;
+
                 case R.id.nav_Home:
                     System.out.println("Home it is");
                     Intent intent2 = new Intent(FluidGlossary.this, HomeActivity.class);
                     startActivity(intent2);
                     break;
+
                 case R.id.nav_feedback:
                     System.out.println("Feedback it is");
 //                    Intent intent3 = new Intent(LearnFluids.this, HomeActivity.class);
