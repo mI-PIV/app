@@ -21,6 +21,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -40,6 +42,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.jsibbold.zoomage.ZoomageView;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.BoolIntStructure;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 
 import org.opencv.android.OpenCVLoader;
@@ -130,7 +133,8 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     private RadioGroup radioGroup;
     // Click this button to cancel edit user data.
     private Button cancelPIVDataButton = null;
-    private int windowSize, overlap = 0;
+    private int windowSize = 64;
+    private int overlap = 32;
     private int selectedId;
     private double nMaxUpper, nMaxLower, maxDisplacement = 0.0;
     private Double qMin, dt, E = 0.0;
@@ -477,7 +481,29 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         // Get user input edittext and button ui controls in the popup dialog.
         setEditTextPIV = (TextView) popupPIVDialogView.findViewById(R.id.textView);
         windowSizeText = (EditText) popupPIVDialogView.findViewById(R.id.windowSize);
+        windowSizeText.setText("64");
         overlapText = (EditText) popupPIVDialogView.findViewById(R.id.overlap);
+        overlapText.setText("32");
+
+        // Set the default overlap to 50% of windowSize if windowSize is changed from default
+        windowSizeText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                BoolIntStructure userInputCheckResult = checkUserInputInt(s.toString());
+                if (s.length() != 0 && userInputCheckResult.getBool()) {
+                    int half = (int) Math.round((double) userInputCheckResult.getInt() / 2);
+                    overlapText.setText(String.valueOf(half));
+                }
+            }
+        });
+
+
         checkBox2=(CheckBox)popupPIVDialogView.findViewById(R.id.checkbox_2);
 
         dtText = (EditText) popupPIVDialogView.findViewById(R.id.dt);
@@ -522,6 +548,20 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 //        radioGroup = (RadioGroup) findViewById(R.id.groupradio);
         savePIVDataButton = popupPIVDialogView.findViewById(R.id.button_save_piv_data);
         cancelPIVDataButton = popupPIVDialogView.findViewById(R.id.button_cancel_piv_data);
+    }
+
+    private BoolIntStructure checkUserInputInt(String userInput)
+    {
+        boolean success = false;
+        int integer;
+        try {
+            integer = Integer.parseInt(userInput);
+            success = true;
+        }
+        catch (NumberFormatException e) {
+            integer = 0;
+        }
+        return new BoolIntStructure(success, integer);
     }
 
     private boolean isExternalStorageAvailable() {
