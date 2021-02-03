@@ -2,6 +2,7 @@ package com.onrpiv.uploadmedia.Learn;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -117,8 +118,8 @@ public class FluidGlossary extends Activity {
 
                 case R.id.nav_feedback:
                     System.out.println("Feedback it is");
-//                    Intent intent3 = new Intent(LearnFluids.this, HomeActivity.class);
-//                    startActivity(intent2);
+                    Intent intent3 = new Intent("android.intent.action.VIEW", Uri.parse("https://usu.co1.qualtrics.com/jfe/form/SV_3WtfQHquWuN0ujj"));
+                    startActivity(intent3);
                     break;
             }
             return true;

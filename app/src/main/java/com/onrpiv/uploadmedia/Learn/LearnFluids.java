@@ -1,6 +1,7 @@
 package com.onrpiv.uploadmedia.Learn;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -63,8 +64,8 @@ public class LearnFluids extends AppCompatActivity {
 
                 case R.id.nav_feedback:
                     System.out.println("Feedback it is");
-//                    Intent intent3 = new Intent(LearnFluids.this, HomeActivity.class);
-//                    startActivity(intent2);
+                    Intent intent3 = new Intent("android.intent.action.VIEW", Uri.parse("https://usu.co1.qualtrics.com/jfe/form/SV_3WtfQHquWuN0ujj"));
+                    startActivity(intent3);
                     break;
             }
             return true;
