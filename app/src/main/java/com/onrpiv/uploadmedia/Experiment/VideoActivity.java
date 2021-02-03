@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
@@ -44,6 +46,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -352,10 +355,11 @@ public class VideoActivity extends AppCompatActivity{
      */
     private void generateFrames(View view){
         String fileExtn = ".png";
-        int startMs= 0;
-        int endMs= 1000;
 
-        String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(new Date());
+        double startMs= 0.0;
+        double endMs= 1000.0;
+
+        String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
         String filePrefix = "EXTRACT_" + timeStamp + "_";
 
         storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/PIV_Frames_" + userName);
@@ -365,6 +369,17 @@ public class VideoActivity extends AppCompatActivity{
 
         jpegFile = new File(storageDirectory, filePrefix + "%03d" + fileExtn);
 
+        /* https://ffmpeg.org/ffmpeg.html
+        ffmpeg command line options
+        -y  overwrite any existing files
+        -i  input video path
+        -an blocks all audio streams of a file from being mapped for any output
+        -r  force the frame rate of output file
+        -ss where to start processing.
+            The value is a time duration See more https://ffmpeg.org/ffmpeg-utils.html#Time-duration.
+        -t  total duration or when to stop processing.
+            The value is a time duration. See more https://ffmpeg.org/ffmpeg-utils.html#Time-duration.
+         */
         String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", "20", "-ss", "" + startMs / 1000, "-t", "" + (endMs - startMs) / 1000, jpegFile.getAbsolutePath()};
         /*   Remove -r 1 if you want to extract all video frames as images from the specified time duration.*/
         execFFmpegBinary(complexCommand);
@@ -383,28 +398,29 @@ public class VideoActivity extends AppCompatActivity{
                 @Override
                 public void onFailure(String s) {
                     Log.d(TAG, "FAILED with output : " + s);
+                    Toast.makeText(VideoActivity.this, "Frames Generation FAILED", Toast.LENGTH_SHORT).show();
                 }
                 @Override
                 public void onSuccess(String s) {
                     Log.d(TAG, "SUCCESS with output : " + s);
+                    Toast.makeText(VideoActivity.this, "Frames Generation Completed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VideoActivity.this, "Head Over to the Image Upload Section", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onProgress(String s) {
-                    Log.d(TAG, "Started command : ffmpeg " + command);
+                    Log.d(TAG, "Started command : ffmpeg " + Arrays.toString(command));
                     Log.d(TAG, "progress : " + s);
                 }
 
                 @Override
                 public void onStart() {
-                    Log.d(TAG, "Started command : ffmpeg " + command);
+                    Log.d(TAG, "Started command : ffmpeg " + Arrays.toString(command));
                 }
 
                 @Override
                 public void onFinish() {
-                    Log.d(TAG, "Finished command : ffmpeg " + command);
-                    Toast.makeText(VideoActivity.this, "Frames Generation Completed", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(VideoActivity.this, "Head Over to the Image Upload Section", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Finished command : ffmpeg " + Arrays.toString(command));
                 }
 
             });
