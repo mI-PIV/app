@@ -20,7 +20,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/laserSafetyTextView0"
+                android:id="@+id/laserSafety1TextView0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
@@ -29,34 +29,31 @@
                 tools:ignore="MissingConstraints" />
 
             <TextView
-                android:id="@+id/laserSafetyTextView1"
+                android:id="@+id/laserSafety1TextView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/laserSafetyTextView0"
+                android:layout_below="@id/laserSafety1TextView0"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/laserSafety0"
+                android:id="@+id/laserSafety1ImageView0"
                 android:layout_width="316dp"
                 android:layout_height="342dp"
-                android:layout_below="@id/laserSafetyTextView1"
+                android:layout_below="@id/laserSafety1TextView1"
                 android:src="@drawable/lasersafety_coherent"
                 tools:ignore="MissingConstraints" />
 
         </RelativeLayout>
 
     </ScrollView>
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation2"
-        app:itemBackground="@android:color/white"
-        />
-
-
-
+        app:itemBackground="@android:color/white" />
 
 </RelativeLayout>
