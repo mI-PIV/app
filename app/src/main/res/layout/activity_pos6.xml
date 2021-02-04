@@ -28,7 +28,6 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-
             <TextView
                 android:id="@+id/pos6TextView1"
                 android:layout_width="wrap_content"
@@ -38,7 +37,7 @@
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pos6ImageView1"
+                android:id="@+id/pos6ImageView0"
                 android:layout_width="match_parent"
                 android:layout_height="367dp"
                 android:layout_below="@id/pos6TextView1"
@@ -46,17 +45,16 @@
                 android:src="@drawable/new_wake"
                 tools:ignore="MissingConstraints" />
 
-
         </RelativeLayout>
+
     </ScrollView>
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation2"
-        app:itemBackground="@android:color/white"
-        />
-
+        app:itemBackground="@android:color/white" />
 
 </RelativeLayout>

@@ -37,16 +37,8 @@
                 android:layout_below="@id/pos1TextView0"
                 tools:ignore="MissingConstraints" />
 
-            <!--    <ImageView-->
-            <!--        android:id="@+id/pos1ImageView1"-->
-            <!--        android:layout_width="fill_parent"-->
-            <!--        android:layout_height="wrap_content"-->
-            <!--        android:src="@drawable/boundary_layer_image_1"-->
-            <!--        android:layout_below="@id/pos1TextView1"-->
-            <!--        tools:ignore="MissingConstraints" />-->
-
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pos1ImageView1"
+                android:id="@+id/pos1ImageView0"
                 android:layout_width="371dp"
                 android:layout_height="153dp"
                 android:layout_below="@id/pos1TextView1"
@@ -57,10 +49,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/pos1ImageView1" />
+                android:layout_below="@id/pos1ImageView0" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pos1ImageView2"
+                android:id="@+id/pos1ImageView1"
                 android:layout_width="match_parent"
                 android:layout_height="104dp"
                 android:layout_below="@id/pos1TextView2"
@@ -72,10 +64,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/pos1ImageView2" />
+                android:layout_below="@id/pos1ImageView1" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pos1ImageView3"
+                android:id="@+id/pos1ImageView2"
                 android:layout_width="match_parent"
                 android:layout_height="136dp"
                 android:layout_below="@id/pos1TextView3"
@@ -87,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/pos1ImageView3"
+                android:layout_below="@id/pos1ImageView2"
                 android:textStyle="bold" />
 
             <TextView
@@ -98,7 +90,7 @@
                 android:layout_below="@id/pos1TextView4" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pos1ImageView4"
+                android:id="@+id/pos1ImageView3"
                 android:layout_width="match_parent"
                 android:layout_height="106dp"
                 android:layout_below="@id/pos1TextView5"
@@ -106,9 +98,7 @@
                 android:src="@drawable/boundary_layer_image_2"
                 tools:ignore="MissingConstraints" />
 
-
         </RelativeLayout>
-
 
     </ScrollView>
 
@@ -118,8 +108,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation2"
-        app:itemBackground="@android:color/white"
-        />
-
+        app:itemBackground="@android:color/white" />
 
 </RelativeLayout>

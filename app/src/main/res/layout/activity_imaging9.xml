@@ -20,7 +20,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/learnImagingTextView0"
+                android:id="@+id/imaging9TextView0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
@@ -30,48 +30,48 @@
                 tools:ignore="MissingConstraints" />
 
             <TextView
-                android:id="@+id/learnImagingTextView12"
+                android:id="@+id/imaging9TextView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/learnImagingTextView0"
+                android:layout_below="@id/imaging9TextView0"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/learnImagingImageView41"
+                android:id="@+id/imaging9ImageView0"
                 android:layout_width="372dp"
                 android:layout_height="314dp"
-                android:layout_below="@id/learnImagingTextView12"
+                android:layout_below="@id/imaging9TextView1"
                 android:src="@drawable/aperture1"
                 tools:ignore="MissingConstraints" />
 
             <TextView
-                android:id="@+id/learnImagingTextView13"
+                android:id="@+id/imaging9TextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/learnImagingImageView41"
+                android:layout_below="@id/imaging9ImageView0"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/learnImagingImageView42"
+                android:id="@+id/imaging9ImageView1"
                 android:layout_width="372dp"
                 android:layout_height="309dp"
-                android:layout_below="@id/learnImagingTextView13"
+                android:layout_below="@id/imaging9TextView2"
                 android:layout_marginTop="1dp"
                 android:src="@drawable/depth_of_field"
                 tools:ignore="MissingConstraints" />
 
         </RelativeLayout>
+
     </ScrollView>
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation2"
-        app:itemBackground="@android:color/white"
-        />
-
+        app:itemBackground="@android:color/white" />
 
 </RelativeLayout>

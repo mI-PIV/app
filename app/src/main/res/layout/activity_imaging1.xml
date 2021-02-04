@@ -28,16 +28,6 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-
-
-            <!--            <TextView-->
-            <!--                android:id="@+id/imaging1TextView1"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                tools:ignore="MissingConstraints"-->
-            <!--                android:textStyle="bold"-->
-            <!--                android:layout_below="@id/imaging1TextView0"/>-->
-
             <TextView
                 android:id="@+id/imaging1TextView2"
                 android:layout_width="wrap_content"
@@ -60,7 +50,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/imaging1ImageView0"
-
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
@@ -80,8 +69,8 @@
                 android:layout_below="@id/imaging1ImageView1"
                 tools:ignore="MissingConstraints" />
 
-
         </RelativeLayout>
+
     </ScrollView>
 
     <android.support.design.widget.BottomNavigationView
@@ -91,6 +80,5 @@
         android:layout_alignParentBottom="true"
         app:itemBackground="@android:color/white"
         app:menu="@menu/bottom_navigation2" />
-
 
 </RelativeLayout>

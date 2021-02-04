@@ -8,7 +8,6 @@ import android.text.Html;
 import android.text.Layout;
 import android.widget.TextView;
 
-import com.onrpiv.uploadmedia.Learn.LearnImagingDummy;
 import com.onrpiv.uploadmedia.R;
 
 public class Imaging8 extends LearnImagingDummy {
@@ -23,11 +22,11 @@ public class Imaging8 extends LearnImagingDummy {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imaging8);
 
-        TextView t0 = (TextView)findViewById(R.id.learnImagingTextView0);
+        TextView t0 = (TextView)findViewById(R.id.imaging8TextView0);
         t0.setText("Frame Rate");
         t0.setTextSize(headerTextSize);
 
-        TextView t1 = (TextView)findViewById(R.id.learnImagingTextView12);
+        TextView t1 = (TextView)findViewById(R.id.imaging8TextView1);
         String html1 = "Frame rate is the number of images (“frames”) taken per second in a video. It is important to note, that in a single camera, increasing the framerate (less time between images) means a shorter maximum shutter speed, as the shutter must open and shut for each frame to be recorded. To apply the framerate, the time between images is simply 1/framerate. For example, if there are 30 frames per second, then a frame is taken every 1/30 seconds or .033 seconds. See <b>Pixel</b> for using this framerate to identify displacements. With the displacement, the velocity may be found as the displacement divided by time.";
         t1.setText(Html.fromHtml(html1));
         t1.setTextSize(paraTextSize);

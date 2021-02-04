@@ -23,11 +23,11 @@ public class Laser1 extends LaserSafetyDummy {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_laser1);
 
-        TextView t0 = (TextView)findViewById(R.id.laserSafetyTextView0);
+        TextView t0 = (TextView)findViewById(R.id.laserSafety1TextView0);
         t0.setText("Laser Definition");
         t0.setTextSize(headerTextSize);
 
-        TextView t1 = (TextView)findViewById(R.id.laserSafetyTextView1);
+        TextView t1 = (TextView)findViewById(R.id.laserSafety1TextView1);
         String html1 = "Lasers differ from other types of light sources because they are coherent, meaning they have the same wavelength, phase, and frequency. A laser emits light using optical amplification from stimulated emission of electromagnetic radiation.";
         t1.setText(Html.fromHtml(html1));
         t1.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
