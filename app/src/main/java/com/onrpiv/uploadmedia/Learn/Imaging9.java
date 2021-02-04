@@ -8,7 +8,6 @@ import android.text.Html;
 import android.text.Layout;
 import android.widget.TextView;
 
-import com.onrpiv.uploadmedia.Learn.LearnImagingDummy;
 import com.onrpiv.uploadmedia.R;
 
 public class Imaging9 extends LearnImagingDummy {
@@ -23,17 +22,17 @@ public class Imaging9 extends LearnImagingDummy {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imaging9);
 
-        TextView t0 = (TextView)findViewById(R.id.learnImagingTextView0);
+        TextView t0 = (TextView)findViewById(R.id.imaging9TextView0);
         t0.setText("Aperture");
         t0.setTextSize(headerTextSize);
 
-        TextView t1 = (TextView)findViewById(R.id.learnImagingTextView12);
+        TextView t1 = (TextView)findViewById(R.id.imaging9TextView1);
         String html1 = "The aperture is a variably sized opening where the light passes through before reaching the sensors. The aperture allows more and less light to reach the sensors and is another way to adjust the brightness of the final image as shown below.";
         t1.setText(Html.fromHtml(html1));
         t1.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
 
         //image
-        TextView t2 = (TextView) findViewById(R.id.learnImagingTextView13);
+        TextView t2 = (TextView) findViewById(R.id.imaging9TextView2);
         t2.setText("However, the larger the aperture, the more narrow the ”depth of field” or the distance particles remain in focus. The larger the depth of field, the longer the band of an image that remains in focus. Aperture is measured by “fstop” where the larger the aperture, the smaller the fstop value.");
         t2.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
 

@@ -38,7 +38,7 @@
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/imaging2ImageView1"
+                android:id="@+id/imaging2ImageView0"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/imaging2TextView1"
@@ -49,11 +49,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/imaging2ImageView1"
+                android:layout_below="@id/imaging2ImageView0"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/imaging2ImageView2"
+                android:id="@+id/imaging2ImageView1"
                 android:layout_width="match_parent"
                 android:layout_height="327dp"
                 android:layout_below="@id/imaging2TextView2"
@@ -65,12 +65,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/imaging2ImageView2"
+                android:layout_below="@id/imaging2ImageView1"
                 tools:ignore="MissingConstraints" />
 
-
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/imaging2ImageView3"
+                android:id="@+id/imaging2ImageView2"
                 android:layout_width="match_parent"
                 android:layout_height="328dp"
                 android:layout_below="@id/imaging2TextView3"
@@ -82,12 +81,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/imaging2ImageView3"
+                android:layout_below="@id/imaging2ImageView2"
                 tools:ignore="MissingConstraints" />
 
-
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/imaging2ImageView4"
+                android:id="@+id/imaging2ImageView3"
                 android:layout_width="match_parent"
                 android:layout_height="328dp"
                 android:layout_below="@id/imaging2TextView4"
@@ -99,12 +97,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/imaging2ImageView4"
+                android:layout_below="@id/imaging2ImageView3"
                 tools:ignore="MissingConstraints" />
 
-
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/imaging2ImageView5"
+                android:id="@+id/imaging2ImageView4"
                 android:layout_width="match_parent"
                 android:layout_height="333dp"
                 android:layout_below="@id/imaging2TextView5"
@@ -116,10 +113,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/imaging2ImageView5"
+                android:layout_below="@id/imaging2ImageView4"
                 tools:ignore="MissingConstraints" />
 
         </RelativeLayout>
+
     </ScrollView>
 
     <android.support.design.widget.BottomNavigationView
@@ -129,6 +127,5 @@
         android:layout_alignParentBottom="true"
         app:itemBackground="@android:color/white"
         app:menu="@menu/bottom_navigation2" />
-
 
 </RelativeLayout>
