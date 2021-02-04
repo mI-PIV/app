@@ -39,7 +39,7 @@
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pos7ImageView1"
+                android:id="@+id/pos7ImageView0"
                 android:layout_width="match_parent"
                 android:layout_height="230dp"
                 android:layout_below="@id/pos7TextView1"
@@ -52,11 +52,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/pos7ImageView1"
+                android:layout_below="@id/pos7ImageView0"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pos7ImageView2"
+                android:id="@+id/pos7ImageView1"
                 android:layout_width="match_parent"
                 android:layout_height="126dp"
                 android:layout_below="@id/pos7TextView2"
@@ -68,11 +68,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/pos7ImageView2"
+                android:layout_below="@id/pos7ImageView1"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pos7ImageView3"
+                android:id="@+id/pos7ImageView2"
                 android:layout_width="match_parent"
                 android:layout_height="116dp"
                 android:layout_below="@id/pos7TextView3"
@@ -80,16 +80,15 @@
                 tools:ignore="MissingConstraints" />
 
         </RelativeLayout>
+
     </ScrollView>
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation2"
-        app:itemBackground="@android:color/white"
-        />
-
-
+        app:itemBackground="@android:color/white" />
 
 </RelativeLayout>
