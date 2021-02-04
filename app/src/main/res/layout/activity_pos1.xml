@@ -37,14 +37,6 @@
                 android:layout_below="@id/pos1TextView0"
                 tools:ignore="MissingConstraints" />
 
-            <!--    <ImageView-->
-            <!--        android:id="@+id/pos1ImageView1"-->
-            <!--        android:layout_width="fill_parent"-->
-            <!--        android:layout_height="wrap_content"-->
-            <!--        android:src="@drawable/boundary_layer_image_1"-->
-            <!--        android:layout_below="@id/pos1TextView1"-->
-            <!--        tools:ignore="MissingConstraints" />-->
-
             <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/pos1ImageView0"
                 android:layout_width="371dp"

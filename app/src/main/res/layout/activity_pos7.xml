@@ -29,7 +29,6 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-
             <TextView
                 android:id="@+id/pos7TextView1"
                 android:layout_width="wrap_content"
@@ -45,7 +44,6 @@
                 android:layout_below="@id/pos7TextView1"
                 android:src="@drawable/new_stresstensor"
                 tools:ignore="MissingConstraints" />
-
 
             <TextView
                 android:id="@+id/pos7TextView2"

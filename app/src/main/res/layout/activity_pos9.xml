@@ -28,7 +28,6 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-
             <TextView
                 android:id="@+id/pos9TextView1"
                 android:layout_width="wrap_content"
