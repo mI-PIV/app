@@ -252,6 +252,17 @@ public class RealPathUtil {
         return "com.google.android.apps.photos.contentprovider".equals(uri.getAuthority());
     }
 
+    public static boolean deleteIfTempFile(Context context, String path) {
+        File tempFile = new File(context.getApplicationInfo().dataDir, "tempFile");
+        boolean result = false;
+
+        if (tempFile.getAbsolutePath().equals(path)) {
+            result = tempFile.delete();
+        }
+
+        return result;
+    }
+
     private static File createTemporalFileFrom(InputStream inputStream, String dataDir) throws IOException {
         File targetFile = null;
 
