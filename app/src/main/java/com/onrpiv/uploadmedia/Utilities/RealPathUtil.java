@@ -15,6 +15,16 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
+
+import org.opencv.android.Utils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class RealPathUtil {
 
@@ -133,7 +143,7 @@ public class RealPathUtil {
 
             // Return the remote address
             if (isGooglePhotosUri(uri))
-                return uri.getLastPathSegment();
+                return getPathFromInputStreamUri(context, uri);
 
             return getDataColumn(context, uri, null, null);
         }
@@ -143,6 +153,37 @@ public class RealPathUtil {
         }
 
         return null;
+    }
+
+    /**
+     * Get the path of a Stream Uri (Google Photos)
+     * see https://stackoverflow.com/questions/35909008/pick-image-from-gallery-or-google-photos-failing/50253933#50253933
+     *
+     */
+    public static String getPathFromInputStreamUri(Context context, Uri uri) {
+        InputStream inputStream = null;
+        String filePath = null;
+
+        String dataDir = context.getApplicationInfo().dataDir;
+
+        try {
+            inputStream = context.getContentResolver().openInputStream(uri);
+            File file = createTemporalFileFrom(inputStream, dataDir);
+            filePath = file.getPath();
+        } catch (FileNotFoundException e) {
+            Log.getStackTraceString(e);
+        } catch (IOException e) {
+            Log.getStackTraceString(e);
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return filePath;
     }
 
     /**
@@ -208,7 +249,30 @@ public class RealPathUtil {
      * @return Whether the Uri authority is Google Photos.
      */
     public static boolean isGooglePhotosUri(Uri uri) {
-        return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+        return "com.google.android.apps.photos.contentprovider".equals(uri.getAuthority());
     }
 
+    private static File createTemporalFileFrom(InputStream inputStream, String dataDir) throws IOException {
+        File targetFile = null;
+
+        if (inputStream != null) {
+            int read;
+            byte[] buffer = new byte[8 * 1024];
+
+            targetFile = new File(dataDir, "tempFile");
+            OutputStream outputStream = new FileOutputStream(targetFile);
+
+            while ((read = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
+            }
+            outputStream.flush();
+
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return targetFile;
+    }
 }
