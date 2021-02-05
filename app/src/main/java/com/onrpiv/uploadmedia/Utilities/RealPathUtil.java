@@ -156,9 +156,11 @@ public class RealPathUtil {
     }
 
     /**
-     * Get the path of a Stream Uri (Google Photos)
+     * Get path of a stream Uri (e.g. Google Photos) by creating a temporary file in app's data directory.
      * see https://stackoverflow.com/questions/35909008/pick-image-from-gallery-or-google-photos-failing/50253933#50253933
-     *
+     * @param context context of the activity; Needed for app's data directory
+     * @param uri stream uri
+     * @return path of newly created temp file created from uri data stream
      */
     public static String getPathFromInputStreamUri(Context context, Uri uri) {
         InputStream inputStream = null;
@@ -252,6 +254,11 @@ public class RealPathUtil {
         return "com.google.android.apps.photos.contentprovider".equals(uri.getAuthority());
     }
 
+    /**
+     * @param context VideoActivity context. Needed for data directory.
+     * @param path Path of the video.
+     * @return True if temp file and deleted successfully, otherwise False.
+     */
     public static boolean deleteIfTempFile(Context context, String path) {
         File tempFile = new File(context.getApplicationInfo().dataDir, "tempFile");
         boolean result = false;
@@ -263,6 +270,13 @@ public class RealPathUtil {
         return result;
     }
 
+    /**
+     * Create a temporary file from a data stream in the app's data directory.
+     * @param inputStream input data stream
+     * @param dataDir app's data directory
+     * @return File object pointing to the newly created temp file
+     * @throws IOException if data stream is unable to close.
+     */
     private static File createTemporalFileFrom(InputStream inputStream, String dataDir) throws IOException {
         File targetFile = null;
 
