@@ -383,7 +383,7 @@ public class VideoActivity extends AppCompatActivity{
         String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", "20", "-ss", "" + startMs / 1000, "-t", "" + (endMs - startMs) / 1000, jpegFile.getAbsolutePath()};
         /*   Remove -r 1 if you want to extract all video frames as images from the specified time duration.*/
         execFFmpegBinary(complexCommand);
-        generateFrames.setBackgroundColor(Color.parseColor("#00CC00"));
+
 //        Intent goHome = new Intent(getApplicationContext(), ImageActivity.class);
 //        startActivity(goHome);
     }
@@ -405,6 +405,9 @@ public class VideoActivity extends AppCompatActivity{
                     Log.d(TAG, "SUCCESS with output : " + s);
                     Toast.makeText(VideoActivity.this, "Frames Generation Completed", Toast.LENGTH_SHORT).show();
                     Toast.makeText(VideoActivity.this, "Head Over to the Image Upload Section", Toast.LENGTH_SHORT).show();
+
+                    RealPathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
+                    generateFrames.setBackgroundColor(Color.parseColor("#00CC00"));
                 }
 
                 @Override
