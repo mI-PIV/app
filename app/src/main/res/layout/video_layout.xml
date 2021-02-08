@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:backgroundTint="#243EDF"
+        android:background="@drawable/buttons"
         android:textColor="#FFFFFF"
         android:text="Record Video" />
 
@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:backgroundTint="#243EDF"
+        android:background="@drawable/buttons"
         android:textColor="#FFFFFF"
         android:text="Pick a video" />
 
@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:backgroundTint="#243EDF"
+        android:background="@drawable/buttons"
         android:textColor="#FFFFFF"
         android:text="Generate Frames" />
 

@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:background="#243EDF"
+        android:background="@drawable/buttons"
         android:text="Select Multiple Images"
         android:textColor="#FFFFFF" />
 <!--        android:layout_marginTop="5dp"/>-->
@@ -45,7 +45,7 @@
         android:onClick="reviewFile"
         android:enabled="false"
         android:text="Review Images"
-        android:background="#243EDF"
+        android:background="@drawable/buttons"
         android:textColor="#FFFFFF"
         android:layout_below="@+id/pickImageMultiple"
         android:visibility="visible" />
@@ -58,7 +58,7 @@
         android:enabled="false"
         android:text="Input PIV Parameters"
         android:layout_below="@+id/Review"
-        android:background="#243EDF"
+        android:background="@drawable/buttons"
         android:textColor="#FFFFFF"
         android:visibility="visible" />
 
@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:enabled="false"
-        android:background="#243EDF"
+        android:background="@drawable/buttons"
         android:textColor="#FFFFFF"
         android:layout_below="@+id/parameters"
         android:text="Compute PIV" />
@@ -80,7 +80,7 @@
         android:layout_marginTop="10dp"
         android:enabled="false"
         android:onClick="displayFile"
-        android:background="#243EDF"
+        android:background="@drawable/buttons"
         android:textColor="#FFFFFF"
         android:layout_below="@+id/compute"
         android:text="View results" />
