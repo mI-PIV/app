@@ -125,6 +125,7 @@ public class VideoActivity extends AppCompatActivity{
         recordVideo = (Button) findViewById(R.id.recordVideo);
         pickVideo = (Button) findViewById(R.id.pickVideo);
         generateFrames = (Button) findViewById(R.id.generateFrames);
+        generateFrames.setEnabled(false);
         retriever = new MediaMetadataRetriever();
         loadFFMpegBinary();
 
@@ -344,6 +345,7 @@ public class VideoActivity extends AppCompatActivity{
                     pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
                 }
             }
+            generateFrames.setEnabled(true);
         }
         else if (resultCode != RESULT_CANCELED) {
             Toast.makeText(this, "Sorry, there was an error!", Toast.LENGTH_LONG).show();
