@@ -1,33 +1,33 @@
 # mI-PIV
-    Mobile Instructional Particle Image Velocimetry (mI-PIV) is an educational Android application
-    that teaches users about fluid dynamics through real-time experiments and curricular modules.
+Mobile Instructional Particle Image Velocimetry (mI-PIV) is an educational Android application
+that teaches users about fluid dynamics through real-time experiments and curricular modules.
 
-    The goal of this project is to promote and cultivate interest, active engagement, and 21st century
-    skill development within STEM areas through the development, implementation, and dissemination of
-    a low cost, mobile learning tool based on particle image velocimetry.
+The goal of this project is to promote and cultivate interest, active engagement, and 21st century
+skill development within STEM areas through the development, implementation, and dissemination of
+a low cost, mobile learning tool based on particle image velocimetry.
 
 ### Investigators
-    Dr. Angela Minichiello, P.E., Assistant Professor, Dept. of Engineering Education, Utah State University
+Dr. Angela Minichiello, P.E., Assistant Professor, Dept. of Engineering Education, Utah State University
 
-    Dr. Vladimir Kulyukin, Associate Professor, Dept. of Computer Science, Utah State University
+Dr. Vladimir Kulyukin, Associate Professor, Dept. of Computer Science, Utah State University
 
-    Dr. Tadd Truscott, Associate Professor, Dept. of Mechanical and Aerospace Engineering, Utah State University
+Dr. Tadd Truscott, Associate Professor, Dept. of Mechanical and Aerospace Engineering, Utah State University
 
 ### Notable Contributors
-    Needed?
+Needed?
 
 ### Testing?
-    Lori Caldwell
+Lori Caldwell
 
 ### Graduate Research Assistants
 TODO need list of all GRAs that contributed
 
-    Aditya Bhouraskar, Jack Elliott, Sarbajit Mukherjee, Kristoffer Price
+Aditya Bhouraskar, Jack Elliott, Sarbajit Mukherjee, Kristoffer Price
 
 ### Undergraduate Research Assistants
 TODO need list of all URAs that contributed
 
-    Kevin Roberts
+Kevin Roberts
 
 ### Publications
 TODO need a list of publication links stemming from this project
