@@ -42,6 +42,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.jsibbold.zoomage.ZoomageView;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.BoolIntStructure;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 
@@ -853,10 +854,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                         Map<String, double[][]> pivCorrelation = piv.extendedSearchAreaPiv_update();
                         Map<String, double[]> interrCenters = piv.getCoordinates();
 
-                        Map<String, Double> arrowDrawOptions = new HashMap<>();
-                        arrowDrawOptions.put("lineType", 8d);
-                        arrowDrawOptions.put("thickness", 2d);
-                        arrowDrawOptions.put("tipLength", 0.2d);
+                        ArrowDrawOptions arrowDrawOptions = new ArrowDrawOptions();
 
                         String step = "SinglePass";
                         piv.saveVector(pivCorrelation, interrCenters, userName, step, imgFileSaveName);

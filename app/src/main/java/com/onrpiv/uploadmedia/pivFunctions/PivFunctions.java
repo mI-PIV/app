@@ -3,6 +3,8 @@ package com.onrpiv.uploadmedia.pivFunctions;
 import android.os.Environment;
 import android.util.Log;
 
+import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
+
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -305,24 +307,12 @@ public class PivFunctions {
         int p = 2;
     }
 
-    public void drawArrowsOnImage(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, Map<String, Double> arrowOptions){
+    public void drawArrowsOnImage(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, ArrowDrawOptions arrowOptions){
         Mat image1 = Imgcodecs.imread(frame1);
 
-        int lineType = 8;
-        int thickness = 2;
-        double tipLength = 0.2;
-
-        if (arrowOptions.containsKey("lineType")) {
-            lineType = arrowOptions.get("lineType").intValue();
-        }
-
-        if (arrowOptions.containsKey("thickness")) {
-            thickness = arrowOptions.get("thickness").intValue();
-        }
-
-        if (arrowOptions.containsKey("tipLength")) {
-            tipLength = arrowOptions.get("tipLength");
-        }
+        int lineType = arrowOptions.lineType;
+        int thickness = arrowOptions.thickness;
+        double tipLength = arrowOptions.tipLength;
 
         double dx, dy;
         Point startPoint = null, endPoint =null;
