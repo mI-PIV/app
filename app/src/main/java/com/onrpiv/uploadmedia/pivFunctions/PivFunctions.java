@@ -305,12 +305,25 @@ public class PivFunctions {
         int p = 2;
     }
 
-    public void drawArrowsOnImage(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName){
+    public void drawArrowsOnImage(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, Map<String, Double> arrowOptions){
         Mat image1 = Imgcodecs.imread(frame1);
 
         int lineType = 8;
         int thickness = 2;
         double tipLength = 0.2;
+
+        if (arrowOptions.containsKey("lineType")) {
+            lineType = arrowOptions.get("lineType").intValue();
+        }
+
+        if (arrowOptions.containsKey("thickness")) {
+            thickness = arrowOptions.get("thickness").intValue();
+        }
+
+        if (arrowOptions.containsKey("tipLength")) {
+            tipLength = arrowOptions.get("tipLength");
+        }
+
         double dx, dy;
         Point startPoint = null, endPoint =null;
 
