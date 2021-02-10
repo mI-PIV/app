@@ -666,7 +666,7 @@ public class PivFunctions {
         return maxValue;
     }
 
-    public double[][] getVorticityMap(Map<String, double[][]> pivCorrelation){
+    public double[][] getVorticityMap(Map<String, double[][]> pivCorrelation, int gap){
         double[][] u = pivCorrelation.get("u");
         double[][] v = pivCorrelation.get("v");
         int nc = u.length;
@@ -674,10 +674,13 @@ public class PivFunctions {
 
         double[][] vortMap = new double[nr][nc];
 
-        for (int r = 0; r < nr; r++)
-        {
-            for (int c = 0; c < nc; c++)
-            {
+        // Don't divide by zero
+        if (gap == 0) {
+            return vortMap;
+        }
+
+        for (int r = 1; r < nr-1; r++) {
+            for (int c = 1; c < nc-1; c++) {
                 vortMap[r][c] = (((v[r][c+1] - v[r][c-1]) - (u[r+1][c] - u[r-1][c]))) / gap;
             }
         }
