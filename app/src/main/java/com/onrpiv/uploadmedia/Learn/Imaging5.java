@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.onrpiv.uploadmedia.R;
 
-public class Imaging5 extends LearnImagingDummy {
+public class Imaging5 extends LearnImagingLayout {
 
     private int headerTextSize = 25;
     private int paraTextSize = 16;

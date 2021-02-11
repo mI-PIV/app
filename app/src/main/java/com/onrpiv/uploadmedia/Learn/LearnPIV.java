@@ -31,7 +31,7 @@ public class LearnPIV extends AppCompatActivity {
         pivBasicsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent pivBasics = new Intent(LearnPIV.this, PIVBasics.class);
+                Intent pivBasics = new Intent(LearnPIV.this, PIVBasicsLayout.class);
                 startActivity(pivBasics);
             }
         });
@@ -40,7 +40,7 @@ public class LearnPIV extends AppCompatActivity {
         learnAboutImaging.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent learnImaging = new Intent(LearnPIV.this, LearnImagingDummy.class);
+                Intent learnImaging = new Intent(LearnPIV.this, LearnImagingLayout.class);
                 startActivity(learnImaging);
             }
         });
@@ -58,7 +58,7 @@ public class LearnPIV extends AppCompatActivity {
         laserSafetyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent laserSafety = new Intent(LearnPIV.this, LaserSafetyDummy.class);
+                Intent laserSafety = new Intent(LearnPIV.this, LaserSafetyLayout.class);
                 startActivity(laserSafety);
             }
         });

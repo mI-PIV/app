@@ -8,10 +8,9 @@ import android.text.Html;
 import android.text.Layout;
 import android.widget.TextView;
 
-import com.onrpiv.uploadmedia.Learn.LearnImagingDummy;
 import com.onrpiv.uploadmedia.R;
 
-public class Imaging4 extends LearnImagingDummy {
+public class Imaging4 extends LearnImagingLayout {
 
     private int headerTextSize = 25;
     private int paraTextSize = 16;

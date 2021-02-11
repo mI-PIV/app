@@ -10,7 +10,7 @@ import android.widget.ListView;
 
 import com.onrpiv.uploadmedia.R;
 
-public class LearnImagingDummy extends LearnPIV {
+public class LearnImagingLayout extends LearnPIV {
 
     String[] imagingArray = {"How Does a Digital Video Camera Work?","Bit Depth","Pixel","ISO",
             "Shutter Speed","Resolution","Focus","Frame Rate","Aperture"};
@@ -19,7 +19,7 @@ public class LearnImagingDummy extends LearnPIV {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.imaging_dummy);
+        setContentView(R.layout.learn_imaging_layout);
 
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
                 R.layout.activity_listview, imagingArray);

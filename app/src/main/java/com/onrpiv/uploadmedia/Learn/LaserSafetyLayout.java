@@ -11,14 +11,14 @@ import android.widget.TextView;
 
 import com.onrpiv.uploadmedia.R;
 
-public class LaserSafetyDummy extends LearnPIV {
+public class LaserSafetyLayout extends LearnPIV {
     String [] laserList = {"Laser Definition", "Lasers in mi-PIV", "Safe use of lasers in Classroom"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.laser_safety_dummy);
+        setContentView(R.layout.laser_safety_layout);
 
         TextView t1 = (TextView)findViewById(R.id.laserSafetytextview1);
         t1.setText("Do NOT look at the laser beam!");

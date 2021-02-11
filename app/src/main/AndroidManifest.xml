@@ -35,8 +35,13 @@
 
         <activity android:name=".Learn.Experiment1"/>
         <activity android:name=".Learn.FluidGlossary"/>
-        <activity android:name=".Learn.LaserSafetyDummy"/>
-        <activity android:name=".Learn.LearnImagingDummy"/>
+        <activity android:name=".Learn.LaserSafetyLayout"/>
+        <activity android:name=".Learn.LearnImagingLayout"/>
+        <activity android:name=".Learn.PIVBasicsLayout"/>
+        <activity android:name=".Learn.PIVBasics1"/>
+        <activity android:name=".Learn.PIVBasics2"/>
+        <activity android:name=".Learn.PIVBasics3"/>
+        <activity android:name=".Learn.PIVBasics4"/>
         <activity android:name=".Learn.Imaging1"/>
         <activity android:name=".Learn.Imaging2"/>
         <activity android:name=".Learn.Imaging3"/>
@@ -66,7 +71,6 @@
         <activity android:name=".Learn.TryExperiments"/>
         <activity android:name=".Learn.LearnFluids"/>
         <activity android:name=".Learn.LearnPIV"/>
-        <activity android:name=".Learn.PIVBasics"/>
         <activity android:name=".Experiment.ImageActivity"/>
         <activity android:name=".Learn.VideoTutorial"/>
         <activity android:name=".Experiment.VideoActivity"/>
