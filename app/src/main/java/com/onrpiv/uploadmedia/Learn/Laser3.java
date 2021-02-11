@@ -8,10 +8,9 @@ import android.text.Html;
 import android.text.Layout;
 import android.widget.TextView;
 
-import com.onrpiv.uploadmedia.Learn.LaserSafetyDummy;
 import com.onrpiv.uploadmedia.R;
 
-public class Laser3 extends LaserSafetyDummy {
+public class Laser3 extends LaserSafetyLayout {
 
     private int headerTextSize = 25;
     private int paraTextSize = 16;
