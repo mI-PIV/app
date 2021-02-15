@@ -30,8 +30,10 @@ Kevin Roberts
 TODO need a list of publication links stemming from this project
 
 ### Funding
+Office of Naval Research, United States Department of the Navy
 
 ### License
+Does our funding constrict licensing?
 
 ## APK Installation
 TODO sign our app?
