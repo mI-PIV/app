@@ -855,6 +855,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                         Map<String, double[]> interrCenters = piv.getCoordinates();
 
                         ArrowDrawOptions arrowDrawOptions = new ArrowDrawOptions();
+                        arrowDrawOptions.scale = 10d;
 
                         String step = "SinglePass";
                         piv.saveVector(pivCorrelation, interrCenters, userName, step, imgFileSaveName);
