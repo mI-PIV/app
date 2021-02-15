@@ -10,10 +10,9 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-import com.onrpiv.uploadmedia.Learn.LaserSafetyDummy;
 import com.onrpiv.uploadmedia.R;
 
-public class Laser2 extends LaserSafetyDummy {
+public class Laser2 extends LaserSafetyLayout {
 
     private int headerTextSize = 25;
     private int paraTextSize = 16;
