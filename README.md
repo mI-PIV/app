@@ -16,13 +16,10 @@ Dr. Tadd Truscott, Associate Professor, Dept. of Mechanical and Aerospace Engine
 ### Notable Contributors
 Needed?
 
-### Testing?
-Lori Caldwell
-
 ### Graduate Research Assistants
 TODO need list of all GRAs that contributed
 
-Aditya Bhouraskar, Jack Elliott, Sarbajit Mukherjee, Kristoffer Price
+Aditya Bhouraskar, Lori Caldwell, Jack Elliott, Sarbajit Mukherjee, Kristoffer Price
 
 ### Undergraduate Research Assistants
 TODO need list of all URAs that contributed
@@ -37,7 +34,7 @@ TODO need a list of publication links stemming from this project
 ### License
 
 ## APK Installation
-TODO sign our app
+TODO sign our app?
 
 A video walk-through is available to download [here](https://github.com/mI-PIV/app/raw/readme/resources/installGithubAPK.mp4).
 
