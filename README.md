@@ -1,6 +1,6 @@
 # mI-PIV
 Mobile Instructional Particle Image Velocimetry (mI-PIV) is an educational Android application
-that teaches users about fluid dynamics through real-time experiments and curricular modules.
+that teaches users about fluid mechanics through real-time experiments and curricular modules.
 
 The goal of mI-PIV is to promote and cultivate interest, active engagement, and 21st century
 skill development within STEM areas through the development, implementation, and dissemination of
