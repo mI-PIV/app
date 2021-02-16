@@ -8,6 +8,7 @@ a low cost, mobile learning tool based on particle image velocimetry.
 
 #### Status
 ![Java CI with Gradle](https://github.com/mI-PIV/app/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=main)
+![Auto Release APK](https://github.com/mI-PIV/app/workflows/Auto%20Release%20APK/badge.svg?branch=main)
 
 ### Investigators
 Dr. Angela Minichiello, P.E., Assistant Professor, Dept. of Engineering Education, Utah State University
