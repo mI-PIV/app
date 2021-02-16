@@ -6,6 +6,9 @@ The goal of mI-PIV is to promote and cultivate interest, active engagement, and 
 skill development within STEM areas through the development, implementation, and dissemination of
 a low cost, mobile learning tool based on particle image velocimetry.
 
+#### Status
+![Java CI with Gradle](https://github.com/mI-PIV/app/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=main)
+
 ### Investigators
 Dr. Angela Minichiello, P.E., Assistant Professor, Dept. of Engineering Education, Utah State University
 
