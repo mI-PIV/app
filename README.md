@@ -7,7 +7,7 @@ skill development within STEM areas through the development, implementation, and
 a low cost, mobile learning tool based on particle image velocimetry.
 
 #### Status
-![Gradle Build](https://github.com/mI-PIV/app/workflows/Gradle%20Build/badge.svg?branch=main)
+![Gradle Build](https://github.com/mI-PIV/app/workflows/Gradle%20Build/badge.svg)
 ![Auto Release APK](https://github.com/mI-PIV/app/workflows/Auto%20Release%20APK/badge.svg?branch=main&event=schedule)
 
 ### Investigators
