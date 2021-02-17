@@ -20,7 +20,7 @@ public class FluidGlossary extends Activity {
     // Array of strings...
     String[] mobileArray = {"Boundary Layer","Laminar and Turbulent Flow","Reynolds Number","Vorticity/Circulation",
             "Fluid","Wake","Shear","Velocity profile","Streamline","Steady/Unsteady",
-            "Bernoulli Equation","External/Internal Flow","Major/Minor losses","Common Assumptions","Viscocity","Gas"};
+            "Bernoulli Equation","External/Internal Flow","Major/Minor losses","Common Assumptions","Viscosity"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
