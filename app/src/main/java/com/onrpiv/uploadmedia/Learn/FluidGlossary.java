@@ -26,7 +26,7 @@ public class FluidGlossary extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fluid_gloassary);
+        setContentView(R.layout.fluid_glossary);
 
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
                 R.layout.activity_listview, mobileArray);
