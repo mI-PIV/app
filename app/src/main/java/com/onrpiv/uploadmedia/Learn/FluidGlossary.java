@@ -20,13 +20,13 @@ public class FluidGlossary extends Activity {
     // Array of strings...
     String[] mobileArray = {"Boundary Layer","Laminar and Turbulent Flow","Reynolds Number","Vorticity/Circulation",
             "Fluid","Wake","Shear","Velocity profile","Streamline","Steady/Unsteady",
-            "Bernoulli Equation","External/Internal Flow","Major/Minor losses","Common Assumptions","Viscocity","Gas"};
+            "Bernoulli Equation","External/Internal Flow","Major/Minor losses","Common Assumptions","Viscosity"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fluid_gloassary);
+        setContentView(R.layout.fluid_glossary);
 
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
                 R.layout.activity_listview, mobileArray);
