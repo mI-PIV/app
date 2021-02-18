@@ -142,7 +142,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     private ScaleGestureDetector mScaleGestureDetector;
     private float mScaleFactor = 1.0f;
     volatile boolean running = true;
-    ZoomageView imageZoom;
+//    ZoomageView imageZoom;
     private CheckBox checkBox2;
     private boolean checked=false;
     private RadioButton radioButton;
@@ -154,7 +154,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 //        imageView = (ImageView) findViewById(R.id.preview);
-        imageZoom = (ZoomageView)findViewById(R.id.myZoomageView);
+//        imageZoom = (ZoomageView)findViewById(R.id.myZoomageView);
         pickImageMultiple = (Button) findViewById(R.id.pickImageMultiple);
         parameters = (Button) findViewById(R.id.parameters);
         compute = (Button) findViewById(R.id.compute);
@@ -855,6 +855,8 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                         ArrowDrawOptions arrowDrawOptions = new ArrowDrawOptions();
                         arrowDrawOptions.scale = 5d;
 
+                        // Save first frame for output base image
+                        piv.saveBaseImage(userName, "Base", imgFileSaveName);
 
                         String vortStep = "Vorticity";
                         double[][] vortMap = piv.getVorticityMap(pivCorrelation, (int)(interrCenters.get("x")[1] - interrCenters.get("x")[0]));

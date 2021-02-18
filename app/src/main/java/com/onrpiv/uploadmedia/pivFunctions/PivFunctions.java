@@ -29,7 +29,6 @@ import java.util.StringJoiner;
 import static org.opencv.core.Core.mean;
 import static org.opencv.core.Core.subtract;
 import static org.opencv.core.CvType.CV_8UC1;
-import static org.opencv.core.CvType.CV_8UC4;
 import static org.opencv.imgproc.Imgproc.COLORMAP_JET;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
@@ -47,10 +46,8 @@ public class PivFunctions {
     private int overlap;
     private double dt;
     private String sig2noise_method;
-    private Mat frame1;
-    private Mat frame2;
-//    private String frame1;
-//    private String frame2;
+    private final Mat frame1;
+    private final Mat frame2;
 
     public PivFunctions(String imagePath1,
                         String imagePath2,
@@ -332,6 +329,10 @@ public class PivFunctions {
                 toPrint.clear();
             }
         }
+    }
+
+    public void saveBaseImage(String userName, String stepName, String imgFileName) {
+        saveImage(frame1, userName, stepName, imgFileName);
     }
 
     public void createVectorField(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, ArrowDrawOptions arrowOptions){

@@ -24,8 +24,12 @@ import java.util.ArrayList;
 
 public class ViewResultsActivity extends AppCompatActivity {
     Button firstPass, secondPass, replaceAfterFirstPass, replaceAfterSecondPass;
-    ZoomageView imageZoom;
+    ZoomageView baseImage;
+    ZoomageView vectorFieldImage;
+    ZoomageView vorticityImage;
     private String userName;
+    private String imgFileToDisplay;
+    private File storageDirectory;
     private int selectedId;
     private double nMaxUpper, nMaxLower, maxDisplacement = 0.0;
     private ArrayList<String> postPathMultiple = new ArrayList<>();
@@ -41,7 +45,9 @@ public class ViewResultsActivity extends AppCompatActivity {
         } else {
             setContentView(R.layout.display_result_layout);
         }
-        imageZoom = (ZoomageView)findViewById(R.id.myZoomageView);
+        baseImage = (ZoomageView)findViewById(R.id.baseZoomageView);
+        vectorFieldImage = (ZoomageView)findViewById(R.id.vectorsZoomageView);
+        vorticityImage = (ZoomageView)findViewById(R.id.vortZoomageView);
         firstPass = (Button) findViewById(R.id.firstPass);
         secondPass = (Button) findViewById(R.id.secondPass);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -92,6 +98,26 @@ public class ViewResultsActivity extends AppCompatActivity {
             final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
             alertDialogParameters.show();
         }
+
+        // Setup images and paths
+        imgFileToDisplay = postPathMultiple.get(0).split("/")[6].split(".png")[0]
+                + "-"
+                +postPathMultiple.get(1).split("/")[6].split("_")[3].split(".png")[0]+".png";
+        storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
+
+        // Display base image (This will be changed when we add controls/buttons to results page)
+        String stepB = "Base";
+        File basePngFile = new File(storageDirectory, stepB+"_"+imgFileToDisplay);
+        if (basePngFile.exists() && baseImage != null) {
+            baseImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(basePngFile)));
+        }
+
+        // Display vorticity colormap (This will be changed when we add controls/buttons to results page)
+        String stepV = "Vorticity";
+        File vortPngFile = new File(storageDirectory, stepV+"_"+imgFileToDisplay);
+        if (vortPngFile.exists() && vorticityImage != null) {
+            vorticityImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(vortPngFile)));
+        }
     }
 
     @Override
@@ -105,43 +131,39 @@ public class ViewResultsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void baseImageDisplay(View view) {
+        String step = "Base";
+        File pngFile = new File(storageDirectory, step+"_"+imgFileToDisplay);
+        baseImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+    }
+
+    public void vorticityImageDisplay(View view) {
+        String step = "Vorticity";
+        File pngFile = new File(storageDirectory, step+"_"+imgFileToDisplay);
+        vorticityImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+    }
+
     public void singlePassDisplay(View view) {
-        String imgFileToDisplay = postPathMultiple.get(0).split("/")[6].split(".png")[0]
-                + "-"
-                +postPathMultiple.get(1).split("/")[6].split("_")[3].split(".png")[0]+".png";
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
         String stepMulti = "SinglePass";
         File pngFile = new File(storageDirectory, stepMulti+"_"+imgFileToDisplay);
-        imageZoom.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+        vectorFieldImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
     }
 
     public void singlePassReplaceDisplay(View view) {
-        String imgFileToDisplay = postPathMultiple.get(0).split("/")[6].split(".png")[0]
-                + "-"
-                +postPathMultiple.get(1).split("/")[6].split("_")[3].split(".png")[0]+".png";
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
         String stepMulti = "Replaced";
         File pngFile = new File(storageDirectory, stepMulti+"_"+imgFileToDisplay);
-        imageZoom.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+        vectorFieldImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
     }
 
     public void multiPassDisplay(View view) {
-        String imgFileToDisplay = postPathMultiple.get(0).split("/")[6].split(".png")[0]
-                + "-"
-                +postPathMultiple.get(1).split("/")[6].split("_")[3].split(".png")[0]+".png";
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
         String stepMulti = "Multipass";
         File pngFile = new File(storageDirectory, stepMulti+"_"+imgFileToDisplay);
-        imageZoom.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+        vectorFieldImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
     }
 
     public void multiPassReplaceDisplay(View view) {
-        String imgFileToDisplay = postPathMultiple.get(0).split("/")[6].split(".png")[0]
-                + "-"
-                +postPathMultiple.get(1).split("/")[6].split("_")[3].split(".png")[0]+".png";
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
         String stepMulti = "Replaced2";
         File pngFile = new File(storageDirectory, stepMulti+"_"+imgFileToDisplay);
-        imageZoom.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+        vectorFieldImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
     }
 }
