@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -30,6 +31,7 @@ import static org.opencv.core.Core.subtract;
 import static org.opencv.core.CvType.CV_8UC1;
 import static org.opencv.core.CvType.CV_8UC4;
 import static org.opencv.imgproc.Imgproc.COLORMAP_JET;
+import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.COLOR_RGB2GRAY;
 import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
@@ -427,12 +429,22 @@ public class PivFunctions {
             }
         }
 
+        // Determine which values are transparent
+        List<int[]> transparentCoords = new ArrayList<>();
+        int threshMax = 135;
+        int threshMin = 120;
+
         // Normalize mapValues to 0-255
         for (int y = 0; y < nr; y++) {
             for (int x = 0; x < nc; x++) {
                 double val = mapValues[y][x];
                 byte byteVal = (byte)(255d * ((val - min)/ (max - min)));
                 int newVal = byteVal & 0xFF;
+
+                if (newVal > threshMin && newVal < threshMax) {
+                    transparentCoords.add(new int[] {y, x});
+                }
+
                 mapValuesMat.put(y, x, newVal);
             }
         }
@@ -442,9 +454,12 @@ public class PivFunctions {
         Imgproc.applyColorMap(mapValuesMat, colorMapImage, COLORMAP_JET);
 
         // Convert to four channels (transparent channel)
-//        int type = colorMapImage.type();
+        cvtColor(colorMapImage, colorMapImage, COLOR_BGR2BGRA);
 
-//        colorMapImage.convertTo(colorMapImage, );
+        // Set our thresholded coordinates to transparent (255, 255, 255, 0)
+        for (int t = 0; t < transparentCoords.size(); t++) {
+            colorMapImage.put(transparentCoords.get(t)[0], transparentCoords.get(t)[1], new byte[] {(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0});
+        }
 
         saveImage(colorMapImage, userName, stepName, imageFileSaveName);
     }
