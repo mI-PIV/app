@@ -8,10 +8,9 @@ import android.text.Html;
 import android.text.Layout;
 import android.widget.TextView;
 
-import com.onrpiv.uploadmedia.Learn.LearnPIV;
 import com.onrpiv.uploadmedia.R;
 
-public class PIVBasics extends LearnPIV {
+public class PIVBasics1 extends PIVBasicsLayout {
 
     private int headerTextSize = 25;
     private int paraTextSize = 16;
@@ -21,7 +20,7 @@ public class PIVBasics extends LearnPIV {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pivbasics);
+        setContentView(R.layout.activity_pivbasics1);
 
         TextView t0 = (TextView)findViewById(R.id.headingTextview);
         t0.setText("PIV Basics");

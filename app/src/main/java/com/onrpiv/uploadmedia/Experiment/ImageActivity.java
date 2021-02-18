@@ -857,6 +857,12 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                         ArrowDrawOptions arrowDrawOptions = new ArrowDrawOptions();
                         arrowDrawOptions.scale = 10d;
 
+
+                        String vortStep = "Vorticity";
+                        double[][] vortMap = piv.getVorticityMap(pivCorrelation, (int)(interrCenters.get("x")[1] - interrCenters.get("x")[0]));
+                        piv.saveVortMap(vortMap, userName, vortStep, imgFileSaveName);
+                        piv.saveColorMapImage(vortMap, userName, vortStep, imgFileSaveName);
+
                         String step = "SinglePass";
                         piv.saveVector(pivCorrelation, interrCenters, userName, step, imgFileSaveName);
                         piv.drawArrowsOnImage(pivCorrelation, interrCenters, userName, step, imgFileSaveName, arrowDrawOptions);
