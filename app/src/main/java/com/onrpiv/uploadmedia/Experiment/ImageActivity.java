@@ -854,10 +854,17 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
                         Map<String, double[][]> pivCorrelation = piv.extendedSearchAreaPiv_update();
                         Map<String, double[]> interrCenters = piv.getCoordinates();
+
+                        String vortStep = "Vorticity";
+                        double[][] vortMap = piv.getVorticityMap(pivCorrelation, (int)(interrCenters.get("x")[1] - interrCenters.get("x")[0]));
+                        piv.saveVortMap(vortMap, userName, vortStep, imgFileSaveName);
+                        piv.saveColorMapImage(vortMap, userName, vortStep, imgFileSaveName);
+
                         String step = "SinglePass";
                         piv.saveVector(pivCorrelation, interrCenters, userName, step, imgFileSaveName);
                         piv.drawArrowsOnImage(pivCorrelation, interrCenters, userName, step, imgFileSaveName);
                         Map<String, double[][]> pivCorrelationProcessed = piv.vectorPostProcessing(pivCorrelation, nMaxUpper, qMin, E);
+
                         String stepPro = "VectorPostProcess";
                         piv.saveVector(pivCorrelationProcessed, interrCenters, userName, stepPro,imgFileSaveName);
                         piv.drawArrowsOnImage(pivCorrelationProcessed, interrCenters, userName, stepPro, imgFileSaveName);

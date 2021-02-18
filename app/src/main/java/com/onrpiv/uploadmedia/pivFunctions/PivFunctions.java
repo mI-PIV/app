@@ -6,9 +6,7 @@ import android.util.Log;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfDouble;
 import org.opencv.core.Point;
-import org.opencv.core.Point3;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -21,17 +19,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import static org.opencv.core.Core.bitwise_not;
 import static org.opencv.core.Core.mean;
 import static org.opencv.core.Core.subtract;
-import static org.opencv.core.CvType.CV_32F;
-import static org.opencv.core.CvType.CV_64F;
-import static org.opencv.core.CvType.CV_8U;
+import static org.opencv.core.CvType.CV_8UC1;
+import static org.opencv.imgproc.Imgproc.COLORMAP_HOT;
+import static org.opencv.imgproc.Imgproc.COLORMAP_JET;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.COLOR_RGB2GRAY;
 import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
@@ -302,7 +298,36 @@ public class PivFunctions {
 //                Log.d("JOIN: ", "string join: "+ sj1.toString());
             }
         }
-        int p = 2;
+    }
+
+    public void saveVortMap(double[][] vortMap, String userName, String stepName, String imgFileSaveName) {
+        double v;
+        ArrayList<String> toPrint = new ArrayList<>();
+
+        //clear out old file////////////////////////
+        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
+        // Then we create the storage directory if does not exists
+        if (!storageDirectory.exists()) storageDirectory.mkdir();
+        File txtFile = new File(storageDirectory, stepName + "_"+imgFileSaveName+".txt");
+        if(txtFile.exists() && txtFile.isFile()){
+            txtFile.delete();
+        }
+        ////////////////////////////////////////////////////////////
+
+        for (int y = 0; y < vortMap.length; y++) {
+            for (int x = 0; x < vortMap[0].length; x++) {
+                v = vortMap[y][x];
+
+                toPrint.add(String.valueOf(x));
+                toPrint.add(String.valueOf(y));
+                toPrint.add(String.valueOf(v));
+
+                StringJoiner sj1 = new StringJoiner(",  ");
+                sj1.add(toPrint.get(0)).add(toPrint.get(1)).add(toPrint.get(2));
+                saveToFile(sj1.toString(), userName, stepName, imgFileSaveName);
+                toPrint.clear();
+            }
+        }
     }
 
     public void drawArrowsOnImage(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName){
@@ -360,20 +385,58 @@ public class PivFunctions {
                     endPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
                 }
 
-//                Log.d("-", "----------------------------------------------------------");
                 Imgproc.arrowedLine(image1, startPoint, endPoint, new Scalar(66,66, 245), thickness, lineType, 0, tipLength);
             }
         }
+
+        saveImage(image1, userName, stepName, imgFileSaveName);
+    }
+
+    private void saveImage(Mat image1, String userName, String stepName, String imgFileSaveName)
+    {
         File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
 
-        // Then we create the storage directory if does not exists
         if (!storageDirectory.exists()) storageDirectory.mkdir();
         File pngFile = new File(storageDirectory, stepName+"_"+imgFileSaveName);
         Mat resizeimage = new Mat();
         Size scaleSize = new Size(2560,1440);
-        Imgproc.resize(image1, resizeimage, scaleSize, 0,0,INTER_CUBIC);
+        Imgproc.resize(image1, resizeimage, scaleSize, 0,0, INTER_CUBIC);
         Imgcodecs.imwrite(pngFile.getAbsolutePath(), resizeimage);
-//        int x= 2;
+    }
+
+    public void saveColorMapImage(double[][] mapValues, String userName, String stepName, String imageFileSaveName)
+    {
+        // Row major order
+        int nr = mapValues.length;
+        int nc = mapValues[0].length;
+
+        Mat mapValuesMat = new Mat(nr, nc, CV_8UC1);
+
+        // Get min and max values
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+        for (int y = 0; y < nr; y++) {
+            for (int x = 0; x < nc; x++) {
+                double val = mapValues[y][x];
+                if (val < min) { min = val; }
+                if (val > max) { max = val; }
+            }
+        }
+
+        // Normalize mapValues to 0-255
+        for (int y = 0; y < nr; y++) {
+            for (int x = 0; x < nc; x++) {
+                double val = mapValues[y][x];
+                byte byteVal = (byte)(255d * ((val - min)/ (max - min)));
+                int newVal = byteVal & 0xFF;
+                mapValuesMat.put(y, x, newVal);
+            }
+        }
+
+        // Create colormap
+        Mat colorMapImage = new Mat(mapValuesMat.rows(), mapValuesMat.cols(), mapValuesMat.type());
+        Imgproc.applyColorMap(mapValuesMat, colorMapImage, COLORMAP_JET);
+        saveImage(colorMapImage, userName, stepName, imageFileSaveName);
     }
 
     private double findMedian(double a1, double a2, double a3, double a4, double a5, double a6, double a7, double a8)
@@ -666,4 +729,25 @@ public class PivFunctions {
         return maxValue;
     }
 
+    public double[][] getVorticityMap(Map<String, double[][]> pivCorrelation, int gap){
+        double[][] u = pivCorrelation.get("u");
+        double[][] v = pivCorrelation.get("v");
+        int nc = u[0].length;
+        int nr = u.length;
+
+        double[][] vortMap = new double[nr][nc];
+
+        // Don't divide by zero
+        if (gap == 0) {
+            return vortMap;
+        }
+
+        for (int r = 1; r < nr-1; r++) {
+            for (int c = 1; c < nc-1; c++) {
+                vortMap[r][c] = (((v[r][c+1] - v[r][c-1]) - (u[r+1][c] - u[r-1][c]))) / gap;
+            }
+        }
+
+        return vortMap;
+    }
 }
