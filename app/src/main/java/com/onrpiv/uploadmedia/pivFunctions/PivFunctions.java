@@ -28,7 +28,7 @@ import java.util.StringJoiner;
 import static org.opencv.core.Core.mean;
 import static org.opencv.core.Core.subtract;
 import static org.opencv.core.CvType.CV_8UC1;
-import static org.opencv.imgproc.Imgproc.COLORMAP_HOT;
+import static org.opencv.core.CvType.CV_8UC4;
 import static org.opencv.imgproc.Imgproc.COLORMAP_JET;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.COLOR_RGB2GRAY;
@@ -45,8 +45,10 @@ public class PivFunctions {
     private int overlap;
     private double dt;
     private String sig2noise_method;
-    private String frame1;
-    private String frame2;
+    private Mat frame1;
+    private Mat frame2;
+//    private String frame1;
+//    private String frame2;
 
     public PivFunctions(String imagePath1,
                         String imagePath2,
@@ -55,8 +57,8 @@ public class PivFunctions {
                         double mDt,
                         String mSig2noise_method){
 
-        frame1 = imagePath1;
-        frame2 = imagePath2;
+        frame1 = Imgcodecs.imread(imagePath1);
+        frame2 = Imgcodecs.imread(imagePath2);
         windowSize = mWindow_size;
         overlap = mOverlap;
         dt = mDt;
@@ -116,8 +118,8 @@ public class PivFunctions {
 
         int search_area_size = windowSize;
 
-        Mat image1 = Imgcodecs.imread(frame1);
-        Mat image2 = Imgcodecs.imread(frame2);
+        Mat image1 = frame1.clone();
+        Mat image2 = frame2.clone();
 
         cvtColor(image1, image1, COLOR_BGR2GRAY);
         cvtColor(image2, image2, COLOR_BGR2GRAY);
@@ -225,7 +227,7 @@ public class PivFunctions {
     }
 
     public Map<String, double[]> getCoordinates(){
-        Mat image1 = Imgcodecs.imread(frame1);
+        Mat image1 = frame1.clone();
         cvtColor(image1, image1, COLOR_RGB2GRAY);
         Map<String, Integer> fieldShape = getFieldShape(image1.cols(), image1.rows(), windowSize, overlap);
 
@@ -296,8 +298,6 @@ public class PivFunctions {
                 sj1.add(toPrint.get(0)).add(toPrint.get(1)).add(toPrint.get(2)).add(toPrint.get(3)).add(toPrint.get(4));
                 saveToFile(sj1.toString(), userName, stepName, imgFileSaveName);
                 toPrint.clear();
-//                Log.d("TEXT: ", "y: "+y+" x: "+x+" ux: "+ux+" vy: "+vy+" q: "+q);
-//                Log.d("JOIN: ", "string join: "+ sj1.toString());
             }
         }
     }
@@ -332,8 +332,9 @@ public class PivFunctions {
         }
     }
 
-    public void drawArrowsOnImage(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, ArrowDrawOptions arrowOptions){
-        Mat image1 = Imgcodecs.imread(frame1);
+    public void createVectorField(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, ArrowDrawOptions arrowOptions){
+        Mat image1 = frame1.clone();
+//        Mat transparentBackground = new Mat(interrCenters.get("y").length, interrCenters.get("x").length, frame1.type(), new Scalar(0, 0, 0, 0));
 
         int lineType = arrowOptions.lineType;
         int thickness = arrowOptions.thickness;
@@ -389,7 +390,7 @@ public class PivFunctions {
                     endPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
                 }
 
-                Imgproc.arrowedLine(image1, startPoint, endPoint, new Scalar(66,66, 245), thickness, lineType, 0, tipLength);
+                Imgproc.arrowedLine(image1, startPoint, endPoint, new Scalar(66, 66, 245, 255), thickness, lineType, 0, tipLength);
             }
         }
 
@@ -467,8 +468,7 @@ public class PivFunctions {
     }
 
     public Map<String, double[][]> vectorPostProcessing(Map<String, double[][]> pivCorrelation, double mMax, double qMin, double E){
-        Mat image1 = Imgcodecs.imread(frame1);
-        Map<String, Integer> fieldShape = getFieldShape(image1.cols(), image1.rows(), windowSize, overlap);
+        Map<String, Integer> fieldShape = getFieldShape(frame1.cols(), frame1.rows(), windowSize, overlap);
 
         double[][] dr1_p = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
         double[][] dc1_p = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
@@ -531,8 +531,8 @@ public class PivFunctions {
     }
 
     public Map<String, double[][]> calculateMultipass(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters){
-        Mat image1 = Imgcodecs.imread(frame1);
-        Mat image2 = Imgcodecs.imread(frame2);
+        Mat image1 = frame1.clone();
+        Mat image2 = frame2.clone();
 
         cvtColor(image1, image1, COLOR_BGR2GRAY);
         cvtColor(image2, image2, COLOR_BGR2GRAY);
@@ -641,8 +641,8 @@ public class PivFunctions {
     }
 
     public Map<String, double[][]> replaceMissingVectors(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters) {
-        Mat image1 = Imgcodecs.imread(frame1);
-        Mat image2 = Imgcodecs.imread(frame2);
+        Mat image1 = frame1.clone();
+        Mat image2 = frame2.clone();
 
         cvtColor(image1, image1, COLOR_BGR2GRAY);
         cvtColor(image2, image2, COLOR_BGR2GRAY);
@@ -743,6 +743,7 @@ public class PivFunctions {
 
         // Don't divide by zero
         if (gap == 0) {
+            Log.e("KP", "getVorticityMap: Trying to divide by zero!");
             return vortMap;
         }
 
