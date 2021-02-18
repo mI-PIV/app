@@ -302,7 +302,7 @@ public class PivFunctions {
         }
     }
 
-    public void saveVortMap(double[][] vortMap, String userName, String stepName, String imgFileSaveName) {
+    public void saveVortMapFile(double[][] vortMap, String userName, String stepName, String imgFileSaveName) {
         double v;
         ArrayList<String> toPrint = new ArrayList<>();
 
@@ -333,8 +333,7 @@ public class PivFunctions {
     }
 
     public void createVectorField(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, ArrowDrawOptions arrowOptions){
-        Mat image1 = frame1.clone();
-//        Mat transparentBackground = new Mat(interrCenters.get("y").length, interrCenters.get("x").length, frame1.type(), new Scalar(0, 0, 0, 0));
+        Mat transparentBackground = new Mat(frame1.rows(), frame1.cols(), frame1.type(), new Scalar(255, 255, 255, 0));
 
         int lineType = arrowOptions.lineType;
         int thickness = arrowOptions.thickness;
@@ -390,11 +389,11 @@ public class PivFunctions {
                     endPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
                 }
 
-                Imgproc.arrowedLine(image1, startPoint, endPoint, new Scalar(66, 66, 245, 255), thickness, lineType, 0, tipLength);
+                Imgproc.arrowedLine(transparentBackground, startPoint, endPoint, new Scalar(66, 66, 245, 255), thickness, lineType, 0, tipLength);
             }
         }
 
-        saveImage(image1, userName, stepName, imgFileSaveName);
+        saveImage(transparentBackground, userName, stepName, imgFileSaveName);
     }
 
     private void saveImage(Mat image1, String userName, String stepName, String imgFileSaveName)
@@ -441,6 +440,12 @@ public class PivFunctions {
         // Create colormap
         Mat colorMapImage = new Mat(mapValuesMat.rows(), mapValuesMat.cols(), mapValuesMat.type());
         Imgproc.applyColorMap(mapValuesMat, colorMapImage, COLORMAP_JET);
+
+        // Convert to four channels (transparent channel)
+//        int type = colorMapImage.type();
+
+//        colorMapImage.convertTo(colorMapImage, );
+
         saveImage(colorMapImage, userName, stepName, imageFileSaveName);
     }
 
