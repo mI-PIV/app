@@ -14,6 +14,8 @@ import android.widget.Button;
 import com.jsibbold.zoomage.ZoomageView;
 import com.onrpiv.uploadmedia.R;
 
+import org.opencv.android.Utils;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -46,6 +48,9 @@ public class ViewResultsActivity extends AppCompatActivity {
             setContentView(R.layout.display_result_layout);
         }
         baseImage = (ZoomageView)findViewById(R.id.baseZoomageView);
+
+//        Utils.matToBitmap();
+
         vectorFieldImage = (ZoomageView)findViewById(R.id.vectorsZoomageView);
         vorticityImage = (ZoomageView)findViewById(R.id.vortZoomageView);
         firstPass = (Button) findViewById(R.id.firstPass);

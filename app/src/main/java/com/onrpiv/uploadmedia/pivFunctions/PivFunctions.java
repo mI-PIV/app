@@ -29,6 +29,7 @@ import java.util.StringJoiner;
 import static org.opencv.core.Core.mean;
 import static org.opencv.core.Core.subtract;
 import static org.opencv.core.CvType.CV_8UC1;
+import static org.opencv.core.CvType.CV_8UC4;
 import static org.opencv.imgproc.Imgproc.COLORMAP_JET;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
@@ -265,7 +266,7 @@ public class PivFunctions {
         }
     }
 
-    public void saveVector(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName) {
+    public void saveVectors(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName) {
         double ux, vy, q, x, y;
         ArrayList<String> toPrint = new ArrayList<>();
 
@@ -336,7 +337,7 @@ public class PivFunctions {
     }
 
     public void createVectorField(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, ArrowDrawOptions arrowOptions){
-        Mat transparentBackground = new Mat(frame1.rows(), frame1.cols(), frame1.type(), new Scalar(255, 255, 255, 0));
+        Mat transparentBackground = new Mat(frame1.rows(), frame1.cols(), CV_8UC4, new Scalar(255, 255, 255, 0));
 
         int lineType = arrowOptions.lineType;
         int thickness = arrowOptions.thickness;

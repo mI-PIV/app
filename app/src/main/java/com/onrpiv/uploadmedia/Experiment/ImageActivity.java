@@ -40,7 +40,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.jsibbold.zoomage.ZoomageView;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.BoolIntStructure;
@@ -864,12 +863,12 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                         piv.saveColorMapImage(vortMap, userName, vortStep, imgFileSaveName);
 
                         String step = "SinglePass";
-                        piv.saveVector(pivCorrelation, interrCenters, userName, step, imgFileSaveName);
+                        piv.saveVectors(pivCorrelation, interrCenters, userName, step, imgFileSaveName);
                         piv.createVectorField(pivCorrelation, interrCenters, userName, step, imgFileSaveName, arrowDrawOptions);
                         Map<String, double[][]> pivCorrelationProcessed = piv.vectorPostProcessing(pivCorrelation, nMaxUpper, qMin, E);
 
                         String stepPro = "VectorPostProcess";
-                        piv.saveVector(pivCorrelationProcessed, interrCenters, userName, stepPro,imgFileSaveName);
+                        piv.saveVectors(pivCorrelationProcessed, interrCenters, userName, stepPro,imgFileSaveName);
                         piv.createVectorField(pivCorrelationProcessed, interrCenters, userName, stepPro, imgFileSaveName, arrowDrawOptions);
 
                         if (selectedId == 0){
@@ -877,12 +876,12 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                             Map<String, double[][]> pivCorrelationMulti = piv.calculateMultipass(pivReplaceMissing, interrCenters);
 
                             String stepMulti = "Multipass";
-                            piv.saveVector(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName);
+                            piv.saveVectors(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName);
                             piv.createVectorField(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName, arrowDrawOptions);
                             Map<String, double[][]> pivReplaceMissing2 = piv.replaceMissingVectors(pivCorrelationMulti, interrCenters);
 
                             String stepReplace2 = "Replaced2";
-                            piv.saveVector(pivReplaceMissing2, interrCenters, userName, stepReplace2, imgFileSaveName);
+                            piv.saveVectors(pivReplaceMissing2, interrCenters, userName, stepReplace2, imgFileSaveName);
                             piv.createVectorField(pivReplaceMissing2, interrCenters, userName, stepReplace2, imgFileSaveName, arrowDrawOptions);
 
                             maxDisplacement = piv.checkMaxDisplacement(pivReplaceMissing2);
@@ -891,7 +890,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                             Map<String, double[][]> pivCorrelationMulti = piv.calculateMultipass(pivCorrelationProcessed, interrCenters);
 
                             String stepMulti = "Multipass";
-                            piv.saveVector(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName);
+                            piv.saveVectors(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName);
                             piv.createVectorField(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName, arrowDrawOptions);
 
                             maxDisplacement = piv.checkMaxDisplacement(pivCorrelationMulti);
