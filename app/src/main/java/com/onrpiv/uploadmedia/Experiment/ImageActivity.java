@@ -42,6 +42,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.jsibbold.zoomage.ZoomageView;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.BoolIntStructure;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 
@@ -52,10 +53,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -566,11 +569,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
     private boolean isExternalStorageAvailable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        } else {
-            return false;
-        }
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     @Override
@@ -855,6 +854,10 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                         Map<String, double[][]> pivCorrelation = piv.extendedSearchAreaPiv_update();
                         Map<String, double[]> interrCenters = piv.getCoordinates();
 
+                        ArrowDrawOptions arrowDrawOptions = new ArrowDrawOptions();
+                        arrowDrawOptions.scale = 10d;
+
+
                         String vortStep = "Vorticity";
                         double[][] vortMap = piv.getVorticityMap(pivCorrelation, (int)(interrCenters.get("x")[1] - interrCenters.get("x")[0]));
                         piv.saveVortMap(vortMap, userName, vortStep, imgFileSaveName);
@@ -862,29 +865,35 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
                         String step = "SinglePass";
                         piv.saveVector(pivCorrelation, interrCenters, userName, step, imgFileSaveName);
-                        piv.drawArrowsOnImage(pivCorrelation, interrCenters, userName, step, imgFileSaveName);
+                        piv.drawArrowsOnImage(pivCorrelation, interrCenters, userName, step, imgFileSaveName, arrowDrawOptions);
                         Map<String, double[][]> pivCorrelationProcessed = piv.vectorPostProcessing(pivCorrelation, nMaxUpper, qMin, E);
 
                         String stepPro = "VectorPostProcess";
                         piv.saveVector(pivCorrelationProcessed, interrCenters, userName, stepPro,imgFileSaveName);
-                        piv.drawArrowsOnImage(pivCorrelationProcessed, interrCenters, userName, stepPro, imgFileSaveName);
+                        piv.drawArrowsOnImage(pivCorrelationProcessed, interrCenters, userName, stepPro, imgFileSaveName, arrowDrawOptions);
 
                         if (selectedId == 0){
                             Map<String, double[][]> pivReplaceMissing = piv.replaceMissingVectors(pivCorrelationProcessed, interrCenters);
                             Map<String, double[][]> pivCorrelationMulti = piv.calculateMultipass(pivReplaceMissing, interrCenters);
+
                             String stepMulti = "Multipass";
                             piv.saveVector(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName);
-                            piv.drawArrowsOnImage(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName);
+                            piv.drawArrowsOnImage(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName, arrowDrawOptions);
                             Map<String, double[][]> pivReplaceMissing2 = piv.replaceMissingVectors(pivCorrelationMulti, interrCenters);
+
                             String stepReplace2 = "Replaced2";
                             piv.saveVector(pivReplaceMissing2, interrCenters, userName, stepReplace2, imgFileSaveName);
-                            piv.drawArrowsOnImage(pivReplaceMissing2, interrCenters, userName, stepReplace2, imgFileSaveName);
+                            piv.drawArrowsOnImage(pivReplaceMissing2, interrCenters, userName, stepReplace2, imgFileSaveName, arrowDrawOptions);
+
                             maxDisplacement = piv.checkMaxDisplacement(pivReplaceMissing2);
+
                         } else if (selectedId == 1) {
                             Map<String, double[][]> pivCorrelationMulti = piv.calculateMultipass(pivCorrelationProcessed, interrCenters);
+
                             String stepMulti = "Multipass";
                             piv.saveVector(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName);
-                            piv.drawArrowsOnImage(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName);
+                            piv.drawArrowsOnImage(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName, arrowDrawOptions);
+
                             maxDisplacement = piv.checkMaxDisplacement(pivCorrelationMulti);
                         }
                         hidepDialog();

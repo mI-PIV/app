@@ -3,6 +3,8 @@ package com.onrpiv.uploadmedia.pivFunctions;
 import android.os.Environment;
 import android.util.Log;
 
+import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
+
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -330,12 +332,14 @@ public class PivFunctions {
         }
     }
 
-    public void drawArrowsOnImage(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName){
+    public void drawArrowsOnImage(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, ArrowDrawOptions arrowOptions){
         Mat image1 = Imgcodecs.imread(frame1);
 
-        int lineType = 8;
-        int thickness = 2;
-        double tipLength = 0.2;
+        int lineType = arrowOptions.lineType;
+        int thickness = arrowOptions.thickness;
+        double tipLength = arrowOptions.tipLength;
+        double scale = arrowOptions.scale;
+
         double dx, dy;
         Point startPoint = null, endPoint =null;
 
@@ -346,39 +350,39 @@ public class PivFunctions {
 
                 if (dx < 0 && dy > 0){
                     startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] - Math.abs(dx)),
-                            (interrCenters.get("y")[i] - Math.abs(dy)));
+                    endPoint = new Point((interrCenters.get("x")[j] - (Math.abs(dx) * scale)),
+                            (interrCenters.get("y")[i] - (Math.abs(dy) * scale)));
                 }
                 else if (dx > 0 && dy > 0) {
                     startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] + Math.abs(dx)),
-                            (interrCenters.get("y")[i] - Math.abs(dy)));
+                    endPoint = new Point((interrCenters.get("x")[j] + (Math.abs(dx) * scale)),
+                            (interrCenters.get("y")[i] - (Math.abs(dy) * scale)));
                 }
                 else if (dx > 0 && dy < 0) {
                     startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] + Math.abs(dx)),
-                            (interrCenters.get("y")[i] + Math.abs(dy)));
+                    endPoint = new Point((interrCenters.get("x")[j] + (Math.abs(dx) * scale)),
+                            (interrCenters.get("y")[i] + (Math.abs(dy) * scale)));
                 }
                 else if (dx < 0 && dy < 0) {
                     startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] - Math.abs(dx)),
-                            (interrCenters.get("y")[i] + Math.abs(dy)));
+                    endPoint = new Point((interrCenters.get("x")[j] - (Math.abs(dx) * scale)),
+                            (interrCenters.get("y")[i] + (Math.abs(dy) * scale)));
                 }
                 else if (dx==0 && dy < 0){
                     startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point(interrCenters.get("x")[j],   (interrCenters.get("y")[i] + Math.abs(dy)));
+                    endPoint = new Point(interrCenters.get("x")[j],   (interrCenters.get("y")[i] + (Math.abs(dy) * scale)));
                 }
                 else if (dx==0 && dy > 0) {
                     startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point(interrCenters.get("x")[j],   (interrCenters.get("y")[i] - Math.abs(dy)));
+                    endPoint = new Point(interrCenters.get("x")[j],   (interrCenters.get("y")[i] - (Math.abs(dy) * scale)));
                 }
                 else if (dx < 0 && dy==0){
                     startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] - Math.abs(dx)), interrCenters.get("y")[i]);
+                    endPoint = new Point((interrCenters.get("x")[j] - (Math.abs(dx) * scale)), interrCenters.get("y")[i]);
                 }
                 else if (dx >0 && dy==0){
                     startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] + Math.abs(dx)), interrCenters.get("y")[i]);
+                    endPoint = new Point((interrCenters.get("x")[j] + (Math.abs(dx) * scale)), interrCenters.get("y")[i]);
                 }
                 else if (dx==0 && dy==0){
                     startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
