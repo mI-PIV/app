@@ -53,6 +53,7 @@
         android:layout_marginTop="10dp"
         android:backgroundTint="#243EDF"
         android:onClick="singlePassDisplay"
+        android:layout_below="@+id/baseZoomageView"
         android:text="Single Pass"
         android:textColor="#FFFFFF" />
 
