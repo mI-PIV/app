@@ -14,14 +14,12 @@ import android.widget.Button;
 import com.jsibbold.zoomage.ZoomageView;
 import com.onrpiv.uploadmedia.R;
 
-import org.opencv.android.Utils;
-
 import java.io.File;
 import java.util.ArrayList;
 
 /**
- * author: sarbajit mukherjee
  * Created by sarbajit mukherjee on 09/07/2020.
+ * Edited by KP on 02/18/2021
  */
 
 public class ViewResultsActivity extends AppCompatActivity {
@@ -29,17 +27,15 @@ public class ViewResultsActivity extends AppCompatActivity {
     ZoomageView baseImage;
     ZoomageView vectorFieldImage;
     ZoomageView vorticityImage;
-    private String userName;
     private String imgFileToDisplay;
     private File storageDirectory;
-    private int selectedId;
-    private double nMaxUpper, nMaxLower, maxDisplacement = 0.0;
-    private ArrayList<String> postPathMultiple = new ArrayList<>();
+    private double nMaxUpper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent displayIntent = getIntent();
-        selectedId = displayIntent.getIntExtra("selection-Id", 0);
+        int selectedId = displayIntent.getIntExtra("selection-Id", 0);
         if (selectedId == 0) {
             setContentView(R.layout.display_result_layout_null_replaced);
 //            replaceAfterFirstPass = (Button) findViewById(R.id.firstReplace);
@@ -47,19 +43,22 @@ public class ViewResultsActivity extends AppCompatActivity {
         } else {
             setContentView(R.layout.display_result_layout);
         }
+
         baseImage = (ZoomageView)findViewById(R.id.baseZoomageView);
-
 //        Utils.matToBitmap();
-
         vectorFieldImage = (ZoomageView)findViewById(R.id.vectorsZoomageView);
         vorticityImage = (ZoomageView)findViewById(R.id.vortZoomageView);
+
         firstPass = (Button) findViewById(R.id.firstPass);
         secondPass = (Button) findViewById(R.id.secondPass);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        postPathMultiple = displayIntent.getStringArrayListExtra("image-paths");
-        nMaxLower = displayIntent.getDoubleExtra("n-max-lower",0);
-        maxDisplacement = displayIntent.getDoubleExtra("max-displacement",0);
-        userName = displayIntent.getStringExtra("username");
+
+        ArrayList<String> postPathMultiple = displayIntent.getStringArrayListExtra("image-paths");
+        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
+        double maxDisplacement = displayIntent.getDoubleExtra("max-displacement", 0);
+        String userName = displayIntent.getStringExtra("username");
+
         if (maxDisplacement < nMaxLower) {
             AlertDialog.Builder alertDialogParametersBuilder = new AlertDialog.Builder(ViewResultsActivity.this);
             alertDialogParametersBuilder.setTitle("Alert !");
@@ -79,8 +78,10 @@ public class ViewResultsActivity extends AppCompatActivity {
                                     dialog.cancel();
                                 }
                             });
+
             final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
             alertDialogParameters.show();
+
         } else {
             AlertDialog.Builder alertDialogParametersBuilder = new AlertDialog.Builder(ViewResultsActivity.this);
             alertDialogParametersBuilder.setTitle("Alert !");
@@ -100,6 +101,7 @@ public class ViewResultsActivity extends AppCompatActivity {
                                     dialog.cancel();
                                 }
                             });
+
             final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
             alertDialogParameters.show();
         }
@@ -107,22 +109,18 @@ public class ViewResultsActivity extends AppCompatActivity {
         // Setup images and paths
         imgFileToDisplay = postPathMultiple.get(0).split("/")[6].split(".png")[0]
                 + "-"
-                +postPathMultiple.get(1).split("/")[6].split("_")[3].split(".png")[0]+".png";
+                + postPathMultiple.get(1).split("/")[6].split("_")[3].split(".png")[0]+".png";
         storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
 
         // Display base image (This will be changed when we add controls/buttons to results page)
         String stepB = "Base";
         File basePngFile = new File(storageDirectory, stepB+"_"+imgFileToDisplay);
-        if (basePngFile.exists() && baseImage != null) {
-            baseImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(basePngFile)));
-        }
+        baseImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(basePngFile)));
 
         // Display vorticity colormap (This will be changed when we add controls/buttons to results page)
         String stepV = "Vorticity";
         File vortPngFile = new File(storageDirectory, stepV+"_"+imgFileToDisplay);
-        if (vortPngFile.exists() && vorticityImage != null) {
-            vorticityImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(vortPngFile)));
-        }
+        vorticityImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(vortPngFile)));
     }
 
     @Override
