@@ -42,6 +42,7 @@
         <activity android:name=".Learn.PIVBasics2"/>
         <activity android:name=".Learn.PIVBasics3"/>
         <activity android:name=".Learn.PIVBasics4"/>
+        <activity android:name=".Learn.PIVBasics5"/>
         <activity android:name=".Learn.Imaging1"/>
         <activity android:name=".Learn.Imaging2"/>
         <activity android:name=".Learn.Imaging3"/>

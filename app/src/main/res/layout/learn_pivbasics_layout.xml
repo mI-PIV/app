@@ -18,7 +18,7 @@
 
     <TextView
         android:id="@+id/learnPIVTextView"
-        android:text="Learn About Our PIV"
+        android:text="Learn About PIV"
         android:background="#0F2439"
         android:gravity="center"
         android:layout_width="match_parent"
