@@ -12,7 +12,7 @@ import com.onrpiv.uploadmedia.R;
 
 public class PIVBasicsLayout extends LearnPIV {
 
-    String[] learnPIVArray = {"Learn About PIV", "Parameters1", "Parameters2", "Parameters3"};
+    String[] learnPIVArray = {"How Does PIV Work?", "Q Value", "Interrogation Region or Window Size", "Median Filter", "Overlap"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +44,10 @@ public class PIVBasicsLayout extends LearnPIV {
                 if (position == 3) {
                     Intent myIntent = new Intent(view.getContext(), PIVBasics4.class);
                     startActivityForResult(myIntent,0);
+                }
+                if (position == 4) {
+                    Intent myIntent = new Intent(view.getContext(), PIVBasics5.class);
+                    startActivityForResult(myIntent, 0);
                 }
             }
         });

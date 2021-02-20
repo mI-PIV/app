@@ -6,7 +6,7 @@ import android.support.annotation.RequiresApi;
 
 import com.onrpiv.uploadmedia.R;
 
-public class PIVBasics2 extends PIVBasicsLayout {
+public class PIVBasics5 extends PIVBasicsLayout {
 
     private int headerTextSize = 25;
     private int paraTextSize = 16;
