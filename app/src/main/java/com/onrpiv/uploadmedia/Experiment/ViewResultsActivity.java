@@ -165,7 +165,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             File pngFile = new File(storageDirectory, step + "_" + imgFileToDisplay);
             Bitmap bmp = BitmapFactory.decodeFile(String.valueOf(pngFile));
             bmpHash.put(step, bmp);
-            imageContainer.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+            imageContainer.setImageBitmap(bmp);
         }
     }
 }
