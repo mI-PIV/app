@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Learn.PIVBasics1">
+    tools:context=".Learn.PIVBasics2">
 
     <ScrollView
         android:layout_width="fill_parent"
@@ -19,9 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
             <TextView
-                android:id="@+id/QValueHeadingTextview"
+                android:id="@+id/QValueHeadingTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
@@ -34,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/QValueHeadingTextview"
+                android:layout_below="@id/QValueHeadingTextView"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
@@ -63,7 +62,6 @@
                 android:layout_below="@id/QValueTextView2"
                 tools:ignore="MissingConstraints" />
 
-
         </RelativeLayout>
 
     </ScrollView>
@@ -74,7 +72,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation2"
-        app:itemBackground="@android:color/white"
-        />
+        app:itemBackground="@android:color/white" />
 
 </RelativeLayout>
