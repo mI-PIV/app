@@ -22,7 +22,7 @@ public class PIVBasics2 extends PIVBasicsLayout {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pivbasics2);
 
-        TextView t0 = (TextView)findViewById(R.id.QValueHeadingTextview);
+        TextView t0 = (TextView)findViewById(R.id.QValueHeadingTextView);
         t0.setText("Q Value");
         t0.setTextSize(headerTextSize);
 
