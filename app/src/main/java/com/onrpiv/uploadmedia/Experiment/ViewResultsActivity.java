@@ -113,14 +113,10 @@ public class ViewResultsActivity extends AppCompatActivity {
         storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
 
         // Display base image (This will be changed when we add controls/buttons to results page)
-        String stepB = "Base";
-        File basePngFile = new File(storageDirectory, stepB+"_"+imgFileToDisplay);
-        baseImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(basePngFile)));
+        displayImage("Base", baseImage);
 
         // Display vorticity colormap (This will be changed when we add controls/buttons to results page)
-        String stepV = "Vorticity";
-        File vortPngFile = new File(storageDirectory, stepV+"_"+imgFileToDisplay);
-        vorticityImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(vortPngFile)));
+        displayImage("Vorticity", vorticityImage);
     }
 
     @Override
@@ -135,38 +131,31 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     public void baseImageDisplay(View view) {
-        String step = "Base";
-        File pngFile = new File(storageDirectory, step+"_"+imgFileToDisplay);
-        baseImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+        displayImage("Base", baseImage);
     }
 
     public void vorticityImageDisplay(View view) {
-        String step = "Vorticity";
-        File pngFile = new File(storageDirectory, step+"_"+imgFileToDisplay);
-        vorticityImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+        displayImage("Vorticity", vorticityImage);
     }
 
     public void singlePassDisplay(View view) {
-        String stepMulti = "SinglePass";
-        File pngFile = new File(storageDirectory, stepMulti+"_"+imgFileToDisplay);
-        vectorFieldImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+        displayImage("SinglePass", vectorFieldImage);
     }
 
     public void singlePassReplaceDisplay(View view) {
-        String stepMulti = "Replaced";
-        File pngFile = new File(storageDirectory, stepMulti+"_"+imgFileToDisplay);
-        vectorFieldImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+        displayImage("Replaced", vectorFieldImage);
     }
 
     public void multiPassDisplay(View view) {
-        String stepMulti = "Multipass";
-        File pngFile = new File(storageDirectory, stepMulti+"_"+imgFileToDisplay);
-        vectorFieldImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+        displayImage("Multipass", vectorFieldImage);
     }
 
     public void multiPassReplaceDisplay(View view) {
-        String stepMulti = "Replaced2";
-        File pngFile = new File(storageDirectory, stepMulti+"_"+imgFileToDisplay);
-        vectorFieldImage.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+        displayImage("Replaced2", vectorFieldImage);
+    }
+
+    private void displayImage(String step, ZoomageView imageContainer) {
+        File pngFile = new File(storageDirectory, step+"_"+imgFileToDisplay);
+        imageContainer.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
     }
 }
