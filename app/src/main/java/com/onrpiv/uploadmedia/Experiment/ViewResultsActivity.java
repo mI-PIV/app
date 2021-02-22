@@ -3,6 +3,7 @@ package com.onrpiv.uploadmedia.Experiment;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,6 +17,7 @@ import com.onrpiv.uploadmedia.R;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by sarbajit mukherjee on 09/07/2020.
@@ -23,13 +25,15 @@ import java.util.ArrayList;
  */
 
 public class ViewResultsActivity extends AppCompatActivity {
-    Button firstPass, secondPass, replaceAfterFirstPass, replaceAfterSecondPass;
-    ZoomageView baseImage;
-    ZoomageView vectorFieldImage;
-    ZoomageView vorticityImage;
+    private Button firstPass, secondPass, replaceAfterFirstPass, replaceAfterSecondPass;
+    private ZoomageView baseImage;
+    private ZoomageView vectorFieldImage;
+    private ZoomageView vorticityImage;
     private String imgFileToDisplay;
     private File storageDirectory;
     private double nMaxUpper;
+
+    private HashMap<String, Bitmap> bmpHash = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +159,13 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     private void displayImage(String step, ZoomageView imageContainer) {
-        File pngFile = new File(storageDirectory, step+"_"+imgFileToDisplay);
-        imageContainer.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+        if (bmpHash.containsKey(step)) {
+            imageContainer.setImageBitmap(bmpHash.get(step));
+        } else {
+            File pngFile = new File(storageDirectory, step + "_" + imgFileToDisplay);
+            Bitmap bmp = BitmapFactory.decodeFile(String.valueOf(pngFile));
+            bmpHash.put(step, bmp);
+            imageContainer.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(pngFile)));
+        }
     }
 }
