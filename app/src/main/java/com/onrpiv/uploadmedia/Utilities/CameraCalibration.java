@@ -20,6 +20,7 @@ import java.util.StringJoiner;
 
 import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
 
+//https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
 //https://docs.opencv.org/3.4/javadoc/org/opencv/calib3d/Calib3d.html
 public final class CameraCalibration {
     private static int patternRows = 14;
@@ -29,11 +30,16 @@ public final class CameraCalibration {
         // EMPTY
     }
 
+    /**
+     * Calibration testing constructor. Loads a default circle grid.
+     * ONLY USE THIS FOR TESTING. WILL DELETE WHEN TESTING IS COMPLETE.
+     * @return
+     */
     public static double Calibrate() {
         OpenCVLoader.initDebug();
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES+"/calibration.png");
         Mat calImg = Imgcodecs.imread(path.getAbsolutePath());
-        return findCirclesGrid(calImg);
+        return findCirclesGrid(calImg, 1d, 1d);
     }
 
     // TODO are we going to use centimeters?
@@ -51,10 +57,10 @@ public final class CameraCalibration {
         patternCols = circleCols;
         patternRows = circleRows;
         Mat calibrationImg = Imgcodecs.imread(calibrationImagePath);
-        return findCirclesGrid(calibrationImg);
+        return findCirclesGrid(calibrationImg, xDiff_CM, yDiff_CM);
     }
 
-    private static double findCirclesGrid(Mat calibrationImage) {
+    private static double findCirclesGrid(Mat calibrationImage, double xDiff, double yDiff) {
         Size patternSize = new Size(patternCols, patternRows);
         MatOfPoint2f circleCenters = new MatOfPoint2f();
         double resultRatio = 1d;
@@ -65,12 +71,12 @@ public final class CameraCalibration {
         // Format of the returned structure (circle centers) is index: x, y
 
         if (found) {
-            resultRatio = getPhysicalToPixelRatio();
+            resultRatio = getPhysicalToPixelRatio(xDiff, yDiff);
         }
         return resultRatio;
     }
 
-    private static double getPhysicalToPixelRatio() {
+    private static double getPhysicalToPixelRatio(double xDiff, double yDiff) {
         // TODO are we going to use average center width and center height?
         return 0d;
     }
