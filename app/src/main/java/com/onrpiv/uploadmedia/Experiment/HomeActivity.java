@@ -9,6 +9,7 @@ import android.widget.Button;
 import com.onrpiv.uploadmedia.Learn.LearnFluids;
 import com.onrpiv.uploadmedia.Learn.LearnPIV;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.CameraCalibration;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -48,5 +49,8 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(learnPIV);
             }
         });
+
+        // TODO debug delete
+        double test = CameraCalibration.Calibrate();
     }
 }
