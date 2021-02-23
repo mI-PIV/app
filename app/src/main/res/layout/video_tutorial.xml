@@ -32,6 +32,7 @@
         android:id="@+id/tutorial_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#C1C1C1"
         android:layout_below="@+id/videoTutorialTextview">
     </ListView>
 
