@@ -69,6 +69,7 @@
         <activity android:name=".Learn.Pos12_Activity"/>
         <activity android:name=".Learn.Pos13_Activity"/>
         <activity android:name=".Learn.Pos14_Activity"/>
+        <activity android:name=".Learn.Pos15_Activity"/>
         <activity android:name=".Learn.TryExperiments"/>
         <activity android:name=".Learn.LearnFluids"/>
         <activity android:name=".Learn.LearnPIV"/>
