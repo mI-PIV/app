@@ -5,78 +5,120 @@ import android.util.Log;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.calib3d.Calib3d;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Size;
+import org.opencv.core.TermCriteria;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.photo.CalibrateCRF;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringJoiner;
 
+import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
+import static org.opencv.imgproc.Imgproc.cvtColor;
 
 //https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
 //https://docs.opencv.org/3.4/javadoc/org/opencv/calib3d/Calib3d.html
 public final class CameraCalibration {
-    private static int patternRows = 14;
-    private static int patternCols = 20;
+    public boolean isCalibrated = false;
+    public double pixelToPhysicalRatio = 1.0d;
 
-    private CameraCalibration() {
-        // EMPTY
+    private int patternRows = 14;
+    private int patternCols = 20;
+    private int physicalX = 1;  // width distance between circles/dots on calibration plate in centimeters
+    private int physicalY = 1;  // height distance between circles/dots on calibration plate in centimeters
+
+    //https://docs.opencv.org/master/d9/d0c/group__calib3d.html#ga687a1ab946686f0d85ae0363b5af1d7b
+    private List<Mat> objPoints = new ArrayList<>();   // Calibration input of frames in 3D real-world space; Note: We are only using one camera so this will be frames with a zero z-dimension.
+    private List<Mat> imgPoints = new ArrayList<>();   // Calibration input of frames in 2D; Load normal frames into here
+    private Mat cameraMatrix = new Mat();              // Calibration input/output of 3x3 camera intrinsic matrix
+    private Mat distCoeffs = new Mat();                // Calibration output of distortion coefficients
+    private List<Mat> rVecs = new ArrayList<>();       // Calibration output of rotation vectors
+    private List<Mat> tVecs = new ArrayList<>();       // Calibration output of translation vectors
+    private MatOfPoint2f circleCenters = new MatOfPoint2f();
+
+
+    public CameraCalibration() {
+        OpenCVLoader.initDebug();
+
+        Mat.eye(3, 3, CvType.CV_64FC1).copyTo(cameraMatrix);
+        cameraMatrix.put(0, 0, 1.0);
+
+        Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distCoeffs);
     }
 
-    /**
-     * Calibration testing constructor. Loads a default circle grid.
-     * ONLY USE THIS FOR TESTING. WILL DELETE WHEN TESTING IS COMPLETE.
-     * @return
-     */
-    public static double Calibrate() {
+    public CameraCalibration(int patternRows, int patternCols, int physicalX, int physicalY) {
         OpenCVLoader.initDebug();
-        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES+"/calibration.png");
-        Mat calImg = Imgcodecs.imread(path.getAbsolutePath());
-        return findCirclesGrid(calImg, 1d, 1d);
+
+        Mat.eye(3, 3, CvType.CV_64FC1).copyTo(cameraMatrix);
+        cameraMatrix.put(0, 0, 1.0);
+
+        Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distCoeffs);
+
+        this.patternRows = patternRows;
+        this.patternCols = patternCols;
+        this.physicalX = physicalX;
+        this.physicalY = physicalY;
     }
 
     // TODO are we going to use centimeters?
     /**
      * Calibrate will look to find a circle grid pattern in an image, and return a centimeter/pixel ratio.
      * @param calibrationImagePath: Path to image that has a circle grid pattern.
-     * @param circleRows: Number of circle rows in the circle grid pattern.
-     * @param circleCols: Number of circle columns in the circle grid pattern.
-     * @param xDiff_CM: The width between two circle centers in Centimeters.
-     * @param yDiff_CM: The height between two circle centers in Centimeters.
-     * @return double centimeter/pixel ratio.
      */
-    public static double Calibrate(String calibrationImagePath, int circleRows, int circleCols, double xDiff_CM, double yDiff_CM) {
+    public void calibrate(String calibrationImagePath) {
         OpenCVLoader.initDebug();
-        patternCols = circleCols;
-        patternRows = circleRows;
-        Mat calibrationImg = Imgcodecs.imread(calibrationImagePath);
-        return findCirclesGrid(calibrationImg, xDiff_CM, yDiff_CM);
-    }
 
-    private static double findCirclesGrid(Mat calibrationImage, double xDiff, double yDiff) {
-        Size patternSize = new Size(patternCols, patternRows);
-        MatOfPoint2f circleCenters = new MatOfPoint2f();
-        double resultRatio = 1d;
-
-        // TODO use tags for camera aperture, focal length, etc...
-
-        boolean found = Calib3d.findCirclesGrid(calibrationImage, patternSize, circleCenters);
-        // Format of the returned structure (circle centers) is index: x, y
-
-        if (found) {
-            resultRatio = getPhysicalToPixelRatio(xDiff, yDiff);
+        if (calibrationImagePath.equals("test")) {
+            calibrationImagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES+"/piv_calib.png").getAbsolutePath();
         }
-        return resultRatio;
+        Mat calibrationImg = Imgcodecs.imread(calibrationImagePath);
+//        cvtColor(calibrationImg, calibrationImg, COLOR_BGR2GRAY);
+        boolean patternFound = findCirclesGrid(calibrationImg);
+        if (patternFound) {
+            calibrateCamera(calibrationImg);
+        }
     }
 
-    private static double getPhysicalToPixelRatio(double xDiff, double yDiff) {
+    public void calibrate(List<String> calibrationImagePaths) {
+        // TODO
+//        Mat calibrationImg = Imgcodecs.imread(calibrationImagePath);
+//        cvtColor(calibrationImg, calibrationImg, COLOR_BGR2GRAY);
+//        boolean patternFound = findCirclesGrid(calibrationImg);
+//        if (patternFound) {
+//            calibrateCamera(calibrationImg);
+//        }
+    }
+
+    private boolean findCirclesGrid(Mat calibrationImage) {
+        Size patternSize = new Size(patternCols, patternRows);
+        return Calib3d.findCirclesGrid(calibrationImage, patternSize, circleCenters);
+    }
+
+    private void calibrateCamera(Mat calibrationImage) {
+        // Optimize circle center positions; this might not be needed
+        Imgproc.cornerSubPix(calibrationImage, circleCenters, new Size(5, 5), new Size(-1, -1), new TermCriteria(new double[] {TermCriteria.MAX_ITER, 30}));
+
+        imgPoints.add(calibrationImage);
+
+        objPoints.add(Mat.zeros(patternRows*patternCols, 1, CvType.CV_32FC3));
+
+        // Calibrate
+        Calib3d.calibrateCamera(objPoints, imgPoints, calibrationImage.size(), cameraMatrix,  distCoeffs, rVecs, tVecs);
+        isCalibrated = Core.checkRange(cameraMatrix) && Core.checkRange(distCoeffs);
+    }
+
+    private static double getPhysicalToPixelRatio() {
         // TODO are we going to use average center width and center height?
         return 0d;
     }

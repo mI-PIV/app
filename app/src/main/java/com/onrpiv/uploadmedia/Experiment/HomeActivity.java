@@ -11,6 +11,8 @@ import com.onrpiv.uploadmedia.Learn.LearnPIV;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.CameraCalibration;
 
+import org.opencv.android.OpenCVLoader;
+
 public class HomeActivity extends AppCompatActivity {
 
     private Button startExperimentButton;
@@ -51,6 +53,8 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         // TODO debug delete
-        double test = CameraCalibration.Calibrate();
+        OpenCVLoader.initDebug();
+        CameraCalibration test = new CameraCalibration();
+        test.calibrate("test");
     }
 }
