@@ -13,19 +13,11 @@ import org.opencv.core.Size;
 import org.opencv.core.TermCriteria;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.photo.CalibrateCRF;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
+import java.lang.Math;
 
-import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
-import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
-import static org.opencv.imgproc.Imgproc.cvtColor;
 
 //https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
 //https://docs.opencv.org/3.4/javadoc/org/opencv/calib3d/Calib3d.html
@@ -37,8 +29,9 @@ public final class CameraCalibration {
     private int patternCols = 20;
 
     // TODO print out pattern and measure centimeters
-    private int physicalX = 1;  // width distance between circles/dots on calibration plate in centimeters
-    private int physicalY = 1;  // height distance between circles/dots on calibration plate in centimeters
+    private double physicalX = 1d;  // width distance between circles/dots on calibration plate in centimeters
+    private double physicalY = 1d;  // height distance between circles/dots on calibration plate in centimeters
+    private double circleRadius = 1d;  // This might be easier to compute?
 
     //https://docs.opencv.org/master/d9/d0c/group__calib3d.html#ga687a1ab946686f0d85ae0363b5af1d7b
     private List<Mat> objPoints = new ArrayList<>();   // Calibration input of frames in 3D real-world space; Note: We are only using one camera so this will be frames with a zero z-dimension.
@@ -54,29 +47,16 @@ public final class CameraCalibration {
         OpenCVLoader.initDebug();
 
         Mat.eye(3, 3, CvType.CV_64FC1).copyTo(cameraMatrix);
+        // TODO find the camera fx, fy, cx, cy and input to cameraMatrix
         cameraMatrix.put(0, 0, 1.0);
 
         Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distCoeffs);
-    }
-
-    // TODO this won't be needed because we are providing the pattern to the user via printout
-    public CameraCalibration(int patternRows, int patternCols, int physicalX, int physicalY) {
-        OpenCVLoader.initDebug();
-
-        Mat.eye(3, 3, CvType.CV_64FC1).copyTo(cameraMatrix);
-        cameraMatrix.put(0, 0, 1.0);
-
-        Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distCoeffs);
-
-        this.patternRows = patternRows;
-        this.patternCols = patternCols;
-        this.physicalX = physicalX;
-        this.physicalY = physicalY;
     }
 
     /**
-     * Calibrate will look to find a circle grid pattern in an image, and return a centimeter/pixel ratio.
-     * @param calibrationImagePath: Path to image that has a circle grid pattern.
+     * Calibrate will look to find a circle grid pattern in an image, then find distortion coefficients, translation and rotation vectors,
+     * and finally stores them into member variables for further calculations and undistortions.
+     * @param calibrationImagePath: Path to image that might have a circle grid pattern.
      */
     public void calibrate(String calibrationImagePath) {
         OpenCVLoader.initDebug();
@@ -91,16 +71,12 @@ public final class CameraCalibration {
         }
     }
 
-    public void calibrate(List<String> calibrationImagePaths) {
-        // TODO
-//        Mat calibrationImg = Imgcodecs.imread(calibrationImagePath);
-//        cvtColor(calibrationImg, calibrationImg, COLOR_BGR2GRAY);
-//        boolean patternFound = findCirclesGrid(calibrationImg);
-//        if (patternFound) {
-//            calibrateCamera(calibrationImg);
-//        }
-    }
-
+    /**
+     * Undistort a single image using stored member variables found with calibrate() function.
+     * @param image: image to be undistorted.
+     * @return the undistorted image.
+     */
+    // TODO make frame1 frame2 member variables?
     public Mat undistortImage(Mat image) {
         cameraMatrix = Calib3d.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, image.size(), 1);
 
@@ -109,6 +85,11 @@ public final class CameraCalibration {
         return result;
     }
 
+    /**
+     * Undistort a List of Mat images using stored member variables found with calibrate() function.
+     * @param images: List of Mat images to be undistorted.
+     * @return List of undistorted Mat images.
+     */
     public List<Mat> undistortImages(List<Mat> images) {
         cameraMatrix = Calib3d.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, images.get(0).size(), 1);
 
@@ -147,9 +128,19 @@ public final class CameraCalibration {
         isCalibrated = Core.checkRange(cameraMatrix) && Core.checkRange(distCoeffs);
     }
 
-    private void calcPhysicalToPhysicalRatio() {
-        // TODO are we going to use average center width and center height?
+    //https://www.pyimagesearch.com/2016/04/04/measuring-distance-between-objects-in-an-image-with-opencv/
+    private double calcPhysicalToPhysicalRatio(int imageIndex, int y, int x) {
 
+        // TODO this needs work and testing once we get an image with a pattern printout
+
+        Mat image = tVecs.get(imageIndex);
+        double[] vec = image.get(y,x);
+        double ty = vec[2];
+        double tx = vec[1];
+
+
+
+        return Math.sqrt(tx*tx + ty*ty) * Math.sqrt(physicalX * physicalX + physicalY * physicalY);
     }
 
     public double getPixelToPhysicalRatio() {
