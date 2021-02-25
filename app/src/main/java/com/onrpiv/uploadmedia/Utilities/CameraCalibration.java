@@ -74,7 +74,6 @@ public final class CameraCalibration {
         this.physicalY = physicalY;
     }
 
-    // TODO are we going to use centimeters?
     /**
      * Calibrate will look to find a circle grid pattern in an image, and return a centimeter/pixel ratio.
      * @param calibrationImagePath: Path to image that has a circle grid pattern.
@@ -100,6 +99,26 @@ public final class CameraCalibration {
 //        if (patternFound) {
 //            calibrateCamera(calibrationImg);
 //        }
+    }
+
+    public Mat undistortImage(Mat image) {
+        cameraMatrix = Calib3d.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, image.size(), 1);
+
+        Mat result = new Mat();
+        Imgproc.undistort(image, result, cameraMatrix, distCoeffs);
+        return result;
+    }
+
+    public List<Mat> undistortImages(List<Mat> images) {
+        cameraMatrix = Calib3d.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, images.get(0).size(), 1);
+
+        for (int i = 0; i < images.size(); i++) {
+            Mat result = new Mat();
+            Imgproc.undistort(images.get(i), result, cameraMatrix, distCoeffs);
+            images.set(i, result);
+        }
+
+        return images;
     }
 
     private boolean findCirclesGrid(Mat calibrationImage) {
