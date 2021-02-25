@@ -35,6 +35,8 @@ public final class CameraCalibration {
 
     private int patternRows = 14;
     private int patternCols = 20;
+
+    // TODO print out pattern and measure centimeters
     private int physicalX = 1;  // width distance between circles/dots on calibration plate in centimeters
     private int physicalY = 1;  // height distance between circles/dots on calibration plate in centimeters
 
@@ -57,6 +59,7 @@ public final class CameraCalibration {
         Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distCoeffs);
     }
 
+    // TODO this won't be needed because we are providing the pattern to the user via printout
     public CameraCalibration(int patternRows, int patternCols, int physicalX, int physicalY) {
         OpenCVLoader.initDebug();
 
@@ -80,10 +83,9 @@ public final class CameraCalibration {
         OpenCVLoader.initDebug();
 
         if (calibrationImagePath.equals("test")) {
-            calibrationImagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES+"/piv_calib.png").getAbsolutePath();
+            calibrationImagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES+"/calibration.png").getAbsolutePath();
         }
         Mat calibrationImg = Imgcodecs.imread(calibrationImagePath);
-//        cvtColor(calibrationImg, calibrationImg, COLOR_BGR2GRAY);
         boolean patternFound = findCirclesGrid(calibrationImg);
         if (patternFound) {
             calibrateCamera(calibrationImg);
@@ -101,8 +103,15 @@ public final class CameraCalibration {
     }
 
     private boolean findCirclesGrid(Mat calibrationImage) {
-        Size patternSize = new Size(patternCols, patternRows);
-        return Calib3d.findCirclesGrid(calibrationImage, patternSize, circleCenters);
+        boolean found = false;
+        for (int rows = patternRows; rows > 1; rows--) {
+            for (int cols = patternCols; cols > 1; cols--) {
+                found = Calib3d.findCirclesGrid(calibrationImage, new Size(cols, rows), circleCenters);
+                if (found) { break; }
+            }
+            if (found) { break; }
+        }
+        return found;
     }
 
     private void calibrateCamera(Mat calibrationImage) {
@@ -111,6 +120,7 @@ public final class CameraCalibration {
 
         imgPoints.add(calibrationImage);
 
+        // Add zeros to our z dimension because we're only doing a 2D calibration
         objPoints.add(Mat.zeros(patternRows*patternCols, 1, CvType.CV_32FC3));
 
         // Calibrate
@@ -118,65 +128,25 @@ public final class CameraCalibration {
         isCalibrated = Core.checkRange(cameraMatrix) && Core.checkRange(distCoeffs);
     }
 
-    private static double getPhysicalToPixelRatio() {
+    private void calcPhysicalToPhysicalRatio() {
         // TODO are we going to use average center width and center height?
-        return 0d;
+
     }
 
-    private static void saveImage(Mat image1, String userName, String stepName, String imgFileSaveName)
-    {
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
-
-        if (!storageDirectory.exists()) storageDirectory.mkdir();
-        File pngFile = new File(storageDirectory, stepName+"_"+imgFileSaveName);
-        Mat resizeimage = new Mat();
-        Size scaleSize = new Size(2560,1440);
-        Imgproc.resize(image1, resizeimage, scaleSize, 0,0, INTER_CUBIC);
-        Imgcodecs.imwrite(pngFile.getAbsolutePath(), resizeimage);
+    public double getPixelToPhysicalRatio() {
+        return pixelToPhysicalRatio;
     }
 
-    private static void saveCalibValues(Mat mat, String userName, String stepName, String imgFileSaveName) {
-        double[] v;
-        ArrayList<String> toPrint = new ArrayList<>();
-
-        //clear out old file////////////////////////
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
-        // Then we create the storage directory if does not exists
-        if (!storageDirectory.exists()) storageDirectory.mkdir();
-        File txtFile = new File(storageDirectory, stepName + "_"+imgFileSaveName+".txt");
-        if(txtFile.exists() && txtFile.isFile()){
-            txtFile.delete();
-        }
-        ////////////////////////////////////////////////////////////
-
-        for (int i = 0; i < mat.rows(); i++) {
-            v = mat.get(i, 0);
-
-            toPrint.add(String.valueOf(i));
-            toPrint.add(String.valueOf(v[0]));
-            toPrint.add(String.valueOf(v[1]));
-
-            StringJoiner sj1 = new StringJoiner(",  ");
-            sj1.add(toPrint.get(0)).add(toPrint.get(1)).add(toPrint.get(2));
-            saveToFile(sj1.toString(), userName, stepName, imgFileSaveName);
-            toPrint.clear();
-        }
+    public Mat getCameraMatrix() {
+        return cameraMatrix;
     }
-
-    private static void saveToFile(String data, String userName, String stepName, String imgFileSaveName){
-        try {
-            File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
-            // Then we create the storage directory if does not exists
-            if (!storageDirectory.exists()) storageDirectory.mkdir();
-            File txtFile = new File(storageDirectory, stepName + "_"+imgFileSaveName+".txt");
-
-            FileOutputStream fileOutputStream = new FileOutputStream(txtFile,true);
-            fileOutputStream.write((data + System.getProperty("line.separator")).getBytes());
-            fileOutputStream.close();
-        }  catch(FileNotFoundException ex) {
-            Log.d("", ex.getMessage());
-        }  catch(IOException ex) {
-            Log.d("", ex.getMessage());
-        }
+    public Mat getDistortionCoeffs() {
+        return distCoeffs;
+    }
+    public List<Mat> getRotationVectors() {
+        return rVecs;
+    }
+    public List<Mat> getTranslationVectors() {
+        return tVecs;
     }
 }
