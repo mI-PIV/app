@@ -1,11 +1,17 @@
 package com.onrpiv.uploadmedia.Learn;
 
 import android.os.Build;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Layout;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.onrpiv.uploadmedia.R;
@@ -78,6 +84,50 @@ public class PIVBasics1 extends PIVBasicsLayout {
         String html5 = "<b>Figure 5.</b> Visual demonstration of cross correlation R matrix development. The R matrix (left) is the sum of overlapping pixels per r and s. <b>Top (r = -2, s = -2): </b>one pair of pixels have an overlapping particle, <b>Middle (r = 0, s = 0):</b> two pixels pairs have overlapping particles, <b>Bottom (r = 2, s = -2):</b> five pixel pairs have overlapping particles.<br><br>As shown in above figure, the pixels which overlap are shaded horizontally and vertically, indicating a product of one in the summation (due to the lack of greyscale values beyond zero and one). The most likely movement of the particles is down two pixels, and left two pixels, or Rmax = R(r = 2, s = -2) = 5.<br><br><b>References:</b><br><br>[1] B. L. Smith and D. R. Neal, “Particle Image Velocimetry,” Part. Image Velocim., p. 27, 2016.";
         t12.setText(Html.fromHtml(html5));
         t12.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
+
+
+
+        final RecyclerView recyclerView = (findViewById(R.id.recyclerView_image_wallpapers));
+        final FloatingActionButton floatingActionButton = findViewById(R.id.backToTopButton);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.smoothScrollToPosition(0);
+            }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+
+                if (dy > 0) { // scrolling down
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            floatingActionButton.setVisibility(View.GONE);
+                        }
+                    }, 2000); // delay of 2 seconds before hiding the fab
+
+                } else if (dy < 0) { // scrolling up
+
+                    floatingActionButton.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) { // No scrolling
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            floatingActionButton.setVisibility(View.GONE);
+                        }
+                    }, 2000); // delay of 2 seconds before hiding the fab
+                }
+
+            }
+        });
 
         TextView[] textViews = {t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12};
         for (int i = 0; i < textViews.length; i++) {

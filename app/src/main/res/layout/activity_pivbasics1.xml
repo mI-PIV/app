@@ -1,30 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Learn.PIVBasics1">
+    tools:context=".Learn.PIVBasics1"
+    android:fillViewport="true"
+    android:id="@+id/relative">
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nestedScroll"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="7.5dp"
         android:layout_marginBottom="60dp"
         android:scrollbarStyle="outsideInset"
+        android:scrollbars="vertical"
         tools:ignore="MissingConstraints">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:descendantFocusability="blocksDescendants">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView_image_wallpapers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorGray"
+                android:nestedScrollingEnabled="false"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/backToTopButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:background="#6D353232"
+                android:backgroundTint="#6D353232"
+                android:visibility="gone"
+                android:src="@drawable/ic_baseline_arrow_upward_24"
+                app:rippleColor="#6D353232" />
 
             <TextView
                 android:id="@+id/headingTextview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_centerHorizontal="true"
+                android:layout_marginEnd="7.5dp"
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
@@ -32,8 +57,8 @@
                 android:id="@+id/pivBasicsTextView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/headingTextview"
+                android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
@@ -48,8 +73,8 @@
                 android:id="@+id/pivBasicsTextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/pivBasicsImageView1"
+                android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
@@ -65,24 +90,24 @@
                 android:id="@+id/pivBasicsTextView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/pivBasicsImageView2"
+                android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/pivBasicsTextView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/pivBasicsTextView3"
+                android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/pivBasicsTextView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/pivBasicsTextView4"
+                android:layout_marginEnd="7.5dp"
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
@@ -90,8 +115,8 @@
                 android:id="@+id/pivBasicsTextView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/pivBasicsTextView5"
+                android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
@@ -106,16 +131,16 @@
                 android:id="@+id/pivBasicsTextView7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/pivBasicsImageView3"
+                android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/pivBasicsTextView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/pivBasicsTextView7"
+                android:layout_marginEnd="7.5dp"
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
@@ -123,8 +148,8 @@
                 android:id="@+id/pivBasicsTextView9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/pivBasicsTextView8"
+                android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
@@ -139,8 +164,8 @@
                 android:id="@+id/pivBasicsTextView10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/pivBasicsImageView4"
+                android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
@@ -155,8 +180,8 @@
                 android:id="@+id/pivBasicsTextView11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/pivBasicsImageView5"
+                android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
             <com.zolad.zoominimageview.ZoomInImageView
@@ -171,21 +196,20 @@
                 android:id="@+id/pivBasicsTextView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
                 android:layout_below="@id/pivBasicsImageView6"
+                android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
         </RelativeLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation2"
-        app:itemBackground="@android:color/white"
-        />
+        app:itemBackground="@android:color/white" />
 
-</RelativeLayout>
+</RelativeLayout >
