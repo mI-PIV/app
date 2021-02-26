@@ -12,6 +12,9 @@ import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.CameraCalibration;
 
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
+
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -54,7 +57,7 @@ public class HomeActivity extends AppCompatActivity {
 
         // TODO debug delete
         OpenCVLoader.initDebug();
-        CameraCalibration test = new CameraCalibration();
+        CameraCalibration test = new CameraCalibration(this);
         test.calibrate("test");
     }
 }
