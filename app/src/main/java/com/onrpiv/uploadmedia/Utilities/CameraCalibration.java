@@ -4,6 +4,7 @@ import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -19,8 +20,6 @@ import org.opencv.core.Size;
 import org.opencv.core.TermCriteria;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-
-import java.lang.Math;
 
 
 //https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
@@ -48,7 +47,9 @@ public final class CameraCalibration {
         OpenCVLoader.initDebug();
 
         Mat.eye(3, 3, CvType.CV_64FC1).copyTo(cameraMatrix);
-        setCameraMatrix(context);
+        Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distCoeffs);
+
+        getCameraProperties(context);
         objPoints = new MatOfPoint3f(createPatternImagePoints3D());
     }
 
@@ -78,19 +79,33 @@ public final class CameraCalibration {
         }
     }
 
-    private void setCameraMatrix(Context context) {
-        CameraCharacteristics.Key<float[]> intrinsicCameraKey = CameraCharacteristics.LENS_INTRINSIC_CALIBRATION;
+    private void getCameraProperties(Context context) {
         CameraManager cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
         float[] intrinsicValues;
+        float[] distortionValues;
 
         try {
             String cameraId = cameraManager.getCameraIdList()[0];
             CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
-            intrinsicValues = characteristics.get(intrinsicCameraKey);
+            intrinsicValues = characteristics.get(CameraCharacteristics.LENS_INTRINSIC_CALIBRATION);
+
+            // SDK < 27
+            if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+                distortionValues = characteristics.get(CameraCharacteristics.LENS_RADIAL_DISTORTION);
+            }
+            // SDK > 28
+            else {
+                distortionValues = characteristics.get(CameraCharacteristics.LENS_DISTORTION);
+            }
         }
         catch (CameraAccessException e) {
             e.printStackTrace();
             intrinsicValues = null;
+            distortionValues = null;
+        }
+
+        if (intrinsicValues == null && distortionValues == null) {
+            cameraMatrix.put(0, 0, 1.0);
         }
 
         if (intrinsicValues != null) {
@@ -106,9 +121,11 @@ public final class CameraCalibration {
             cameraMatrix.put(0, 1, s);
             cameraMatrix.put(2, 2, 1f);
         }
-        else
-        {
-            cameraMatrix.put(0, 0, 1.0);
+
+        if (distortionValues != null) {
+            for (int i = 0; i < 5; i++) {
+                distCoeffs.put(i, 0, distortionValues[i]);
+            }
         }
     }
 
