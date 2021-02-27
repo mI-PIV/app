@@ -175,8 +175,8 @@
                 android:layout_below="@id/pivBasicsImageView6"
                 tools:ignore="MissingConstraints" />
 
-
         </RelativeLayout>
+
     </ScrollView>
 
     <android.support.design.widget.BottomNavigationView

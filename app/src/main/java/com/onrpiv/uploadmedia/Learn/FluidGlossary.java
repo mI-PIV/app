@@ -2,6 +2,7 @@ package com.onrpiv.uploadmedia.Learn;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,12 +32,13 @@ public class FluidGlossary extends Activity {
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
                 R.layout.activity_listview, mobileArray);
 
-        ListView listView = (ListView) findViewById(R.id.mobile_list);
+        final ListView listView = (ListView) findViewById(R.id.mobile_list);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
                 if (position == 0) {
                     Intent myIntent = new Intent(view.getContext(), Pos1_Activity.class);
                     startActivityForResult(myIntent,0);
@@ -92,6 +94,12 @@ public class FluidGlossary extends Activity {
                 if (position == 13) {
                     Intent myIntent = new Intent(view.getContext(), Pos14_Activity.class);
                     startActivityForResult(myIntent,13);
+                }
+                // Commenting this out because there's no content in this section yet.
+                if (position == 14) {
+//                    Intent myIntent = new Intent(view.getContext(), Pos15_Activity.class);
+//                    startActivityForResult(myIntent,14);
+                    //view.setBackgroundColor(Color.parseColor("#bebebe"));
                 }
             }
         });

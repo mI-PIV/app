@@ -42,6 +42,7 @@
         <activity android:name=".Learn.PIVBasics2"/>
         <activity android:name=".Learn.PIVBasics3"/>
         <activity android:name=".Learn.PIVBasics4"/>
+        <activity android:name=".Learn.PIVBasics5"/>
         <activity android:name=".Learn.Imaging1"/>
         <activity android:name=".Learn.Imaging2"/>
         <activity android:name=".Learn.Imaging3"/>
@@ -68,6 +69,7 @@
         <activity android:name=".Learn.Pos12_Activity"/>
         <activity android:name=".Learn.Pos13_Activity"/>
         <activity android:name=".Learn.Pos14_Activity"/>
+        <activity android:name=".Learn.Pos15_Activity"/>
         <activity android:name=".Learn.TryExperiments"/>
         <activity android:name=".Learn.LearnFluids"/>
         <activity android:name=".Learn.LearnPIV"/>
