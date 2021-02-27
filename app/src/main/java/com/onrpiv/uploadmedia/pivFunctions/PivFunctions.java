@@ -302,6 +302,44 @@ public class PivFunctions {
         }
     }
 
+    public void saveVectorCentimeters(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, double pixelToCM, String userName, String stepName, String imgFileSaveName) {
+        double ux, vy, q, x, y;
+        ArrayList<String> toPrint = new ArrayList<>();
+
+        //clear out old file////////////////////////
+        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
+        // Then we create the storage directory if does not exists
+        if (!storageDirectory.exists()) storageDirectory.mkdir();
+        File txtFile = new File(storageDirectory, stepName + "_"+imgFileSaveName+".txt");
+        if(txtFile.exists() && txtFile.isFile()){
+            txtFile.delete();
+        }
+        ////////////////////////////////////////////////////////////
+
+        for (int i = 0; i < interrCenters.get("y").length; i++) {
+            for (int j = 0; j < interrCenters.get("x").length; j++) {
+                x = interrCenters.get("x")[j];
+                y = interrCenters.get("y")[i];
+                ux = (pivCorrelation.get("u")[i][j]*dt) * pixelToCM;
+                vy = (pivCorrelation.get("v")[i][j]*dt) * pixelToCM;
+                q = pivCorrelation.get("sig2Noise")[i][j];
+
+                toPrint.add(String.valueOf(x));
+                toPrint.add(String.valueOf(y));
+                toPrint.add(String.valueOf(ux));
+                toPrint.add(String.valueOf(vy));
+                toPrint.add(String.valueOf(q));
+
+                StringJoiner sj1 = new StringJoiner(",  ");
+                sj1.add(toPrint.get(0)).add(toPrint.get(1)).add(toPrint.get(2)).add(toPrint.get(3)).add(toPrint.get(4));
+                saveToFile(sj1.toString(), userName, stepName, imgFileSaveName);
+                toPrint.clear();
+//                Log.d("TEXT: ", "y: "+y+" x: "+x+" ux: "+ux+" vy: "+vy+" q: "+q);
+//                Log.d("JOIN: ", "string join: "+ sj1.toString());
+            }
+        }
+    }
+
     public void saveVortMap(double[][] vortMap, String userName, String stepName, String imgFileSaveName) {
         double v;
         ArrayList<String> toPrint = new ArrayList<>();
@@ -396,7 +434,7 @@ public class PivFunctions {
         saveImage(image1, userName, stepName, imgFileSaveName);
     }
 
-    private void saveImage(Mat image1, String userName, String stepName, String imgFileSaveName)
+    public void saveImage(Mat image1, String userName, String stepName, String imgFileSaveName)
     {
         File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
 
