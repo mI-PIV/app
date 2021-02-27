@@ -6,7 +6,6 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.calib3d.Calib3d;
@@ -16,6 +15,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfPoint3f;
+import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.core.TermCriteria;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -26,13 +26,13 @@ import org.opencv.imgproc.Imgproc;
 //https://docs.opencv.org/3.4/javadoc/org/opencv/calib3d/Calib3d.html
 public final class CameraCalibration {
     public boolean isCalibrated = false;
-    public double pixelToPhysicalRatio = 1.0d;
+    public double pixelsPerCentimeter = 1.0d;
 
     private final static int patternRows = 21;
     private final static int patternCols = 27;
 
-    private final static double physicalX = 1d;  // width distance between circles/dots on calibration plate in centimeters
-    private final static double physicalY = 1d;  // height distance between circles/dots on calibration plate in centimeters
+    private final static double physicalX = 1d;  // width distance between circles/dots on calibration pattern in centimeters
+    private final static double physicalY = 1d;  // height distance between circles/dots on calibration pattern in centimeters
 
     //https://docs.opencv.org/master/d9/d0c/group__calib3d.html#ga687a1ab946686f0d85ae0363b5af1d7b
     private MatOfPoint3f objPoints;                       // Calibration input of frames in 3D real-world space; Note: We are only using one camera so this will be frames with a zero z-dimension.
@@ -71,12 +71,29 @@ public final class CameraCalibration {
 
         // TODO debug delete
         Core.rotate(calibrationImg, calibrationImg, Core.ROTATE_90_COUNTERCLOCKWISE);
-        Imgproc.resize(calibrationImg, calibrationImg, new Size(2560, 1440));
+        Imgproc.resize(calibrationImg, calibrationImg, new Size(800, 618));
 
         boolean patternFound = findCirclesGrid(calibrationImg);
         if (patternFound) {
             calibrateCamera(calibrationImg);
+            calibrationImg = undistortImage(calibrationImg);
+            // TODO do we want to overwrite old image?
+
+            if (isCalibrated) {
+                calcPixelsPerCentimeter();
+            }
         }
+    }
+
+    /**
+     * Undistort a single image using stored member variables found with calibrate() function.
+     * @param image: image to be undistorted.
+     */
+    public Mat undistortImage(Mat image) {
+        cameraMatrix = Calib3d.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, image.size(), 1);
+        Mat result = new Mat();
+        Imgproc.undistort(image, result, cameraMatrix, distCoeffs);
+        return result;
     }
 
     private void getCameraProperties(Context context) {
@@ -148,43 +165,31 @@ public final class CameraCalibration {
         // Calibrate
         Calib3d.solvePnP(objPoints, circleCenters, cameraMatrix, distCoeffs, rVecs, tVecs);
 
-        isCalibrated = Core.checkRange(cameraMatrix) && Core.checkRange(distCoeffs);
-
-        Log.i("kp", "Camera matrix: " + cameraMatrix.dump());
-        Log.i("kp", "PP tvec: " + tVecs.dump());
-        Log.i("kp", "PP rvec: " + rVecs.dump());
-        Log.i("kp", "PP Distortion coefficients: " + distCoeffs.dump());
-
-        Mat R = new Mat();
-        Calib3d.Rodrigues(tVecs, R);
-        Log.i("kp", "PP R: " + R.dump());
-
-
-        // TODO might not want to calculate physical measurements here
-//        double test = calcPhysicalToPixelRatio(0, 0);
+        isCalibrated = Core.checkRange(cameraMatrix)
+                && Core.checkRange(distCoeffs)
+                && Core.checkRange(rVecs)
+                && Core.checkRange(tVecs);
     }
 
     //https://www.pyimagesearch.com/2016/04/04/measuring-distance-between-objects-in-an-image-with-opencv/
-//    private double calcPhysicalToPixelRatio(int y, int x) {
-//
-//        // TODO this needs work and testing once we get an image with a pattern printout
-//
-//        List<double[]> look = new ArrayList<>();
-//        for (int i = 0; i < tVecs.size(); i++) {
-//            Mat image = tVecs.get(i);
-//            for (int rows = 0; rows < image.rows(); rows++) {
-//                for (int cols = 0; cols < image.cols(); cols++) {
-//                    look.add(image.get(rows, cols));
-//                }
-//            }
-//        }
-////        double[] vec = image.get(y,x);
-////        double ty = vec[2];
-////        double tx = vec[1];
-//
-////        return Math.sqrt(tx*tx + ty*ty) * Math.sqrt(physicalX * physicalX + physicalY * physicalY);
-//        return 0d;
-//    }
+    private void calcPixelsPerCentimeter() {
+        double sumDistance = 0d;
+        int count = 0;
+        for (int i = 1; i < patternCols*patternRows; i++) {
+            // Make sure our two points are in the same row
+            if (i/patternCols != (i-1)/patternCols) { continue; }
+
+            Point point0 = new Point(circleCenters.get(i-1, 0));
+            Point point1 = new Point(circleCenters.get(i, 0));
+
+            sumDistance += euclidean(point0, point1);
+            count++;
+        }
+
+        // since our circle centers will be 1 cm away from each other (on an 8.5 x 11 inch paper),
+        // then the average distance between the circle centers will be our pixels/cm ratio.
+        pixelsPerCentimeter = sumDistance / count;
+    }
 
     private Mat createPatternImagePoints3D() {
         Mat result = new Mat(patternRows*patternCols, 1, CvType.CV_32FC3);
@@ -205,10 +210,13 @@ public final class CameraCalibration {
         return result;
     }
 
-    public double getPixelToPhysicalRatio() {
-        return pixelToPhysicalRatio;
+    private static double euclidean(Point a, Point b) {
+        return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
     }
 
+    public double getPixelsPerCentimeter() {
+        return pixelsPerCentimeter;
+    }
     public Mat getCameraMatrix() {
         return cameraMatrix;
     }
