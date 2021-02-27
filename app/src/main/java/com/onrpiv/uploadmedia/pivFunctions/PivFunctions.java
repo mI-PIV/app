@@ -22,14 +22,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
 import static org.opencv.core.Core.mean;
 import static org.opencv.core.Core.subtract;
 import static org.opencv.core.CvType.CV_8UC1;
-import static org.opencv.imgproc.Imgproc.COLORMAP_HOT;
+import static org.opencv.core.CvType.CV_8UC4;
 import static org.opencv.imgproc.Imgproc.COLORMAP_JET;
+import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.COLOR_RGB2GRAY;
 import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
@@ -45,8 +47,8 @@ public class PivFunctions {
     private int overlap;
     private double dt;
     private String sig2noise_method;
-    private String frame1;
-    private String frame2;
+    private final Mat frame1;
+    private final Mat frame2;
 
     public PivFunctions(String imagePath1,
                         String imagePath2,
@@ -55,8 +57,8 @@ public class PivFunctions {
                         double mDt,
                         String mSig2noise_method){
 
-        frame1 = imagePath1;
-        frame2 = imagePath2;
+        frame1 = Imgcodecs.imread(imagePath1);
+        frame2 = Imgcodecs.imread(imagePath2);
         windowSize = mWindow_size;
         overlap = mOverlap;
         dt = mDt;
@@ -116,8 +118,8 @@ public class PivFunctions {
 
         int search_area_size = windowSize;
 
-        Mat image1 = Imgcodecs.imread(frame1);
-        Mat image2 = Imgcodecs.imread(frame2);
+        Mat image1 = frame1.clone();
+        Mat image2 = frame2.clone();
 
         cvtColor(image1, image1, COLOR_BGR2GRAY);
         cvtColor(image2, image2, COLOR_BGR2GRAY);
@@ -225,7 +227,7 @@ public class PivFunctions {
     }
 
     public Map<String, double[]> getCoordinates(){
-        Mat image1 = Imgcodecs.imread(frame1);
+        Mat image1 = frame1.clone();
         cvtColor(image1, image1, COLOR_RGB2GRAY);
         Map<String, Integer> fieldShape = getFieldShape(image1.cols(), image1.rows(), windowSize, overlap);
 
@@ -264,7 +266,7 @@ public class PivFunctions {
         }
     }
 
-    public void saveVector(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName) {
+    public void saveVectors(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName) {
         double ux, vy, q, x, y;
         ArrayList<String> toPrint = new ArrayList<>();
 
@@ -296,8 +298,6 @@ public class PivFunctions {
                 sj1.add(toPrint.get(0)).add(toPrint.get(1)).add(toPrint.get(2)).add(toPrint.get(3)).add(toPrint.get(4));
                 saveToFile(sj1.toString(), userName, stepName, imgFileSaveName);
                 toPrint.clear();
-//                Log.d("TEXT: ", "y: "+y+" x: "+x+" ux: "+ux+" vy: "+vy+" q: "+q);
-//                Log.d("JOIN: ", "string join: "+ sj1.toString());
             }
         }
     }
@@ -340,7 +340,7 @@ public class PivFunctions {
         }
     }
 
-    public void saveVortMap(double[][] vortMap, String userName, String stepName, String imgFileSaveName) {
+    public void saveVortMapFile(double[][] vortMap, String userName, String stepName, String imgFileSaveName) {
         double v;
         ArrayList<String> toPrint = new ArrayList<>();
 
@@ -370,8 +370,12 @@ public class PivFunctions {
         }
     }
 
-    public void drawArrowsOnImage(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, ArrowDrawOptions arrowOptions){
-        Mat image1 = Imgcodecs.imread(frame1);
+    public void saveBaseImage(String userName, String stepName, String imgFileName) {
+        saveImage(frame1, userName, stepName, imgFileName);
+    }
+
+    public void createVectorField(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, ArrowDrawOptions arrowOptions){
+        Mat transparentBackground = new Mat(frame1.rows(), frame1.cols(), CV_8UC4, new Scalar(255, 255, 255, 0));
 
         int lineType = arrowOptions.lineType;
         int thickness = arrowOptions.thickness;
@@ -427,11 +431,11 @@ public class PivFunctions {
                     endPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
                 }
 
-                Imgproc.arrowedLine(image1, startPoint, endPoint, new Scalar(66,66, 245), thickness, lineType, 0, tipLength);
+                Imgproc.arrowedLine(transparentBackground, startPoint, endPoint, new Scalar(66, 66, 245, 255), thickness, lineType, 0, tipLength);
             }
         }
 
-        saveImage(image1, userName, stepName, imgFileSaveName);
+        saveImage(transparentBackground, userName, stepName, imgFileSaveName);
     }
 
     public void saveImage(Mat image1, String userName, String stepName, String imgFileSaveName)
@@ -465,12 +469,22 @@ public class PivFunctions {
             }
         }
 
+        // Determine which values are transparent
+        List<int[]> transparentCoords = new ArrayList<>();
+        int threshMax = 135;
+        int threshMin = 120;
+
         // Normalize mapValues to 0-255
         for (int y = 0; y < nr; y++) {
             for (int x = 0; x < nc; x++) {
                 double val = mapValues[y][x];
                 byte byteVal = (byte)(255d * ((val - min)/ (max - min)));
                 int newVal = byteVal & 0xFF;
+
+                if (newVal > threshMin && newVal < threshMax) {
+                    transparentCoords.add(new int[] {y, x});
+                }
+
                 mapValuesMat.put(y, x, newVal);
             }
         }
@@ -478,6 +492,15 @@ public class PivFunctions {
         // Create colormap
         Mat colorMapImage = new Mat(mapValuesMat.rows(), mapValuesMat.cols(), mapValuesMat.type());
         Imgproc.applyColorMap(mapValuesMat, colorMapImage, COLORMAP_JET);
+
+        // Convert to four channels (transparent channel)
+        cvtColor(colorMapImage, colorMapImage, COLOR_BGR2BGRA);
+
+        // Set our thresholded coordinates to transparent (255, 255, 255, 0)
+        for (int t = 0; t < transparentCoords.size(); t++) {
+            colorMapImage.put(transparentCoords.get(t)[0], transparentCoords.get(t)[1], new byte[] {(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0});
+        }
+
         saveImage(colorMapImage, userName, stepName, imageFileSaveName);
     }
 
@@ -505,8 +528,7 @@ public class PivFunctions {
     }
 
     public Map<String, double[][]> vectorPostProcessing(Map<String, double[][]> pivCorrelation, double mMax, double qMin, double E){
-        Mat image1 = Imgcodecs.imread(frame1);
-        Map<String, Integer> fieldShape = getFieldShape(image1.cols(), image1.rows(), windowSize, overlap);
+        Map<String, Integer> fieldShape = getFieldShape(frame1.cols(), frame1.rows(), windowSize, overlap);
 
         double[][] dr1_p = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
         double[][] dc1_p = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
@@ -569,8 +591,8 @@ public class PivFunctions {
     }
 
     public Map<String, double[][]> calculateMultipass(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters){
-        Mat image1 = Imgcodecs.imread(frame1);
-        Mat image2 = Imgcodecs.imread(frame2);
+        Mat image1 = frame1.clone();
+        Mat image2 = frame2.clone();
 
         cvtColor(image1, image1, COLOR_BGR2GRAY);
         cvtColor(image2, image2, COLOR_BGR2GRAY);
@@ -679,8 +701,8 @@ public class PivFunctions {
     }
 
     public Map<String, double[][]> replaceMissingVectors(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters) {
-        Mat image1 = Imgcodecs.imread(frame1);
-        Mat image2 = Imgcodecs.imread(frame2);
+        Mat image1 = frame1.clone();
+        Mat image2 = frame2.clone();
 
         cvtColor(image1, image1, COLOR_BGR2GRAY);
         cvtColor(image2, image2, COLOR_BGR2GRAY);
