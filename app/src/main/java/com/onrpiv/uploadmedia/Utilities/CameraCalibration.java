@@ -25,9 +25,6 @@ import org.opencv.imgproc.Imgproc;
 //https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
 //https://docs.opencv.org/3.4/javadoc/org/opencv/calib3d/Calib3d.html
 public final class CameraCalibration {
-    public boolean isCalibrated = false;
-    public double pixelsPerCentimeter = 1.0d;
-
     private final static int patternRows = 21;
     private final static int patternCols = 27;
 
@@ -41,6 +38,9 @@ public final class CameraCalibration {
     private Mat rVecs = new Mat();                        // Calibration output of rotation vectors
     private Mat tVecs = new Mat();                        // Calibration output of translation vectors
     private MatOfPoint2f circleCenters = new MatOfPoint2f();
+
+    private Mat frame1;
+    private Mat frame2;
 
 
     public CameraCalibration(Context context) {
@@ -56,44 +56,44 @@ public final class CameraCalibration {
     /**
      * Calibrate will look to find a circle grid pattern in an image, then find distortion coefficients, translation and rotation vectors,
      * and finally stores them into member variables for further calculations and undistortions.
-     * @param calibrationImagePath: Path to image that might have a circle grid pattern.
+     * @param calibrationImagePath1: Path to first image that might have a circle grid pattern.
+     * @param calibrationImagePath2: Path to second image that might have a circle grid pattern.
+     * @return pixel to centimeter ratio for both frames
      */
-    public void calibrate(String calibrationImagePath) {
+    public double calibrate(String calibrationImagePath1, String calibrationImagePath2) {
         OpenCVLoader.initDebug();
 
-        // TODO debug delete
-        if (calibrationImagePath.equals("test")) {
-            calibrationImagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES+"/calibrationPattern.png").getAbsolutePath();
-        }
+        frame1 = Imgcodecs.imread(calibrationImagePath1);
+        frame2 = Imgcodecs.imread(calibrationImagePath2);
+        Imgproc.cvtColor(frame1, frame1, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.cvtColor(frame2, frame2, Imgproc.COLOR_BGR2GRAY);
 
-        Mat calibrationImg = Imgcodecs.imread(calibrationImagePath);
-        Imgproc.cvtColor(calibrationImg, calibrationImg, Imgproc.COLOR_BGR2GRAY);
+        double pixelCMRatio1 = calibratePipeline(frame1);
+        double pixelCMRatio2 = calibratePipeline(frame2);
 
-        // TODO debug delete
-        Core.rotate(calibrationImg, calibrationImg, Core.ROTATE_90_COUNTERCLOCKWISE);
-        Imgproc.resize(calibrationImg, calibrationImg, new Size(800, 618));
-
-        boolean patternFound = findCirclesGrid(calibrationImg);
-        if (patternFound) {
-            calibrateCamera(calibrationImg);
-            calibrationImg = undistortImage(calibrationImg);
-            // TODO do we want to overwrite old image?
-
-            if (isCalibrated) {
-                calcPixelsPerCentimeter();
-            }
-        }
+        return (pixelCMRatio1 + pixelCMRatio2) / 2;
     }
 
     /**
      * Undistort a single image using stored member variables found with calibrate() function.
-     * @param image: image to be undistorted.
      */
-    public Mat undistortImage(Mat image) {
-        cameraMatrix = Calib3d.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, image.size(), 1);
+    public Mat undistortImage() {
+        cameraMatrix = Calib3d.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, frame1.size(), 1);
         Mat result = new Mat();
-        Imgproc.undistort(image, result, cameraMatrix, distCoeffs);
+        Imgproc.undistort(frame1, result, cameraMatrix, distCoeffs);
         return result;
+    }
+
+    private double calibratePipeline(Mat img) {
+        double pixelsPerCentimeter = 1d;
+        boolean patternFound = findCirclesGrid(img);
+        if (patternFound) {
+            calibrateCamera(img);
+            if (isCalibrated()) {
+                pixelsPerCentimeter = calcPixelsPerCentimeter();
+            }
+        }
+        return pixelsPerCentimeter;
     }
 
     private void getCameraProperties(Context context) {
@@ -148,8 +148,8 @@ public final class CameraCalibration {
 
     private boolean findCirclesGrid(Mat calibrationImage) {
         boolean found = false;
-        for (int rows = patternRows; rows > 1; rows--) {
-            for (int cols = patternCols; cols > 1; cols--) {
+        for (int rows = (int) (patternRows * 0.75); rows > 1; rows--) {
+            for (int cols = (int) (patternCols * 0.75); cols > 1; cols--) {
                 found = Calib3d.findCirclesGrid(calibrationImage, new Size(cols, rows), circleCenters);
                 if (found) { break; }
             }
@@ -160,19 +160,14 @@ public final class CameraCalibration {
 
     private void calibrateCamera(Mat calibrationImage) {
         // Optimize circle center positions; this might not be needed
-        Imgproc.cornerSubPix(calibrationImage, circleCenters, new Size(5, 5), new Size(-1, -1), new TermCriteria(new double[] {TermCriteria.MAX_ITER, 30}));
+//        Imgproc.cornerSubPix(calibrationImage, circleCenters, new Size(5, 5), new Size(-1, -1), new TermCriteria(new double[] {TermCriteria.MAX_ITER, 30}));
 
         // Calibrate
         Calib3d.solvePnP(objPoints, circleCenters, cameraMatrix, distCoeffs, rVecs, tVecs);
-
-        isCalibrated = Core.checkRange(cameraMatrix)
-                && Core.checkRange(distCoeffs)
-                && Core.checkRange(rVecs)
-                && Core.checkRange(tVecs);
     }
 
     //https://www.pyimagesearch.com/2016/04/04/measuring-distance-between-objects-in-an-image-with-opencv/
-    private void calcPixelsPerCentimeter() {
+    private double calcPixelsPerCentimeter() {
         double sumDistance = 0d;
         int count = 0;
         for (int i = 1; i < patternCols*patternRows; i++) {
@@ -188,7 +183,7 @@ public final class CameraCalibration {
 
         // since our circle centers will be 1 cm away from each other (on an 8.5 x 11 inch paper),
         // then the average distance between the circle centers will be our pixels/cm ratio.
-        pixelsPerCentimeter = sumDistance / count;
+        return sumDistance / count;
     }
 
     private Mat createPatternImagePoints3D() {
@@ -214,8 +209,11 @@ public final class CameraCalibration {
         return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
     }
 
-    public double getPixelsPerCentimeter() {
-        return pixelsPerCentimeter;
+    public boolean isCalibrated() {
+        return Core.checkRange(cameraMatrix)
+                && Core.checkRange(distCoeffs)
+                && Core.checkRange(rVecs)
+                && Core.checkRange(tVecs);
     }
     public Mat getCameraMatrix() {
         return cameraMatrix;

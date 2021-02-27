@@ -44,9 +44,11 @@ import com.jsibbold.zoomage.ZoomageView;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.BoolIntStructure;
+import com.onrpiv.uploadmedia.Utilities.CameraCalibration;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
 
 import java.io.File;
 import java.io.IOException;
@@ -148,12 +150,15 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     private CheckBox checkBox2;
     private boolean checked=false;
     private RadioButton radioButton;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_layout);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        context = this;
 
 //        imageView = (ImageView) findViewById(R.id.preview);
         imageZoom = (ZoomageView)findViewById(R.id.myZoomageView);
@@ -857,6 +862,13 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                         ArrowDrawOptions arrowDrawOptions = new ArrowDrawOptions();
                         arrowDrawOptions.scale = 10d;
 
+                        String calibrationStep = "Calibration";
+                        CameraCalibration calibration = new CameraCalibration(context);
+                        double pixelToCmRatio = calibration.calibrate(postPathMultiple.get(0), postPathMultiple.get(1));
+                        if (calibration.isCalibrated()) {
+                            piv.saveImage(calibration.undistortImage(), userName, calibrationStep, imgFileSaveName);
+                            piv.saveVectorCentimeters(pivCorrelation, interrCenters, pixelToCmRatio, userName, "CENTIMETERS", imgFileSaveName);
+                        }
 
                         String vortStep = "Vorticity";
                         double[][] vortMap = piv.getVorticityMap(pivCorrelation, (int)(interrCenters.get("x")[1] - interrCenters.get("x")[0]));

@@ -55,11 +55,5 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(learnPIV);
             }
         });
-
-        // TODO debug delete
-        OpenCVLoader.initDebug();
-        CameraCalibration test = new CameraCalibration(this);
-        test.calibrate("test");
-        Log.d("kp", "PIXS PER CM: " + test.pixelsPerCentimeter);
     }
 }
