@@ -24,7 +24,7 @@ jobs:
         run: bash ./gradlew assembleDebug --stacktrace
       # rename apk file
       - name: Rename APK File
-        run: bash mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/mIPIV_${{ env.version }}.apk
+        run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/mIPIV_${{ env.version }}.apk
       - name: Upload APK
         uses: actions/upload-artifact@v1
         with:
@@ -58,6 +58,6 @@ jobs:
           asset_content_type: application/zip
       # increase version number
       - name: Increment Version
-        run: bash sed -ri 's/(.*)([0-9])(\.)([0-9])([0-9])/echo "\1\2\3\4((\5+1))"/ge' ./version
+        run: sed -ri 's/(.*)([0-9])(\.)([0-9])([0-9])/echo "\1\2\3\4((\5+1))"/ge' ./version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
