@@ -51,16 +51,16 @@ jobs:
     needs: apk
     runs-on: ubuntu-latest
     steps:
+      # get version number
+      - name: Get Version
+        id: version
+        run: echo "version=$(echo | cat ./version)" >> $GITHUB_ENV
       - name: Download APK from build
         uses: actions/download-artifact@v1
         with:
           name: mIPIV_${{ env.version }}.apk
       - name: Checkout
         uses: actions/checkout@v1
-      # get version number
-      - name: Get Version
-        id: version
-        run: echo "version=$(echo | cat ./version)" >> $GITHUB_ENV
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
