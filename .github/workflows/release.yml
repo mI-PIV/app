@@ -67,7 +67,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          release_name: Release ${{ env.version }}
+          release_name: ${{ env.version }}
           tag_name: ${{ env.version }}
           prerelease: true
       - name: Upload Release APK
