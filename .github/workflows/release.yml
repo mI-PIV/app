@@ -55,6 +55,8 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: apk
+      - name: Checkout
+        uses: actions/checkout@v1
       # get version number
       - name: Get Version
         id: version
