@@ -32,13 +32,11 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      # get version number
       - name: Get Version
         id: version
         run: echo "version=$(echo | cat ./version)" >> $GITHUB_ENV
       - name: Build APK
         run: bash ./gradlew assembleDebug --stacktrace
-      # rename apk file
       - name: Rename APK File
         run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/mIPIV_${{ env.version }}.apk
       - name: Upload APK
@@ -53,7 +51,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      # get version number
       - name: Get Version
         id: version
         run: echo "version=$(echo | cat ./version)" >> $GITHUB_ENV
@@ -61,6 +58,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: mIPIV_${{ env.version }}.apk
+          path: ./apk/
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -77,10 +75,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /home/runner/work/app/app/mIPIV_${{ env.version }}.apk
+          asset_path: apk/
           asset_name: mIPIV_${{ env.version }}.apk
           asset_content_type: application/zip
-      # increase version number
       - name: Increment Version
         run: sudo sed -ri 's/(.*)([0-9])(\.)([0-9])([0-9])/echo "\1\2\3\4((\5+1))"/ge' ./version
         env:
