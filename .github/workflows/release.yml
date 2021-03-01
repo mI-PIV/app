@@ -44,7 +44,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v1
         with:
-          name: apk
+          name: mIPIV_${{ env.version }}.apk
           path: app/build/outputs/apk/debug/mIPIV_${{ env.version }}.apk
   release:
     name: Release APK
@@ -54,7 +54,7 @@ jobs:
       - name: Download APK from build
         uses: actions/download-artifact@v1
         with:
-          name: apk
+          name: mIPIV_${{ env.version }}.apk
       - name: Checkout
         uses: actions/checkout@v1
       # get version number
