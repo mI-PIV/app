@@ -82,6 +82,6 @@ jobs:
           asset_content_type: application/zip
       # increase version number
       - name: Increment Version
-        run: sed -ri 's/(.*)([0-9])(\.)([0-9])([0-9])/echo "\1\2\3\4((\5+1))"/ge' ./version
+        run: sudo sed -ri 's/(.*)([0-9])(\.)([0-9])([0-9])/echo "\1\2\3\4((\5+1))"/ge' ./version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
