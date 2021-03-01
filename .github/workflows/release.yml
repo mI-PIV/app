@@ -58,7 +58,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: mIPIV_${{ env.version }}.apk
-          path: ./apk/
+          path: ./
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -75,7 +75,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: apk/
+          asset_path: mIPIV_${{ env.version }}.apk
           asset_name: mIPIV_${{ env.version }}.apk
           asset_content_type: application/zip
       - name: Increment Version
