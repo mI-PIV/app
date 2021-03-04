@@ -3,7 +3,8 @@ package org.opencv.android;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import android.annotation.TargetApi;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -13,13 +14,16 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 
-@TargetApi(21)
+import androidx.annotation.RequiresApi;
+
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class Camera2Renderer extends CameraGLRendererBase {
 
     protected final String LOGTAG = "Camera2Renderer";
@@ -27,6 +31,7 @@ public class Camera2Renderer extends CameraGLRendererBase {
     private CameraCaptureSession mCaptureSession;
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private String mCameraID;
+    @SuppressLint("NewApi")
     private Size mPreviewSize = new Size(-1, -1);
 
     private HandlerThread mBackgroundThread;

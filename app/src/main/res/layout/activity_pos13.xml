@@ -37,7 +37,7 @@
                 android:layout_below="@+id/pos13TextView0"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pos13ImageView0"
                 android:layout_width="match_parent"
                 android:layout_height="90dp"

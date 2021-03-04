@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.jsibbold.zoomage.ZoomageView;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.onrpiv.uploadmedia.R;
 
 import java.io.File;
@@ -26,9 +26,9 @@ import java.util.HashMap;
 
 public class ViewResultsActivity extends AppCompatActivity {
     private Button firstPass, secondPass, replaceAfterFirstPass, replaceAfterSecondPass;
-    private ZoomageView baseImage;
-    private ZoomageView vectorFieldImage;
-    private ZoomageView vorticityImage;
+    private PhotoView baseImage;
+    private PhotoView vectorFieldImage;
+    private PhotoView vorticityImage;
     private String imgFileToDisplay;
     private File storageDirectory;
     private double nMaxUpper;
@@ -48,10 +48,9 @@ public class ViewResultsActivity extends AppCompatActivity {
             setContentView(R.layout.display_result_layout);
         }
 
-        baseImage = (ZoomageView)findViewById(R.id.baseZoomageView);
-//        Utils.matToBitmap();
-        vectorFieldImage = (ZoomageView)findViewById(R.id.vectorsZoomageView);
-        vorticityImage = (ZoomageView)findViewById(R.id.vortZoomageView);
+        baseImage = findViewById(R.id.baseZoomageView);
+        vectorFieldImage = findViewById(R.id.vectorsZoomageView);
+        vorticityImage = findViewById(R.id.vortZoomageView);
 
         firstPass = (Button) findViewById(R.id.firstPass);
         secondPass = (Button) findViewById(R.id.secondPass);
@@ -158,7 +157,7 @@ public class ViewResultsActivity extends AppCompatActivity {
         displayImage("Replaced2", vectorFieldImage);
     }
 
-    private void displayImage(String step, ZoomageView imageContainer) {
+    private void displayImage(String step, PhotoView imageContainer) {
         if (bmpHash.containsKey(step)) {
             imageContainer.setImageBitmap(bmpHash.get(step));
         } else {

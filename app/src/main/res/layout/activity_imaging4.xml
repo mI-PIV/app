@@ -47,7 +47,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging4ImageView0"
                 android:layout_width="match_parent"
                 android:layout_height="274dp"
@@ -65,7 +65,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging4ImageView1"
                 android:layout_width="match_parent"
                 android:layout_height="275dp"
@@ -83,7 +83,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging4ImageView2"
                 android:layout_width="match_parent"
                 android:layout_height="276dp"
@@ -101,7 +101,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging4ImageView3"
                 android:layout_width="match_parent"
                 android:layout_height="274dp"
@@ -119,7 +119,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging4ImageView4"
                 android:layout_width="match_parent"
                 android:layout_height="269dp"
@@ -137,7 +137,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging4ImageView5"
                 android:layout_width="match_parent"
                 android:layout_height="271dp"

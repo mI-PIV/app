@@ -36,7 +36,7 @@
                 android:layout_below="@id/QValueHeadingTextView"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/QValueImageView1"
                 android:layout_width="match_parent"
                 android:layout_height="322dp"

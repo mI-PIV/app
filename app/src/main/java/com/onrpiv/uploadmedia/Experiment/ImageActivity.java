@@ -38,7 +38,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.onrpiv.uploadmedia.BuildConfig;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
@@ -598,17 +597,8 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                     postPath = mediaPath;
                 }
             } else if (requestCode == CAMERA_PIC_REQUEST) {
-                if (Build.VERSION.SDK_INT > 21) {
-
-                    Glide.with(this).load(mImageFileLocation).into(imageView);
-                    postPath = mImageFileLocation;
-
-                } else {
-                    Glide.with(this).load(fileUri).into(imageView);
-                    postPath = fileUri.getPath();
-
-                }
-
+                imageView.setImageBitmap(BitmapFactory.decodeFile(mImageFileLocation));
+                postPath = mImageFileLocation;
             }
         } else if (resultCode != RESULT_CANCELED) {
             Toast.makeText(this, "Sorry, there was an error!", Toast.LENGTH_LONG).show();

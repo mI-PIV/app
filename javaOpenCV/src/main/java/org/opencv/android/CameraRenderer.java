@@ -10,7 +10,6 @@ import android.os.Build;
 import android.util.Log;
 
 @TargetApi(15)
-@SuppressWarnings("deprecation")
 public class CameraRenderer extends CameraGLRendererBase {
 
     public static final String LOGTAG = "CameraRenderer";

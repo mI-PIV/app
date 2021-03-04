@@ -47,7 +47,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView0"
                 android:layout_width="match_parent"
                 android:layout_height="272dp"
@@ -65,7 +65,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView1"
                 android:layout_width="match_parent"
                 android:layout_height="272dp"
@@ -83,7 +83,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView2"
                 android:layout_width="match_parent"
                 android:layout_height="277dp"
@@ -101,7 +101,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView3"
                 android:layout_width="match_parent"
                 android:layout_height="273dp"
@@ -119,7 +119,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView4"
                 android:layout_width="match_parent"
                 android:layout_height="275dp"
@@ -145,7 +145,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView5"
                 android:layout_width="match_parent"
                 android:layout_height="277dp"
@@ -163,7 +163,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView6"
                 android:layout_width="match_parent"
                 android:layout_height="278dp"
@@ -181,7 +181,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView7"
                 android:layout_width="match_parent"
                 android:layout_height="276dp"
@@ -199,7 +199,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView8"
                 android:layout_width="match_parent"
                 android:layout_height="273dp"
@@ -217,7 +217,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView9"
                 android:layout_width="match_parent"
                 android:layout_height="269dp"
@@ -235,7 +235,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView10"
                 android:layout_width="match_parent"
                 android:layout_height="269dp"

@@ -27,7 +27,7 @@
         android:layout_below="@+id/laserSafetytextview0"/>
 
 
-    <com.zolad.zoominimageview.ZoomInImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/laserSafetyImageView"
         android:layout_width="300dp"
         android:layout_height="300dp"

@@ -37,7 +37,7 @@
                 android:layout_below="@+id/pos11TextView0"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pos11ImageView0"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
@@ -53,7 +53,7 @@
                 android:layout_below="@+id/pos11ImageView0"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pos11ImageView1"
                 android:layout_width="match_parent"
                 android:layout_height="117dp"
@@ -78,7 +78,7 @@
                 android:layout_below="@+id/pos11TextView3"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pos11ImageView2"
                 android:layout_width="match_parent"
                 android:layout_height="225dp"
@@ -94,7 +94,7 @@
                 android:layout_below="@+id/pos11ImageView2"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pos11ImageView3"
                 android:layout_width="match_parent"
                 android:layout_height="118dp"
@@ -110,7 +110,7 @@
                 android:layout_below="@+id/pos11ImageView3"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pos11ImageView4"
                 android:layout_width="match_parent"
                 android:layout_height="92dp"

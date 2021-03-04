@@ -46,7 +46,7 @@
                 android:textSize="20sp" />
         </LinearLayout>
 
-        <com.zolad.zoominimageview.ZoomInImageView
+        <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/usu_logo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

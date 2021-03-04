@@ -1,4 +1,4 @@
-package com.delaroystudios.uploadmedia;
+package com.onrpiv.uploadmedia;
 
 import org.junit.Test;
 
