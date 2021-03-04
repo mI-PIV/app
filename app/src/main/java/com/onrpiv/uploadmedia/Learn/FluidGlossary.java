@@ -2,11 +2,10 @@ package com.onrpiv.uploadmedia.Learn;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
+import androidx.annotation.NonNull;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;

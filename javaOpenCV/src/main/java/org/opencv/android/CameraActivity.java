@@ -8,6 +8,8 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 
+import androidx.annotation.RequiresApi;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class CameraActivity extends Activity {
         return new ArrayList<CameraBridgeViewBase>();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     protected void onCameraPermissionGranted() {
         List<? extends CameraBridgeViewBase> cameraViews = getCameraViewList();
         if (cameraViews == null) {
@@ -33,6 +36,7 @@ public class CameraActivity extends Activity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     @Override
     protected void onStart() {
         super.onStart();

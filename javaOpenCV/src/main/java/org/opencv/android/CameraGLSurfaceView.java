@@ -5,10 +5,14 @@ import org.opencv.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import androidx.annotation.RequiresApi;
+
+@RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
 public class CameraGLSurfaceView extends GLSurfaceView {
 
     private static final String LOGTAG = "CameraGLSurfaceView";
@@ -42,6 +46,7 @@ public class CameraGLSurfaceView extends GLSurfaceView {
     private CameraTextureListener mTexListener;
     private CameraGLRendererBase mRenderer;
 
+    @RequiresApi(api = Build.VERSION_CODES.FROYO)
     public CameraGLSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -49,7 +54,7 @@ public class CameraGLSurfaceView extends GLSurfaceView {
         int cameraIndex = styledAttrs.getInt(R.styleable.CameraBridgeViewBase_camera_id, -1);
         styledAttrs.recycle();
 
-        if(android.os.Build.VERSION.SDK_INT >= 21)
+        if(Build.VERSION.SDK_INT >= 21)
             mRenderer = new Camera2Renderer(this);
         else
             mRenderer = new CameraRenderer(this);

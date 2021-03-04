@@ -66,6 +66,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
         super(context, attrs);
     }
 
+    @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.FROYO)
     protected boolean initializeCamera(int width, int height) {
         Log.d(TAG, "Initialize java camera");
         boolean result = true;
@@ -248,6 +249,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
 
     private boolean mCameraFrameReady = false;
 
+    @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.FROYO)
     @Override
     protected boolean connectCamera(int width, int height) {
 
@@ -297,6 +299,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
         mCameraFrameReady = false;
     }
 
+    @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.FROYO)
     @Override
     public void onPreviewFrame(byte[] frame, Camera arg1) {
         if (BuildConfig.DEBUG)

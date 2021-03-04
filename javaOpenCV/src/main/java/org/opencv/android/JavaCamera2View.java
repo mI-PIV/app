@@ -38,7 +38,7 @@ import org.opencv.imgproc.Imgproc;
  * converted to RGBA32 and then passed to the external callback for modifications if required.
  */
 
-@TargetApi(21)
+@androidx.annotation.RequiresApi(api = android.os.Build.VERSION_CODES.LOLLIPOP)
 public class JavaCamera2View extends CameraBridgeViewBase {
 
     private static final String LOGTAG = "JavaCamera2View";

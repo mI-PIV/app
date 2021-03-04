@@ -1,14 +1,16 @@
 package com.onrpiv.uploadmedia.Utilities;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
+
 
 /**
  * author: sarbajit mukherjee
@@ -38,7 +40,8 @@ public class ViewPagerAdapterTest extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         ImageView imageView = new ImageView(context);
-        Glide.with(context).load(imageUrls[position]).into(imageView);
+        imageView.setImageBitmap(BitmapFactory.decodeFile(imageUrls[position]));
+//        Glide.with(context).load(imageUrls[position]).into(imageView);
 //        Picasso.with(context)
 //                .load(imageUrls[position])
 //                .fit()

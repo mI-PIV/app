@@ -8,47 +8,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.jsibbold.zoomage.ZoomageView
+        <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/vortZoomageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_background"
-            app:zoomage_animateOnReset="true"
-            app:zoomage_autoCenter="true"
-            app:zoomage_autoResetMode="UNDER"
-            app:zoomage_maxScale="8"
-            app:zoomage_minScale="0.6"
-            app:zoomage_restrictBounds="false"
-            app:zoomage_translatable="true"
-            app:zoomage_zoomable="true" />
+            android:src="@drawable/ic_launcher_background"/>
 
-        <com.jsibbold.zoomage.ZoomageView
+        <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/vectorsZoomageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_background"
-            app:zoomage_animateOnReset="true"
-            app:zoomage_autoCenter="true"
-            app:zoomage_autoResetMode="UNDER"
-            app:zoomage_maxScale="8"
-            app:zoomage_minScale="0.6"
-            app:zoomage_restrictBounds="false"
-            app:zoomage_translatable="true"
-            app:zoomage_zoomable="true" />
+            android:src="@drawable/ic_launcher_background"/>
 
-        <com.jsibbold.zoomage.ZoomageView
+        <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/baseZoomageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_background"
-            app:zoomage_animateOnReset="true"
-            app:zoomage_autoCenter="true"
-            app:zoomage_autoResetMode="UNDER"
-            app:zoomage_maxScale="8"
-            app:zoomage_minScale="0.6"
-            app:zoomage_restrictBounds="false"
-            app:zoomage_translatable="true"
-            app:zoomage_zoomable="true" />
+            android:src="@drawable/ic_launcher_background"/>
+
     </FrameLayout>
 
     <Button
