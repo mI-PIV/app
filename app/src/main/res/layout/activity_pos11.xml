@@ -61,62 +61,6 @@
                 android:src="@drawable/bernoulli_eq2"
                 tools:ignore="MissingConstraints" />
 
-            <TextView
-                android:id="@+id/pos11TextView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
-                android:layout_below="@+id/pos11ImageView1"
-                android:textStyle="bold"
-                tools:ignore="MissingConstraints" />
-
-            <TextView
-                android:id="@+id/pos11TextView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
-                android:layout_below="@+id/pos11TextView3"
-                tools:ignore="MissingConstraints" />
-
-            <com.github.chrisbanes.photoview.PhotoView
-                android:id="@+id/pos11ImageView2"
-                android:layout_width="match_parent"
-                android:layout_height="225dp"
-                android:layout_below="@id/pos11TextView4"
-                android:src="@drawable/bernoulli_image"
-                tools:ignore="MissingConstraints" />
-
-            <TextView
-                android:id="@+id/pos11TextView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
-                android:layout_below="@+id/pos11ImageView2"
-                tools:ignore="MissingConstraints" />
-
-            <com.github.chrisbanes.photoview.PhotoView
-                android:id="@+id/pos11ImageView3"
-                android:layout_width="match_parent"
-                android:layout_height="118dp"
-                android:layout_below="@id/pos11TextView5"
-                android:src="@drawable/bernoulli_eq3"
-                tools:ignore="MissingConstraints" />
-
-            <TextView
-                android:id="@+id/pos11TextView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
-                android:layout_below="@+id/pos11ImageView3"
-                tools:ignore="MissingConstraints" />
-
-            <com.github.chrisbanes.photoview.PhotoView
-                android:id="@+id/pos11ImageView4"
-                android:layout_width="match_parent"
-                android:layout_height="92dp"
-                android:layout_below="@id/pos11TextView6"
-                android:src="@drawable/bernoulli_eq4"
-                tools:ignore="MissingConstraints" />
 
         </RelativeLayout>
 
