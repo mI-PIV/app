@@ -1,8 +1,8 @@
 package com.onrpiv.uploadmedia.Learn;
 
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.BottomNavigationView;
+import androidx.annotation.RequiresApi;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Layout;
