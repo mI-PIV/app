@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
 
 /**
  * author: sarbajit mukherjee
