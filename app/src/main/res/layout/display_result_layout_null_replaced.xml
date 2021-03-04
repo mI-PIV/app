@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    xmlns:com.edmondo="http://schemas.android.com/tools">
 
     <com.jsibbold.zoomage.ZoomageView
         android:id="@+id/baseZoomageView"
@@ -46,16 +47,129 @@
         app:zoomage_translatable="true"
         app:zoomage_zoomable="true" />
 
-    <Button
-        android:id="@+id/firstPass"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="#243EDF"
-        android:onClick="singlePassDisplay"
         android:layout_below="@+id/baseZoomageView"
-        android:text="Single Pass"
-        android:textColor="#FFFFFF" />
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/vectorfieldLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vector Field"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Switch
+                    android:id="@+id/switch3"
+                    android:layout_width="107dp"
+                    android:layout_height="wrap_content"
+                    android:text="Display" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Single Pass                              Multipass                         Replacement" />
+
+            <SeekBar
+                android:id="@+id/seekBar4"
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="2"
+                android:progress="0" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/vect_color"
+                    android:layout_width="15pt"
+                    android:layout_height="15pt" />
+
+                <TextView
+                    android:id="@+id/textView7"
+                    android:layout_width="322dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Color" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vorticity"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <Switch
+                android:id="@+id/switch5"
+                android:layout_width="105dp"
+                android:layout_height="wrap_content"
+                android:text="Display" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/vort_color"
+                    android:layout_width="15pt"
+                    android:layout_height="15pt" />
+
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="322dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Color" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Transparent Values (normalized)" />
+
+            <com.google.android.material.slider.RangeSlider
+                android:id="@+id/rangeSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="37dp"
+                android:valueFrom="0"
+                android:valueTo="255" />
+        </LinearLayout>
+    </ScrollView>
 
     <!--    <Button-->
     <!--        android:id="@+id/firstReplace"-->
@@ -68,27 +182,38 @@
     <!--        android:layout_below="@+id/firstPass"-->
     <!--        android:text="Replacement After Single Pass" />-->
 
-    <Button
-        android:id="@+id/secondPass"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/firstPass"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="#243EDF"
-        android:onClick="multiPassDisplay"
-        android:text="Multiple Pass"
-        android:textColor="#FFFFFF" />
+<!--    <Button-->
+<!--        android:id="@+id/firstPass"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/baseZoomageView"-->
+<!--        android:layout_marginTop="532dp"-->
+<!--        android:backgroundTint="#243EDF"-->
+<!--        android:onClick="singlePassDisplay"-->
+<!--        android:text="Single Pass"-->
+<!--        android:textColor="#FFFFFF" />-->
 
-    <Button
-        android:id="@+id/secondReplace"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/secondPass"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="#243EDF"
-        android:onClick="multiPassReplaceDisplay"
-        android:text="Replacement After MultiPass"
-        android:textColor="#FFFFFF" />
+<!--    <Button-->
+<!--        android:id="@+id/secondReplace"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/secondPass"-->
+<!--        android:layout_marginTop="17dp"-->
+<!--        android:backgroundTint="#243EDF"-->
+<!--        android:onClick="multiPassReplaceDisplay"-->
+<!--        android:text="Replacement After MultiPass"-->
+<!--        android:textColor="#FFFFFF" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/secondPass"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/firstPass"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        android:backgroundTint="#243EDF"-->
+<!--        android:onClick="multiPassDisplay"-->
+<!--        android:text="Multiple Pass"-->
+<!--        android:textColor="#FFFFFF" />-->
 
 </RelativeLayout>
 
