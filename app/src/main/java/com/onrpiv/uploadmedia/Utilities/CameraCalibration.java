@@ -78,6 +78,8 @@ public final class CameraCalibration {
      * Undistort a single image using stored member variables found with calibrate() function.
      */
     public Mat undistortImage() {
+        // TODO try with a 0 alpha parameter
+        // TODO also try without this
         cameraMatrix = Calib3d.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, frame1.size(), 1);
         Mat result = new Mat();
         Imgproc.undistort(frame1, result, cameraMatrix, distCoeffs);
