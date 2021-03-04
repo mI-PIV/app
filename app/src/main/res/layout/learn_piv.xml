@@ -76,7 +76,7 @@
             android:layout_below="@id/linearLayout"
             android:src="@drawable/narwhal" />
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
