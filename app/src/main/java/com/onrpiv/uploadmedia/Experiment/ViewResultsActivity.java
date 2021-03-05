@@ -37,31 +37,26 @@ import java.util.Map;
  * Edited by KP on 02/18/2021
  */
 
-enum ResultSettingsKeys {
-    TRUE("true"),
-    FALSE("false"),
-    VEC_DISPLAY("vecDisplay"),
-    VEC_OPTION("vecOption"),
-    VEC_SINGLE("singlepass"),
-    VEC_MULTI("multipass"),
-    VEC_REPLACED("replaced"),
-    ARROW_COLOR("arrowColor"),
-    ARROW_SCALE("arrowScale"),
-    VORT_DISPLAY("vortDisplay"),
-    VORT_COLORS("vorColors"),
-    VORT_TRANS_VALS("transVals"),
-    BACKGROUND("background"),
-    BACKGRND_SOLID("solid"),
-    BACKGRND_IMG("image");
-
-    public final String label;
-    ResultSettingsKeys(String label) {
-        this.label = label;
-    }
-}
-
-
 public class ViewResultsActivity extends AppCompatActivity {
+    // Settings "Enum"
+    private final static String
+    TRUE="true",
+    FALSE="false",
+    VEC_DISPLAY="vecDisplay",
+    VEC_OPTION="vecOption",
+    VEC_SINGLE="singlepass",
+    VEC_MULTI="multipass",
+    VEC_REPLACED="replaced",
+    ARROW_COLOR="arrowColor",
+    ARROW_SCALE="arrowScale",
+    VORT_DISPLAY="vortDisplay",
+    VORT_COLORS="vorColors",
+    VORT_TRANS_VALS="transVals",
+    BACKGROUND="background",
+    BACKGRND_SOLID="solid",
+    BACKGRND_IMG="image";
+
+
     // Widgets
     private RangeSlider rangeSlider;
     private ImageView baseImage, vectorFieldImage, vorticityImage;
@@ -98,7 +93,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             @Override
             public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
                 madeChange();
-                currentSettings.put(ResultSettingsKeys.VORT_TRANS_VALS.label, String.valueOf((int) value));
+                currentSettings.put(VORT_TRANS_VALS, String.valueOf((int) value));
             }
         });
 
@@ -107,15 +102,17 @@ public class ViewResultsActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 madeChange();
-                currentSettings.put(ResultSettingsKeys.ARROW_SCALE.label, String.valueOf(progress));
+                currentSettings.put(ARROW_SCALE, String.valueOf(progress));
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+                //EMPTY
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                //EMPTY
             }
         });
 
@@ -137,7 +134,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 madeChange();
-                currentSettings.put(ResultSettingsKeys.VEC_DISPLAY.label, Boolean.toString(isChecked));
+                currentSettings.put(VEC_DISPLAY, Boolean.toString(isChecked));
             }
         });
 
@@ -146,7 +143,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 madeChange();
-                currentSettings.put(ResultSettingsKeys.VORT_DISPLAY.label, Boolean.toString(isChecked));
+                currentSettings.put(VORT_DISPLAY, Boolean.toString(isChecked));
             }
         });
 
@@ -166,15 +163,15 @@ public class ViewResultsActivity extends AppCompatActivity {
                 String value;
                 switch (checkedId) {
                     case R.id.multipass:
-                        value = ResultSettingsKeys.VEC_MULTI.label;
+                        value = VEC_MULTI;
                         break;
                     case R.id.replace:
-                        value = ResultSettingsKeys.VEC_REPLACED.label;
+                        value = VEC_REPLACED;
                         break;
                     default:
-                        value = ResultSettingsKeys.VEC_SINGLE.label;
+                        value = VEC_SINGLE;
                 }
-                currentSettings.put(ResultSettingsKeys.VEC_OPTION.label, value);
+                currentSettings.put(VEC_OPTION, value);
             }
         });
 
@@ -185,11 +182,11 @@ public class ViewResultsActivity extends AppCompatActivity {
                 madeChange();
                 String value;
                 if (checkedId == R.id.plain) {
-                    value = ResultSettingsKeys.BACKGRND_SOLID.label;
+                    value = BACKGRND_SOLID;
                 } else {
-                    value = ResultSettingsKeys.BACKGRND_IMG.label;
+                    value = BACKGRND_IMG;
                 }
-                currentSettings.put(ResultSettingsKeys.BACKGROUND.label, value);
+                currentSettings.put(BACKGROUND, value);
             }
         });
 
@@ -229,14 +226,20 @@ public class ViewResultsActivity extends AppCompatActivity {
 
     public void OnClick_ArrowColor(View view) {
         // TODO
+
+        //popup
     }
 
     public void OnClick_VortColors(View view) {
         // TODO
+
+        //popup
     }
 
     public void OnClick_BackgroundColor(View view) {
         // TODO
+
+        //popup
     }
 
     public void baseImageDisplay() {
@@ -329,22 +332,22 @@ public class ViewResultsActivity extends AppCompatActivity {
         return colormap;
     }
 
-    private HashMap<String, String> loadDefaultSettings() {
+    private static HashMap<String, String> loadDefaultSettings() {
         HashMap<String, String> settings = new HashMap<>();
-        settings.put(ResultSettingsKeys.VEC_DISPLAY.label, ResultSettingsKeys.FALSE.label);
-        settings.put(ResultSettingsKeys.VEC_OPTION.label, ResultSettingsKeys.VEC_SINGLE.label);
-        settings.put(ResultSettingsKeys.ARROW_COLOR.label, "red");
-        settings.put(ResultSettingsKeys.ARROW_SCALE.label, "1.0");
+        settings.put(VEC_DISPLAY, FALSE);
+        settings.put(VEC_OPTION, VEC_SINGLE);
+        settings.put(ARROW_COLOR, "red");
+        settings.put(ARROW_SCALE, "1.0");
 
-        settings.put(ResultSettingsKeys.VORT_DISPLAY.label, ResultSettingsKeys.FALSE.label);
-        settings.put(ResultSettingsKeys.VORT_COLORS.label, "jet");
-        settings.put(ResultSettingsKeys.VORT_TRANS_VALS.label, "120,135");
+        settings.put(VORT_DISPLAY, FALSE);
+        settings.put(VORT_COLORS, "jet");
+        settings.put(VORT_TRANS_VALS, "120,135");
 
-        settings.put(ResultSettingsKeys.BACKGROUND.label, ResultSettingsKeys.BACKGRND_IMG.label);
+        settings.put(BACKGROUND, BACKGRND_IMG);
         return settings;
     }
 
-    private HashMap<String, Integer> loadColormapHash() {
+    private static HashMap<String, Integer> loadColormapHash() {
         HashMap<String, Integer> colormap = new HashMap<>();
         colormap.put("autumn", Imgproc.COLORMAP_AUTUMN);
         colormap.put("bone", Imgproc.COLORMAP_BONE);
