@@ -8,19 +8,17 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.android.material.slider.RangeSlider;
 import com.onrpiv.uploadmedia.R;
@@ -30,7 +28,9 @@ import org.opencv.imgproc.Imgproc;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Function;
+
+import petrov.kristiyan.colorpicker.ColorPicker;
 
 /**
  * Created by sarbajit mukherjee on 09/07/2020.
@@ -64,7 +64,7 @@ public class ViewResultsActivity extends AppCompatActivity {
     private SeekBar arrowScale;
     private SwitchCompat displayVectors, displayVorticity;
     private RadioGroup vectorRadioGroup, backgroundRadioGroup;
-    private RadioButton singleRadio, multiRadio, replacementRadio, solidRadio, imageRadio;
+//    private RadioButton singleRadio, multiRadio, replacementRadio, solidRadio, imageRadio;
 
     // paths
     private String imgFileToDisplay;
@@ -72,8 +72,7 @@ public class ViewResultsActivity extends AppCompatActivity {
 
     // dynamic storage
     private HashMap<String, Integer> colormapHash = loadColormapHash();
-    private final HashMap<String, String> defaultSettings = loadDefaultSettings();
-    private HashMap<String, String> currentSettings = new HashMap<>();
+    private HashMap<String, String> currentSettings = loadDefaultSettingsMap();
     private HashMap<String, Bitmap> bmpHash = new HashMap<>();
 
     @Override
@@ -83,11 +82,11 @@ public class ViewResultsActivity extends AppCompatActivity {
 
         setContentView(R.layout.display_result_layout);
 
-        loadDefaultSettings();
+        loadDefaultSettingsMap();
 
         // sliders
         rangeSlider = findViewById(R.id.rangeSeekBar);
-        float[] rangeVals = getTransparentValues(defaultSettings);
+        float[] rangeVals = getTransparentValues();
         rangeSlider.setValues(rangeVals[0], rangeVals[1]);
         rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
             @Override
@@ -127,6 +126,7 @@ public class ViewResultsActivity extends AppCompatActivity {
         vorticityColors = findViewById(R.id.vort_color);
         solidColor = findViewById(R.id.background_color);
         applyButton = findViewById(R.id.apply);
+        applyButton.setEnabled(false);
 
         // switches
         displayVectors = findViewById(R.id.vec_display);
@@ -148,11 +148,11 @@ public class ViewResultsActivity extends AppCompatActivity {
         });
 
         // radio buttons
-        singleRadio = findViewById(R.id.singlepass);
-        multiRadio = findViewById(R.id.multipass);
-        replacementRadio = findViewById(R.id.replace);
-        solidRadio = findViewById(R.id.plain);
-        imageRadio = findViewById(R.id.base);
+//        singleRadio = findViewById(R.id.singlepass);
+//        multiRadio = findViewById(R.id.multipass);
+//        replacementRadio = findViewById(R.id.replace);
+//        solidRadio = findViewById(R.id.plain);
+//        imageRadio = findViewById(R.id.base);
 
         // radio groups
         vectorRadioGroup = findViewById(R.id.vec_rgroup);
@@ -206,7 +206,7 @@ public class ViewResultsActivity extends AppCompatActivity {
                 + postPathMultiple.get(1).split("/")[6].split("_")[3].split(".png")[0]+".png";
         storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
 
-        // Display base image (This will be changed when we add controls/buttons to results page)
+        // Display base image
         displayImage("Base", baseImage);
     }
 
@@ -222,12 +222,24 @@ public class ViewResultsActivity extends AppCompatActivity {
 
     public void applyDisplay(View view) {
         // TODO apply button clicked
+        // TODO this is the big one
     }
 
     public void OnClick_ArrowColor(View view) {
-        // TODO
+        ColorPicker colorPicker = new ColorPicker(this);
+        colorPicker.setColors(getColors());
+        colorPicker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
+            @Override
+            public void setOnFastChooseColorListener(int position, int color) {
+                madeChange();
+                currentSettings.put(ARROW_COLOR, String.valueOf(color));
+            }
 
-        //popup
+            @Override
+            public void onCancel() {
+                //EMPTY
+            }
+        }).setDefaultColorButton(getColorSetting(ARROW_COLOR)).show();
     }
 
     public void OnClick_VortColors(View view) {
@@ -283,13 +295,13 @@ public class ViewResultsActivity extends AppCompatActivity {
 
     private void resetDefault() {
         applyButton.setEnabled(false);
-        currentSettings = deepCopy(defaultSettings);
+        currentSettings = loadDefaultSettingsMap();
     }
 
-    private float[] getTransparentValues(HashMap<String, String> map) {
+    private float[] getTransparentValues() {
         float[] vals = new float[2];
-        if (map.containsKey("transVals")) {
-            String rawValue = map.get("transVals");
+        if (currentSettings.containsKey(VORT_TRANS_VALS)) {
+            String rawValue = currentSettings.get(VORT_TRANS_VALS);
             String[] stringVals = rawValue.split(",");
             vals[0] = Float.parseFloat(stringVals[0]);
             vals[1] = Float.parseFloat(stringVals[1]);
@@ -297,42 +309,61 @@ public class ViewResultsActivity extends AppCompatActivity {
         return vals;
     }
 
-    private double getDoubleSetting(String key, HashMap<String, String> map) {
+    private double getDoubleSetting(String key) {
         double result = 1d;
-        if (map.containsKey(key)) {
-            result = Double.parseDouble(map.get(key));
+        if (currentSettings.containsKey(key)) {
+            result = Double.parseDouble(currentSettings.get(key));
         }
         return result;
     }
 
-    private boolean getBooleanSetting(String key, HashMap<String, String> map) {
+    private boolean getBooleanSetting(String key) {
         boolean result = false;
-        if (map.containsKey(key)) {
-            result = Boolean.parseBoolean(map.get(key));
+        if (currentSettings.containsKey(key)) {
+            result = Boolean.parseBoolean(currentSettings.get(key));
         }
         return result;
     }
 
-    private int getColorSetting(String key, HashMap<String, String> map) {
+    private int getColorSetting(String key) {
          // red, blue, green, black, white, gray, cyan, magenta, yellow, lightgray, darkgray,
          // grey, lightgrey, darkgrey, aqua, fuchsia, lime, maroon, navy, olive, purple,
          // silver, and teal.
         int color = Color.BLACK;
-        if (map.containsKey(key)) {
-            color = Color.parseColor(map.get(key));
+        if (currentSettings.containsKey(key)) {
+            try {
+                color = Color.parseColor(currentSettings.get(key));
+            }
+            catch (IllegalArgumentException e) {
+                color = Integer.parseInt(currentSettings.get(key));
+            }
         }
         return color;
     }
 
-    private int getColorMapSetting(HashMap<String, String> map) {
+    private static int[] getColors() {
+        String[] colorStrings = new String[]{
+                "red", "blue", "green", "black", "white", "gray", "cyan", "magenta", "yellow",
+                "lightgray", "darkgray", "grey", "lightgrey", "darkgrey", "aqua", "fuchsia",
+                "lime", "maroon", "navy", "olive", "purple", "silver", "teal"
+        };
+
+        int[] colors = new int[colorStrings.length];
+        for (int i = 0; i < colorStrings.length; i++) {
+            colors[i] = Color.parseColor(colorStrings[i]);
+        }
+        return colors;
+    }
+
+    private int getColorMapSetting() {
         int colormap = Imgproc.COLORMAP_JET;
-        if (map.containsKey("vortColors") && colormapHash.containsKey(map.get("vortColors"))) {
-            colormap = colormapHash.get(map.get("vortColors"));
+        if (currentSettings.containsKey(VORT_COLORS) && colormapHash.containsKey(currentSettings.get(VORT_COLORS))) {
+            colormap = colormapHash.get(currentSettings.get(VORT_COLORS));
         }
         return colormap;
     }
 
-    private static HashMap<String, String> loadDefaultSettings() {
+    private static HashMap<String, String> loadDefaultSettingsMap() {
         HashMap<String, String> settings = new HashMap<>();
         settings.put(VEC_DISPLAY, FALSE);
         settings.put(VEC_OPTION, VEC_SINGLE);
@@ -363,14 +394,6 @@ public class ViewResultsActivity extends AppCompatActivity {
         colormap.put("summer", Imgproc.COLORMAP_SUMMER);
         colormap.put("winter", Imgproc.COLORMAP_WINTER);
         return colormap;
-    }
-
-    private static HashMap<String, String> deepCopy(HashMap<String, String> orig) {
-        HashMap<String, String> copy = new HashMap<>();
-        for (Map.Entry<String, String> entry : orig.entrySet()) {
-            copy.put(entry.getKey(), new String(entry.getValue()));
-        }
-        return copy;
     }
 
     private void popups(double nMaxLower, double maxDisplacement) {

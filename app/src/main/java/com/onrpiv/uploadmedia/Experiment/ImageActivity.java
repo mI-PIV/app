@@ -527,8 +527,6 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         groupradio_text = (TextView) popupPIVDialogView.findViewById(R.id.groupradio_text);
 
         radioGroup = (RadioGroup) popupPIVDialogView.findViewById(R.id.groupradio);
-        // Uncheck or reset the radio buttons initially
-//        radioGroup.clearCheck();
         // Add the Listener to the RadioGroup
         radioGroup.setOnCheckedChangeListener(
                 new RadioGroup
@@ -548,7 +546,6 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                         radioButton = (RadioButton) findViewById(checkedId);
                     }
                 });
-//        radioGroup = (RadioGroup) findViewById(R.id.groupradio);
         savePIVDataButton = popupPIVDialogView.findViewById(R.id.button_save_piv_data);
         cancelPIVDataButton = popupPIVDialogView.findViewById(R.id.button_cancel_piv_data);
     }
@@ -642,54 +639,38 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
      * Launching camera app to capture image
      */
     private void captureImage() {
-//        Toast.makeText(this, "in capture", Toast.LENGTH_SHORT).show();
-        if (Build.VERSION.SDK_INT > 21) { //use this if Lollipop_Mr1 (API 22) or above
-            int j = 0;
-            Intent callCameraApplicationIntent = new Intent();
-            callCameraApplicationIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+        int j = 0;
+        Intent callCameraApplicationIntent = new Intent();
+        callCameraApplicationIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
 
-            // We give some instruction to the intent to save the image
-            File photoFile = null;
-//            Toast.makeText(this, "in 21", Toast.LENGTH_SHORT).show();
-            try {
-                // If the createImageFile will be successful, the photo file will have the address of the file
-                photoFile = createImageFile();
-                j =0;
-                // Here we call the function that will try to catch the exception made by the throw function
-            } catch (IOException e) {
-                Logger.getAnonymousLogger().info("Exception error in generating the file");
-                e.printStackTrace();
-            }
-            // Here we add an extra file to the intent to put the address on to. For this purpose we use the FileProvider, declared in the AndroidManifest.
-            Uri outputUri = FileProvider.getUriForFile(
-                    this,
-                    BuildConfig.APPLICATION_ID + ".provider",
-                    photoFile);
-            callCameraApplicationIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
-
-            // The following is a new line with a trying attempt
-            callCameraApplicationIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-            Logger.getAnonymousLogger().info("Calling the camera App by intent");
-
-            // The following strings calls the camera app and wait for his file in return.
-            while(j < 2){
-                startActivityForResult(callCameraApplicationIntent, CAMERA_PIC_REQUEST);
-                j = j+1;
-            }
-
-        } else {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-            fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-
-            // start the image capture Intent
-            startActivityForResult(intent, CAMERA_PIC_REQUEST);
+        // We give some instruction to the intent to save the image
+        File photoFile = null;
+        try {
+            // If the createImageFile will be successful, the photo file will have the address of the file
+            photoFile = createImageFile();
+            j =0;
+            // Here we call the function that will try to catch the exception made by the throw function
+        } catch (IOException e) {
+            Logger.getAnonymousLogger().info("Exception error in generating the file");
+            e.printStackTrace();
         }
+        // Here we add an extra file to the intent to put the address on to. For this purpose we use the FileProvider, declared in the AndroidManifest.
+        Uri outputUri = FileProvider.getUriForFile(
+                this,
+                BuildConfig.APPLICATION_ID + ".provider",
+                photoFile);
+        callCameraApplicationIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
 
+        // The following is a new line with a trying attempt
+        callCameraApplicationIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
+        Logger.getAnonymousLogger().info("Calling the camera App by intent");
+
+        // The following strings calls the camera app and wait for his file in return.
+        while(j < 2){
+            startActivityForResult(callCameraApplicationIntent, CAMERA_PIC_REQUEST);
+            j = j+1;
+        }
     }
 
     File createImageFile() throws IOException {
