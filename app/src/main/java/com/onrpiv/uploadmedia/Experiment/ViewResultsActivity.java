@@ -53,6 +53,7 @@ public class ViewResultsActivity extends AppCompatActivity {
     VORT_COLORS="vorColors",
     VORT_TRANS_VALS="transVals",
     BACKGROUND="background",
+    BACKGRND_COLOR="background_color",
     BACKGRND_SOLID="solid",
     BACKGRND_IMG="image";
 
@@ -249,9 +250,20 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     public void OnClick_BackgroundColor(View view) {
-        // TODO
+        ColorPicker colorPicker = new ColorPicker(this);
+        colorPicker.setColors(getColors());
+        colorPicker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
+            @Override
+            public void setOnFastChooseColorListener(int position, int color) {
+                madeChange();
+                currentSettings.put(BACKGRND_COLOR, String.valueOf(color));
+            }
 
-        //popup
+            @Override
+            public void onCancel() {
+                //EMPTY
+            }
+        }).setDefaultColorButton(getColorSetting(BACKGRND_COLOR)).show();
     }
 
     public void baseImageDisplay() {
@@ -375,6 +387,7 @@ public class ViewResultsActivity extends AppCompatActivity {
         settings.put(VORT_TRANS_VALS, "120,135");
 
         settings.put(BACKGROUND, BACKGRND_IMG);
+        settings.put(BACKGRND_COLOR, "white");
         return settings;
     }
 
