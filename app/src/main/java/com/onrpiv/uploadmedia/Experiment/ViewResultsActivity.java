@@ -8,21 +8,20 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
-import android.widget.Switch;
 
-import com.github.chrisbanes.photoview.OnScaleChangedListener;
-import com.github.chrisbanes.photoview.PhotoView;
-import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.google.android.material.slider.RangeSlider;
 import com.onrpiv.uploadmedia.R;
 
@@ -38,6 +37,30 @@ import java.util.Map;
  * Edited by KP on 02/18/2021
  */
 
+enum ResultSettingsKeys {
+    TRUE("true"),
+    FALSE("false"),
+    VEC_DISPLAY("vecDisplay"),
+    VEC_OPTION("vecOption"),
+    VEC_SINGLE("singlepass"),
+    VEC_MULTI("multipass"),
+    VEC_REPLACED("replaced"),
+    ARROW_COLOR("arrowColor"),
+    ARROW_SCALE("arrowScale"),
+    VORT_DISPLAY("vortDisplay"),
+    VORT_COLORS("vorColors"),
+    VORT_TRANS_VALS("transVals"),
+    BACKGROUND("background"),
+    BACKGRND_SOLID("solid"),
+    BACKGRND_IMG("image");
+
+    public final String label;
+    ResultSettingsKeys(String label) {
+        this.label = label;
+    }
+}
+
+
 public class ViewResultsActivity extends AppCompatActivity {
     // Widgets
     private RangeSlider rangeSlider;
@@ -45,6 +68,7 @@ public class ViewResultsActivity extends AppCompatActivity {
     private Button arrowColor, vorticityColors, solidColor, applyButton;
     private SeekBar arrowScale;
     private SwitchCompat displayVectors, displayVorticity;
+    private RadioGroup vectorRadioGroup, backgroundRadioGroup;
     private RadioButton singleRadio, multiRadio, replacementRadio, solidRadio, imageRadio;
 
     // paths
@@ -52,9 +76,9 @@ public class ViewResultsActivity extends AppCompatActivity {
     private File storageDirectory;
 
     // dynamic storage
-    private final HashMap<String, String> defaultSettings = new HashMap<>();
+    private HashMap<String, Integer> colormapHash = loadColormapHash();
+    private final HashMap<String, String> defaultSettings = loadDefaultSettings();
     private HashMap<String, String> currentSettings = new HashMap<>();
-    private HashMap<String, Integer> colormapHash = new HashMap<>();
     private HashMap<String, Bitmap> bmpHash = new HashMap<>();
 
     @Override
@@ -62,19 +86,41 @@ public class ViewResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent displayIntent = getIntent();
 
-        setContentView(R.layout.display_result_layout_null_replaced);
+        setContentView(R.layout.display_result_layout);
 
         loadDefaultSettings();
-        loadColormapHash();
 
         // sliders
         rangeSlider = findViewById(R.id.rangeSeekBar);
         float[] rangeVals = getTransparentValues(defaultSettings);
         rangeSlider.setValues(rangeVals[0], rangeVals[1]);
+        rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
+                madeChange();
+                currentSettings.put(ResultSettingsKeys.VORT_TRANS_VALS.label, String.valueOf((int) value));
+            }
+        });
 
         arrowScale = findViewById(R.id.arrow_scale);
+        arrowScale.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                madeChange();
+                currentSettings.put(ResultSettingsKeys.ARROW_SCALE.label, String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
 
         // image containers
+        // TODO check listeners in Utilites.FrameView for interactive images
         baseImage = findViewById(R.id.baseView);
         vectorFieldImage = findViewById(R.id.vectorsView);
         vorticityImage = findViewById(R.id.vortView);
@@ -87,7 +133,22 @@ public class ViewResultsActivity extends AppCompatActivity {
 
         // switches
         displayVectors = findViewById(R.id.vec_display);
+        displayVectors.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                madeChange();
+                currentSettings.put(ResultSettingsKeys.VEC_DISPLAY.label, Boolean.toString(isChecked));
+            }
+        });
+
         displayVorticity = findViewById(R.id.vort_display);
+        displayVorticity.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                madeChange();
+                currentSettings.put(ResultSettingsKeys.VORT_DISPLAY.label, Boolean.toString(isChecked));
+            }
+        });
 
         // radio buttons
         singleRadio = findViewById(R.id.singlepass);
@@ -95,6 +156,42 @@ public class ViewResultsActivity extends AppCompatActivity {
         replacementRadio = findViewById(R.id.replace);
         solidRadio = findViewById(R.id.plain);
         imageRadio = findViewById(R.id.base);
+
+        // radio groups
+        vectorRadioGroup = findViewById(R.id.vec_rgroup);
+        vectorRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                madeChange();
+                String value;
+                switch (checkedId) {
+                    case R.id.multipass:
+                        value = ResultSettingsKeys.VEC_MULTI.label;
+                        break;
+                    case R.id.replace:
+                        value = ResultSettingsKeys.VEC_REPLACED.label;
+                        break;
+                    default:
+                        value = ResultSettingsKeys.VEC_SINGLE.label;
+                }
+                currentSettings.put(ResultSettingsKeys.VEC_OPTION.label, value);
+            }
+        });
+
+        backgroundRadioGroup = findViewById(R.id.background_rgroup);
+        backgroundRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                madeChange();
+                String value;
+                if (checkedId == R.id.plain) {
+                    value = ResultSettingsKeys.BACKGRND_SOLID.label;
+                } else {
+                    value = ResultSettingsKeys.BACKGRND_IMG.label;
+                }
+                currentSettings.put(ResultSettingsKeys.BACKGROUND.label, value);
+            }
+        });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -123,19 +220,34 @@ public class ViewResultsActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
-    public void baseImageDisplay(View view) {
+    public void applyDisplay(View view) {
+        // TODO apply button clicked
+    }
+
+    public void OnClick_ArrowColor(View view) {
+        // TODO
+    }
+
+    public void OnClick_VortColors(View view) {
+        // TODO
+    }
+
+    public void OnClick_BackgroundColor(View view) {
+        // TODO
+    }
+
+    public void baseImageDisplay() {
         displayImage("Base", baseImage);
     }
 
-    public void vorticityImageDisplay(View view) {
+    public void vorticityImageDisplay() {
         displayImage("Vorticity", vorticityImage);
     }
 
-    public void singlePassDisplay(View view) {
+    public void singlePassDisplay() {
         displayImage("SinglePass", vectorFieldImage);
     }
 
@@ -143,11 +255,11 @@ public class ViewResultsActivity extends AppCompatActivity {
         displayImage("Replaced", vectorFieldImage);
     }
 
-    public void multiPassDisplay(View view) {
+    public void multiPassDisplay() {
         displayImage("Multipass", vectorFieldImage);
     }
 
-    public void multiPassReplaceDisplay(View view) {
+    public void multiPassReplaceDisplay() {
         displayImage("Replaced2", vectorFieldImage);
     }
 
@@ -217,34 +329,37 @@ public class ViewResultsActivity extends AppCompatActivity {
         return colormap;
     }
 
-    private void loadDefaultSettings() {
-        defaultSettings.clear();
-        defaultSettings.put("vecDisplay", "false");
-        defaultSettings.put("vecOption", "singlepass");
-        defaultSettings.put("arrowColor", "red");
-        defaultSettings.put("arrowScale", "1.0");
+    private HashMap<String, String> loadDefaultSettings() {
+        HashMap<String, String> settings = new HashMap<>();
+        settings.put(ResultSettingsKeys.VEC_DISPLAY.label, ResultSettingsKeys.FALSE.label);
+        settings.put(ResultSettingsKeys.VEC_OPTION.label, ResultSettingsKeys.VEC_SINGLE.label);
+        settings.put(ResultSettingsKeys.ARROW_COLOR.label, "red");
+        settings.put(ResultSettingsKeys.ARROW_SCALE.label, "1.0");
 
-        defaultSettings.put("vortDisplay", "false");
-        defaultSettings.put("vortColors", "jet");
-        defaultSettings.put("transVals", "120,135");
+        settings.put(ResultSettingsKeys.VORT_DISPLAY.label, ResultSettingsKeys.FALSE.label);
+        settings.put(ResultSettingsKeys.VORT_COLORS.label, "jet");
+        settings.put(ResultSettingsKeys.VORT_TRANS_VALS.label, "120,135");
 
-        defaultSettings.put("background", "image");
+        settings.put(ResultSettingsKeys.BACKGROUND.label, ResultSettingsKeys.BACKGRND_IMG.label);
+        return settings;
     }
 
-    private void loadColormapHash() {
-        colormapHash.put("autumn", Imgproc.COLORMAP_AUTUMN);
-        colormapHash.put("bone", Imgproc.COLORMAP_BONE);
-        colormapHash.put("cool", Imgproc.COLORMAP_COOL);
-        colormapHash.put("hot", Imgproc.COLORMAP_HOT);
-        colormapHash.put("hsv", Imgproc.COLORMAP_HSV);
-        colormapHash.put("jet", Imgproc.COLORMAP_JET);
-        colormapHash.put("ocean", Imgproc.COLORMAP_OCEAN);
-        colormapHash.put("parula", Imgproc.COLORMAP_PARULA);
-        colormapHash.put("pink", Imgproc.COLORMAP_PINK);
-        colormapHash.put("rainbow", Imgproc.COLORMAP_RAINBOW);
-        colormapHash.put("spring", Imgproc.COLORMAP_SPRING);
-        colormapHash.put("summer", Imgproc.COLORMAP_SUMMER);
-        colormapHash.put("winter", Imgproc.COLORMAP_WINTER);
+    private HashMap<String, Integer> loadColormapHash() {
+        HashMap<String, Integer> colormap = new HashMap<>();
+        colormap.put("autumn", Imgproc.COLORMAP_AUTUMN);
+        colormap.put("bone", Imgproc.COLORMAP_BONE);
+        colormap.put("cool", Imgproc.COLORMAP_COOL);
+        colormap.put("hot", Imgproc.COLORMAP_HOT);
+        colormap.put("hsv", Imgproc.COLORMAP_HSV);
+        colormap.put("jet", Imgproc.COLORMAP_JET);
+        colormap.put("ocean", Imgproc.COLORMAP_OCEAN);
+        colormap.put("parula", Imgproc.COLORMAP_PARULA);
+        colormap.put("pink", Imgproc.COLORMAP_PINK);
+        colormap.put("rainbow", Imgproc.COLORMAP_RAINBOW);
+        colormap.put("spring", Imgproc.COLORMAP_SPRING);
+        colormap.put("summer", Imgproc.COLORMAP_SUMMER);
+        colormap.put("winter", Imgproc.COLORMAP_WINTER);
+        return colormap;
     }
 
     private static HashMap<String, String> deepCopy(HashMap<String, String> orig) {
