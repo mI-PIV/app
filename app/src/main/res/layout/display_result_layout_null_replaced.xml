@@ -1,62 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/baseView"
+    <com.onrpiv.uploadmedia.Utilities.FrameView
+        android:id="@+id/img_frame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_background" />
+        android:layout_height="wrap_content">
 
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/vortView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_background" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/vectorsView"
+            <ImageView
+                android:id="@+id/baseView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="BackgroundImage" />
+
+            <ImageView
+                android:id="@+id/vortView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="VorticityImage" />
+
+            <ImageView
+                android:id="@+id/vectorsView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="VectorFieldImage" />
+        </RelativeLayout>
+    </com.onrpiv.uploadmedia.Utilities.FrameView>
+
+    <LinearLayout
+        android:id="@+id/apply_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_background" />
+        android:orientation="horizontal"
+        android:layout_below="@id/img_frame">
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/apply"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="Apply" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_below="@+id/baseView"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/apply_layout">
 
         <LinearLayout
             android:id="@+id/vectorfieldLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <Button
-                    android:id="@+id/apply"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    android:text="Apply" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="14dp" />
 
             <TextView
                 android:id="@+id/textView3"
@@ -180,10 +190,10 @@
                     android:id="@+id/arrow_scale"
                     android:layout_width="239dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:max="10"
                     android:min="-10"
-                    android:progress="1"
-                    android:layout_weight="1" />
+                    android:progress="1" />
 
                 <Space
                     android:layout_width="wrap_content"
@@ -308,10 +318,10 @@
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider" />
 
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:checkedButton="@id/base">
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:checkedButton="@id/base">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -344,7 +354,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 

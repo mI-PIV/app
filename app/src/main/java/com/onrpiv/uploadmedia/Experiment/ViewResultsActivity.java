@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.github.chrisbanes.photoview.OnScaleChangedListener;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -30,9 +31,9 @@ import java.util.HashMap;
 public class ViewResultsActivity extends AppCompatActivity {
 //    private Button firstPass, secondPass, replaceAfterFirstPass, replaceAfterSecondPass;
     private RangeSlider rangeSlider;
-    private PhotoView baseImage;
-    private PhotoView vectorFieldImage;
-    private PhotoView vorticityImage;
+    private ImageView baseImage;
+    private ImageView vectorFieldImage;
+    private ImageView vorticityImage;
     private String imgFileToDisplay;
     private File storageDirectory;
     private double nMaxUpper;
@@ -181,7 +182,7 @@ public class ViewResultsActivity extends AppCompatActivity {
         displayImage("Replaced2", vectorFieldImage);
     }
 
-    private void displayImage(String step, PhotoView imageContainer) {
+    private void displayImage(String step, ImageView imageContainer) {
         if (bmpHash.containsKey(step)) {
             imageContainer.setImageBitmap(bmpHash.get(step));
         } else {
