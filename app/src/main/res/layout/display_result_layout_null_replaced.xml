@@ -94,7 +94,7 @@
                     android:layout_weight="1" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch3"
+                    android:id="@+id/vec_display"
                     android:layout_width="107dp"
                     android:layout_height="wrap_content"
                     android:text="Display" />
@@ -231,7 +231,7 @@
                     android:layout_weight="1" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch5"
+                    android:id="@+id/vort_display"
                     android:layout_width="105dp"
                     android:layout_height="wrap_content"
                     android:text="Display" />
