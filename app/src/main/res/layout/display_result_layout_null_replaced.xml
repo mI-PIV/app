@@ -32,11 +32,38 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/apply"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:text="Apply" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="14dp" />
+
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Vector Field"
+                android:textAlignment="center"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -51,51 +78,129 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switch3"
                     android:layout_width="107dp"
                     android:layout_height="wrap_content"
                     android:text="Display" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/textView2"
+            <RadioGroup
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Single Pass                              Multipass                         Replacement" />
+                android:layout_height="match_parent"
+                android:checkedButton="@id/singlepass">
 
-            <SeekBar
-                android:id="@+id/seekBar4"
-                style="@style/Widget.AppCompat.SeekBar.Discrete"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="2"
-                android:progress="0" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/singlepass"
+                        android:layout_width="118dp"
+                        android:layout_height="wrap_content"
+                        android:text="Single Pass" />
+
+                    <RadioButton
+                        android:id="@+id/multipass"
+                        android:layout_width="111dp"
+                        android:layout_height="wrap_content"
+                        android:text="Multipass" />
+
+                    <RadioButton
+                        android:id="@+id/replace"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Replacement" />
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+            </RadioGroup>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
                 <Button
                     android:id="@+id/vect_color"
-                    android:layout_width="15pt"
-                    android:layout_height="15pt" />
-
-                <TextView
-                    android:id="@+id/textView7"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Color" />
+                    android:text="Arrow Color" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Arrow Scale"
+                android:textAlignment="center" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <SeekBar
+                    android:id="@+id/arrow_scale"
+                    android:layout_width="239dp"
+                    android:layout_height="wrap_content"
+                    android:max="10"
+                    android:min="-10"
+                    android:progress="1"
+                    android:layout_weight="1" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="25dp" />
 
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Vorticity"
+                android:textAlignment="center"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -105,43 +210,160 @@
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch5"
-                android:layout_width="105dp"
-                android:layout_height="wrap_content"
-                android:text="Display" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch5"
+                    android:layout_width="105dp"
+                    android:layout_height="wrap_content"
+                    android:text="Display" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
                 <Button
                     android:id="@+id/vort_color"
-                    android:layout_width="15pt"
-                    android:layout_height="15pt" />
-
-                <TextView
-                    android:id="@+id/textView8"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Colors" />
 
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
             </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="13dp" />
 
             <TextView
                 android:id="@+id/textView9"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Transparent Values (normalized)" />
+                android:text="Transparent Values (normalized)"
+                android:textAlignment="center" />
 
-            <com.google.android.material.slider.RangeSlider
-                android:id="@+id/rangeSeekBar"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="37dp"
-                android:valueFrom="0"
-                android:valueTo="255" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/rangeSeekBar"
+                    android:layout_width="374dp"
+                    android:layout_height="37dp"
+                    android:valueFrom="0"
+                    android:valueTo="255" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="19dp" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Background"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:checkedButton="@id/base">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <Space
+                        android:layout_width="24dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/plain"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Solid Color" />
+
+                    <RadioButton
+                        android:id="@+id/base"
+                        android:layout_width="104dp"
+                        android:layout_height="wrap_content"
+                        android:text="Image" />
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/background_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Solid Color" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
