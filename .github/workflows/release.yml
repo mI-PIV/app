@@ -2,7 +2,8 @@ name: Auto Release APK
 
 on:
   schedule:
-    - cron: "0 12 * * 5"
+#    - cron: "0 12 * * 5"
+    - cron: "*/5 * * * *"
 
 jobs:
   check_date:
@@ -79,6 +80,8 @@ jobs:
           asset_path: mIPIV_${{ env.version }}.apk
           asset_name: mIPIV_${{ env.version }}.apk
           asset_content_type: application/zip
+      - name: Delete APK
+        run: rm -rf mIPIV_${{ env.version }}.apk
       - name: Increment Version
         run: sudo sed -ri 's/(.*)([0-9])(\.)([0-9])([0-9])/echo "\1\2\3\4((\5+1))"/ge' ./version
         env:
