@@ -9,10 +9,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 
+import com.github.chrisbanes.photoview.OnScaleChangedListener;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
+import com.google.android.material.slider.RangeSlider;
 import com.onrpiv.uploadmedia.R;
 
 import java.io.File;
@@ -25,7 +28,8 @@ import java.util.HashMap;
  */
 
 public class ViewResultsActivity extends AppCompatActivity {
-    private Button firstPass, secondPass, replaceAfterFirstPass, replaceAfterSecondPass;
+//    private Button firstPass, secondPass, replaceAfterFirstPass, replaceAfterSecondPass;
+    private RangeSlider rangeSlider;
     private PhotoView baseImage;
     private PhotoView vectorFieldImage;
     private PhotoView vorticityImage;
@@ -40,20 +44,40 @@ public class ViewResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent displayIntent = getIntent();
         int selectedId = displayIntent.getIntExtra("selection-Id", 0);
+
+        // TODO rework this; this is just awful
         if (selectedId == 0) {
             setContentView(R.layout.display_result_layout_null_replaced);
 //            replaceAfterFirstPass = (Button) findViewById(R.id.firstReplace);
-            replaceAfterSecondPass = (Button) findViewById(R.id.secondReplace);
+//            replaceAfterSecondPass = (Button) findViewById(R.id.secondReplace);
         } else {
             setContentView(R.layout.display_result_layout);
         }
 
-        baseImage = findViewById(R.id.baseZoomageView);
-        vectorFieldImage = findViewById(R.id.vectorsZoomageView);
-        vorticityImage = findViewById(R.id.vortZoomageView);
+        rangeSlider = findViewById(R.id.rangeSeekBar);
+        rangeSlider.setValues(120f, 135f);
+        baseImage = findViewById(R.id.baseView);
+        vectorFieldImage = findViewById(R.id.vectorsView);
+        vorticityImage = findViewById(R.id.vortView);
 
-        firstPass = (Button) findViewById(R.id.firstPass);
-        secondPass = (Button) findViewById(R.id.secondPass);
+//        firstPass = (Button) findViewById(R.id.firstPass);
+//        secondPass = (Button) findViewById(R.id.secondPass);
+
+        // Sync stacked images
+//        OnScaleChangedListener scaleChangedListener = new OnScaleChangedListener() {
+//            @Override
+//            public void onScaleChange(float scaleFactor, float focusX, float focusY) {
+//                if (scaleFactor > 3.0f) {scaleFactor = 3.0f;}
+//                if (scaleFactor < 1.0f) {scaleFactor = 1.0f;}
+//
+//                baseImage.setScale(scaleFactor, focusX, focusY, false);
+//                vectorFieldImage.setScale(scaleFactor, focusX, focusY, false);
+//                vorticityImage.setScale(scaleFactor, focusX, focusY, false);
+//            }
+//        };
+//        baseImage.setOnScaleChangeListener(scaleChangedListener);
+//        vectorFieldImage.setOnScaleChangeListener(scaleChangedListener);
+//        vorticityImage.setOnScaleChangeListener(scaleChangedListener);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

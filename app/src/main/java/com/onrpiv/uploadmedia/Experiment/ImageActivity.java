@@ -851,13 +851,13 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                         // Save first frame for output base image
                         piv.saveBaseImage(userName, "Base", imgFileSaveName);
 
-                        String calibrationStep = "Calibration";
-                        CameraCalibration calibration = new CameraCalibration(context);
-                        double pixelToCmRatio = calibration.calibrate(postPathMultiple.get(0), postPathMultiple.get(1));
-                        if (calibration.isCalibrated()) {
-                            piv.saveImage(calibration.undistortImage(), userName, calibrationStep, imgFileSaveName);
-                            piv.saveVectorCentimeters(pivCorrelation, interrCenters, pixelToCmRatio, userName, "CENTIMETERS", imgFileSaveName);
-                        }
+//                        String calibrationStep = "Calibration";
+//                        CameraCalibration calibration = new CameraCalibration(context);
+//                        double pixelToCmRatio = calibration.calibrate(postPathMultiple.get(0), postPathMultiple.get(1));
+//                        if (calibration.isCalibrated()) {
+//                            piv.saveImage(calibration.undistortImage(), userName, calibrationStep, imgFileSaveName);
+//                            piv.saveVectorCentimeters(pivCorrelation, interrCenters, pixelToCmRatio, userName, "CENTIMETERS", imgFileSaveName);
+//                        }
 
                         String vortStep = "Vorticity";
                         double[][] vortMap = piv.getVorticityMap(pivCorrelation, (int)(interrCenters.get("x")[1] - interrCenters.get("x")[0]));

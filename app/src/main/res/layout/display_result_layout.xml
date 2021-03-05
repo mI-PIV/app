@@ -9,19 +9,19 @@
         android:layout_height="wrap_content">
 
         <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/vortZoomageView"
+            android:id="@+id/vortView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_launcher_background"/>
 
         <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/vectorsZoomageView"
+            android:id="@+id/vectorsView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_launcher_background"/>
 
         <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/baseZoomageView"
+            android:id="@+id/baseView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_launcher_background"/>
