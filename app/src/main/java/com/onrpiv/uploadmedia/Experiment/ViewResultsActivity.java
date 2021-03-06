@@ -1,11 +1,14 @@
 package com.onrpiv.uploadmedia.Experiment;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.MenuItem;
@@ -15,22 +18,35 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.slider.RangeSlider;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
+import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMapPicker;
+import com.onrpiv.uploadmedia.Utilities.ResultSettings;
 
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.function.Function;
+import java.util.List;
+import java.util.Map;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
+
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_IMG;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_SOLID;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_MULTI;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_REPLACED;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
 
 /**
  * Created by sarbajit mukherjee on 09/07/2020.
@@ -39,23 +55,7 @@ import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class ViewResultsActivity extends AppCompatActivity {
     // Settings "Enum"
-    private final static String
-    TRUE="true",
-    FALSE="false",
-    VEC_DISPLAY="vecDisplay",
-    VEC_OPTION="vecOption",
-    VEC_SINGLE="singlepass",
-    VEC_MULTI="multipass",
-    VEC_REPLACED="replaced",
-    ARROW_COLOR="arrowColor",
-    ARROW_SCALE="arrowScale",
-    VORT_DISPLAY="vortDisplay",
-    VORT_COLORS="vorColors",
-    VORT_TRANS_VALS="transVals",
-    BACKGROUND="background",
-    BACKGRND_COLOR="background_color",
-    BACKGRND_SOLID="solid",
-    BACKGRND_IMG="image";
+
 
 
     // Widgets
@@ -71,10 +71,9 @@ public class ViewResultsActivity extends AppCompatActivity {
     private String imgFileToDisplay;
     private File storageDirectory;
 
-    // dynamic storage
-    private HashMap<String, Integer> colormapHash = loadColormapHash();
-    private HashMap<String, String> currentSettings = loadDefaultSettingsMap();
     private HashMap<String, Bitmap> bmpHash = new HashMap<>();
+    private ArrayList<ColorMap> colorMaps;
+    private ResultSettings settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,17 +82,24 @@ public class ViewResultsActivity extends AppCompatActivity {
 
         setContentView(R.layout.display_result_layout);
 
-        loadDefaultSettingsMap();
+        colorMaps = ColorMap.loadColorMaps(this, getResources(), getPackageName());
+        settings = new ResultSettings(this, getResources(), getPackageName());
 
         // sliders
         rangeSlider = findViewById(R.id.rangeSeekBar);
-        float[] rangeVals = getTransparentValues();
+        float[] rangeVals = settings.getVortTransVals();
         rangeSlider.setValues(rangeVals[0], rangeVals[1]);
+        rangeSlider.setMinSeparation(1f);
+        rangeSlider.setStepSize(1f);
+        // TODO display numbers above thumbs
+        // https://developer.android.com/reference/com/google/android/material/slider/RangeSlider
         rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
             @Override
             public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
                 madeChange();
-                currentSettings.put(VORT_TRANS_VALS, String.valueOf((int) value));
+                List<Float> vals = rangeSlider.getValues();
+                settings.setVortTransVals_min(Math.min(vals.get(0), vals.get(1)));
+                settings.setVortTransVals_max(Math.max(vals.get(0), vals.get(1)));
             }
         });
 
@@ -102,7 +108,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 madeChange();
-                currentSettings.put(ARROW_SCALE, String.valueOf(progress));
+                settings.setArrowScale((double) progress);
             }
 
             @Override
@@ -135,7 +141,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 madeChange();
-                currentSettings.put(VEC_DISPLAY, Boolean.toString(isChecked));
+                settings.setVecDisplay(isChecked);
             }
         });
 
@@ -144,7 +150,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 madeChange();
-                currentSettings.put(VORT_DISPLAY, Boolean.toString(isChecked));
+                settings.setVortDisplay(isChecked);
             }
         });
 
@@ -172,7 +178,7 @@ public class ViewResultsActivity extends AppCompatActivity {
                     default:
                         value = VEC_SINGLE;
                 }
-                currentSettings.put(VEC_OPTION, value);
+                settings.setVecOption(value);
             }
         });
 
@@ -187,7 +193,7 @@ public class ViewResultsActivity extends AppCompatActivity {
                 } else {
                     value = BACKGRND_IMG;
                 }
-                currentSettings.put(BACKGROUND, value);
+                settings.setBackground(value);
             }
         });
 
@@ -213,10 +219,9 @@ public class ViewResultsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -228,42 +233,59 @@ public class ViewResultsActivity extends AppCompatActivity {
 
     public void OnClick_ArrowColor(View view) {
         ColorPicker colorPicker = new ColorPicker(this);
-        colorPicker.setColors(getColors());
+        colorPicker.setColors(ResultSettings.getColors());
         colorPicker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
             @Override
             public void setOnFastChooseColorListener(int position, int color) {
                 madeChange();
-                currentSettings.put(ARROW_COLOR, String.valueOf(color));
+                settings.setArrowColor(color);
             }
 
             @Override
             public void onCancel() {
                 //EMPTY
             }
-        }).setDefaultColorButton(getColorSetting(ARROW_COLOR)).show();
+        }).setDefaultColorButton(settings.getArrowColor()).show();
     }
 
     public void OnClick_VortColors(View view) {
-        // TODO
+        ColorMapPicker colorMapPicker = new ColorMapPicker(this);
+        ArrayList<Drawable> drawables = getColorMapDrawables();
+        colorMapPicker.setColors(drawables);
+        colorMapPicker.setOnFastChooseColorListener(new ColorMapPicker.OnFastChooseColorListener() {
+            @Override
+            public void setOnFastChooseColorListener(int position, Drawable color) {
+                madeChange();
+                for (ColorMap colorMap : colorMaps) {
+                    if (colorMap.getDrawable() == color) {
+                        settings.setVortColorMap(colorMap);
+                        return;
+                    }
+                }
+            }
 
-        //popup
+            @Override
+            public void onCancel() {
+                //EMPTY
+            }
+        }).setDefaultColorButton(settings.getVortColorMap().getDrawable()).show();
     }
 
     public void OnClick_BackgroundColor(View view) {
         ColorPicker colorPicker = new ColorPicker(this);
-        colorPicker.setColors(getColors());
+        colorPicker.setColors(ResultSettings.getColors());
         colorPicker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
             @Override
             public void setOnFastChooseColorListener(int position, int color) {
                 madeChange();
-                currentSettings.put(BACKGRND_COLOR, String.valueOf(color));
+                settings.setBackgroundColor(color);
             }
 
             @Override
             public void onCancel() {
                 //EMPTY
             }
-        }).setDefaultColorButton(getColorSetting(BACKGRND_COLOR)).show();
+        }).setDefaultColorButton(settings.getBackgroundColor()).show();
     }
 
     public void baseImageDisplay() {
@@ -307,106 +329,15 @@ public class ViewResultsActivity extends AppCompatActivity {
 
     private void resetDefault() {
         applyButton.setEnabled(false);
-        currentSettings = loadDefaultSettingsMap();
+        settings = new ResultSettings(this, getResources(), getPackageName());
     }
 
-    private float[] getTransparentValues() {
-        float[] vals = new float[2];
-        if (currentSettings.containsKey(VORT_TRANS_VALS)) {
-            String rawValue = currentSettings.get(VORT_TRANS_VALS);
-            String[] stringVals = rawValue.split(",");
-            vals[0] = Float.parseFloat(stringVals[0]);
-            vals[1] = Float.parseFloat(stringVals[1]);
-        }
-        return vals;
-    }
-
-    private double getDoubleSetting(String key) {
-        double result = 1d;
-        if (currentSettings.containsKey(key)) {
-            result = Double.parseDouble(currentSettings.get(key));
+    private ArrayList<Drawable> getColorMapDrawables() {
+        ArrayList<Drawable> result = new ArrayList<>();
+        for (ColorMap colorMap : colorMaps) {
+            result.add(colorMap.getDrawable());
         }
         return result;
-    }
-
-    private boolean getBooleanSetting(String key) {
-        boolean result = false;
-        if (currentSettings.containsKey(key)) {
-            result = Boolean.parseBoolean(currentSettings.get(key));
-        }
-        return result;
-    }
-
-    private int getColorSetting(String key) {
-         // red, blue, green, black, white, gray, cyan, magenta, yellow, lightgray, darkgray,
-         // grey, lightgrey, darkgrey, aqua, fuchsia, lime, maroon, navy, olive, purple,
-         // silver, and teal.
-        int color = Color.BLACK;
-        if (currentSettings.containsKey(key)) {
-            try {
-                color = Color.parseColor(currentSettings.get(key));
-            }
-            catch (IllegalArgumentException e) {
-                color = Integer.parseInt(currentSettings.get(key));
-            }
-        }
-        return color;
-    }
-
-    private static int[] getColors() {
-        String[] colorStrings = new String[]{
-                "red", "blue", "green", "black", "white", "gray", "cyan", "magenta", "yellow",
-                "lightgray", "darkgray", "grey", "lightgrey", "darkgrey", "aqua", "fuchsia",
-                "lime", "maroon", "navy", "olive", "purple", "silver", "teal"
-        };
-
-        int[] colors = new int[colorStrings.length];
-        for (int i = 0; i < colorStrings.length; i++) {
-            colors[i] = Color.parseColor(colorStrings[i]);
-        }
-        return colors;
-    }
-
-    private int getColorMapSetting() {
-        int colormap = Imgproc.COLORMAP_JET;
-        if (currentSettings.containsKey(VORT_COLORS) && colormapHash.containsKey(currentSettings.get(VORT_COLORS))) {
-            colormap = colormapHash.get(currentSettings.get(VORT_COLORS));
-        }
-        return colormap;
-    }
-
-    private static HashMap<String, String> loadDefaultSettingsMap() {
-        HashMap<String, String> settings = new HashMap<>();
-        settings.put(VEC_DISPLAY, FALSE);
-        settings.put(VEC_OPTION, VEC_SINGLE);
-        settings.put(ARROW_COLOR, "red");
-        settings.put(ARROW_SCALE, "1.0");
-
-        settings.put(VORT_DISPLAY, FALSE);
-        settings.put(VORT_COLORS, "jet");
-        settings.put(VORT_TRANS_VALS, "120,135");
-
-        settings.put(BACKGROUND, BACKGRND_IMG);
-        settings.put(BACKGRND_COLOR, "white");
-        return settings;
-    }
-
-    private static HashMap<String, Integer> loadColormapHash() {
-        HashMap<String, Integer> colormap = new HashMap<>();
-        colormap.put("autumn", Imgproc.COLORMAP_AUTUMN);
-        colormap.put("bone", Imgproc.COLORMAP_BONE);
-        colormap.put("cool", Imgproc.COLORMAP_COOL);
-        colormap.put("hot", Imgproc.COLORMAP_HOT);
-        colormap.put("hsv", Imgproc.COLORMAP_HSV);
-        colormap.put("jet", Imgproc.COLORMAP_JET);
-        colormap.put("ocean", Imgproc.COLORMAP_OCEAN);
-        colormap.put("parula", Imgproc.COLORMAP_PARULA);
-        colormap.put("pink", Imgproc.COLORMAP_PINK);
-        colormap.put("rainbow", Imgproc.COLORMAP_RAINBOW);
-        colormap.put("spring", Imgproc.COLORMAP_SPRING);
-        colormap.put("summer", Imgproc.COLORMAP_SUMMER);
-        colormap.put("winter", Imgproc.COLORMAP_WINTER);
-        return colormap;
     }
 
     private void popups(double nMaxLower, double maxDisplacement) {
