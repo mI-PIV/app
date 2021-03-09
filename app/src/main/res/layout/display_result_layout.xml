@@ -46,6 +46,7 @@
             android:layout_weight="1" />
 
         <Button
+            android:background="@drawable/buttons"
             android:id="@+id/apply"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
