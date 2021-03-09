@@ -108,7 +108,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 madeChange();
-                settings.setArrowScale((double) progress);
+                settings.setArrowScale(progress);
             }
 
             @Override
@@ -129,9 +129,16 @@ public class ViewResultsActivity extends AppCompatActivity {
         vorticityImage = findViewById(R.id.vortView);
 
         // buttons
+        // TODO display the selected colors, maybe make the buttons the colors and add "color" text
         arrowColor = findViewById(R.id.vect_color);
+        arrowColor.setBackgroundColor(settings.getArrowColor());
+
         vorticityColors = findViewById(R.id.vort_color);
+        vorticityColors.setBackground(settings.getVortColorMap().getDrawable());
+
         solidColor = findViewById(R.id.background_color);
+        solidColor.setBackgroundColor(settings.getBackgroundColor());
+
         applyButton = findViewById(R.id.apply);
         applyButton.setEnabled(false);
 
@@ -239,6 +246,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             public void setOnFastChooseColorListener(int position, int color) {
                 madeChange();
                 settings.setArrowColor(color);
+                arrowColor.setBackgroundColor(color);
             }
 
             @Override
@@ -259,6 +267,7 @@ public class ViewResultsActivity extends AppCompatActivity {
                 for (ColorMap colorMap : colorMaps) {
                     if (colorMap.getDrawable() == color) {
                         settings.setVortColorMap(colorMap);
+                        vorticityColors.setBackground(colorMap.getDrawable());
                         return;
                     }
                 }
@@ -279,6 +288,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             public void setOnFastChooseColorListener(int position, int color) {
                 madeChange();
                 settings.setBackgroundColor(color);
+                solidColor.setBackgroundColor(color);
             }
 
             @Override
