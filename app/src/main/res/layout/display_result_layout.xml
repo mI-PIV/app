@@ -34,12 +34,12 @@
         </RelativeLayout>
     </com.onrpiv.uploadmedia.Utilities.FrameView>
 
-
     <LinearLayout
         android:id="@+id/apply_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/img_frame"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <Space
@@ -105,6 +105,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <Space
@@ -164,6 +165,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <Space
@@ -173,10 +175,9 @@
 
                 <TextView
                     android:id="@+id/textView5"
-                    android:layout_width="1dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.55"
-                    android:text="Arrow Color:" />
+                    android:text="Arrow Color: " />
 
                 <android.widget.Button
                     android:id="@+id/vect_color"
@@ -191,12 +192,9 @@
 
             </LinearLayout>
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="20dp" />
-
             <TextView
                 android:id="@+id/textView4"
+                android:layout_marginTop="30dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Arrow Scale"
@@ -205,6 +203,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <Space
@@ -221,18 +220,11 @@
                     android:min="-10"
                     android:progress="1" />
 
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
             </LinearLayout>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="30dp" />
 
             <TextView
                 android:id="@+id/textView6"
+                android:layout_marginTop="30dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Vorticity"
@@ -249,12 +241,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center"
                 android:orientation="horizontal">
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/vort_display"
@@ -262,28 +250,19 @@
                     android:layout_height="wrap_content"
                     android:text="Display" />
 
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
+                android:gravity="center"
                 android:orientation="horizontal">
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/textView7"
-                    android:layout_width="1dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:text="Color Map:" />
+                    android:text="Color Map: " />
 
                 <Button
                     android:id="@+id/vort_color"
@@ -292,19 +271,11 @@
                     android:onClick="OnClick_VortColors"
                     android:scaleType="fitCenter" />
 
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
             </LinearLayout>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="25dp" />
 
             <TextView
                 android:id="@+id/textView9"
+                android:layout_marginTop="30dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Transparent Values (normalized)"
@@ -314,12 +285,8 @@
                 android:theme="@style/MaterialTheme"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center"
                 android:orientation="horizontal">
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
 
                 <com.google.android.material.slider.RangeSlider
                     android:id="@+id/rangeSeekBar"
@@ -328,18 +295,11 @@
                     android:valueFrom="0"
                     android:valueTo="255" />
 
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
             </LinearLayout>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="30dp" />
 
             <TextView
                 android:id="@+id/textView2"
+                android:layout_marginTop="30dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Background"
@@ -385,22 +345,18 @@
             </RadioGroup>
 
             <LinearLayout
+                android:layout_marginBottom="30dp"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:orientation="horizontal">
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/textView8"
-                    android:layout_width="1dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.6"
-                    android:text="Solid Color:" />
+                    android:text="Solid Color: " />
 
                 <Button
                     android:id="@+id/background_color"
@@ -408,10 +364,6 @@
                     android:layout_height="wrap_content"
                     android:onClick="OnClick_BackgroundColor" />
 
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
