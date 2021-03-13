@@ -18,6 +18,7 @@ import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -54,8 +55,6 @@ import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
  */
 
 // TODO save image as... with a default name
-// TODO radio buttons
-// TODO
 public class ViewResultsActivity extends AppCompatActivity {
     // Widgets
     private RangeSlider rangeSlider;
@@ -64,7 +63,7 @@ public class ViewResultsActivity extends AppCompatActivity {
     private SeekBar arrowScale;
     private SwitchCompat displayVectors, displayVorticity;
     private RadioGroup vectorRadioGroup, backgroundRadioGroup;
-//    private RadioButton singleRadio, multiRadio, replacementRadio, solidRadio, imageRadio;
+    private RadioButton singleRadio, multiRadio, replacementRadio, solidRadio, imageRadio;
 
     // paths
     private String imgFileToDisplay;
@@ -114,7 +113,6 @@ public class ViewResultsActivity extends AppCompatActivity {
         rangeSlider.setValues(rangeVals[0], rangeVals[1]);
         rangeSlider.setMinSeparation(1f);
         rangeSlider.setStepSize(1f);
-        // TODO display numbers above thumbs
         // https://developer.android.com/reference/com/google/android/material/slider/RangeSlider
         rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
             @Override
@@ -183,16 +181,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             }
         });
 
-        // radio buttons
-        // TODO radio groups listener doesn't work, need to use buttons
-//        singleRadio = findViewById(R.id.singlepass);
-//        multiRadio = findViewById(R.id.multipass);
-//        replacementRadio = findViewById(R.id.replace);
-//        solidRadio = findViewById(R.id.plain);
-//        imageRadio = findViewById(R.id.base);
-
         // radio groups
-        // TODO this doesn't work, use buttons instead
         vectorRadioGroup = findViewById(R.id.vec_rgroup);
         vectorRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -213,7 +202,6 @@ public class ViewResultsActivity extends AppCompatActivity {
             }
         });
 
-        // TODO this doesn't work use buttons instead
         backgroundRadioGroup = findViewById(R.id.background_rgroup);
         backgroundRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -247,8 +235,6 @@ public class ViewResultsActivity extends AppCompatActivity {
 
         // Display base image
         displayBaseImage("background" + BACKGRND_IMG, BACKGRND_IMG);
-//        displayBaseImage("solid" + BACKGRND_SOLID, BACKGRND_SOLID);
-
     }
 
     @Override
@@ -261,12 +247,8 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     public void applyDisplay(View view) {
-        // TODO apply button clicked
-        // TODO "loading" popup uninterruptable for each intensive change
-
         // Vector Field
         if (settings.vecFieldChanged && settings.getVecDisplay()) {
-            // TODO loading popup with relevant info
             HashMap<String, double[][]> correlation = correlationMaps.get(settings.getVecOption());
             String key = "vec"
                     + settings.getVecOption()
@@ -280,7 +262,6 @@ public class ViewResultsActivity extends AppCompatActivity {
 
         // Vorticity
         if (settings.vortMapChanged && settings.getVortDisplay()) {
-            // TODO loading popup with relevant info
             String key = "vort"
                     + settings.getVortColorMap().getOpenCVCode()
                     + settings.getVortTransVals_min()
@@ -303,9 +284,6 @@ public class ViewResultsActivity extends AppCompatActivity {
             }
             displayBaseImage(key, settings.getBackground());
         }
-
-        // reset image order
-//        restackImages();
 
         // reset detected changes
         settings.resetBools();
@@ -373,15 +351,14 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     private void displayVectorImage(String key, HashMap<String, double[][]> correlation) {
-//        if (bmpHash.containsKey(key)) {
-//            vectorFieldImage.setImageBitmap(bmpHash.get(key));
-//        } else {
+        if (bmpHash.containsKey(key)) {
+            vectorFieldImage.setImageBitmap(bmpHash.get(key));
+        } else {
             Bitmap bmp = createVectorFieldBitmap(correlation);
-//            bmpHash.put(key, bmp);
+            bmpHash.put(key, bmp);
             vectorFieldImage.setImageBitmap(bmp);
-            vectorFieldImage.setVisibility(View.VISIBLE);
-//        }
-//        vectorFieldImage.invalidate();
+        }
+        vectorFieldImage.setVisibility(View.VISIBLE);
     }
 
     private void displayVortImage(String key) {
@@ -409,7 +386,6 @@ public class ViewResultsActivity extends AppCompatActivity {
                 baseImage.setImageBitmap(bmp);
             }
         }
-//        baseImage.invalidate();
     }
 
     private Bitmap createVorticityBitmap() {
@@ -443,17 +419,6 @@ public class ViewResultsActivity extends AppCompatActivity {
     private void resetDefault() {
         applyButton.setEnabled(false);
         settings = new ResultSettings(this, getResources(), getPackageName());
-    }
-
-    private void restackImages(){
-        ViewParent parent = baseImage.getParent();
-        if (settings.getVecDisplay()) {
-            parent.bringChildToFront(vectorFieldImage);
-        } else if (settings.getVortDisplay()) {
-            parent.bringChildToFront(vorticityImage);
-        } else {
-            parent.bringChildToFront(baseImage);
-        }
     }
 
     private ArrayList<Drawable> getColorMapDrawables() {

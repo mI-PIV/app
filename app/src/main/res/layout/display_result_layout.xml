@@ -113,41 +113,36 @@
                 android:id="@+id/vec_rgroup"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:orientation="horizontal"
                 android:checkedButton="@id/singlepass">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                <RadioButton
+                    android:id="@+id/singlepass"
+                    android:layout_width="118dp"
+                    android:layout_height="wrap_content"
+                    android:text="Single Pass" />
 
-                    <RadioButton
-                        android:id="@+id/singlepass"
-                        android:layout_width="118dp"
-                        android:layout_height="wrap_content"
-                        android:text="Single Pass" />
+                <RadioButton
+                    android:id="@+id/multipass"
+                    android:layout_width="111dp"
+                    android:layout_height="wrap_content"
+                    android:text="Multipass" />
 
-                    <RadioButton
-                        android:id="@+id/multipass"
-                        android:layout_width="111dp"
-                        android:layout_height="wrap_content"
-                        android:text="Multipass" />
+                <RadioButton
+                    android:id="@+id/replace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Replacement" />
 
-                    <RadioButton
-                        android:id="@+id/replace"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Replacement" />
-
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-                </LinearLayout>
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
             </RadioGroup>
 
@@ -347,35 +342,31 @@
                 android:id="@+id/background_rgroup"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:checkedButton="@id/base">
+                android:checkedButton="@id/base"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                <Space
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
-                    <Space
-                        android:layout_width="24dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                <RadioButton
+                    android:id="@+id/plain"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Solid Color" />
 
-                    <RadioButton
-                        android:id="@+id/plain"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:text="Solid Color" />
+                <RadioButton
+                    android:id="@+id/base"
+                    android:layout_width="104dp"
+                    android:layout_height="wrap_content"
+                    android:text="Image" />
 
-                    <RadioButton
-                        android:id="@+id/base"
-                        android:layout_width="104dp"
-                        android:layout_height="wrap_content"
-                        android:text="Image" />
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-                </LinearLayout>
             </RadioGroup>
 
             <LinearLayout
