@@ -492,18 +492,18 @@ public class PivFunctions {
                     endPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
                 }
 
-                int red = (int) arrowOptions.color.red();
-                int green = (int) arrowOptions.color.green();
-                int blue = (int) arrowOptions.color.blue();
+                int red = (int) arrowOptions.color.red() * 255;
+                int green = (int) arrowOptions.color.green() * 255;
+                int blue = (int) arrowOptions.color.blue() * 255;
 
                 Imgproc.arrowedLine(transparentBackground, startPoint, endPoint, new Scalar(red, green, blue, 255), thickness, lineType, 0, tipLength);
             }
         }
 
-        // TODO format needs to be tested
         Mat resized = resizeMat(transparentBackground);
         Bitmap bmp = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(resized, bmp);
+        bmp.setHasAlpha(true);
+        Utils.matToBitmap(resized, bmp, true);
         return bmp;
     }
 
@@ -537,10 +537,10 @@ public class PivFunctions {
         List<int[]> transparentCoords = findTransparentCoords(mapValuesMat, mapValues, threshMin, threshMax, minMax[0], minMax[1]);
         Mat colorMap = createColorMap(mapValuesMat, transparentCoords, openCVColorMapCode);
 
-        // TODO RGB vs BGR needs to be tested
         Mat resized = resizeMat(colorMap);
         Bitmap result = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(resized, result);
+        result.setHasAlpha(true);
+        Utils.matToBitmap(resized, result, true);
         return result;
     }
 

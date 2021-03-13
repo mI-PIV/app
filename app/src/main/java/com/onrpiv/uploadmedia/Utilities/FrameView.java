@@ -168,7 +168,7 @@ public class FrameView extends FrameLayout {
         return listener;
     }
 
-    public void setListner(final ZoomViewListener listener) {
+    public void setListener(final ZoomViewListener listener) {
         this.listener = listener;
     }
 
@@ -396,62 +396,60 @@ public class FrameView extends FrameLayout {
                 -clamp(0.5f * getHeight() / zoom, zoomY, getHeight() - 0.5f
                         * getHeight() / zoom));
 
-        // get view
-        final View v = getChildAt(0);
-        m.preTranslate(v.getLeft(), v.getTop());
+        // get views
+        for (int child_index = 0; child_index < getChildCount(); child_index++) {
 
-        // get drawing cache if available
-        if (animating && ch == null && isAnimationCacheEnabled()) {
-            v.setDrawingCacheEnabled(true);
-            ch = v.getDrawingCache();
-        }
+            final View v = getChildAt(getChildCount()-1);
+            if (v.getVisibility() == View.INVISIBLE || v.getVisibility() == View.GONE) {
+                continue;
+            }
 
-        // draw using cache while animating
-        if (animating && isAnimationCacheEnabled() && ch != null) {
-            p.setColor(0xffffffff);
-            canvas.drawBitmap(ch, m, p);
-        } else { // zoomed or cache unavailable
+//            setChildrenDrawingOrderEnabled(true);
+//            getChildDrawingOrder(getChildCount(), i);
+            m.preTranslate(v.getLeft(), v.getTop());
+
             ch = null;
             canvas.save();
             canvas.concat(m);
             v.draw(canvas);
             canvas.restore();
+            v.invalidate();
         }
 
         // draw minimap
-        if (showMinimap) {
-            if (miniMapHeight < 0) {
-                miniMapHeight = getHeight() / 4;
-            }
-
-            canvas.translate(10.0f, 10.0f);
-
-            p.setColor(0x80000000 | 0x00ffffff & miniMapColor);
-            final float w = miniMapHeight * (float) getWidth() / getHeight();
-            final float h = miniMapHeight;
-            canvas.drawRect(0.0f, 0.0f, w, h, p);
-
-            if (miniMapCaption != null && miniMapCaption.length() > 0) {
-                p.setTextSize(miniMapCaptionSize);
-                p.setColor(miniMapCaptionColor);
-                p.setAntiAlias(true);
-                canvas.drawText(miniMapCaption, 10.0f,
-                        10.0f + miniMapCaptionSize, p);
-                p.setAntiAlias(false);
-            }
-
-            p.setColor(0x80000000 | 0x00ffffff & miniMapColor);
-            final float dx = w * zoomX / getWidth();
-            final float dy = h * zoomY / getHeight();
-            canvas.drawRect(dx - 0.5f * w / zoom, dy - 0.5f * h / zoom, dx
-                    + 0.5f * w / zoom, dy + 0.5f * h / zoom, p);
-
-            canvas.translate(-10.0f, -10.0f);
-        }
+//        if (showMinimap) {
+//            if (miniMapHeight < 0) {
+//                miniMapHeight = getHeight() / 4;
+//            }
+//
+//            canvas.translate(10.0f, 10.0f);
+//
+//            p.setColor(0x80000000 | 0x00ffffff & miniMapColor);
+//            final float w = miniMapHeight * (float) getWidth() / getHeight();
+//            final float h = miniMapHeight;
+//            canvas.drawRect(0.0f, 0.0f, w, h, p);
+//
+//            if (miniMapCaption != null && miniMapCaption.length() > 0) {
+//                p.setTextSize(miniMapCaptionSize);
+//                p.setColor(miniMapCaptionColor);
+//                p.setAntiAlias(true);
+//                canvas.drawText(miniMapCaption, 10.0f,
+//                        10.0f + miniMapCaptionSize, p);
+//                p.setAntiAlias(false);
+//            }
+//
+//            p.setColor(0x80000000 | 0x00ffffff & miniMapColor);
+//            final float dx = w * zoomX / getWidth();
+//            final float dy = h * zoomY / getHeight();
+//            canvas.drawRect(dx - 0.5f * w / zoom, dy - 0.5f * h / zoom, dx
+//                    + 0.5f * w / zoom, dy + 0.5f * h / zoom, p);
+//
+//            canvas.translate(-10.0f, -10.0f);
+//        }
 
         // redraw
         // if (animating) {
-        getRootView().invalidate();
+//        getRootView().invalidate();
         invalidate();
         // }
     }

@@ -4,14 +4,16 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <com.onrpiv.uploadmedia.Utilities.FrameView
-        android:id="@+id/img_frame"
+
+    <RelativeLayout
+        android:id="@+id/img_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <com.onrpiv.uploadmedia.Utilities.FrameView
+            android:id="@+id/img_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/baseView"
@@ -30,14 +32,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:contentDescription="VectorFieldImage" />
-        </RelativeLayout>
-    </com.onrpiv.uploadmedia.Utilities.FrameView>
+        </com.onrpiv.uploadmedia.Utilities.FrameView>
+    </RelativeLayout>
+
 
     <LinearLayout
         android:id="@+id/apply_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/img_frame"
+        android:layout_below="@id/img_layout"
         android:orientation="horizontal">
 
         <Space
@@ -181,7 +184,7 @@
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="25dp" />
+                android:layout_height="20dp" />
 
             <TextView
                 android:id="@+id/textView4"
