@@ -275,7 +275,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             displayVectorImage(key, correlation);
         } else if (!settings.getVecDisplay()) {
             vectorFieldImage.setVisibility(View.INVISIBLE);
-            vectorFieldImage.invalidate();
+//            vectorFieldImage.invalidate();
         }
 
         // Vorticity
@@ -305,7 +305,7 @@ public class ViewResultsActivity extends AppCompatActivity {
         }
 
         // reset image order
-        restackImages();
+//        restackImages();
 
         // reset detected changes
         settings.resetBools();
@@ -373,14 +373,15 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     private void displayVectorImage(String key, HashMap<String, double[][]> correlation) {
-        if (bmpHash.containsKey(key)) {
-            vectorFieldImage.setImageBitmap(bmpHash.get(key));
-        } else {
+//        if (bmpHash.containsKey(key)) {
+//            vectorFieldImage.setImageBitmap(bmpHash.get(key));
+//        } else {
             Bitmap bmp = createVectorFieldBitmap(correlation);
-            bmpHash.put(key, bmp);
+//            bmpHash.put(key, bmp);
             vectorFieldImage.setImageBitmap(bmp);
-        }
-        vectorFieldImage.invalidate();
+            vectorFieldImage.setVisibility(View.VISIBLE);
+//        }
+//        vectorFieldImage.invalidate();
     }
 
     private void displayVortImage(String key) {
@@ -391,7 +392,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             bmpHash.put(key, bmp);
             vorticityImage.setImageBitmap(bmp);
         }
-        vectorFieldImage.invalidate();
+        vorticityImage.setVisibility(View.VISIBLE);
     }
 
     private void displayBaseImage(String key, String backgroundCode) {
@@ -408,7 +409,7 @@ public class ViewResultsActivity extends AppCompatActivity {
                 baseImage.setImageBitmap(bmp);
             }
         }
-        baseImage.invalidate();
+//        baseImage.invalidate();
     }
 
     private Bitmap createVorticityBitmap() {

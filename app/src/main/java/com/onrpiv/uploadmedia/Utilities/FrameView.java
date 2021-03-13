@@ -396,16 +396,8 @@ public class FrameView extends FrameLayout {
                 -clamp(0.5f * getHeight() / zoom, zoomY, getHeight() - 0.5f
                         * getHeight() / zoom));
 
-        // get views
-        for (int child_index = 0; child_index < getChildCount(); child_index++) {
-
-            final View v = getChildAt(getChildCount()-1);
-            if (v.getVisibility() == View.INVISIBLE || v.getVisibility() == View.GONE) {
-                continue;
-            }
-
-//            setChildrenDrawingOrderEnabled(true);
-//            getChildDrawingOrder(getChildCount(), i);
+        // get view
+            final View v = getChildAt(0);
             m.preTranslate(v.getLeft(), v.getTop());
 
             ch = null;
@@ -413,8 +405,6 @@ public class FrameView extends FrameLayout {
             canvas.concat(m);
             v.draw(canvas);
             canvas.restore();
-            v.invalidate();
-        }
 
         // draw minimap
 //        if (showMinimap) {
@@ -449,7 +439,7 @@ public class FrameView extends FrameLayout {
 
         // redraw
         // if (animating) {
-//        getRootView().invalidate();
+        getRootView().invalidate();
         invalidate();
         // }
     }
