@@ -13,4 +13,20 @@
         <item>remove_image</item>
     </string-array>
 
+    <array name="colormaps">
+        <item>@drawable/colormap_autumn</item>
+        <item>@drawable/colormap_bone</item>
+        <item>@drawable/colormap_cool</item>
+        <item>@drawable/colormap_hot</item>
+        <item>@drawable/colormap_hsv</item>
+        <item>@drawable/colormap_jet</item>
+        <item>@drawable/colormap_ocean</item>
+        <item>@drawable/colormap_parula</item>
+        <item>@drawable/colormap_pink</item>
+        <item>@drawable/colormap_rainbow</item>
+        <item>@drawable/colormap_spring</item>
+        <item>@drawable/colormap_summer</item>
+        <item>@drawable/colormap_winter</item>
+    </array>
+
 </resources>

@@ -34,7 +34,10 @@ dependencies {
     implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
     implementation "androidx.annotation:annotation:1.1.0"
+    implementation 'petrov.kristiyan:colorpicker-library:1.1.10'
     implementation group: 'net.imglib2', name: 'imglib2', version: '5.11.1'
+    implementation 'org.jetbrains:annotations-java5:15.0'
+    implementation 'org.jetbrains:annotations-java5:15.0'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.3.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
