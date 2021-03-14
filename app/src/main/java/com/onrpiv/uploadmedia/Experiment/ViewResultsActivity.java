@@ -14,14 +14,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +33,7 @@ import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMapPicker;
 import com.onrpiv.uploadmedia.Utilities.ResultSettings;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +53,6 @@ import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
  * Edited by KP on 02/18/2021
  */
 
-// TODO save image as... with a default name
 public class ViewResultsActivity extends AppCompatActivity {
     // Widgets
     private RangeSlider rangeSlider;
@@ -63,7 +61,6 @@ public class ViewResultsActivity extends AppCompatActivity {
     private SeekBar arrowScale;
     private SwitchCompat displayVectors, displayVorticity;
     private RadioGroup vectorRadioGroup, backgroundRadioGroup;
-    private RadioButton singleRadio, multiRadio, replacementRadio, solidRadio, imageRadio;
 
     // paths
     private String imgFileToDisplay;
@@ -74,6 +71,7 @@ public class ViewResultsActivity extends AppCompatActivity {
     private HashMap<String, HashMap<String, double[][]>> correlationMaps;
     private ArrayList<ColorMap> colorMaps;
     private ResultSettings settings;
+    private int imageCounter = 0;
 
     // From Image Activity
     private HashMap<String, double[][]> pivCorrelation;
@@ -98,9 +96,12 @@ public class ViewResultsActivity extends AppCompatActivity {
         vorticityValues = (double[][]) extras.get("vorticityValues");
         rows = (int) extras.get("rows");
         cols = (int) extras.get("cols");
-        pivReplaceMissing2 = (HashMap<String, double[][]>) extras.getSerializable("pivReplaceMissing2");
         pivCorrelationMulti = (HashMap<String, double[][]>) extras.getSerializable("pivCorrelationMulti");
-        // TODO bring in selected-ID from imageview and disable the "replaced" radio button if 1 (double check)
+        int selectedId = (int) extras.get("selection-Id");
+
+        if (selectedId == 0) {
+            pivReplaceMissing2 = (HashMap<String, double[][]>) extras.getSerializable("pivReplaceMissing2");
+        }
 
         // load our maps and settings
         correlationMaps = loadCorrelationMaps();
@@ -350,6 +351,29 @@ public class ViewResultsActivity extends AppCompatActivity {
         }).setDefaultColorButton(settings.getBackgroundColor()).show();
     }
 
+    public void OnClick_SaveImage(View view) {
+        View imageStack = findViewById(R.id.img_frame);
+        imageStack.setDrawingCacheEnabled(true);
+        Bitmap bmp = imageStack.getDrawingCache();
+        File pngFile = new File(storageDirectory, "PIV_" + imageCounter++ + ".png");
+
+        try {
+            if (!pngFile.exists()) {
+                pngFile.createNewFile();
+            }
+            FileOutputStream ostream = new FileOutputStream(pngFile);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, ostream);
+            ostream.close();
+            imageStack.invalidate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            imageStack.setDrawingCacheEnabled(false);
+        }
+
+        Toast.makeText(this, "Current image saved as " + pngFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+    }
+
     private void displayVectorImage(String key, HashMap<String, double[][]> correlation) {
         if (bmpHash.containsKey(key)) {
             vectorFieldImage.setImageBitmap(bmpHash.get(key));
@@ -414,11 +438,6 @@ public class ViewResultsActivity extends AppCompatActivity {
         paint.setColor(settings.getBackgroundColor());
         canvas.drawRect(rect, paint);
         return bmp;
-    }
-
-    private void resetDefault() {
-        applyButton.setEnabled(false);
-        settings = new ResultSettings(this, getResources(), getPackageName());
     }
 
     private ArrayList<Drawable> getColorMapDrawables() {

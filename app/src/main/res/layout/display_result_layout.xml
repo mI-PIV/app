@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/base_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-
 
     <com.onrpiv.uploadmedia.Utilities.FrameView
         android:id="@+id/img_frame"
@@ -47,13 +47,28 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <Button
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@drawable/buttons"
+            android:onClick="OnClick_SaveImage"
+            android:contentDescription="Save Current Image"
+            app:srcCompat="@android:drawable/ic_menu_save" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <Button
             android:id="@+id/apply"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/buttons"
             android:onClick="applyDisplay"
-            android:text="Apply" />
+            android:text="Apply Changes" />
 
         <Space
             android:layout_width="wrap_content"
