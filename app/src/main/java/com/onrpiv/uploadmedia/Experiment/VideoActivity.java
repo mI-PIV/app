@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
 import com.onrpiv.uploadmedia.Utilities.RealPathUtil;
 
 
@@ -130,10 +132,11 @@ public class VideoActivity extends AppCompatActivity{
         recordVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                if(videoCaptureIntent.resolveActivity(getPackageManager()) != null){
-                    startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE);
-                }
+//                Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+//                if(videoCaptureIntent.resolveActivity(getPackageManager()) != null){
+//                    startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE);
+//                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.video_layout_container, CameraFragment.newInstance()).commit();
             }
         });
 
