@@ -9,9 +9,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -32,11 +35,16 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.TransitionRes;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import com.onrpiv.uploadmedia.R;
@@ -58,7 +66,7 @@ public class CameraFragment extends Fragment
     private static final SparseIntArray DEFAULT_ORIENTATIONS = new SparseIntArray();
     private static final SparseIntArray INVERSE_ORIENTATIONS = new SparseIntArray();
 
-    private static final String TAG = "Camera2VideoFragment";
+    private static final String TAG = "CameraFragment";
     private static final int REQUEST_VIDEO_PERMISSIONS = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
 
@@ -89,7 +97,7 @@ public class CameraFragment extends Fragment
     /**
      * Button to record video
      */
-    private Button mButtonVideo;
+    private ImageButton mButtonVideo;
 
     /**
      * A reference to the opened {@link android.hardware.camera2.CameraDevice}.
@@ -257,10 +265,9 @@ public class CameraFragment extends Fragment
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
-        mButtonVideo = (Button) view.findViewById(R.id.video);
+        mTextureView = (AutoFitTextureView) view.findViewById(R.id.record_texture);
+        mButtonVideo = (ImageButton) view.findViewById(R.id.recordButton);
         mButtonVideo.setOnClickListener(this);
-//        view.findViewById(R.id.info).setOnClickListener(this);
     }
 
     @Override
@@ -284,10 +291,13 @@ public class CameraFragment extends Fragment
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.video: {
+            case R.id.recordButton: {
                 if (mIsRecordingVideo) {
                     stopRecordingVideo();
                 } else {
+                    // Change record button
+                    mButtonVideo.setImageResource(R.drawable.round_stop_circle_white_48dp);
+
                     startRecordingVideo();
                 }
                 break;
@@ -333,9 +343,9 @@ public class CameraFragment extends Fragment
         return false;
     }
 
-    /**
-     * Requests permissions needed for recording video.
-     */
+//    /**
+//     * Requests permissions needed for recording video.
+//     */
 //    private void requestVideoPermissions() {
 //        if (shouldShowRequestPermissionRationale(VIDEO_PERMISSIONS)) {
 //            new ConfirmationDialog().show(getChildFragmentManager(), FRAGMENT_DIALOG);
@@ -553,12 +563,14 @@ public class CameraFragment extends Fragment
         if (mNextVideoAbsolutePath == null || mNextVideoAbsolutePath.isEmpty()) {
             mNextVideoAbsolutePath = getVideoFilePath(getActivity());
         }
+
+        // TODO this is where we customize our video options
         mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
         mMediaRecorder.setVideoEncodingBitRate(10000000);
         mMediaRecorder.setVideoFrameRate(30);
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+//        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
         switch (mSensorOrientation) {
             case SENSOR_ORIENTATION_DEFAULT_DEGREES:
@@ -584,7 +596,7 @@ public class CameraFragment extends Fragment
         try {
             closePreviewSession();
             setUpMediaRecorder();
-            SurfaceTexture texture = mTextureView.getSurfaceTexture();
+            final SurfaceTexture texture = mTextureView.getSurfaceTexture();
             assert texture != null;
             texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
             mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
@@ -612,7 +624,6 @@ public class CameraFragment extends Fragment
                         @Override
                         public void run() {
                             // UI
-                            mButtonVideo.setText("Stop");
                             mIsRecordingVideo = true;
 
                             // Start recording
@@ -625,7 +636,7 @@ public class CameraFragment extends Fragment
                 public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
                     Activity activity = getActivity();
                     if (null != activity) {
-                        Toast.makeText(activity, "Failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "Failed Camera Configuration", Toast.LENGTH_SHORT).show();
                     }
                 }
             }, mBackgroundHandler);
@@ -645,15 +656,16 @@ public class CameraFragment extends Fragment
     private void stopRecordingVideo() {
         // UI
         mIsRecordingVideo = false;
-        mButtonVideo.setText("Record");
         // Stop recording
         mMediaRecorder.stop();
         mMediaRecorder.reset();
 
+        mButtonVideo.setImageResource(R.drawable.round_fiber_manual_record_white_48dp);
+
         Activity activity = getActivity();
         if (null != activity) {
             Toast.makeText(activity, "Video saved: " + mNextVideoAbsolutePath,
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_LONG).show();
             Log.d(TAG, "Video saved: " + mNextVideoAbsolutePath);
         }
         mNextVideoAbsolutePath = null;
