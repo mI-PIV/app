@@ -18,8 +18,30 @@
         android:layout_below="@id/record_texture"
         android:background="@color/black_de">
 
-        <!--        TODO add record timer
-            TODO add framerate dropdown-->
+        <RadioGroup
+            android:id="@+id/fps_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="start|center"
+            android:checkedButton="@id/fps_120">
+
+            <RadioButton
+                android:id="@+id/fps_120"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="120 fps"
+                android:textColor="@color/white"
+                android:buttonTint="@color/white"/>
+
+            <RadioButton
+                android:id="@+id/fps_240"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="240 fps"
+                android:textColor="@color/white"
+                android:buttonTint="@color/white"/>
+        </RadioGroup>
 
         <ImageButton
             android:id="@+id/recordButton"

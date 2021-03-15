@@ -27,6 +27,7 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -39,6 +40,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -140,6 +142,9 @@ public class CameraFragment extends Fragment
     private Integer mSensorOrientation;
     private String mNextVideoAbsolutePath;
     private CaptureRequest.Builder mPreviewBuilder;
+
+    private RadioGroup mFrameRateGroup;
+    private int mFrameRate;
     /**
      * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its status.
      */
@@ -267,6 +272,19 @@ public class CameraFragment extends Fragment
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.record_texture);
         mButtonVideo = (ImageButton) view.findViewById(R.id.recordButton);
+        mFrameRateGroup = (RadioGroup) view.findViewById(R.id.fps_group);
+
+        mFrameRateGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.fps_120) {
+                    mFrameRate = 120;
+                } else {
+                    mFrameRate = 240;
+                }
+            }
+        });
+
         mButtonVideo.setOnClickListener(this);
     }
 
@@ -567,7 +585,7 @@ public class CameraFragment extends Fragment
         // TODO this is where we customize our video options
         mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
         mMediaRecorder.setVideoEncodingBitRate(10000000);
-        mMediaRecorder.setVideoFrameRate(30);
+        mMediaRecorder.setVideoFrameRate(mFrameRate);
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 //        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
