@@ -2,8 +2,8 @@ package com.onrpiv.uploadmedia.Learn;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.BottomNavigationView;
+import androidx.annotation.RequiresApi;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.text.Html;
 import android.text.Layout;
 import android.widget.TextView;
@@ -27,7 +27,7 @@ public class PIVBasics3 extends PIVBasicsLayout {
         t0.setTextSize(headerTextSize);
 
         TextView t1 = (TextView)findViewById(R.id.windowSizeTextView1);
-        String html1 = "Choosing an appropriate interrogation region or “window” size in PIV involves trade-offs. A larger window increases the number of particles per correlation and can increase the likelihood of finding a valid correlation. Increasing the window size, however, also decreases the spatial resolution of the displacement of the particles in each interrogation region (IR). This means that if the particle RULE OF THUMB: Set an initial Q value threshold of 1.3. Users can relax this standard by decreasing Q (minimum of one), or tighten this standard by increasing Q. displacements vary within a given IR, the output vector may be less representative of the particles near the center of the IR (where the output vector is returned/placed).<br><br>A demonstration of these tradeoffs is shown in Figure 1. Imagine a pair of overlaid images with particle locations in the first image shown in red, and particle images in the second image shown in gold. To make the displacement of each particle easier to track, a black line is drawn from each particle location in the first image to the particle location in the second image.";
+        String html1 = "Choosing an appropriate interrogation region or “window” size in PIV involves trade-offs. A larger window increases the number of particles per correlation and can increase the likelihood of finding a valid correlation. Increasing the window size, however, also decreases the spatial resolution of the displacement of the particles in each interrogation region (IR). This means that if the particle displacements vary within a given IR, the output vector may be less representative of the particles near the center of the IR (where the output vector is returned/placed).<br><br>A demonstration of these tradeoffs is shown in Figure 1. Imagine a pair of overlaid images with particle locations in the first image shown in red, and particle images in the second image shown in gold. To make the displacement of each particle easier to track, a black line is drawn from each particle location in the first image to the particle location in the second image.";
         t1.setText(Html.fromHtml(html1));
         t1.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
 

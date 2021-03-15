@@ -1,16 +1,14 @@
 package com.onrpiv.uploadmedia.Learn;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.support.design.widget.BottomNavigationView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.onrpiv.uploadmedia.Learn.Experiment1;
-import com.onrpiv.uploadmedia.Learn.FluidGlossary;
 import com.onrpiv.uploadmedia.R;
 
 public class TryExperiments extends FluidGlossary {

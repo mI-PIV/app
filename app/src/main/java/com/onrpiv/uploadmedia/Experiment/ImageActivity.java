@@ -14,12 +14,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.BuildConfig;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -39,26 +39,25 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.jsibbold.zoomage.ZoomageView;
+import com.onrpiv.uploadmedia.BuildConfig;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.BoolIntStructure;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -116,6 +115,19 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     private String userName;
     private File storageDirectory;
 
+    private Map<String, double[][]> pivCorrelation = null;
+    private Map<String, double[]> interrCenters = null;
+    private PivFunctions piv = null;
+    private double[][] vorticityValues = null;
+    private Map<String, double[][]> pivCorrelationProcessed = null;
+    private Map<String, double[][]> pivReplaceMissing = null;
+    private Map<String, double[][]> pivCorrelationMulti = null;
+    private Map<String, double[][]> pivReplaceMissing2 = null;
+    private int rows;
+    private int cols;
+    private Mat grayFrame1;
+    private Mat grayFrame2;
+
     private TableRow tableDt = null;
     private View popupPIVDialogView = null;
     private TextView setEditTextPIV = null;
@@ -144,10 +156,11 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     private ScaleGestureDetector mScaleGestureDetector;
     private float mScaleFactor = 1.0f;
     volatile boolean running = true;
-    ZoomageView imageZoom;
+//    ZoomageView imageZoom;
     private CheckBox checkBox2;
     private boolean checked=false;
     private RadioButton radioButton;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,8 +168,10 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.image_layout);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        context = this;
+
 //        imageView = (ImageView) findViewById(R.id.preview);
-        imageZoom = (ZoomageView)findViewById(R.id.myZoomageView);
+//        imageZoom = (ZoomageView)findViewById(R.id.myZoomageView);
         pickImageMultiple = (Button) findViewById(R.id.pickImageMultiple);
         parameters = (Button) findViewById(R.id.parameters);
         compute = (Button) findViewById(R.id.compute);
@@ -527,8 +542,6 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         groupradio_text = (TextView) popupPIVDialogView.findViewById(R.id.groupradio_text);
 
         radioGroup = (RadioGroup) popupPIVDialogView.findViewById(R.id.groupradio);
-        // Uncheck or reset the radio buttons initially
-//        radioGroup.clearCheck();
         // Add the Listener to the RadioGroup
         radioGroup.setOnCheckedChangeListener(
                 new RadioGroup
@@ -548,7 +561,6 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                         radioButton = (RadioButton) findViewById(checkedId);
                     }
                 });
-//        radioGroup = (RadioGroup) findViewById(R.id.groupradio);
         savePIVDataButton = popupPIVDialogView.findViewById(R.id.button_save_piv_data);
         cancelPIVDataButton = popupPIVDialogView.findViewById(R.id.button_cancel_piv_data);
     }
@@ -597,17 +609,8 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                     postPath = mediaPath;
                 }
             } else if (requestCode == CAMERA_PIC_REQUEST) {
-                if (Build.VERSION.SDK_INT > 21) {
-
-                    Glide.with(this).load(mImageFileLocation).into(imageView);
-                    postPath = mImageFileLocation;
-
-                } else {
-                    Glide.with(this).load(fileUri).into(imageView);
-                    postPath = fileUri.getPath();
-
-                }
-
+                imageView.setImageBitmap(BitmapFactory.decodeFile(mImageFileLocation));
+                postPath = mImageFileLocation;
             }
         } else if (resultCode != RESULT_CANCELED) {
             Toast.makeText(this, "Sorry, there was an error!", Toast.LENGTH_LONG).show();
@@ -651,54 +654,38 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
      * Launching camera app to capture image
      */
     private void captureImage() {
-//        Toast.makeText(this, "in capture", Toast.LENGTH_SHORT).show();
-        if (Build.VERSION.SDK_INT > 21) { //use this if Lollipop_Mr1 (API 22) or above
-            int j = 0;
-            Intent callCameraApplicationIntent = new Intent();
-            callCameraApplicationIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+        int j = 0;
+        Intent callCameraApplicationIntent = new Intent();
+        callCameraApplicationIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
 
-            // We give some instruction to the intent to save the image
-            File photoFile = null;
-//            Toast.makeText(this, "in 21", Toast.LENGTH_SHORT).show();
-            try {
-                // If the createImageFile will be successful, the photo file will have the address of the file
-                photoFile = createImageFile();
-                j =0;
-                // Here we call the function that will try to catch the exception made by the throw function
-            } catch (IOException e) {
-                Logger.getAnonymousLogger().info("Exception error in generating the file");
-                e.printStackTrace();
-            }
-            // Here we add an extra file to the intent to put the address on to. For this purpose we use the FileProvider, declared in the AndroidManifest.
-            Uri outputUri = FileProvider.getUriForFile(
-                    this,
-                    BuildConfig.APPLICATION_ID + ".provider",
-                    photoFile);
-            callCameraApplicationIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
-
-            // The following is a new line with a trying attempt
-            callCameraApplicationIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-            Logger.getAnonymousLogger().info("Calling the camera App by intent");
-
-            // The following strings calls the camera app and wait for his file in return.
-            while(j < 2){
-                startActivityForResult(callCameraApplicationIntent, CAMERA_PIC_REQUEST);
-                j = j+1;
-            }
-
-        } else {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-            fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-
-            // start the image capture Intent
-            startActivityForResult(intent, CAMERA_PIC_REQUEST);
+        // We give some instruction to the intent to save the image
+        File photoFile = null;
+        try {
+            // If the createImageFile will be successful, the photo file will have the address of the file
+            photoFile = createImageFile();
+            j =0;
+            // Here we call the function that will try to catch the exception made by the throw function
+        } catch (IOException e) {
+            Logger.getAnonymousLogger().info("Exception error in generating the file");
+            e.printStackTrace();
         }
+        // Here we add an extra file to the intent to put the address on to. For this purpose we use the FileProvider, declared in the AndroidManifest.
+        Uri outputUri = FileProvider.getUriForFile(
+                this,
+                BuildConfig.APPLICATION_ID + ".provider",
+                photoFile);
+        callCameraApplicationIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
 
+        // The following is a new line with a trying attempt
+        callCameraApplicationIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
+        Logger.getAnonymousLogger().info("Calling the camera App by intent");
+
+        // The following strings calls the camera app and wait for his file in return.
+        while(j < 2){
+            startActivityForResult(callCameraApplicationIntent, CAMERA_PIC_REQUEST);
+            j = j+1;
+        }
     }
 
     File createImageFile() throws IOException {
@@ -821,6 +808,14 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         displayIntent.putExtra("image-paths", postPathMultiple);
         displayIntent.putExtra("username", userName);
         displayIntent.putExtra("selection-Id", selectedId);
+        displayIntent.putExtra("pivCorrelation", (Serializable) pivCorrelation);
+        displayIntent.putExtra("interrCenters", (Serializable) interrCenters);
+        displayIntent.putExtra("vorticityValues", vorticityValues);
+        displayIntent.putExtra("pivCorrelationMulti", (Serializable) pivCorrelationMulti);
+        displayIntent.putExtra("pivReplaceMissing2", (Serializable) pivReplaceMissing2);
+        displayIntent.putExtra("rows", rows);
+        displayIntent.putExtra("cols", cols);
+
         startActivity(displayIntent);
         pickImageMultiple.setBackgroundColor(Color.parseColor("#243EDF"));
         compute.setBackgroundColor(Color.parseColor("#243EDF"));
@@ -830,6 +825,22 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
     // Process Images
     private void processFile() {
+        piv = new PivFunctions(postPathMultiple.get(0),
+                postPathMultiple.get(1),
+                windowSize,
+                overlap,
+                dt,
+                "peak2peak");
+
+        rows = piv.getRows();
+        cols = piv.getCols();
+        grayFrame1 = piv.getFirstFrameGray();
+        grayFrame2 = piv.getSecondFrameGray();
+
+        final String imgFileSaveName = postPathMultiple.get(0).split("/")[6].split(".png")[0]
+                + "-"
+                +postPathMultiple.get(1).split("/")[6].split("_")[3].split(".png")[0]+".png";
+
         if (postPathMultiple.size() != 0){
 
             //---------------------------------Using Threads--------------------------------------//
@@ -841,60 +852,68 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                         return;
                     }
                     else {
-                        PivFunctions piv = new PivFunctions(postPathMultiple.get(0),
-                                postPathMultiple.get(1),
+                        pivCorrelation = PivFunctions.extendedSearchAreaPiv_update(
+                                grayFrame1,
+                                grayFrame2,
+                                rows,
+                                cols,
                                 windowSize,
-                                overlap,
-                                dt,
-                                "peak2peak");
-                        String imgFileSaveName = postPathMultiple.get(0).split("/")[6].split(".png")[0]
-                                + "-"
-                                +postPathMultiple.get(1).split("/")[6].split("_")[3].split(".png")[0]+".png";
+                                overlap
+                        );
 
-                        Map<String, double[][]> pivCorrelation = piv.extendedSearchAreaPiv_update();
-                        Map<String, double[]> interrCenters = piv.getCoordinates();
+                        interrCenters = PivFunctions.getCoordinates(rows, cols, windowSize, overlap);
 
                         ArrowDrawOptions arrowDrawOptions = new ArrowDrawOptions();
-                        arrowDrawOptions.scale = 10d;
+                        arrowDrawOptions.scale = 5d;
 
+                        // Save first frame for output base image
+                        piv.saveBaseImage(userName, "Base", imgFileSaveName);
+
+//                        String calibrationStep = "Calibration";
+//                        CameraCalibration calibration = new CameraCalibration(context);
+//                        double pixelToCmRatio = calibration.calibrate(postPathMultiple.get(0), postPathMultiple.get(1));
+//                        if (calibration.isCalibrated()) {
+//                            piv.saveImage(calibration.undistortImage(), userName, calibrationStep, imgFileSaveName);
+//                            piv.saveVectorCentimeters(pivCorrelation, interrCenters, pixelToCmRatio, userName, "CENTIMETERS", imgFileSaveName);
+//                        }
 
                         String vortStep = "Vorticity";
-                        double[][] vortMap = piv.getVorticityMap(pivCorrelation, (int)(interrCenters.get("x")[1] - interrCenters.get("x")[0]));
-                        piv.saveVortMap(vortMap, userName, vortStep, imgFileSaveName);
-                        piv.saveColorMapImage(vortMap, userName, vortStep, imgFileSaveName);
+                        vorticityValues = PivFunctions.calculateVorticityMap(pivCorrelation, (int)(interrCenters.get("x")[1] - interrCenters.get("x")[0]));
+                        PivFunctions.saveVortMapFile(vorticityValues, userName, vortStep, imgFileSaveName);
+                        PivFunctions.saveColorMapImage(vorticityValues, userName, vortStep, imgFileSaveName);
 
                         String step = "SinglePass";
-                        piv.saveVector(pivCorrelation, interrCenters, userName, step, imgFileSaveName);
-                        piv.drawArrowsOnImage(pivCorrelation, interrCenters, userName, step, imgFileSaveName, arrowDrawOptions);
-                        Map<String, double[][]> pivCorrelationProcessed = piv.vectorPostProcessing(pivCorrelation, nMaxUpper, qMin, E);
+                        PivFunctions.saveVectors(pivCorrelation, interrCenters, userName, step, imgFileSaveName, dt);
+                        PivFunctions.createVectorField(pivCorrelation, interrCenters, userName, step, imgFileSaveName, arrowDrawOptions, rows, cols);
+                        pivCorrelationProcessed = PivFunctions.vectorPostProcessing(pivCorrelation, cols, rows, windowSize, overlap, dt, nMaxUpper, qMin, E);
 
                         String stepPro = "VectorPostProcess";
-                        piv.saveVector(pivCorrelationProcessed, interrCenters, userName, stepPro,imgFileSaveName);
-                        piv.drawArrowsOnImage(pivCorrelationProcessed, interrCenters, userName, stepPro, imgFileSaveName, arrowDrawOptions);
+                        PivFunctions.saveVectors(pivCorrelationProcessed, interrCenters, userName, stepPro,imgFileSaveName, dt);
+                        PivFunctions.createVectorField(pivCorrelationProcessed, interrCenters, userName, stepPro, imgFileSaveName, arrowDrawOptions, rows, cols);
 
                         if (selectedId == 0){
-                            Map<String, double[][]> pivReplaceMissing = piv.replaceMissingVectors(pivCorrelationProcessed, interrCenters);
-                            Map<String, double[][]> pivCorrelationMulti = piv.calculateMultipass(pivReplaceMissing, interrCenters);
+                            pivReplaceMissing = PivFunctions.replaceMissingVectors(pivCorrelationProcessed, rows, cols, windowSize, overlap);
+                            pivCorrelationMulti = PivFunctions.calculateMultipass(pivReplaceMissing, interrCenters, grayFrame1, grayFrame2, rows, cols, windowSize, overlap);
 
                             String stepMulti = "Multipass";
-                            piv.saveVector(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName);
-                            piv.drawArrowsOnImage(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName, arrowDrawOptions);
-                            Map<String, double[][]> pivReplaceMissing2 = piv.replaceMissingVectors(pivCorrelationMulti, interrCenters);
+                            PivFunctions.saveVectors(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName, dt);
+                            PivFunctions.createVectorField(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName, arrowDrawOptions, rows, cols);
+                            pivReplaceMissing2 = PivFunctions.replaceMissingVectors(pivCorrelationMulti, rows, cols, windowSize, overlap);
 
                             String stepReplace2 = "Replaced2";
-                            piv.saveVector(pivReplaceMissing2, interrCenters, userName, stepReplace2, imgFileSaveName);
-                            piv.drawArrowsOnImage(pivReplaceMissing2, interrCenters, userName, stepReplace2, imgFileSaveName, arrowDrawOptions);
+                            PivFunctions.saveVectors(pivReplaceMissing2, interrCenters, userName, stepReplace2, imgFileSaveName, dt);
+                            PivFunctions.createVectorField(pivReplaceMissing2, interrCenters, userName, stepReplace2, imgFileSaveName, arrowDrawOptions, rows, cols);
 
-                            maxDisplacement = piv.checkMaxDisplacement(pivReplaceMissing2);
+                            maxDisplacement = PivFunctions.checkMaxDisplacement(pivReplaceMissing2);
 
                         } else if (selectedId == 1) {
-                            Map<String, double[][]> pivCorrelationMulti = piv.calculateMultipass(pivCorrelationProcessed, interrCenters);
+                            pivCorrelationMulti = PivFunctions.calculateMultipass(pivCorrelationProcessed, interrCenters, grayFrame1, grayFrame2, rows, cols, windowSize, overlap);
 
                             String stepMulti = "Multipass";
-                            piv.saveVector(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName);
-                            piv.drawArrowsOnImage(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName, arrowDrawOptions);
+                            PivFunctions.saveVectors(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName, dt);
+                            PivFunctions.createVectorField(pivCorrelationMulti, interrCenters, userName, stepMulti, imgFileSaveName, arrowDrawOptions, rows, cols);
 
-                            maxDisplacement = piv.checkMaxDisplacement(pivCorrelationMulti);
+                            maxDisplacement = PivFunctions.checkMaxDisplacement(pivCorrelationMulti);
                         }
                         hidepDialog();
                     }

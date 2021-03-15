@@ -5,46 +5,70 @@ on:
     - cron: "0 12 * * 5"
 
 jobs:
+  check_date:
+    runs-on: ubuntu-latest
+    name: Check latest commit
+    outputs:
+      should_run: ${{ steps.should_run.outputs.should_run }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: print latest_commit
+        run: echo ${{ github.sha }}
+      - id: should_run
+        continue-on-error: true
+        name: check latest commit is less than a week
+        if: ${{ github.event_name == 'schedule' }}
+        run: test -z $(git rev-list  --after="168 hours"  ${{ github.sha }}) && echo "::set-output name=should_run::false"
   apk:
     name: Generate APK
+    needs: check_date
+    if: ${{ needs.check_date.outputs.should_run != 'false' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Setup JDK
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      # get version number
       - name: Get Version
         id: version
-        run: bash echo | cat ./version
+        run: echo "version=$(echo | cat ./version)" >> $GITHUB_ENV
       - name: Build APK
         run: bash ./gradlew assembleDebug --stacktrace
-      # rename apk file
       - name: Rename APK File
-        run: bash mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/mIPIV_${{ steps.version }}.apk
+        run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/mIPIV_${{ env.version }}.apk
       - name: Upload APK
         uses: actions/upload-artifact@v1
         with:
-          name: apk
-          path: app/build/outputs/apk/debug/mIPIV_${{ steps.version }}.apk
+          name: mIPIV_${{ env.version }}.apk
+          path: app/build/outputs/apk/debug/mIPIV_${{ env.version }}.apk
   release:
     name: Release APK
     needs: apk
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Get Version
+        id: version
+        run: echo "version=$(echo | cat ./version)" >> $GITHUB_ENV
       - name: Download APK from build
         uses: actions/download-artifact@v1
         with:
-          name: apk
+          name: mIPIV_${{ env.version }}.apk
+          path: ./
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          release_name: Release ${{version}}
+          release_name: mIPIV_${{ env.version }}
+          tag_name: ${{ env.version }}
+          prerelease: true
       - name: Upload Release APK
         id: upload_release_asset
         uses: actions/upload-release-asset@v1.0.1
@@ -52,11 +76,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: apk/mIPIV_${{ apk.steps.version }}.apk
-          asset_name: mIPIV_${{ apk.steps.version }}.apk
+          asset_path: mIPIV_${{ env.version }}.apk
+          asset_name: mIPIV_${{ env.version }}.apk
           asset_content_type: application/zip
-      # increase version number
+      - name: Delete APK
+        run: sudo rm -rf mIPIV_${{ env.version }}.apk
       - name: Increment Version
-        run: bash sed -ri 's/(.*)([0-9])(\.)([0-9])([0-9])/echo "\1\2\3\4((\5+1))"/ge' ./version
+        run: sudo sed -ri 's/(.*)([0-9])(\.)([0-9])([0-9])/echo "\1\2\3\4$((\5+1))"/ge' ./version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push Version Increment Changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Auto increment version

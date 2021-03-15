@@ -61,7 +61,7 @@
                 android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pivBasicsImageView1"
                 android:layout_width="match_parent"
                 android:layout_height="322dp"
@@ -77,7 +77,7 @@
                 android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pivBasicsImageView2"
                 android:layout_width="match_parent"
                 android:layout_height="257dp"
@@ -119,7 +119,7 @@
                 android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pivBasicsImageView3"
                 android:layout_width="match_parent"
                 android:layout_height="305dp"
@@ -152,7 +152,7 @@
                 android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pivBasicsImageView4"
                 android:layout_width="match_parent"
                 android:layout_height="62dp"
@@ -168,7 +168,7 @@
                 android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pivBasicsImageView5"
                 android:layout_width="match_parent"
                 android:layout_height="106dp"
@@ -184,7 +184,7 @@
                 android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pivBasicsImageView6"
                 android:layout_width="match_parent"
                 android:layout_height="309dp"
@@ -204,7 +204,7 @@
 
     </android.support.v4.widget.NestedScrollView>
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"

@@ -2,7 +2,7 @@ package com.onrpiv.uploadmedia.Learn;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;

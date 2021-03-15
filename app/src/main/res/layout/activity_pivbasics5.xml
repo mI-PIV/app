@@ -36,7 +36,7 @@
                 android:layout_below="@id/overlapHeadingTextView"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/overlapImageView1"
                 android:layout_width="match_parent"
                 android:layout_height="247dp"
@@ -52,7 +52,7 @@
                 android:layout_below="@id/overlapImageView1"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/overlapImageView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
                 android:layout_below="@id/overlapImageView2"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/overlapImageView3"
                 android:layout_width="match_parent"
                 android:layout_height="230dp"
@@ -88,7 +88,7 @@
 
     </ScrollView>
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

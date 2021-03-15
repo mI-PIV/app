@@ -37,7 +37,7 @@
                 android:layout_below="@+id/pos7TextView0"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pos7ImageView0"
                 android:layout_width="match_parent"
                 android:layout_height="230dp"
@@ -53,7 +53,7 @@
                 android:layout_below="@id/pos7ImageView0"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pos7ImageView1"
                 android:layout_width="match_parent"
                 android:layout_height="126dp"
@@ -69,7 +69,7 @@
                 android:layout_below="@id/pos7ImageView1"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pos7ImageView2"
                 android:layout_width="match_parent"
                 android:layout_height="116dp"
@@ -81,7 +81,7 @@
 
     </ScrollView>
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
