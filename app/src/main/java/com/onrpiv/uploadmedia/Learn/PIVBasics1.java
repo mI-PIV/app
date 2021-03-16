@@ -8,14 +8,10 @@ import android.os.Handler;
 import android.text.Html;
 import android.text.Layout;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -99,10 +95,12 @@ public class PIVBasics1 extends PIVBasicsLayout {
             textViews[i].setTextSize(paraTextSize);
         }
 
-        View rootView = this.findViewById(android.R.id.content);
-        recyclerView = rootView.findViewById(R.id.recyclerView_image_wallpapers);
-        fab = findViewById(R.id.fab);
+//        View rootView = this.findViewById(android.R.id.content);
+//        recyclerView = rootView.findViewById(R.id.recyclerView_image_wallpapers);
+//        fab = findViewById(R.id.fab);
 
+        fab = findViewById(R.id.fab);
+        final NestedScrollView scrollView = findViewById(R.id.nestedScroll);
 
 
 //        adapter = new Picasso(getActivity(), TopImages);
@@ -112,16 +110,16 @@ public class PIVBasics1 extends PIVBasicsLayout {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//          recyclerView.scrollToPosition(0);
-                recyclerView.smoothScrollToPosition(0);
+                //recyclerView.smoothScrollToPosition(0);
+                scrollView.scrollTo(0, 0);
 
             }
         });
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
+        scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                int dy = scrollY - oldScrollY;
 
                 if (dy > 0) { // scrolling down
                     new Handler().postDelayed(new Runnable() {
@@ -130,26 +128,45 @@ public class PIVBasics1 extends PIVBasicsLayout {
                             fab.setVisibility(View.GONE);
                         }
                     }, 2000); // delay of 2 seconds before hiding the fab
-
                 } else if (dy < 0) { // scrolling up
-
                     fab.setVisibility(View.VISIBLE);
                 }
             }
-
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) { // No scrolling
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            fab.setVisibility(View.GONE);
-                        }
-                    }, 2000); // delay of 2 seconds before hiding the fab
-                }
-
-            }
         });
+
+
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//
+//                if (dy > 0) { // scrolling down
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            fab.setVisibility(View.GONE);
+//                        }
+//                    }, 2000); // delay of 2 seconds before hiding the fab
+//
+//                } else if (dy < 0) { // scrolling up
+//
+//                    fab.setVisibility(View.VISIBLE);
+//                }
+//            }
+//
+//            @Override
+//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+//                if (newState == RecyclerView.SCROLL_STATE_IDLE) { // No scrolling
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            fab.setVisibility(View.GONE);
+//                        }
+//                    }, 2000); // delay of 2 seconds before hiding the fab
+//                }
+//
+//            }
+//        });
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
