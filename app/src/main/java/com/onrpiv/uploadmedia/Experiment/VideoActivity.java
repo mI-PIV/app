@@ -5,18 +5,15 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
@@ -40,14 +37,8 @@ import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
 import com.onrpiv.uploadmedia.Utilities.RealPathUtil;
 
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.core.Mat;
-
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -60,34 +51,11 @@ public class VideoActivity extends AppCompatActivity{
     private Button pickVideo, generateFrames, recordVideo;
     public static final int REQUEST_PICK_VIDEO = 3;
     private static final int REQUEST_VIDEO_CAPTURE = 300;
-    private static final int READ_REQUEST_CODE = 200;
     public ProgressDialog pDialog;
     private VideoView mVideoView;
     private TextView mBufferingTextView;
-    private Uri video;
     private FFmpeg ffmpeg;
     private String videoPath;
-    private ArrayList<Bitmap> frameList;
-    private ArrayList<File> fileList;
-    private static final int US_OF_S = 1000 * 1000;
-    private int fps = 3;
-    private MediaMetadataRetriever retriever = null;
-    private File storageDirectory;
-    private FileOutputStream fos;
-    private BufferedOutputStream bos;
-    private long time;
-    private Bitmap lastbitmap = null;
-    private File jpegFile;
-    private static String LOG_TAG="opencv";
-    private CameraBridgeViewBase cameraView;
-    ProgressDialog progressBar;
-    private int progressBarStatus = 0;
-    private Handler progressBarHandler = new Handler();
-    private long framesDone = 0;
-    private long eachCount = 0;
-    private long framesToBeGenerated=0;
-    private int  j=0;
-    Mat imageMat;
     private static final String TAG = "SARBAJIT";
     private String userName;
 
@@ -111,29 +79,12 @@ public class VideoActivity extends AppCompatActivity{
         pickVideo = (Button) findViewById(R.id.pickVideo);
         generateFrames = (Button) findViewById(R.id.generateFrames);
         generateFrames.setEnabled(false);
-        retriever = new MediaMetadataRetriever();
         loadFFMpegBinary();
-        final CameraManager camManager = (CameraManager) this.getSystemService(Context.CAMERA_SERVICE);
-
 
         recordVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean hasHighFPS = false;
-                try {
-                    int[] capabilities = camManager.getCameraCharacteristics(camManager.getCameraIdList()[0]).get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
-                    assert capabilities != null;
-                    for (int capability : capabilities) {
-                        if (capability == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_CONSTRAINED_HIGH_SPEED_VIDEO) {
-                            hasHighFPS = true;
-                            break;
-                        }
-                    }
-                } catch (IllegalArgumentException | CameraAccessException e) {
-                    e.printStackTrace();
-                }
-
-                if (hasHighFPS && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                if (hasHighSpeedCapability() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.video_layout_container, CameraFragment.newInstance()).commit();
                 } else {
                     Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
@@ -189,18 +140,6 @@ public class VideoActivity extends AppCompatActivity{
 
         return super.onOptionsItemSelected(item);
     }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if (!OpenCVLoader.initDebug()) {
-//            Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-//            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
-//        } else {
-//            Log.d("OpenCV", "OpenCV library found inside package. Using it!");
-//            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-//        }
-//    }
 
     @Override
     protected void onPause() {
@@ -329,6 +268,7 @@ public class VideoActivity extends AppCompatActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
+            Uri video;
             if (requestCode == REQUEST_VIDEO_CAPTURE) {
                 if (data != null) {
                     Toast.makeText(this, "Video content URI: " + data.getData(),
@@ -369,12 +309,12 @@ public class VideoActivity extends AppCompatActivity{
         String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
         String filePrefix = "EXTRACT_" + timeStamp + "_";
 
-        storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/PIV_Frames_" + userName);
+        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/PIV_Frames_" + userName);
 
         // Then we create the storage directory if does not exists
         if (!storageDirectory.exists()) storageDirectory.mkdir();
 
-        jpegFile = new File(storageDirectory, filePrefix + "%03d" + fileExtn);
+        File jpegFile = new File(storageDirectory, filePrefix + "%03d" + fileExtn);
 
         /* https://ffmpeg.org/ffmpeg.html
         ffmpeg command line options
@@ -390,9 +330,6 @@ public class VideoActivity extends AppCompatActivity{
         String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", "20", "-ss", "" + startMs / 1000, "-t", "" + (endMs - startMs) / 1000, jpegFile.getAbsolutePath()};
         /*   Remove -r 1 if you want to extract all video frames as images from the specified time duration.*/
         execFFmpegBinary(complexCommand);
-
-//        Intent goHome = new Intent(getApplicationContext(), ImageActivity.class);
-//        startActivity(goHome);
     }
 
 
@@ -447,16 +384,22 @@ public class VideoActivity extends AppCompatActivity{
         pDialog.setCancelable(true);
     }
 
-
-    protected void showpDialog() {
-
-        if (!pDialog.isShowing()) pDialog.show();
+    private boolean hasHighSpeedCapability() {
+        final CameraManager camManager = (CameraManager) this.getSystemService(Context.CAMERA_SERVICE);
+        boolean hasHighFPS = false;
+        try {
+            int[] capabilities = camManager.getCameraCharacteristics(camManager.getCameraIdList()[0]).get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
+            assert capabilities != null;
+            for (int capability : capabilities) {
+                if (capability == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_CONSTRAINED_HIGH_SPEED_VIDEO) {
+                    hasHighFPS = true;
+                    break;
+                }
+            }
+        } catch (IllegalArgumentException | CameraAccessException e) {
+            e.printStackTrace();
+        }
+        return hasHighFPS;
     }
-
-    protected void hidepDialog() {
-
-        if (pDialog.isShowing()) pDialog.dismiss();
-    }
-
 }
 
