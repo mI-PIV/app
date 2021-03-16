@@ -125,7 +125,7 @@ public class CameraFragment extends Fragment
     private String mNextVideoAbsolutePath;
     private CaptureRequest.Builder mPreviewBuilder;
 
-    private Range<Integer> mFrameRate = new Range<>(30, 120);
+    private Range<Integer> mFrameRate = new Range<>(120, 120);
     /**
      * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its status.
      */
@@ -258,9 +258,9 @@ public class CameraFragment extends Fragment
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.fps_120) {
-                    mFrameRate =  new Range<>(30, 120);
+                    mFrameRate =  new Range<>(120, 120);
                 } else {
-                    mFrameRate = new Range<>(30, 240);
+                    mFrameRate = new Range<>(240, 240);
                 }
 
                 final Activity activity = getActivity();
@@ -464,6 +464,7 @@ public class CameraFragment extends Fragment
         setUpCaptureRequestBuilder(mPreviewBuilder, true);
         HandlerThread thread = new HandlerThread("CameraCapture");
         thread.start();
+        mBackgroundHandler = new Handler(thread.getLooper());
         mPreviewSession.setRepeatingBurst(highSpeedRequests, null, mBackgroundHandler);
     }
 
@@ -474,6 +475,8 @@ public class CameraFragment extends Fragment
         setUpCaptureRequestBuilder(mPreviewBuilder, false);
         HandlerThread thread = new HandlerThread("CameraPreview");
         thread.start();
+
+        mBackgroundHandler = new Handler(thread.getLooper());
 
         try {
             mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, mBackgroundHandler);
@@ -538,12 +541,12 @@ public class CameraFragment extends Fragment
         mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
         mMediaRecorder.setVideoEncodingBitRate(10000000);
 
-//        try {
-//            mMediaRecorder.setVideoFrameRate(mFrameRate);
-//        } catch (IllegalArgumentException e) {
-//            Log.e("FPS", "Couldn't set FPS.");
-//            e.printStackTrace();
-//        }
+        try {
+            mMediaRecorder.setVideoFrameRate(mFrameRate.getUpper());
+        } catch (IllegalArgumentException e) {
+            Log.e("FPS", "Couldn't set FPS.");
+            e.printStackTrace();
+        }
 
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
@@ -575,7 +578,7 @@ public class CameraFragment extends Fragment
             final SurfaceTexture texture = mTextureView.getSurfaceTexture();
             assert texture != null;
             texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
-            mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_MANUAL);
+            mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
             setUpCaptureRequestBuilder(mPreviewBuilder,true);
 
             List<Surface> surfaces = new ArrayList<>();
@@ -649,7 +652,6 @@ public class CameraFragment extends Fragment
         mIsRecordingVideo = false;
         // Stop recording
         mMediaRecorder.stop();
-        mMediaRecorder.reset();
 
         mButtonVideo.setImageResource(R.drawable.round_fiber_manual_record_white_48dp);
 
@@ -660,7 +662,6 @@ public class CameraFragment extends Fragment
             Log.d(TAG, "Video saved: " + mNextVideoAbsolutePath);
         }
         mNextVideoAbsolutePath = null;
-//        startPreview();
 
         // Close the fragment
         onPause();
