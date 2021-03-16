@@ -217,19 +217,18 @@ public class CameraFragment extends Fragment
      * ratio matches with the specified value.
      *
      * @param choices     The list of sizes that the camera supports for the intended output class
-     * @param width       The minimum desired width
-     * @param height      The minimum desired height
      * @param aspectRatio The aspect ratio
      * @return The optimal {@code Size}, or an arbitrary one if none were big enough
      */
-    private static Size chooseOptimalSize(Size[] choices, int width, int height, Size aspectRatio) {
+    private static Size chooseOptimalSize(Size[] choices, Size aspectRatio) {
         // Collect the supported resolutions that are at least as big as the preview Surface
         List<Size> bigEnough = new ArrayList<>();
         int w = aspectRatio.getWidth();
         int h = aspectRatio.getHeight();
+        double ratio = (double) h / w;
         for (Size option : choices) {
-            if (option.getHeight() == option.getWidth() * h / w &&
-                    option.getWidth() >= width && option.getHeight() >= height) {
+            double optionRatio = (double) option.getHeight() / option.getWidth();
+            if (ratio == optionRatio) {
                 bigEnough.add(option);
             }
         }
@@ -282,8 +281,7 @@ public class CameraFragment extends Fragment
                         .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
                 mVideoSize = chooseVideoSize(map.getHighSpeedVideoSizesFor(mFrameRate));
-                mPreviewSize = chooseOptimalSize(map.getHighSpeedVideoSizesFor(mFrameRate),
-                        mTextureView.getWidth(), mTextureView.getHeight(), mVideoSize);
+                mPreviewSize = chooseOptimalSize(map.getHighSpeedVideoSizesFor(mFrameRate), mVideoSize);
             }
         });
 
@@ -375,8 +373,7 @@ public class CameraFragment extends Fragment
                 throw new RuntimeException("Cannot get available preview/video sizes");
             }
             mVideoSize = chooseVideoSize(map.getHighSpeedVideoSizesFor(mFrameRate));
-            mPreviewSize = chooseOptimalSize(map.getHighSpeedVideoSizesFor(mFrameRate),
-                    width, height, mVideoSize);
+            mPreviewSize = chooseOptimalSize(map.getHighSpeedVideoSizesFor(mFrameRate), mVideoSize);
 
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {

@@ -50,7 +50,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 /**
  * author: sarbajit mukherjee
@@ -97,23 +96,6 @@ public class VideoActivity extends AppCompatActivity{
 
     // Tag for the instance state bundle.
     private static final String PLAYBACK_TIME = "play_time";
-
-//    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-//        @Override
-//        public void onManagerConnected(int status) {
-//            switch (status) {
-//                case LoaderCallbackInterface.SUCCESS:
-//                {
-//                    Log.i("OpenCV", "OpenCV loaded successfully");
-//                    imageMat=new Mat();
-//                } break;
-//                default:
-//                {
-//                    super.onManagerConnected(status);
-//                } break;
-//            }
-//        }
-//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
