@@ -25,8 +25,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
 
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
@@ -85,7 +88,18 @@ public class VideoActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 if (hasHighSpeedCapability() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.video_layout_container, CameraFragment.newInstance()).commit();
+                    FragmentManager fragManager = getSupportFragmentManager();
+
+                    final String requestKey = "highSpeedKey";
+                    fragManager.setFragmentResultListener(requestKey, VideoActivity.this, new FragmentResultListener() {
+                        @Override
+                        public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                            videoCaptured(Uri.parse(result.getString("uri")));
+                            generateFrames.setEnabled(true);
+                        }
+                    });
+
+                    fragManager.beginTransaction().replace(R.id.video_layout_container, CameraFragment.newInstance(requestKey)).commit();
                 } else {
                     Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                     if (videoCaptureIntent.resolveActivity(getPackageManager()) != null) {
@@ -268,26 +282,14 @@ public class VideoActivity extends AppCompatActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            Uri video;
             if (requestCode == REQUEST_VIDEO_CAPTURE) {
                 if (data != null) {
-                    Toast.makeText(this, "Video content URI: " + data.getData(),
-                            Toast.LENGTH_LONG).show();
-                    video = data.getData();
-                    videoPath = RealPathUtil.getRealPath(VideoActivity.this, video);
-                    initializePlayer(video);
-                    recordVideo.setBackgroundColor(Color.parseColor("#00CC00"));
-                    pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+                    videoCaptured(data.getData());
                 }
             }
             if (requestCode == REQUEST_PICK_VIDEO) {
                 if (data != null) {
-                    Toast.makeText(this, "Video content URI: " + data.getData(),
-                            Toast.LENGTH_LONG).show();
-                    video = data.getData();
-                    videoPath = RealPathUtil.getRealPath(VideoActivity.this, video);
-                    initializePlayer(video);
-                    pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+                    videoSelected(data.getData());
                 }
             }
             generateFrames.setEnabled(true);
@@ -295,6 +297,25 @@ public class VideoActivity extends AppCompatActivity{
         else if (resultCode != RESULT_CANCELED) {
             Toast.makeText(this, "Sorry, there was an error!", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void videoCaptured(Uri video) {
+        Toast.makeText(this, "Video content URI: " + video,
+                Toast.LENGTH_LONG).show();
+
+        videoPath = RealPathUtil.getRealPath(VideoActivity.this, video);
+        initializePlayer(video);
+        recordVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+        pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+    }
+
+    private void videoSelected(Uri video) {
+        Toast.makeText(this, "Video content URI: " + video,
+                Toast.LENGTH_LONG).show();
+
+        videoPath = RealPathUtil.getRealPath(VideoActivity.this, video);
+        initializePlayer(video);
+        pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
     }
 
     /**

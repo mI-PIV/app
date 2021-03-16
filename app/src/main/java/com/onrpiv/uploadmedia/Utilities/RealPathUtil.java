@@ -17,8 +17,6 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import org.opencv.android.Utils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -152,7 +150,7 @@ public class RealPathUtil {
             return uri.getPath();
         }
 
-        return null;
+        return uri.toString();
     }
 
     /**

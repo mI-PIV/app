@@ -124,6 +124,7 @@ public class CameraFragment extends Fragment
     private Integer mSensorOrientation;
     private String mNextVideoAbsolutePath;
     private CaptureRequest.Builder mPreviewBuilder;
+    private static String mRequestKey;
 
     private Range<Integer> mFrameRate = new Range<>(120, 120);
     /**
@@ -190,7 +191,8 @@ public class CameraFragment extends Fragment
 
     };
 
-    public static CameraFragment newInstance() {
+    public static CameraFragment newInstance(String requestKey) {
+        mRequestKey = requestKey;
         return new CameraFragment();
     }
 
@@ -661,11 +663,15 @@ public class CameraFragment extends Fragment
                     Toast.LENGTH_LONG).show();
             Log.d(TAG, "Video saved: " + mNextVideoAbsolutePath);
         }
-        mNextVideoAbsolutePath = null;
+
+        // Save URI for VideoActivity
+        onPause();
+        Bundle result = new Bundle();
+        result.putString("uri", mNextVideoAbsolutePath);
+        getParentFragmentManager().setFragmentResult(mRequestKey, result);
 
         // Close the fragment
-        onPause();
-        getFragmentManager().beginTransaction().remove(this).commit();
+        getParentFragmentManager().beginTransaction().remove(this).commit();
     }
 
     /**
