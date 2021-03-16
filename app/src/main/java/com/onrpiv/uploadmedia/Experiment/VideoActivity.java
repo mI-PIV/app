@@ -2,21 +2,22 @@ package com.onrpiv.uploadmedia.Experiment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
@@ -36,10 +40,8 @@ import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
 import com.onrpiv.uploadmedia.Utilities.RealPathUtil;
 
-
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.core.Mat;
-
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -48,6 +50,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * author: sarbajit mukherjee
@@ -128,15 +131,34 @@ public class VideoActivity extends AppCompatActivity{
         generateFrames.setEnabled(false);
         retriever = new MediaMetadataRetriever();
         loadFFMpegBinary();
+        final CameraManager camManager = (CameraManager) this.getSystemService(Context.CAMERA_SERVICE);
+
 
         recordVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-//                if(videoCaptureIntent.resolveActivity(getPackageManager()) != null){
-//                    startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE);
-//                }
-                getSupportFragmentManager().beginTransaction().replace(R.id.video_layout_container, CameraFragment.newInstance()).commit();
+                boolean hasHighFPS = false;
+                try {
+                    int[] capabilities = camManager.getCameraCharacteristics(camManager.getCameraIdList()[0]).get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
+                    assert capabilities != null;
+                    for (int capability : capabilities) {
+                        if (capability == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_CONSTRAINED_HIGH_SPEED_VIDEO) {
+                            hasHighFPS = true;
+                            break;
+                        }
+                    }
+                } catch (IllegalArgumentException | CameraAccessException e) {
+                    e.printStackTrace();
+                }
+
+                if (hasHighFPS && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.video_layout_container, CameraFragment.newInstance()).commit();
+                } else {
+                    Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                    if (videoCaptureIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE);
+                    }
+                }
             }
         });
 
