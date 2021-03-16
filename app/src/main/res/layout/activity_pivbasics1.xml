@@ -25,25 +25,6 @@
             android:layout_height="match_parent"
             android:descendantFocusability="blocksDescendants">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView_image_wallpapers"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorGray"
-                android:nestedScrollingEnabled="false"/>
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:background="#6D353232"
-                android:backgroundTint="#6D353232"
-                android:visibility="gone"
-                android:src="@drawable/ic_baseline_arrow_upward_24"
-                app:rippleColor="#6D353232" />
-
             <TextView
                 android:id="@+id/headingTextview"
                 android:layout_width="wrap_content"
@@ -199,6 +180,23 @@
                 android:layout_below="@id/pivBasicsImageView6"
                 android:layout_marginEnd="7.5dp"
                 tools:ignore="MissingConstraints" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_image_wallpapers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="160dp"
+                android:background="#6D353232"
+                android:backgroundTint="#6D353232"
+                android:visibility="visible"
+                android:src="@drawable/ic_baseline_arrow_upward_24"
+                app:rippleColor="#6D353232" />
 
         </RelativeLayout>
 
