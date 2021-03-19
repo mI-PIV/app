@@ -25,6 +25,8 @@ public class LearnFluids extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.learn_fluids);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         fluidGlossaryButton = (Button)findViewById(R.id.fluidGlossaryButton);
         fluidGlossaryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,4 +73,15 @@ public class LearnFluids extends AppCompatActivity {
             return true;
         }
     };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
