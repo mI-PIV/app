@@ -27,6 +27,8 @@ public class LearnPIV extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.learn_piv);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         pivBasicsButton = (Button)findViewById(R.id.pivBasicsButton);
         pivBasicsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,4 +93,15 @@ public class LearnPIV extends AppCompatActivity {
             return true;
         }
     };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }

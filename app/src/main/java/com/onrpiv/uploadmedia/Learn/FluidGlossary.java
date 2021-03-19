@@ -16,7 +16,7 @@ import com.onrpiv.uploadmedia.Experiment.HomeActivity;
 import com.onrpiv.uploadmedia.Experiment.VideoActivity;
 import com.onrpiv.uploadmedia.R;
 
-public class FluidGlossary extends Activity {
+public class FluidGlossary extends LearnFluids {
     // Array of strings...
     String[] mobileArray = {"Boundary Layer","Laminar and Turbulent Flow","Reynolds Number","Vorticity/Circulation",
             "Fluid","Wake","Shear","Velocity profile","Streamline","Steady/Unsteady",
