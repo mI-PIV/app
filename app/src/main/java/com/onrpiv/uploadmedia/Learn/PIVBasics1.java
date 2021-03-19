@@ -1,30 +1,25 @@
 package com.onrpiv.uploadmedia.Learn;
 
 import android.os.Build;
-//import android.support.annotation.RequiresApi;
-//import android.support.design.widget.BottomNavigationView;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Html;
 import android.text.Layout;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.ScrollToTop;
 
 public class PIVBasics1 extends PIVBasicsLayout {
 
     private int headerTextSize = 25;
     private int paraTextSize = 16;
-    private RecyclerView recyclerView;
+    private NestedScrollView scrollView;
     private FloatingActionButton fab;
-    private RecyclerView.Adapter adapter;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -95,78 +90,11 @@ public class PIVBasics1 extends PIVBasicsLayout {
             textViews[i].setTextSize(paraTextSize);
         }
 
-//        View rootView = this.findViewById(android.R.id.content);
-//        recyclerView = rootView.findViewById(R.id.recyclerView_image_wallpapers);
-//        fab = findViewById(R.id.fab);
-
         fab = findViewById(R.id.fab);
-        final NestedScrollView scrollView = findViewById(R.id.nestedScroll);
+        scrollView = findViewById(R.id.nestedScroll);
 
-
-//        adapter = new Picasso(getActivity(), TopImages);
-//        adapter.setClickListener(this);
-//        recyclerView.setAdapter(adapter);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //recyclerView.smoothScrollToPosition(0);
-                scrollView.scrollTo(0, 0);
-
-            }
-        });
-
-        scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                int dy = scrollY - oldScrollY;
-
-                if (dy > 0) { // scrolling down
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            fab.setVisibility(View.GONE);
-                        }
-                    }, 2000); // delay of 2 seconds before hiding the fab
-                } else if (dy < 0) { // scrolling up
-                    fab.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//
-//                if (dy > 0) { // scrolling down
-//                    new Handler().postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            fab.setVisibility(View.GONE);
-//                        }
-//                    }, 2000); // delay of 2 seconds before hiding the fab
-//
-//                } else if (dy < 0) { // scrolling up
-//
-//                    fab.setVisibility(View.VISIBLE);
-//                }
-//            }
-//
-//            @Override
-//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-//                if (newState == RecyclerView.SCROLL_STATE_IDLE) { // No scrolling
-//                    new Handler().postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            fab.setVisibility(View.GONE);
-//                        }
-//                    }, 2000); // delay of 2 seconds before hiding the fab
-//                }
-//
-//            }
-//        });
+        ScrollToTop scrollToTop = new ScrollToTop(scrollView, fab);
+        scrollToTop.scrollFunction();
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
