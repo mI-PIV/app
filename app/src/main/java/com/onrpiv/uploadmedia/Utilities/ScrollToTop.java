@@ -1,6 +1,5 @@
 package com.onrpiv.uploadmedia.Utilities;
 
-
 import android.os.Handler;
 import android.view.View;
 
@@ -13,14 +12,12 @@ public class ScrollToTop {
     private NestedScrollView scrollView;
     private FloatingActionButton fab;
 
-    public ScrollToTop(NestedScrollView myScrollView, FloatingActionButton myFab)
-    {
+    public ScrollToTop(NestedScrollView myScrollView, FloatingActionButton myFab) {
         scrollView = myScrollView;
         fab = myFab;
     }
 
-    public void scrollFunction()
-    {
+    public void scrollFunction() {
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
