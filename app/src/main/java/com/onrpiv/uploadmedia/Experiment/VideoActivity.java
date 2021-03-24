@@ -52,10 +52,9 @@ public class VideoActivity extends AppCompatActivity{
     public ProgressDialog pDialog;
     private VideoView mVideoView;
     private TextView mBufferingTextView;
-    private FFmpeg ffmpeg;
     private String videoPath;
-    private static final String TAG = "SARBAJIT";
     private String userName;
+    private String fps = "30";
 
     // Current playback position (in milliseconds).
     private int mCurrentPosition = 0;
@@ -77,11 +76,11 @@ public class VideoActivity extends AppCompatActivity{
         pickVideo = (Button) findViewById(R.id.pickVideo);
         generateFrames = (Button) findViewById(R.id.generateFrames);
         generateFrames.setEnabled(false);
-//        loadFFMpegBinary();
 
         recordVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Camera supports high speed capture
                 if (hasHighSpeedCapability() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     FragmentManager fragManager = getSupportFragmentManager();
 
@@ -90,11 +89,14 @@ public class VideoActivity extends AppCompatActivity{
                         @Override
                         public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                             videoCaptured(Uri.parse(result.getString("uri")));
+                            fps = result.getString("fps");
                             generateFrames.setEnabled(true);
                         }
                     });
 
                     fragManager.beginTransaction().replace(R.id.video_layout_container, CameraFragment.newInstance(requestKey)).commit();
+
+                // Camera doesn't support high speed capture
                 } else {
                     Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                     if (videoCaptureIntent.resolveActivity(getPackageManager()) != null) {
@@ -299,7 +301,7 @@ public class VideoActivity extends AppCompatActivity{
         -t  total duration or when to stop processing.
             The value is a time duration. See more https://ffmpeg.org/ffmpeg-utils.html#Time-duration.
          */
-        String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", "20", "-ss", "" + startMs / 1000, "-t", "" + (endMs - startMs) / 1000, jpegFile.getAbsolutePath()};
+        String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", fps, "-ss", "" + startMs / 1000, "-t", "" + (endMs - startMs) / 1000, jpegFile.getAbsolutePath()};
         /*   Remove -r 1 if you want to extract all video frames as images from the specified time duration.*/
         execFFmpegBinary(complexCommand);
     }

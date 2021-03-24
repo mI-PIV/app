@@ -668,6 +668,7 @@ public class CameraFragment extends Fragment
         onPause();
         Bundle result = new Bundle();
         result.putString("uri", mNextVideoAbsolutePath);
+        result.putString("fps", mFrameRate.getLower().toString());
         getParentFragmentManager().setFragmentResult(mRequestKey, result);
 
         // Close the fragment
