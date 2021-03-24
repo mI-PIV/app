@@ -40,12 +40,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-//import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
-//import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
-//import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
-//import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
-//import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
-
 /**
  * author: sarbajit mukherjee
  * Created by sarbajit mukherjee on 09/07/2020.
@@ -187,50 +181,6 @@ public class VideoActivity extends AppCompatActivity{
         outState.putInt(PLAYBACK_TIME, mVideoView.getCurrentPosition());
     }
 
-//    /**
-//     * Load FFmpeg binary
-//     */
-//    private void loadFFMpegBinary() {
-//        try {
-//            if (ffmpeg == null) {
-//                Log.d(TAG, "ffmpeg : era nulo");
-//                ffmpeg = FFmpeg.getInstance(this);
-//            }
-//            ffmpeg.loadBinary(new LoadBinaryResponseHandler() {
-//                @Override
-//                public void onFailure() {
-//                    showUnsupportedExceptionDialog();
-//                }
-//
-//                @Override
-//                public void onSuccess() {
-//                    Log.d(TAG, "ffmpeg : correctly Loaded");
-//                }
-//            });
-//        } catch (FFmpegNotSupportedException e) {
-//            showUnsupportedExceptionDialog();
-//        } catch (Exception e) {
-//            Log.d(TAG, "Exception no control ada : " + e);
-//        }
-//    }
-
-//    private void showUnsupportedExceptionDialog() {
-//        new AlertDialog.Builder(VideoActivity.this)
-//                .setIcon(android.R.drawable.ic_dialog_alert)
-//                .setTitle("Not Supported")
-//                .setMessage("Device Not Supported")
-//                .setCancelable(false)
-//                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        VideoActivity.this.finish();
-//                    }
-//                })
-//                .create()
-//                .show();
-//
-//    }
-
     private void initializePlayer(Uri uri) {
         // Show the "Buffering..." message while the video loads.
         mBufferingTextView.setVisibility(VideoView.VISIBLE);
@@ -350,7 +300,6 @@ public class VideoActivity extends AppCompatActivity{
             The value is a time duration. See more https://ffmpeg.org/ffmpeg-utils.html#Time-duration.
          */
         String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", "20", "-ss", "" + startMs / 1000, "-t", "" + (endMs - startMs) / 1000, jpegFile.getAbsolutePath()};
-//        String[] complexCommand = {"-y -i " + videoPath + " -an -r 20 -ss " + startMs / 1000 + " -t " + (endMs - startMs) / 1000 + " " + jpegFile.getAbsolutePath()};
         /*   Remove -r 1 if you want to extract all video frames as images from the specified time duration.*/
         execFFmpegBinary(complexCommand);
     }
@@ -377,44 +326,6 @@ public class VideoActivity extends AppCompatActivity{
                     }
                 }
             });
-
-//            ffmpeg.execute(command, new ExecuteBinaryResponseHandler() {
-//                @Override
-//                public void onFailure(String s) {
-//                    Log.d(TAG, "FAILED with output : " + s);
-//                    Toast.makeText(VideoActivity.this, "Frames Generation FAILED", Toast.LENGTH_SHORT).show();
-//                }
-//                @Override
-//                public void onSuccess(String s) {
-//                    Log.d(TAG, "SUCCESS with output : " + s);
-//                    Toast.makeText(VideoActivity.this, "Frames Generation Completed", Toast.LENGTH_SHORT).show();
-//                    Toast.makeText(VideoActivity.this, "Head Over to the Image Upload Section", Toast.LENGTH_SHORT).show();
-//
-//                    RealPathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
-//                    generateFrames.setBackgroundColor(Color.parseColor("#00CC00"));
-//                }
-//
-//                @Override
-//                public void onProgress(String s) {
-//                    Log.d(TAG, "Started command : ffmpeg " + Arrays.toString(command));
-//                    Log.d(TAG, "progress : " + s);
-//                }
-//
-//                @Override
-//                public void onStart() {
-//                    Log.d(TAG, "Started command : ffmpeg " + Arrays.toString(command));
-//                }
-//
-//                @Override
-//                public void onFinish() {
-//                    Log.d(TAG, "Finished command : ffmpeg " + Arrays.toString(command));
-//                }
-//
-//            });
-//        } catch (FFmpegCommandAlreadyRunningException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
     protected void initDialog() {
