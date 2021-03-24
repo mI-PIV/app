@@ -94,11 +94,9 @@ public class FluidGlossary extends LearnFluids {
                     Intent myIntent = new Intent(view.getContext(), Pos14_Activity.class);
                     startActivityForResult(myIntent,13);
                 }
-                // Commenting this out because there's no content in this section yet.
                 if (position == 14) {
-//                    Intent myIntent = new Intent(view.getContext(), Pos15_Activity.class);
-//                    startActivityForResult(myIntent,14);
-                    //view.setBackgroundColor(Color.parseColor("#bebebe"));
+                    Intent myIntent = new Intent(view.getContext(), Pos15_Activity.class);
+                    startActivityForResult(myIntent,14);
                 }
             }
         });
