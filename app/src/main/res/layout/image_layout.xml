@@ -92,34 +92,31 @@
 
         <Button
             android:id="@+id/lightbulb1"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_marginStart="350dp"
             android:layout_marginTop="50dp"
-            android:background="@drawable/mybuttons"
-            android:text="Button1"
+            android:background="@drawable/lightbulb"
             android:textColor="#FFFFFF"
             android:textSize="10dp" />
 
         <Button
             android:id="@+id/lightbulb2"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_marginStart="350dp"
             android:layout_marginTop="108dp"
-            android:background="@drawable/mybuttons"
-            android:text="Button2"
+            android:background="@drawable/lightbulb"
             android:textColor="#FFFFFF"
             android:textSize="10dp" />
 
         <Button
             android:id="@+id/lightbulb3"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_marginStart="350dp"
             android:layout_marginTop="224dp"
-            android:background="@drawable/mybuttons"
-            android:text="Button3"
+            android:background="@drawable/lightbulb"
             android:textColor="#FFFFFF"
             android:textSize="10dp" />
 
