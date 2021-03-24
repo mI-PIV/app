@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -26,63 +27,104 @@
 <!--        app:zoomage_minScale="0.6"-->
 <!--        app:zoomage_maxScale="8" />-->
 
-    <Button
-        android:id="@+id/pickImageMultiple"
+    <RelativeLayout
+        android:id="@+id/imageActivityRelativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:background="@drawable/buttons"
-        android:text="Select Multiple Images"
-        android:textColor="#FFFFFF" />
-<!--        android:layout_marginTop="5dp"/>-->
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/Review"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:onClick="reviewFile"
-        android:enabled="false"
-        android:text="Review Images"
-        android:background="@drawable/buttons"
-        android:textColor="#FFFFFF"
-        android:layout_below="@+id/pickImageMultiple"
-        android:visibility="visible" />
+        <Button
+            android:id="@+id/pickImageMultiple"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/buttons"
+            android:text="Select Image Pair"
+            android:textColor="#FFFFFF" />
+    <!--        android:layout_marginTop="5dp"/>-->
 
-    <Button
-        android:id="@+id/parameters"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:enabled="false"
-        android:text="Input PIV Parameters"
-        android:layout_below="@+id/Review"
-        android:background="@drawable/buttons"
-        android:textColor="#FFFFFF"
-        android:visibility="visible" />
+        <Button
+            android:id="@+id/Review"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:onClick="reviewFile"
+            android:enabled="false"
+            android:text="Check Image Correlation"
+            android:background="@drawable/buttons"
+            android:textColor="#FFFFFF"
+            android:layout_below="@+id/pickImageMultiple"
+            android:visibility="visible" />
 
-    <Button
-        android:id="@+id/compute"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:enabled="false"
-        android:background="@drawable/buttons"
-        android:textColor="#FFFFFF"
-        android:layout_below="@+id/parameters"
-        android:text="Compute PIV" />
+        <Button
+            android:id="@+id/parameters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:enabled="false"
+            android:text="Input PIV Parameters"
+            android:layout_below="@+id/Review"
+            android:background="@drawable/buttons"
+            android:textColor="#FFFFFF"
+            android:visibility="visible" />
 
-    <Button
-        android:id="@+id/display"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:enabled="false"
-        android:onClick="displayFile"
-        android:background="@drawable/buttons"
-        android:textColor="#FFFFFF"
-        android:layout_below="@+id/compute"
-        android:text="View results" />
+        <Button
+            android:id="@+id/compute"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:enabled="false"
+            android:background="@drawable/buttons"
+            android:textColor="#FFFFFF"
+            android:layout_below="@+id/parameters"
+            android:text="Compute PIV" />
+
+        <Button
+            android:id="@+id/display"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:enabled="false"
+            android:onClick="displayFile"
+            android:background="@drawable/buttons"
+            android:textColor="#FFFFFF"
+            android:layout_below="@+id/compute"
+            android:text="View results" />
+
+        <Button
+            android:id="@+id/lightbulb1"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="350dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/mybuttons"
+            android:text="Button1"
+            android:textColor="#FFFFFF"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/lightbulb2"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="350dp"
+            android:layout_marginTop="108dp"
+            android:background="@drawable/mybuttons"
+            android:text="Button2"
+            android:textColor="#FFFFFF"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/lightbulb3"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="350dp"
+            android:layout_marginTop="224dp"
+            android:background="@drawable/mybuttons"
+            android:text="Button3"
+            android:textColor="#FFFFFF"
+            android:textSize="10dp" />
+
+
+    </RelativeLayout>
 
 <!--    <Button-->
 <!--        android:id="@+id/save"-->
