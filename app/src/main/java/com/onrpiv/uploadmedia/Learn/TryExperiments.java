@@ -32,30 +32,36 @@ public class TryExperiments extends FluidGlossary {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                // There's only one experiment that's completed in this section. Graying out the ones
-                // that don't have any content.
-//                if (position == 0) {
-//                    view.setBackgroundColor(Color.parseColor("#bebebe"));
-//                }
-//                if (position == 1) {
-//                    view.setBackgroundColor(Color.parseColor("#bebebe"));
-//                }
-//                if (position == 2) {
-//                    view.setBackgroundColor(Color.parseColor("#bebebe"));
-//                }
-//                if (position == 3) {
-//                    view.setBackgroundColor(Color.parseColor("#bebebe"));
-//                }
-//                if (position == 4) {
-//                    view.setBackgroundColor(Color.parseColor("#bebebe"));
-//                }
-                if (position == 5) {
+                // There's only one experiment that's completed in this section.
+                // The rest are "under construction."
+                if (position == 0) {
                     Intent myIntent = new Intent(view.getContext(), Experiment1.class);
                     startActivityForResult(myIntent,0);
                 }
-//                if (position == 6) {
-//                    view.setBackgroundColor(Color.parseColor("#bebebe"));
-//                }
+                if (position == 1) {
+                    Intent myIntent = new Intent(view.getContext(), Experiment2.class);
+                    startActivityForResult(myIntent,0);
+                }
+                if (position == 2) {
+                    Intent myIntent = new Intent(view.getContext(), Experiment3.class);
+                    startActivityForResult(myIntent,0);
+                }
+                if (position == 3) {
+                    Intent myIntent = new Intent(view.getContext(), Experiment4.class);
+                    startActivityForResult(myIntent,0);
+                }
+                if (position == 4) {
+                    Intent myIntent = new Intent(view.getContext(), Experiment5.class);
+                    startActivityForResult(myIntent,0);
+                }
+                if (position == 5) {
+                    Intent myIntent = new Intent(view.getContext(), Experiment6.class);
+                    startActivityForResult(myIntent,0);
+                }
+                if (position == 6) {
+                    Intent myIntent = new Intent(view.getContext(), Experiment7.class);
+                    startActivityForResult(myIntent,0);
+                }
             }
         });
 

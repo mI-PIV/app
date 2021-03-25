@@ -36,6 +36,12 @@
         </activity>
 
         <activity android:name=".Learn.Experiment1"/>
+        <activity android:name=".Learn.Experiment2"/>
+        <activity android:name=".Learn.Experiment3"/>
+        <activity android:name=".Learn.Experiment4"/>
+        <activity android:name=".Learn.Experiment5"/>
+        <activity android:name=".Learn.Experiment6"/>
+        <activity android:name=".Learn.Experiment7"/>
         <activity android:name=".Learn.FluidGlossary"/>
         <activity android:name=".Learn.LaserSafetyLayout"/>
         <activity android:name=".Learn.LearnImagingLayout"/>
