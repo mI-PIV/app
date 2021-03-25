@@ -11,16 +11,9 @@ import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.provider.MediaStore;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -38,6 +31,10 @@ import android.widget.RadioGroup;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import com.onrpiv.uploadmedia.BuildConfig;
 import com.onrpiv.uploadmedia.R;
@@ -238,7 +235,8 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
             requestReadPhoneStatePermission();
         } else {
             // READ_PHONE_STATE permission is already been granted.
-            doPermissionGrantedStuffs();
+
+//            doPermissionGrantedStuffs();
         }
     }
 
@@ -959,25 +957,26 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-
-        if (requestCode == MY_PERMISSIONS_REQUEST_READ_PHONE_STATE) {
-            // Received permission result for READ_PHONE_STATE permission.est.");
-            // Check if the only required permission has been granted
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // READ_PHONE_STATE permission has been granted, proceed with displaying IMEI Number
-                //alertAlert(getString(R.string.permision_available_read_phone_state));
-                doPermissionGrantedStuffs();
-            } else {
-                alertAlert(getString(R.string.permissions_not_granted_read_phone_state));
-            }
-        }
-    }
+//    /**
+//     * Callback received when a permissions request has been completed.
+//     */
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+//                                           @NonNull int[] grantResults) {
+//
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == MY_PERMISSIONS_REQUEST_READ_PHONE_STATE) {
+//            // Received permission result for READ_PHONE_STATE permission.est.");
+//            // Check if the only required permission has been granted
+//            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // READ_PHONE_STATE permission has been granted, proceed with displaying IMEI Number
+//                //alertAlert(getString(R.string.permision_available_read_phone_state));
+//                doPermissionGrantedStuffs();
+//            } else {
+//                alertAlert(getString(R.string.permissions_not_granted_read_phone_state));
+//            }
+//        }
+//    }
 
     private void alertAlert(String msg) {
         new AlertDialog.Builder(ImageActivity.this)
@@ -992,27 +991,27 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                 .show();
     }
 
-    public void doPermissionGrantedStuffs() {
-        //Have an  object of TelephonyManager
-        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        //Get IMEI Number of Phone  //////////////// for this task i only need the IMEI
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            IMEINumber = tm != null ? tm.getImei() : null;
-        }
-
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1 && android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            IMEINumber = tm != null ? tm.getDeviceId() : null;
-        }
+//    public void doPermissionGrantedStuffs() {
+//        //Have an  object of TelephonyManager
+//        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+//        //Get IMEI Number of Phone  //////////////// for this task i only need the IMEI
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//            IMEINumber = tm != null ? tm.getImei() : null;
+//        }
+//
+//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1 && android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+//            IMEINumber = tm != null ? tm.getDeviceId() : null;
+//        }
 
         /************************************************
          * **********************************************
@@ -1084,5 +1083,5 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
          }
          */
-    }
+//    }
 }
