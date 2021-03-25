@@ -11,90 +11,116 @@
         android:gravity="center_horizontal"
         android:textSize="15dp" />
 
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="10dp">
+        android:layout_height="match_parent">
 
-        <TableRow
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:paddingTop="10dp">
 
-            <TextView
-                android:gravity="end"
-                android:text="Which Image Set : " />
-
-            <EditText
-                android:id="@+id/imgSet"
-                android:hint="Number 1 - 20"
-                android:inputType="number" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <TextView
-                android:gravity="end"
-                android:text="First Image : " />
-
-            <EditText
-                android:id="@+id/img1"
-                android:hint="Number 1 - 20"
-                android:inputType="number" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <TextView
-                android:gravity="end"
-                android:text="Second Image : " />
-
-            <EditText
-                android:id="@+id/img2"
-                android:hint="Number 1 - 20"
-                android:inputType="number" />
-
-        </TableRow>
-
-        <TableRow android:gravity="center_horizontal">
-
-            <Button
-                android:id="@+id/button_cancel_user_data"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cancel"
-                android:textSize="20dp"
-                android:textAllCaps="false"
-                android:backgroundTint="#243EDF"
-                android:textColor="#FFFFFF"
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:gravity="center_horizontal"
-                android:layout_marginBottom="20dp"/>
+                android:orientation="horizontal">
 
+                <TextView
+                    android:gravity="end"
+                    android:text="Which Image Set : " />
 
-            <Button
-                android:id="@+id/button_save_user_data"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select Images"
-                android:textSize="20dp"
-                android:textAllCaps="false"
-                android:backgroundTint="#243EDF"
-                android:textColor="#FFFFFF"
+                <EditText
+                    android:id="@+id/imgSet"
+                    android:hint="Number 1 - 20"
+                    android:inputType="number" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:gravity="center_horizontal"
-                android:layout_marginBottom="20dp"/>
+                android:orientation="horizontal">
 
-        </TableRow>
-    </TableLayout>
+                <TextView
+                    android:gravity="end"
+                    android:text="First Image : " />
+
+                <EditText
+                    android:id="@+id/img1"
+                    android:hint="Number 1 - 20"
+                    android:inputType="number" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:gravity="end"
+                    android:text="Second Image : " />
+
+                <EditText
+                    android:id="@+id/img2"
+                    android:hint="Number 1 - 20"
+                    android:inputType="number" />
+
+            </TableRow>
+
+            <TableRow android:gravity="center_horizontal">
+
+                <Button
+                    android:id="@+id/button_cancel_user_data"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel"
+                    android:textSize="20dp"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#243EDF"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center_horizontal"
+                    android:layout_marginBottom="20dp"/>
+
+
+                <Button
+                    android:id="@+id/button_save_user_data"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Images"
+                    android:textSize="20dp"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#243EDF"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center_horizontal"
+                    android:layout_marginBottom="20dp"/>
+
+            </TableRow>
+        </TableLayout>
+
+        <Button
+            android:id="@+id/lightbulbUserDialog1"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="350dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/lightbulb"
+            android:textColor="#FFFFFF"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/lightbulbUserDialog2"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="350dp"
+            android:layout_marginTop="80dp"
+            android:background="@drawable/lightbulb"
+            android:textColor="#FFFFFF"
+            android:textSize="10dp" />
+
+    </RelativeLayout>
 
 </LinearLayout>

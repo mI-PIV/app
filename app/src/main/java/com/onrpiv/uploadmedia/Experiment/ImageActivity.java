@@ -207,7 +207,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
             initDialog();
         }
 
-        popupWindowRun();
+        popupWindowImageLayoutRun();
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
@@ -430,15 +430,20 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    private void popupWindowUserDialogRun()
+    {
+        context = getApplicationContext();
+    }
+
     // creates a popupwindow that gives information and possibly a link to somewhere else in the app
-    private void popupWindowRun()
+    private void popupWindowImageLayoutRun()
     {
         context = getApplicationContext();
         relativeLayout = (RelativeLayout) findViewById(R.id.imageActivityRelativeLayout);
 
-        lightbulb1 = (Button) findViewById(R.id.lightbulb1);
-        lightbulb2 = (Button) findViewById(R.id.lightbulb2);
-        lightbulb3 = (Button) findViewById(R.id.lightbulb3);
+        lightbulb1 = (Button) findViewById(R.id.lightbulbImageLayout1);
+        lightbulb2 = (Button) findViewById(R.id.lightbulbImagelayout2);
+        lightbulb3 = (Button) findViewById(R.id.lightbulbImageLayout3);
 
         String lightbulb1Title = "Image Pair";
         String lightbulb2Title = "Image Correlation";
