@@ -170,9 +170,6 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     // tooltips variables
     private PopupWindow popupWindow;
     private RelativeLayout relativeLayout;
-    private Button lightbulb1;
-    private Button lightbulb2;
-    private Button lightbulb3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -441,9 +438,9 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         context = getApplicationContext();
         relativeLayout = (RelativeLayout) findViewById(R.id.imageActivityRelativeLayout);
 
-        lightbulb1 = (Button) findViewById(R.id.lightbulbImageLayout1);
-        lightbulb2 = (Button) findViewById(R.id.lightbulbImagelayout2);
-        lightbulb3 = (Button) findViewById(R.id.lightbulbImageLayout3);
+        Button lightbulb1 = (Button) findViewById(R.id.lightbulbImageLayout1);
+        Button lightbulb2 = (Button) findViewById(R.id.lightbulbImagelayout2);
+        Button lightbulb3 = (Button) findViewById(R.id.lightbulbImageLayout3);
 
         String lightbulb1Title = "Image Pair";
         String lightbulb2Title = "Image Correlation";
