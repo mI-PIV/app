@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.text.LineBreaker;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -208,6 +209,8 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
             loadIMEI();
             initDialog();
         }
+
+        popupWindowImageLayoutRun();
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
@@ -288,7 +291,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                 Arrays.sort(allFiles);
                 int lenAllFiles = allFiles.length;
                 int set = lenAllFiles/20;
-                setEditText.setText("User '"+userName + "' has "+set+" image sets. The highest number set corresponds to the lastest generated frames");
+                setEditText.setText("User '"+userName + "' has "+set+" image sets. The highest number set corresponds to the latest generated frames");
                 setEditText.setTextSize(15);
                 if (set == 1) {
                     setNumberEditText.setHint("Number 1");
@@ -434,6 +437,19 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     private void popupWindowUserDialogRun()
     {
         context = getApplicationContext();
+        relativeLayout = (RelativeLayout) findViewById(R.id.popupDialogRelativeLayout);
+
+        Button lightbulb1 = (Button) findViewById(R.id.lightbulbUserDialog1);
+        Button lightbulb2 = (Button) findViewById(R.id.lightbulbUserDialog2);
+
+        String lightbulb1Title = "Image Set";
+        String lightbulb2Title = "Images";
+
+        String lightbulb1Info = "The image set numbers are in order (time-wise) of each users' frame generation";
+        String lightbulb2Info = "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).";
+
+        popupWindowNoLink(lightbulb1, lightbulb1Title, lightbulb1Info);
+        popupWindowNoLink(lightbulb2, lightbulb2Title, lightbulb2Info);
     }
 
     // creates a popupwindow that gives information and possibly a link to somewhere else in the app
@@ -1147,6 +1163,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                 windowTitle.setText(popUpWindowTitle);
 
                 TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
+                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
                 windowMessage.setText(popupWindowMessage);
 
                 // New instance of popup window
@@ -1192,6 +1209,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                 windowTitle.setText(popUpWindowTitle);
 
                 TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
+                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
                 windowMessage.setText(popupWindowMessage);
 
                 // New instance of popup window
