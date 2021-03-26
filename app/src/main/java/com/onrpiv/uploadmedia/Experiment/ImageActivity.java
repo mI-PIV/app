@@ -1131,7 +1131,8 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
          }
          */
-    }
+//    }
+
 
     private void popupWindowWithLink(Button button, final String popUpWindowTitle, final String popupWindowMessage, final String linkText, final Object myClass) {
 
@@ -1213,5 +1214,4 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
-//    }
 }
