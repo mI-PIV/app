@@ -17,6 +17,6 @@ public class Pos15_Activity extends FluidGlossary {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pos15);
+        setContentView(R.layout.under_construction);
     }
 }

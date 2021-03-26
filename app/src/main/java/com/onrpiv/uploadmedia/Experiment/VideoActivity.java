@@ -3,7 +3,6 @@ package com.onrpiv.uploadmedia.Experiment;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.camera2.CameraAccessException;
@@ -26,23 +25,19 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 
-import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
-import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
-import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
-import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
-import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
+import com.arthenica.mobileffmpeg.Config;
+import com.arthenica.mobileffmpeg.ExecuteCallback;
+import com.arthenica.mobileffmpeg.FFmpeg;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
 import com.onrpiv.uploadmedia.Utilities.RealPathUtil;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -57,10 +52,9 @@ public class VideoActivity extends AppCompatActivity{
     public ProgressDialog pDialog;
     private VideoView mVideoView;
     private TextView mBufferingTextView;
-    private FFmpeg ffmpeg;
     private String videoPath;
-    private static final String TAG = "SARBAJIT";
     private String userName;
+    private String fps = "30";
 
     // Current playback position (in milliseconds).
     private int mCurrentPosition = 0;
@@ -82,11 +76,11 @@ public class VideoActivity extends AppCompatActivity{
         pickVideo = (Button) findViewById(R.id.pickVideo);
         generateFrames = (Button) findViewById(R.id.generateFrames);
         generateFrames.setEnabled(false);
-        loadFFMpegBinary();
 
         recordVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Camera supports high speed capture
                 if (hasHighSpeedCapability() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     FragmentManager fragManager = getSupportFragmentManager();
 
@@ -95,11 +89,14 @@ public class VideoActivity extends AppCompatActivity{
                         @Override
                         public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                             videoCaptured(Uri.parse(result.getString("uri")));
+                            fps = result.getString("fps");
                             generateFrames.setEnabled(true);
                         }
                     });
 
                     fragManager.beginTransaction().replace(R.id.video_layout_container, CameraFragment.newInstance(requestKey)).commit();
+
+                // Camera doesn't support high speed capture
                 } else {
                     Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                     if (videoCaptureIntent.resolveActivity(getPackageManager()) != null) {
@@ -184,50 +181,6 @@ public class VideoActivity extends AppCompatActivity{
         // Save the current playback position (in milliseconds) to the
         // instance state bundle.
         outState.putInt(PLAYBACK_TIME, mVideoView.getCurrentPosition());
-    }
-
-    /**
-     * Load FFmpeg binary
-     */
-    private void loadFFMpegBinary() {
-        try {
-            if (ffmpeg == null) {
-                Log.d(TAG, "ffmpeg : era nulo");
-                ffmpeg = FFmpeg.getInstance(this);
-            }
-            ffmpeg.loadBinary(new LoadBinaryResponseHandler() {
-                @Override
-                public void onFailure() {
-                    showUnsupportedExceptionDialog();
-                }
-
-                @Override
-                public void onSuccess() {
-                    Log.d(TAG, "ffmpeg : correctly Loaded");
-                }
-            });
-        } catch (FFmpegNotSupportedException e) {
-            showUnsupportedExceptionDialog();
-        } catch (Exception e) {
-            Log.d(TAG, "Exception no control ada : " + e);
-        }
-    }
-
-    private void showUnsupportedExceptionDialog() {
-        new AlertDialog.Builder(VideoActivity.this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Not Supported")
-                .setMessage("Device Not Supported")
-                .setCancelable(false)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        VideoActivity.this.finish();
-                    }
-                })
-                .create()
-                .show();
-
     }
 
     private void initializePlayer(Uri uri) {
@@ -348,7 +301,7 @@ public class VideoActivity extends AppCompatActivity{
         -t  total duration or when to stop processing.
             The value is a time duration. See more https://ffmpeg.org/ffmpeg-utils.html#Time-duration.
          */
-        String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", "20", "-ss", "" + startMs / 1000, "-t", "" + (endMs - startMs) / 1000, jpegFile.getAbsolutePath()};
+        String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", fps, "-ss", "" + startMs / 1000, "-t", "" + (endMs - startMs) / 1000, jpegFile.getAbsolutePath()};
         /*   Remove -r 1 if you want to extract all video frames as images from the specified time duration.*/
         execFFmpegBinary(complexCommand);
     }
@@ -358,44 +311,23 @@ public class VideoActivity extends AppCompatActivity{
      * Executing ffmpeg binary
      */
     private void execFFmpegBinary(final String[] command) {
-        try {
-            ffmpeg.execute(command, new ExecuteBinaryResponseHandler() {
+            FFmpeg.executeAsync(command, new ExecuteCallback() {
                 @Override
-                public void onFailure(String s) {
-                    Log.d(TAG, "FAILED with output : " + s);
-                    Toast.makeText(VideoActivity.this, "Frames Generation FAILED", Toast.LENGTH_SHORT).show();
-                }
-                @Override
-                public void onSuccess(String s) {
-                    Log.d(TAG, "SUCCESS with output : " + s);
+                public void apply(long executionId, int returnCode) {
+                    if (returnCode == Config.RETURN_CODE_SUCCESS) {
                     Toast.makeText(VideoActivity.this, "Frames Generation Completed", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(VideoActivity.this, "Head Over to the Image Upload Section", Toast.LENGTH_SHORT).show();
 
                     RealPathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
                     generateFrames.setBackgroundColor(Color.parseColor("#00CC00"));
-                }
 
-                @Override
-                public void onProgress(String s) {
-                    Log.d(TAG, "Started command : ffmpeg " + Arrays.toString(command));
-                    Log.d(TAG, "progress : " + s);
+                    } else if (returnCode == Config.RETURN_CODE_CANCEL) {
+                        Log.d("FFMPEG", "Frame extraction cancelled!");
+                    } else {
+                        Toast.makeText(VideoActivity.this, "Frames Generation FAILED", Toast.LENGTH_SHORT).show();
+                        Log.e("FFMPEG", "Async frame extraction failed with return code = " + returnCode);
+                    }
                 }
-
-                @Override
-                public void onStart() {
-                    Log.d(TAG, "Started command : ffmpeg " + Arrays.toString(command));
-                }
-
-                @Override
-                public void onFinish() {
-                    Log.d(TAG, "Finished command : ffmpeg " + Arrays.toString(command));
-                }
-
             });
-        } catch (FFmpegCommandAlreadyRunningException e) {
-            e.printStackTrace();
-        }
-
     }
 
     protected void initDialog() {

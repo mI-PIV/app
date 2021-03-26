@@ -16,12 +16,15 @@ public class VideoTutorial extends LearnPIV {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.video_tutorial);
+        setContentView(R.layout.under_construction); // change to video_tutorial when we get content
 
-        ArrayAdapter adapter = new ArrayAdapter<String>(this,
-                R.layout.activity_listview, tutorialArray);
-
-        ListView listView = (ListView) findViewById(R.id.tutorial_list);
-        listView.setAdapter(adapter);
+        //
+        // UNCOMMENT THE CODE BELOW WHEN WE HAVE CONTENT TO ADD TO THIS
+        //
+//        ArrayAdapter adapter = new ArrayAdapter<String>(this,
+//                R.layout.activity_listview, tutorialArray);
+//
+//        ListView listView = (ListView) findViewById(R.id.tutorial_list);
+//        listView.setAdapter(adapter);
     }
 }

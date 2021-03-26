@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.onrpiv.uploadmedia.R;
 
-public class Experiment1 extends TryExperiments {
+public class Experiment5 extends TryExperiments {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
