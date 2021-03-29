@@ -1,16 +1,26 @@
 package com.onrpiv.uploadmedia.Experiment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.text.LineBreaker;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.onrpiv.uploadmedia.R;
 
@@ -23,6 +33,12 @@ public class ViewPagerActivity extends AppCompatActivity {
     Button startAnimation;
     String [] urls;
     AnimationDrawable animation;
+
+    // tooltips variables
+    Context context;
+    private PopupWindow popupWindow;
+    private RelativeLayout relativeLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +47,7 @@ public class ViewPagerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         urls = intent.getStringArrayExtra("string-array-urls");
+        popupWindowReviewRun();
 //        ViewPager viewPager = (ViewPager) findViewById(R.id.pager_adapter);
 //        ViewPagerAdapterTest adapter = new ViewPagerAdapterTest(this, urls);
 //        viewPager.setAdapter(adapter);
@@ -72,5 +89,54 @@ public class ViewPagerActivity extends AppCompatActivity {
     public void stopAnimation(View view) {
         view.clearAnimation();
         animation.stop();
+    }
+
+    private void popupWindowReviewRun() {
+        context = getApplicationContext();
+        relativeLayout = (RelativeLayout) findViewById(R.id.popupReviewRelativeLayout);
+
+        Button lightbulb1 = (Button) findViewById(R.id.lightbulbReviewLayout1);
+
+        String lightbulb1Title = "Start Animation";
+        String lightbulb1Info = "View the animation and consider if you can tell where the particles move between the first and second frame. If you can't correlate the images with your eyes, the PIV algorithm is less likely to be able to do so.";
+
+        popupWindowNoLink(lightbulb1, lightbulb1Title, lightbulb1Info);
+    }
+
+    private void popupWindowNoLink(Button button, final String popUpWindowTitle, final String popupWindowMessage) {
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+                final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
+
+                TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
+                windowTitle.setText(popUpWindowTitle);
+
+                TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
+                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+                windowMessage.setText(popupWindowMessage);
+
+                // New instance of popup window
+                popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                // Setting an elevation value for popup window, it requires API level 21
+                if (Build.VERSION.SDK_INT >= 21) {
+                    popupWindow.setElevation(5.0f);
+                }
+
+                Button closeButton = (Button) customView.findViewById(R.id.button_close);
+                closeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        popupWindow.dismiss();
+                    }
+                });
+
+                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
+            }
+        });
     }
 }
