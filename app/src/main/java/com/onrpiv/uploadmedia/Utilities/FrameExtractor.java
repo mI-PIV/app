@@ -19,21 +19,21 @@ public class FrameExtractor {
     /**
      * Command for extracting images from video
      */
-    public static void generateFrames(Context context, String userName, String videoPath, String fps, Callable<Void> successCallback){
-        String fileExtn = ".png";
+    public static void generateFrames(Context context, String userName, String videoPath, int framesDirNum, String fps, Callable<Void> successCallback){
+        String fileExtn = ".jpg";
 
         double startMs= 0.0;
         double endMs= 1000.0;
 
-        String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
         String filePrefix = "EXTRACT_" + timeStamp + "_";
 
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/PIV_Frames_" + userName);
+        File userDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/miPIV_" + userName + "/");
+        File framesDirectory = new File(userDirectory, "Extracted_Frames");
+        File framesOccurDir = new File(framesDirectory, Integer.toString(framesDirNum));
+        if (!framesOccurDir.exists()) framesOccurDir.mkdirs();
 
-        // Then we create the storage directory if does not exists
-        if (!storageDirectory.exists()) storageDirectory.mkdir();
-
-        File jpegFile = new File(storageDirectory, filePrefix + "%03d" + fileExtn);
+        File jpegFile = new File(framesOccurDir, filePrefix + "%03d" + fileExtn);
 
         /* https://ffmpeg.org/ffmpeg.html
         ffmpeg command line options

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
@@ -30,6 +31,7 @@ import androidx.fragment.app.FragmentResultListener;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
 import com.onrpiv.uploadmedia.Utilities.FrameExtractor;
+import com.onrpiv.uploadmedia.Utilities.PeristedDataKeys;
 import com.onrpiv.uploadmedia.Utilities.RealPathUtil;
 
 import java.util.concurrent.Callable;
@@ -48,7 +50,9 @@ public class VideoActivity extends AppCompatActivity{
     private TextView mBufferingTextView;
     private String videoPath;
     private String userName;
-    private String fps = "30";
+    private String fps = "20";
+
+    private SharedPreferences persistedData;
 
     // Current playback position (in milliseconds).
     private int mCurrentPosition = 0;
@@ -65,6 +69,9 @@ public class VideoActivity extends AppCompatActivity{
         // Get the transferred data from source activity.
         Intent userNameIntent = getIntent();
         userName = userNameIntent.getStringExtra("UserName");
+
+        // Get user persisted data
+        persistedData = getSharedPreferences("miPIV_" + userName, MODE_PRIVATE);
 
         recordVideo = (Button) findViewById(R.id.recordVideo);
         pickVideo = (Button) findViewById(R.id.pickVideo);
@@ -250,16 +257,25 @@ public class VideoActivity extends AppCompatActivity{
     }
 
     private void generateFrames(View view) {
+        final int framesDirNum = persistedData.getInt(PeristedDataKeys.FRAME_DIRECTORY_NUMBER, 0);
+
         Callable<Void> successCallBack = new Callable<Void>() {
             @Override
             public Void call() throws Exception {
+                // Change generate Frames button to green
                 generateFramesButton.setBackgroundColor(Color.parseColor("#00CC00"));
+
+                // If we retrieved the video from google drive, then delete the temp file we created
                 RealPathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
+
+                // Increment our frame directory number
+                persistedData.edit().putInt(PeristedDataKeys.FRAME_DIRECTORY_NUMBER, framesDirNum+1).apply();
+
                 return null;
             }
         };
 
-        FrameExtractor.generateFrames(view.getContext(), userName, videoPath, fps, successCallBack);
+        FrameExtractor.generateFrames(view.getContext(), userName, videoPath, framesDirNum, fps, successCallBack);
     }
 
     private void releasePlayer() {
