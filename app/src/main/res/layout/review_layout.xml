@@ -56,9 +56,9 @@ android:layout_height="fill_parent">
         <Button
             android:id="@+id/lightbulbReviewLayout1"
             android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_height="35dp"
             android:layout_marginStart="350dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:background="@drawable/lightbulb"
             android:textColor="#FFFFFF"
             android:textSize="10dp" />
