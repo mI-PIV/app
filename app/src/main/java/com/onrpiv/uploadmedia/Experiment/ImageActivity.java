@@ -153,11 +153,8 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     private ScaleGestureDetector mScaleGestureDetector;
     private float mScaleFactor = 1.0f;
     volatile boolean running = true;
-//    ZoomageView imageZoom;
-    private CheckBox checkBox2;
     private boolean checked=false;
     private RadioButton radioButton;
-    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,10 +162,8 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.image_layout);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        context = this;
+        Context context = this;
 
-//        imageView = (ImageView) findViewById(R.id.preview);
-//        imageZoom = (ZoomageView)findViewById(R.id.myZoomageView);
         pickImageMultiple = (Button) findViewById(R.id.pickImageMultiple);
         parameters = (Button) findViewById(R.id.parameters);
         compute = (Button) findViewById(R.id.compute);
@@ -520,7 +515,8 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         });
 
 
-        checkBox2=(CheckBox)popupPIVDialogView.findViewById(R.id.checkbox_2);
+        //    ZoomageView imageZoom;
+        CheckBox checkBox2 = (CheckBox) popupPIVDialogView.findViewById(R.id.checkbox_2);
 
         dtText = (EditText) popupPIVDialogView.findViewById(R.id.dt);
         dt_text = (TextView) popupPIVDialogView.findViewById(R.id.dt_text);

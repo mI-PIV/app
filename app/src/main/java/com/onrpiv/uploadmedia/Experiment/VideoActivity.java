@@ -12,9 +12,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,16 +27,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 
-import com.arthenica.mobileffmpeg.Config;
-import com.arthenica.mobileffmpeg.ExecuteCallback;
-import com.arthenica.mobileffmpeg.FFmpeg;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
+import com.onrpiv.uploadmedia.Utilities.FrameExtractor;
 import com.onrpiv.uploadmedia.Utilities.RealPathUtil;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.concurrent.Callable;
 
 /**
  * author: sarbajit mukherjee
@@ -46,7 +40,7 @@ import java.util.Date;
  */
 
 public class VideoActivity extends AppCompatActivity{
-    private Button pickVideo, generateFrames, recordVideo;
+    private Button pickVideo, generateFramesButton, recordVideo;
     public static final int REQUEST_PICK_VIDEO = 3;
     private static final int REQUEST_VIDEO_CAPTURE = 300;
     public ProgressDialog pDialog;
@@ -74,8 +68,8 @@ public class VideoActivity extends AppCompatActivity{
 
         recordVideo = (Button) findViewById(R.id.recordVideo);
         pickVideo = (Button) findViewById(R.id.pickVideo);
-        generateFrames = (Button) findViewById(R.id.generateFrames);
-        generateFrames.setEnabled(false);
+        generateFramesButton = (Button) findViewById(R.id.generateFrames);
+        generateFramesButton.setEnabled(false);
 
         recordVideo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +84,7 @@ public class VideoActivity extends AppCompatActivity{
                         public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                             videoCaptured(Uri.parse(result.getString("uri")));
                             fps = result.getString("fps");
-                            generateFrames.setEnabled(true);
+                            generateFramesButton.setEnabled(true);
                         }
                     });
 
@@ -115,7 +109,7 @@ public class VideoActivity extends AppCompatActivity{
             }
         });
 
-        generateFrames.setOnClickListener(new View.OnClickListener() {
+        generateFramesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (videoPath != null){
@@ -227,8 +221,11 @@ public class VideoActivity extends AppCompatActivity{
                 });
     }
 
-    private void releasePlayer() {
-        mVideoView.stopPlayback();
+    protected void initDialog() {
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage(getString(R.string.msg_loading));
+        pDialog.setCancelable(true);
     }
 
     @Override
@@ -245,11 +242,28 @@ public class VideoActivity extends AppCompatActivity{
                     videoSelected(data.getData());
                 }
             }
-            generateFrames.setEnabled(true);
+            generateFramesButton.setEnabled(true);
         }
         else if (resultCode != RESULT_CANCELED) {
             Toast.makeText(this, "Sorry, there was an error!", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void generateFrames(View view) {
+        Callable<Void> successCallBack = new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                generateFramesButton.setBackgroundColor(Color.parseColor("#00CC00"));
+                RealPathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
+                return null;
+            }
+        };
+
+        FrameExtractor.generateFrames(view.getContext(), userName, videoPath, fps, successCallBack);
+    }
+
+    private void releasePlayer() {
+        mVideoView.stopPlayback();
     }
 
     private void videoCaptured(Uri video) {
@@ -269,72 +283,6 @@ public class VideoActivity extends AppCompatActivity{
         videoPath = RealPathUtil.getRealPath(VideoActivity.this, video);
         initializePlayer(video);
         pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
-    }
-
-    /**
-     * Command for extracting images from video
-     */
-    private void generateFrames(View view){
-        String fileExtn = ".png";
-
-        double startMs= 0.0;
-        double endMs= 1000.0;
-
-        String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
-        String filePrefix = "EXTRACT_" + timeStamp + "_";
-
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/PIV_Frames_" + userName);
-
-        // Then we create the storage directory if does not exists
-        if (!storageDirectory.exists()) storageDirectory.mkdir();
-
-        File jpegFile = new File(storageDirectory, filePrefix + "%03d" + fileExtn);
-
-        /* https://ffmpeg.org/ffmpeg.html
-        ffmpeg command line options
-        -y  overwrite any existing files
-        -i  input video path
-        -an blocks all audio streams of a file from being mapped for any output
-        -r  force the frame rate of output file
-        -ss where to start processing.
-            The value is a time duration See more https://ffmpeg.org/ffmpeg-utils.html#Time-duration.
-        -t  total duration or when to stop processing.
-            The value is a time duration. See more https://ffmpeg.org/ffmpeg-utils.html#Time-duration.
-         */
-        String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", fps, "-ss", "" + startMs / 1000, "-t", "" + (endMs - startMs) / 1000, jpegFile.getAbsolutePath()};
-        /*   Remove -r 1 if you want to extract all video frames as images from the specified time duration.*/
-        execFFmpegBinary(complexCommand);
-    }
-
-
-    /**
-     * Executing ffmpeg binary
-     */
-    private void execFFmpegBinary(final String[] command) {
-            FFmpeg.executeAsync(command, new ExecuteCallback() {
-                @Override
-                public void apply(long executionId, int returnCode) {
-                    if (returnCode == Config.RETURN_CODE_SUCCESS) {
-                    Toast.makeText(VideoActivity.this, "Frames Generation Completed", Toast.LENGTH_SHORT).show();
-
-                    RealPathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
-                    generateFrames.setBackgroundColor(Color.parseColor("#00CC00"));
-
-                    } else if (returnCode == Config.RETURN_CODE_CANCEL) {
-                        Log.d("FFMPEG", "Frame extraction cancelled!");
-                    } else {
-                        Toast.makeText(VideoActivity.this, "Frames Generation FAILED", Toast.LENGTH_SHORT).show();
-                        Log.e("FFMPEG", "Async frame extraction failed with return code = " + returnCode);
-                    }
-                }
-            });
-    }
-
-    protected void initDialog() {
-
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage(getString(R.string.msg_loading));
-        pDialog.setCancelable(true);
     }
 
     private boolean hasHighSpeedCapability() {
