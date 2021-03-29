@@ -1,7 +1,6 @@
 package com.onrpiv.uploadmedia.Experiment;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -45,7 +44,6 @@ public class VideoActivity extends AppCompatActivity{
     private Button pickVideo, generateFramesButton, recordVideo;
     public static final int REQUEST_PICK_VIDEO = 3;
     private static final int REQUEST_VIDEO_CAPTURE = 300;
-    public ProgressDialog pDialog;
     private VideoView mVideoView;
     private TextView mBufferingTextView;
     private String videoPath;
@@ -138,8 +136,6 @@ public class VideoActivity extends AppCompatActivity{
         MediaController controller = new MediaController(this);
         controller.setMediaPlayer(mVideoView);
         mVideoView.setMediaController(controller);
-
-        initDialog();
     }
 
     @Override
@@ -228,13 +224,6 @@ public class VideoActivity extends AppCompatActivity{
                 });
     }
 
-    protected void initDialog() {
-
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage(getString(R.string.msg_loading));
-        pDialog.setCancelable(true);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -256,10 +245,11 @@ public class VideoActivity extends AppCompatActivity{
         }
     }
 
-    private void generateFrames(View view) {
+    private void generateFrames(final View view) {
         final int framesDirNum = persistedData.getInt(PeristedDataKeys.FRAME_DIRECTORY_NUMBER, 0);
 
-        Callable<Void> successCallBack = new Callable<Void>() {
+        // This is called when frame generation completes successfully
+        final Callable<Void> successCallBack = new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 // Change generate Frames button to green

@@ -1,5 +1,6 @@
 package com.onrpiv.uploadmedia.Utilities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
@@ -56,6 +57,13 @@ public class FrameExtractor {
      * Executing ffmpeg binary
      */
     private static void execFFmpegBinary(final String[] command, final Context context, final Callable<Void> successCallback) {
+
+        // Progress dialog
+        final ProgressDialog pDialog = new ProgressDialog(context);
+        pDialog.setMessage("Extracting Frames...");
+        pDialog.setCancelable(true);
+        if (!pDialog.isShowing()) pDialog.show();
+
         FFmpeg.executeAsync(command, new ExecuteCallback() {
             @Override
             public void apply(long executionId, int returnCode) {
@@ -67,6 +75,7 @@ public class FrameExtractor {
                         Log.e("FFMPEG", "Unable to call success callback!");
                         e.printStackTrace();
                     }
+                    if (pDialog.isShowing()) pDialog.dismiss();
                 } else if (returnCode == Config.RETURN_CODE_CANCEL) {
                     Log.d("FFMPEG", "Frame extraction cancelled!");
                 } else {
