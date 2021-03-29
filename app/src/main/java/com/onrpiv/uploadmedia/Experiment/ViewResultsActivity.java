@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -31,6 +32,7 @@ import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMapPicker;
 import com.onrpiv.uploadmedia.Utilities.ResultSettings;
+import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,8 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
-
-import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_IMG;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_SOLID;
@@ -145,7 +145,6 @@ public class ViewResultsActivity extends AppCompatActivity {
         });
 
         // image containers
-        // TODO check listeners in Utilites.FrameView for interactive images
         baseImage = findViewById(R.id.baseView);
         vectorFieldImage = findViewById(R.id.vectorsView);
         vorticityImage = findViewById(R.id.vortView);
@@ -352,6 +351,10 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     public void OnClick_SaveImage(View view) {
+        ImageButton saveImageButton = findViewById(R.id.imageSaveButton);
+        saveImageButton.setEnabled(false);
+        saveImageButton.setBackgroundColor(Color.parseColor("#576674"));
+
         View imageStack = findViewById(R.id.img_frame);
         imageStack.setDrawingCacheEnabled(true);
         Bitmap bmp = imageStack.getDrawingCache();
@@ -372,6 +375,8 @@ public class ViewResultsActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, "Current image saved as " + pngFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+        saveImageButton.setEnabled(true);
+        saveImageButton.setBackgroundColor(Color.parseColor("#243EDF"));
     }
 
     private void displayVectorImage(String key, HashMap<String, double[][]> correlation) {
