@@ -434,24 +434,6 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void popupWindowUserDialogRun()
-    {
-        context = getApplicationContext();
-        relativeLayout = (RelativeLayout) findViewById(R.id.popupDialogRelativeLayout);
-
-        Button lightbulb1 = (Button) findViewById(R.id.lightbulbUserDialog1);
-        Button lightbulb2 = (Button) findViewById(R.id.lightbulbUserDialog2);
-
-        String lightbulb1Title = "Image Set";
-        String lightbulb2Title = "Images";
-
-        String lightbulb1Info = "The image set numbers are in order (time-wise) of each users' frame generation";
-        String lightbulb2Info = "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).";
-
-        popupWindowNoLink(lightbulb1, lightbulb1Title, lightbulb1Info);
-        popupWindowNoLink(lightbulb2, lightbulb2Title, lightbulb2Info);
-    }
-
     // creates a popupwindow that gives information and possibly a link to somewhere else in the app
     private void popupWindowImageLayoutRun()
     {
@@ -478,6 +460,18 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         popupWindowWithLink(lightbulb3, lightbulb3Title, lightbulb3Info, "PIV Basics", pivBasicsLayout);
     }
 
+    private void popupWindowUserDialogRun(Button myLightbulb1, Button mylightbulb2)
+    {
+        String lightbulb1Title = "Image Set";
+        String lightbulb2Title = "Images";
+
+        String lightbulb1Info = "The image set numbers are in order (time-wise) of each users' frame generation";
+        String lightbulb2Info = "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).";
+
+        popupWindowNoLink(myLightbulb1, lightbulb1Title, lightbulb1Info);
+        popupWindowNoLink(mylightbulb2, lightbulb2Title, lightbulb2Info);
+    }
+
     /* Initialize popup dialog view and ui controls in the popup dialog. */
     private void initPopupViewControls()
     {
@@ -494,6 +488,10 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         img2EditText = (EditText) popupInputDialogView.findViewById(R.id.img2);
         saveUserDataButton = popupInputDialogView.findViewById(R.id.button_save_user_data);
         cancelUserDataButton = popupInputDialogView.findViewById(R.id.button_cancel_user_data);
+        Button lightbulb1 = popupInputDialogView.findViewById(R.id.lightbulbUserDialog1);
+        Button lightbulb2 = popupInputDialogView.findViewById(R.id.lightbulbUserDialog2);
+
+        popupWindowUserDialogRun(lightbulb1, lightbulb2);
     }
 
 
