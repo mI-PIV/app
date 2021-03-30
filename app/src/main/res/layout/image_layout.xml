@@ -4,37 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<!--    <ImageView-->
-<!--        android:id="@+id/preview"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="250dp"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:scaleType="fitXY"-->
-<!--        android:src="@drawable/ic_launcher_background" />-->
-
-<!--    <com.jsibbold.zoomage.ZoomageView-->
-<!--        android:id="@+id/myZoomageView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:src="@drawable/ic_launcher_background"-->
-<!--        app:zoomage_restrictBounds="false"-->
-<!--        app:zoomage_animateOnReset="true"-->
-<!--        app:zoomage_autoResetMode="UNDER"-->
-<!--        app:zoomage_autoCenter="true"-->
-<!--        app:zoomage_zoomable="true"-->
-<!--        app:zoomage_translatable="true"-->
-<!--        app:zoomage_minScale="0.6"-->
-<!--        app:zoomage_maxScale="8" />-->
-
     <Button
         android:id="@+id/pickImageMultiple"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:background="@drawable/buttons"
+        android:onClick="onClick_MultipleImages"
         android:text="Select Multiple Images"
         android:textColor="#FFFFFF" />
-<!--        android:layout_marginTop="5dp"/>-->
 
     <Button
         android:id="@+id/Review"
@@ -53,6 +31,7 @@
         android:id="@+id/parameters"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="inputPivOptions"
         android:layout_marginTop="10dp"
         android:enabled="false"
         android:text="Input PIV Parameters"
@@ -67,6 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:enabled="false"
+        android:onClick="processFile"
         android:background="@drawable/buttons"
         android:textColor="#FFFFFF"
         android:layout_below="@+id/parameters"
@@ -83,14 +63,4 @@
         android:textColor="#FFFFFF"
         android:layout_below="@+id/compute"
         android:text="View results" />
-
-<!--    <Button-->
-<!--        android:id="@+id/save"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:enabled="false"-->
-<!--        android:onClick="saveFile"-->
-<!--        android:text="save" />-->
-
 </RelativeLayout>

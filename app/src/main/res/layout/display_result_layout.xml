@@ -51,6 +51,7 @@
             android:id="@+id/imageSaveButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:onClick="OnClick_SaveImage"
             android:layout_weight="1"
             android:background="@drawable/buttons"
             android:contentDescription="Save Current Image"

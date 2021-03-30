@@ -2,7 +2,6 @@ package com.onrpiv.uploadmedia.Utilities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,7 +19,7 @@ public class FrameExtractor {
     /**
      * Command for extracting images from video
      */
-    public static void generateFrames(Context context, String userName, String videoPath, int framesDirNum, String fps, Callable<Void> successCallback){
+    public static void generateFrames(Context context, String userName, String videoPath, String fps, Callable<Void> successCallback){
         String fileExtn = ".jpg";
 
         double startMs= 0.0;
@@ -29,12 +28,14 @@ public class FrameExtractor {
         String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
         String filePrefix = "EXTRACT_" + timeStamp + "_";
 
-        File userDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/miPIV_" + userName + "/");
-        File framesDirectory = new File(userDirectory, "Extracted_Frames");
-        File framesOccurDir = new File(framesDirectory, Integer.toString(framesDirNum));
-        if (!framesOccurDir.exists()) framesOccurDir.mkdirs();
+        // create and retrieve the new frames directory
+        int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName) + 1);
+        File framesNumDir = PathUtil.getFramesNumberedDirectory(userName, totalFrameDirs);
+        PersistedData.setTotalFrameDirectories(context, userName, totalFrameDirs);
 
-        File jpegFile = new File(framesOccurDir, filePrefix + "%03d" + fileExtn);
+        if (!framesNumDir.exists()) framesNumDir.mkdirs();
+
+        File jpegFile = new File(framesNumDir, filePrefix + "%03d" + fileExtn);
 
         /* https://ffmpeg.org/ffmpeg.html
         ffmpeg command line options
