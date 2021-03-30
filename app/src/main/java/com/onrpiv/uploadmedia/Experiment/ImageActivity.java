@@ -177,6 +177,11 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     private PopupWindow popupWindow;
     private RelativeLayout relativeLayout;
 
+    private Button lightbulb1;
+    private Button lightbulb2;
+    private Button lightbulb3;
+    private Button lightbulb4;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -507,13 +512,15 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                     dt_text.setVisibility(View.VISIBLE);
                     dtText.setText("1");
 
-                    nMaxUpperText.setVisibility(View.VISIBLE);
-                    nMaxUpper_text.setVisibility(View.VISIBLE);
-                    nMaxUpperText.setText("25");
+                    // Are nMaxUpper and nMaxLower being used??
 
-                    nMaxLowerText.setVisibility(View.VISIBLE);
-                    nMaxLower_text.setVisibility(View.VISIBLE);
-                    nMaxLowerText.setText("5");
+                    //nMaxUpperText.setVisibility(View.VISIBLE);
+                    //nMaxUpper_text.setVisibility(View.VISIBLE);
+                    //nMaxUpperText.setText("25");
+
+                    //nMaxLowerText.setVisibility(View.VISIBLE);
+                    //nMaxLower_text.setVisibility(View.VISIBLE);
+                    //nMaxLowerText.setText("5");
 
                     qMinText.setVisibility(View.VISIBLE);
                     qMin_text.setVisibility(View.VISIBLE);
@@ -526,15 +533,18 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                     radioGroup.setVisibility(View.VISIBLE);
                     groupradio_text.setVisibility(View.VISIBLE);
                     radioGroup.check(R.id.yesRadio);
+
+                    lightbulb3.setVisibility(View.VISIBLE);
+                    lightbulb4.setVisibility(View.VISIBLE);
                 }else{
                     dtText.setVisibility(View.GONE);
                     dt_text.setVisibility(View.GONE);
 
-                    nMaxUpperText.setVisibility(View.GONE);
-                    nMaxUpper_text.setVisibility(View.GONE);
+                    //nMaxUpperText.setVisibility(View.GONE);
+                    //nMaxUpper_text.setVisibility(View.GONE);
 
-                    nMaxLowerText.setVisibility(View.GONE);
-                    nMaxLower_text.setVisibility(View.GONE);
+                    //nMaxLowerText.setVisibility(View.GONE);
+                    //nMaxLower_text.setVisibility(View.GONE);
 
                     qMinText.setVisibility(View.GONE);
                     qMin_text.setVisibility(View.GONE);
@@ -544,6 +554,9 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
                     radioGroup.setVisibility(View.GONE);
                     groupradio_text.setVisibility(View.GONE);
+
+                    lightbulb3.setVisibility(View.GONE);
+                    lightbulb4.setVisibility(View.GONE);
                 }break;
         }
     }
@@ -623,6 +636,12 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
                 });
         savePIVDataButton = popupPIVDialogView.findViewById(R.id.button_save_piv_data);
         cancelPIVDataButton = popupPIVDialogView.findViewById(R.id.button_cancel_piv_data);
+
+        // tooltips buttons
+        lightbulb1 = popupPIVDialogView.findViewById(R.id.lightbulbInputDialog1);
+        lightbulb2 = popupPIVDialogView.findViewById(R.id.lightbulbInputDialog2);
+        lightbulb3 = popupPIVDialogView.findViewById(R.id.lightbulbInputDialog3);
+        lightbulb4 = popupPIVDialogView.findViewById(R.id.lightbulbInputDialog4);
     }
 
     private BoolIntStructure checkUserInputInt(String userInput)
