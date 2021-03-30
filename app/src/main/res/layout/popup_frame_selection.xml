@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/frame_selection_description"
         android:layout_width="match_parent"
         android:layout_height="77dp"
         android:gravity="center_horizontal"
@@ -28,7 +28,6 @@
 
             <EditText
                 android:id="@+id/imgSet"
-                android:hint="Number 1 - 20"
                 android:inputType="number" />
 
         </TableRow>
@@ -45,7 +44,6 @@
 
             <EditText
                 android:id="@+id/img1"
-                android:hint="Number 1 - 20"
                 android:inputType="number" />
 
         </TableRow>
@@ -62,7 +60,6 @@
 
             <EditText
                 android:id="@+id/img2"
-                android:hint="Number 1 - 20"
                 android:inputType="number" />
 
         </TableRow>
@@ -70,7 +67,7 @@
         <TableRow android:gravity="center_horizontal">
 
             <Button
-                android:id="@+id/button_cancel_user_data"
+                android:id="@+id/button_cancel_frame_selection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cancel"
@@ -83,7 +80,7 @@
 
 
             <Button
-                android:id="@+id/button_save_user_data"
+                android:id="@+id/button_save_frame_selection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Select Images"
@@ -96,5 +93,23 @@
 
         </TableRow>
     </TableLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.github.chrisbanes.photoview.PhotoView
+            android:id="@+id/frame_selection_preview1"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start" />
+
+        <com.github.chrisbanes.photoview.PhotoView
+            android:id="@+id/frame_selection_preview2"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"/>
+    </LinearLayout>
 
 </LinearLayout>

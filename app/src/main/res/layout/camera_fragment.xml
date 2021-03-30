@@ -10,48 +10,51 @@
         android:scaleX="1.075"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        />
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_alignBottom="@id/record_texture"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_alignStart="@id/record_texture"
         android:background="@color/black_de">
 
         <RadioGroup
             android:id="@+id/fps_group"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
+            android:layout_gravity="start|bottom"
+            android:checkedButton="@id/fps_120"
             android:orientation="vertical"
-            android:layout_gravity="start|center"
-            android:checkedButton="@id/fps_120">
+            android:rotation="90">
 
             <RadioButton
                 android:id="@+id/fps_120"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:buttonTint="@color/white"
                 android:text="120 fps"
-                android:textColor="@color/white"
-                android:buttonTint="@color/white"/>
+                android:textColor="@color/white" />
 
             <RadioButton
                 android:id="@+id/fps_240"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:buttonTint="@color/white"
                 android:text="240 fps"
-                android:textColor="@color/white"
-                android:buttonTint="@color/white"/>
+                android:textColor="@color/white" />
         </RadioGroup>
 
         <ImageButton
             android:id="@+id/recordButton"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:tint="#FF0000"
-            android:src="@drawable/round_fiber_manual_record_white_48dp"
             android:background="@android:color/transparent"
-            android:contentDescription="Record Button" />
+            android:contentDescription="Record Button"
+            android:src="@drawable/round_fiber_manual_record_white_48dp"
+            android:tint="#FF0000" />
 
     </FrameLayout>
 

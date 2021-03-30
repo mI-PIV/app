@@ -24,21 +24,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class RealPathUtil {
+public class PathUtil {
 
     public static String getRealPath(Context context, Uri fileUri) {
         String realPath;
         // SDK < API11
         if (Build.VERSION.SDK_INT < 11) {
-            realPath = RealPathUtil.getRealPathFromURI_BelowAPI11(context, fileUri);
+            realPath = PathUtil.getRealPathFromURI_BelowAPI11(context, fileUri);
         }
         // SDK >= 11 && SDK < 19
         else if (Build.VERSION.SDK_INT < 19) {
-            realPath = RealPathUtil.getRealPathFromURI_API11to18(context, fileUri);
+            realPath = PathUtil.getRealPathFromURI_API11to18(context, fileUri);
         }
         // SDK > 19 (Android 4.4) and up
         else {
-            realPath = RealPathUtil.getRealPathFromURI_API19(context, fileUri);
+            realPath = PathUtil.getRealPathFromURI_API19(context, fileUri);
         }
         return realPath;
     }
@@ -219,6 +219,43 @@ public class RealPathUtil {
         return null;
     }
 
+    public static File getUserDirectory(String userName) {
+        File result = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/miPIV_" + userName + "/");
+        return checkDir(result);
+    }
+
+    public static File getFramesDirectory(String userName) {
+        File result = new File(getUserDirectory(userName), "Extracted_Frames");
+        return checkDir(result);
+    }
+
+    public static File getFramesNumberedDirectory(String userName, int framesDirNum) {
+        File result = new File(getFramesDirectory(userName), "Frames_"+framesDirNum);
+        return checkDir(result);
+    }
+
+    public static File getExperimentsDirectory(String userName) {
+        File result = new File(getUserDirectory(userName), "Experiments");
+        return checkDir(result);
+    }
+
+    public static File getExperimentNumberedDirectory(String userName, int expDirNum) {
+        File result = new File(getExperimentsDirectory(userName), "Experiment_"+expDirNum);
+        return checkDir(result);
+    }
+
+    public static String getExperimentImageFileSuffix(int currentExperiment) {
+        return "_Experiment_" + currentExperiment + ".png";
+    }
+
+    public static String getExperimentTextFileSuffix(int currentExperiment) {
+        return "_Experiment_" + currentExperiment + ".txt";
+    }
+
+    private static File checkDir(File dir) {
+        if (!dir.exists()) {dir.mkdirs();}
+        return dir;
+    }
 
     /**
      * @param uri The Uri to check.
