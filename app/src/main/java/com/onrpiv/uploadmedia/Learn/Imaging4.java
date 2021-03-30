@@ -1,19 +1,25 @@
 package com.onrpiv.uploadmedia.Learn;
 
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.BottomNavigationView;
+import androidx.annotation.RequiresApi;
+import androidx.core.widget.NestedScrollView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Layout;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.ScrollToTop;
 
 public class Imaging4 extends LearnImagingLayout {
 
     private int headerTextSize = 25;
     private int paraTextSize = 16;
+    private NestedScrollView scrollView;
+    private FloatingActionButton fab;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -64,6 +70,12 @@ public class Imaging4 extends LearnImagingLayout {
         for (int i = 0; i < textViews.length; i++) {
             textViews[i].setTextSize(paraTextSize);
         }
+
+        fab = findViewById(R.id.fab);
+        scrollView = findViewById(R.id.nestedScroll);
+
+        ScrollToTop scrollToTop = new ScrollToTop(scrollView, fab);
+        scrollToTop.scrollFunction();
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);

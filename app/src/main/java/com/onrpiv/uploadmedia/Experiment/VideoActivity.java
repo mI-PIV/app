@@ -1,24 +1,17 @@
 package com.onrpiv.uploadmedia.Experiment;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.media.MediaMetadataRetriever;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,26 +21,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
-import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
-import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
-import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
-import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
+
 import com.onrpiv.uploadmedia.R;
-import com.onrpiv.uploadmedia.Utilities.RealPathUtil;
+import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
+import com.onrpiv.uploadmedia.Utilities.FrameExtractor;
+import com.onrpiv.uploadmedia.Utilities.PathUtil;
 
-
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.core.Mat;
-
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.concurrent.Callable;
 
 /**
  * author: sarbajit mukherjee
@@ -55,62 +39,20 @@ import java.util.Date;
  */
 
 public class VideoActivity extends AppCompatActivity{
-    private Button pickVideo, generateFrames, recordVideo;
+    private Button pickVideo, generateFramesButton, recordVideo;
     public static final int REQUEST_PICK_VIDEO = 3;
     private static final int REQUEST_VIDEO_CAPTURE = 300;
-    private static final int READ_REQUEST_CODE = 200;
-    public ProgressDialog pDialog;
     private VideoView mVideoView;
     private TextView mBufferingTextView;
-    private Uri video;
-    private FFmpeg ffmpeg;
     private String videoPath;
-    private ArrayList<Bitmap> frameList;
-    private ArrayList<File> fileList;
-    private static final int US_OF_S = 1000 * 1000;
-    private int fps = 3;
-    private MediaMetadataRetriever retriever = null;
-    private File storageDirectory;
-    private FileOutputStream fos;
-    private BufferedOutputStream bos;
-    private long time;
-    private Bitmap lastbitmap = null;
-    private File jpegFile;
-    private static String LOG_TAG="opencv";
-    private CameraBridgeViewBase cameraView;
-    ProgressDialog progressBar;
-    private int progressBarStatus = 0;
-    private Handler progressBarHandler = new Handler();
-    private long framesDone = 0;
-    private long eachCount = 0;
-    private long framesToBeGenerated=0;
-    private int  j=0;
-    Mat imageMat;
-    private static final String TAG = "SARBAJIT";
     private String userName;
+    private String fps = "20";
 
     // Current playback position (in milliseconds).
     private int mCurrentPosition = 0;
 
     // Tag for the instance state bundle.
     private static final String PLAYBACK_TIME = "play_time";
-
-//    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-//        @Override
-//        public void onManagerConnected(int status) {
-//            switch (status) {
-//                case LoaderCallbackInterface.SUCCESS:
-//                {
-//                    Log.i("OpenCV", "OpenCV loaded successfully");
-//                    imageMat=new Mat();
-//                } break;
-//                default:
-//                {
-//                    super.onManagerConnected(status);
-//                } break;
-//            }
-//        }
-//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,17 +66,34 @@ public class VideoActivity extends AppCompatActivity{
 
         recordVideo = (Button) findViewById(R.id.recordVideo);
         pickVideo = (Button) findViewById(R.id.pickVideo);
-        generateFrames = (Button) findViewById(R.id.generateFrames);
-        generateFrames.setEnabled(false);
-        retriever = new MediaMetadataRetriever();
-        loadFFMpegBinary();
+        generateFramesButton = (Button) findViewById(R.id.generateFrames);
+        generateFramesButton.setEnabled(false);
 
         recordVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                if(videoCaptureIntent.resolveActivity(getPackageManager()) != null){
-                    startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE);
+                // Camera supports high speed capture
+                if (hasHighSpeedCapability() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    FragmentManager fragManager = getSupportFragmentManager();
+
+                    final String requestKey = "highSpeedKey";
+                    fragManager.setFragmentResultListener(requestKey, VideoActivity.this, new FragmentResultListener() {
+                        @Override
+                        public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                            videoCaptured(Uri.parse(result.getString("uri")));
+                            fps = result.getString("fps");
+                            generateFramesButton.setEnabled(true);
+                        }
+                    });
+
+                    fragManager.beginTransaction().replace(R.id.video_layout_container, CameraFragment.newInstance(requestKey)).commit();
+
+                // Camera doesn't support high speed capture
+                } else {
+                    Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                    if (videoCaptureIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE);
+                    }
                 }
             }
         });
@@ -148,7 +107,7 @@ public class VideoActivity extends AppCompatActivity{
             }
         });
 
-        generateFrames.setOnClickListener(new View.OnClickListener() {
+        generateFramesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (videoPath != null){
@@ -170,8 +129,6 @@ public class VideoActivity extends AppCompatActivity{
         MediaController controller = new MediaController(this);
         controller.setMediaPlayer(mVideoView);
         mVideoView.setMediaController(controller);
-
-        initDialog();
     }
 
     @Override
@@ -184,18 +141,6 @@ public class VideoActivity extends AppCompatActivity{
 
         return super.onOptionsItemSelected(item);
     }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if (!OpenCVLoader.initDebug()) {
-//            Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-//            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
-//        } else {
-//            Log.d("OpenCV", "OpenCV library found inside package. Using it!");
-//            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-//        }
-//    }
 
     @Override
     protected void onPause() {
@@ -226,50 +171,6 @@ public class VideoActivity extends AppCompatActivity{
         // Save the current playback position (in milliseconds) to the
         // instance state bundle.
         outState.putInt(PLAYBACK_TIME, mVideoView.getCurrentPosition());
-    }
-
-    /**
-     * Load FFmpeg binary
-     */
-    private void loadFFMpegBinary() {
-        try {
-            if (ffmpeg == null) {
-                Log.d(TAG, "ffmpeg : era nulo");
-                ffmpeg = FFmpeg.getInstance(this);
-            }
-            ffmpeg.loadBinary(new LoadBinaryResponseHandler() {
-                @Override
-                public void onFailure() {
-                    showUnsupportedExceptionDialog();
-                }
-
-                @Override
-                public void onSuccess() {
-                    Log.d(TAG, "ffmpeg : correctly Loaded");
-                }
-            });
-        } catch (FFmpegNotSupportedException e) {
-            showUnsupportedExceptionDialog();
-        } catch (Exception e) {
-            Log.d(TAG, "Exception no control ada : " + e);
-        }
-    }
-
-    private void showUnsupportedExceptionDialog() {
-        new AlertDialog.Builder(VideoActivity.this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Not Supported")
-                .setMessage("Device Not Supported")
-                .setCancelable(false)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        VideoActivity.this.finish();
-                    }
-                })
-                .create()
-                .show();
-
     }
 
     private void initializePlayer(Uri uri) {
@@ -316,142 +217,84 @@ public class VideoActivity extends AppCompatActivity{
                 });
     }
 
-    private void releasePlayer() {
-        mVideoView.stopPlayback();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_VIDEO_CAPTURE) {
                 if (data != null) {
-                    Toast.makeText(this, "Video content URI: " + data.getData(),
-                            Toast.LENGTH_LONG).show();
-                    video = data.getData();
-                    videoPath = RealPathUtil.getRealPath(VideoActivity.this, video);
-                    initializePlayer(video);
-                    recordVideo.setBackgroundColor(Color.parseColor("#00CC00"));
-                    pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+                    videoCaptured(data.getData());
                 }
             }
             if (requestCode == REQUEST_PICK_VIDEO) {
                 if (data != null) {
-                    Toast.makeText(this, "Video content URI: " + data.getData(),
-                            Toast.LENGTH_LONG).show();
-                    video = data.getData();
-                    videoPath = RealPathUtil.getRealPath(VideoActivity.this, video);
-                    initializePlayer(video);
-                    pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+                    videoSelected(data.getData());
                 }
             }
-            generateFrames.setEnabled(true);
+            generateFramesButton.setEnabled(true);
         }
         else if (resultCode != RESULT_CANCELED) {
             Toast.makeText(this, "Sorry, there was an error!", Toast.LENGTH_LONG).show();
         }
     }
 
-    /**
-     * Command for extracting images from video
-     */
-    private void generateFrames(View view){
-        String fileExtn = ".png";
+    private void generateFrames(final View view) {
+        // This is called when frame generation completes successfully
+        final Callable<Void> successCallBack = new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                // Change generate Frames button to green
+                generateFramesButton.setBackgroundColor(Color.parseColor("#00CC00"));
 
-        double startMs= 0.0;
-        double endMs= 1000.0;
+                // If we retrieved the video from google drive, then delete the temp file we created
+                PathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
 
-        String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
-        String filePrefix = "EXTRACT_" + timeStamp + "_";
+                return null;
+            }
+        };
 
-        storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/PIV_Frames_" + userName);
-
-        // Then we create the storage directory if does not exists
-        if (!storageDirectory.exists()) storageDirectory.mkdir();
-
-        jpegFile = new File(storageDirectory, filePrefix + "%03d" + fileExtn);
-
-        /* https://ffmpeg.org/ffmpeg.html
-        ffmpeg command line options
-        -y  overwrite any existing files
-        -i  input video path
-        -an blocks all audio streams of a file from being mapped for any output
-        -r  force the frame rate of output file
-        -ss where to start processing.
-            The value is a time duration See more https://ffmpeg.org/ffmpeg-utils.html#Time-duration.
-        -t  total duration or when to stop processing.
-            The value is a time duration. See more https://ffmpeg.org/ffmpeg-utils.html#Time-duration.
-         */
-        String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", "20", "-ss", "" + startMs / 1000, "-t", "" + (endMs - startMs) / 1000, jpegFile.getAbsolutePath()};
-        /*   Remove -r 1 if you want to extract all video frames as images from the specified time duration.*/
-        execFFmpegBinary(complexCommand);
-
-//        Intent goHome = new Intent(getApplicationContext(), ImageActivity.class);
-//        startActivity(goHome);
+        FrameExtractor.generateFrames(view.getContext(), userName, videoPath, fps, successCallBack);
     }
 
+    private void releasePlayer() {
+        mVideoView.stopPlayback();
+    }
 
-    /**
-     * Executing ffmpeg binary
-     */
-    private void execFFmpegBinary(final String[] command) {
+    private void videoCaptured(Uri video) {
+        Toast.makeText(this, "Video content URI: " + video,
+                Toast.LENGTH_LONG).show();
+
+        videoPath = PathUtil.getRealPath(VideoActivity.this, video);
+        initializePlayer(video);
+        recordVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+        pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+    }
+
+    private void videoSelected(Uri video) {
+        Toast.makeText(this, "Video content URI: " + video,
+                Toast.LENGTH_LONG).show();
+
+        videoPath = PathUtil.getRealPath(VideoActivity.this, video);
+        initializePlayer(video);
+        pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+    }
+
+    private boolean hasHighSpeedCapability() {
+        final CameraManager camManager = (CameraManager) this.getSystemService(Context.CAMERA_SERVICE);
+        boolean hasHighFPS = false;
         try {
-            ffmpeg.execute(command, new ExecuteBinaryResponseHandler() {
-                @Override
-                public void onFailure(String s) {
-                    Log.d(TAG, "FAILED with output : " + s);
-                    Toast.makeText(VideoActivity.this, "Frames Generation FAILED", Toast.LENGTH_SHORT).show();
+            int[] capabilities = camManager.getCameraCharacteristics(camManager.getCameraIdList()[0]).get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
+            assert capabilities != null;
+            for (int capability : capabilities) {
+                if (capability == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_CONSTRAINED_HIGH_SPEED_VIDEO) {
+                    hasHighFPS = true;
+                    break;
                 }
-                @Override
-                public void onSuccess(String s) {
-                    Log.d(TAG, "SUCCESS with output : " + s);
-                    Toast.makeText(VideoActivity.this, "Frames Generation Completed", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(VideoActivity.this, "Head Over to the Image Upload Section", Toast.LENGTH_SHORT).show();
-
-                    RealPathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
-                    generateFrames.setBackgroundColor(Color.parseColor("#00CC00"));
-                }
-
-                @Override
-                public void onProgress(String s) {
-                    Log.d(TAG, "Started command : ffmpeg " + Arrays.toString(command));
-                    Log.d(TAG, "progress : " + s);
-                }
-
-                @Override
-                public void onStart() {
-                    Log.d(TAG, "Started command : ffmpeg " + Arrays.toString(command));
-                }
-
-                @Override
-                public void onFinish() {
-                    Log.d(TAG, "Finished command : ffmpeg " + Arrays.toString(command));
-                }
-
-            });
-        } catch (FFmpegCommandAlreadyRunningException e) {
+            }
+        } catch (IllegalArgumentException | CameraAccessException e) {
             e.printStackTrace();
         }
-
+        return hasHighFPS;
     }
-
-    protected void initDialog() {
-
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage(getString(R.string.msg_loading));
-        pDialog.setCancelable(true);
-    }
-
-
-    protected void showpDialog() {
-
-        if (!pDialog.isShowing()) pDialog.show();
-    }
-
-    protected void hidepDialog() {
-
-        if (pDialog.isShowing()) pDialog.dismiss();
-    }
-
 }
 

@@ -1,4 +1,4 @@
-package com.onrpiv.uploadmedia.Utilities;
+package com.onrpiv.uploadmedia.Utilities.Camera;
 
 import android.content.Context;
 import android.hardware.camera2.CameraAccessException;

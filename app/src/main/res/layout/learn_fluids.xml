@@ -46,19 +46,20 @@
                 android:textSize="20sp" />
         </LinearLayout>
 
-        <com.zolad.zoominimageview.ZoomInImageView
+        <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/usu_logo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/linearLayout"
             android:src="@drawable/narwhal" />
 
-        <android.support.design.widget.BottomNavigationView
-            android:id="@+id/bottom_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            app:menu="@menu/bottom_navigation2"/>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:itemBackground="@android:color/white"
+        app:menu="@menu/bottom_navigation2" />
 
 
     </RelativeLayout>

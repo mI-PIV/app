@@ -79,8 +79,10 @@ jobs:
           asset_path: mIPIV_${{ env.version }}.apk
           asset_name: mIPIV_${{ env.version }}.apk
           asset_content_type: application/zip
+      - name: Delete APK
+        run: sudo rm -rf mIPIV_${{ env.version }}.apk
       - name: Increment Version
-        run: sudo sed -ri 's/(.*)([0-9])(\.)([0-9])([0-9])/echo "\1\2\3\4((\5+1))"/ge' ./version
+        run: sudo sed -ri 's/(.*)([0-9])(\.)([0-9])([0-9])/echo "\1\2\3\4$((\5+1))"/ge' ./version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Push Version Increment Changes

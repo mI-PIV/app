@@ -2,11 +2,10 @@ package com.onrpiv.uploadmedia.Learn;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
+import androidx.annotation.NonNull;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,7 +16,7 @@ import com.onrpiv.uploadmedia.Experiment.HomeActivity;
 import com.onrpiv.uploadmedia.Experiment.VideoActivity;
 import com.onrpiv.uploadmedia.R;
 
-public class FluidGlossary extends Activity {
+public class FluidGlossary extends LearnFluids {
     // Array of strings...
     String[] mobileArray = {"Boundary Layer","Laminar and Turbulent Flow","Reynolds Number","Vorticity/Circulation",
             "Fluid","Wake","Shear","Velocity profile","Streamline","Steady/Unsteady",
@@ -95,11 +94,9 @@ public class FluidGlossary extends Activity {
                     Intent myIntent = new Intent(view.getContext(), Pos14_Activity.class);
                     startActivityForResult(myIntent,13);
                 }
-                // Commenting this out because there's no content in this section yet.
                 if (position == 14) {
-//                    Intent myIntent = new Intent(view.getContext(), Pos15_Activity.class);
-//                    startActivityForResult(myIntent,14);
-                    //view.setBackgroundColor(Color.parseColor("#bebebe"));
+                    Intent myIntent = new Intent(view.getContext(), Pos15_Activity.class);
+                    startActivityForResult(myIntent,14);
                 }
             }
         });

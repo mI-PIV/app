@@ -15,10 +15,13 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import androidx.annotation.RequiresApi;
 
 /**
  * This is a basic class, implementing the interaction with Camera and OpenCV library.
@@ -191,6 +194,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
         public Mat gray();
     };
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
         Log.d(TAG, "call surfaceChanged event");
         synchronized(mSyncObject) {
@@ -213,6 +217,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
         /* Do nothing. Wait until surfaceChanged delivered */
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     public void surfaceDestroyed(SurfaceHolder holder) {
         synchronized(mSyncObject) {
             mSurfaceExist = false;
@@ -226,6 +231,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
      * The actual onCameraViewStarted callback will be delivered only after setCameraPermissionGranted
      * and enableView have been called and surface is available
      */
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     public void setCameraPermissionGranted() {
         synchronized(mSyncObject) {
             mCameraPermissionGranted = true;
@@ -239,6 +245,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
      * The actual onCameraViewStarted callback will be delivered only after setCameraPermissionGranted
      * and enableView have been called and surface is available
      */
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     public void enableView() {
         synchronized(mSyncObject) {
             mEnabled = true;
@@ -250,6 +257,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
      * This method is provided for clients, so they can disable camera connection and stop
      * the delivery of frames even though the surface view itself is not destroyed and still stays on the scren
      */
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     public void disableView() {
         synchronized(mSyncObject) {
             mEnabled = false;
@@ -312,6 +320,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
     /**
      * Called when mSyncObject lock is held
      */
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     private void checkCurrentState() {
         Log.d(TAG, "call checkCurrentState");
         int targetState;
@@ -330,6 +339,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     private void processEnterState(int state) {
         Log.d(TAG, "call processEnterState: " + state);
         switch(state) {
@@ -370,6 +380,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
 
     // NOTE: The order of bitmap constructor and camera connection is important for android 4.1.x
     // Bitmap must be constructed before surface
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     private void onEnterStartedState() {
         Log.d(TAG, "call onEnterStartedState");
         /* Connect camera */

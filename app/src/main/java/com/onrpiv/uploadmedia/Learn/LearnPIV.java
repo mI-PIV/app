@@ -2,9 +2,9 @@ package com.onrpiv.uploadmedia.Learn;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +26,8 @@ public class LearnPIV extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.learn_piv);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         pivBasicsButton = (Button)findViewById(R.id.pivBasicsButton);
         pivBasicsButton.setOnClickListener(new View.OnClickListener() {
@@ -91,4 +93,15 @@ public class LearnPIV extends AppCompatActivity {
             return true;
         }
     };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
