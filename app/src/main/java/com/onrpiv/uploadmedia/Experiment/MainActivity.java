@@ -4,15 +4,16 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.onrpiv.uploadmedia.R;
 
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Get user input edittext and button ui controls in the popup dialog.
         userNameEditText = (EditText) popupInputDialogView.findViewById(R.id.userName);
-        saveUserDataButton = popupInputDialogView.findViewById(R.id.button_save_user_data);
-        cancelUserDataButton = popupInputDialogView.findViewById(R.id.button_cancel_user_data);
+        saveUserDataButton = popupInputDialogView.findViewById(R.id.button_save_user);
+        cancelUserDataButton = popupInputDialogView.findViewById(R.id.button_cancel_user);
     }
 }

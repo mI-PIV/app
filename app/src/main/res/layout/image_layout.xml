@@ -5,6 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/pickImageMultiple"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/buttons"
+        android:onClick="onClick_MultipleImages"
+        android:text="Select Multiple Images"
+        android:textColor="#FFFFFF" />
 <!--    <ImageView-->
 <!--        android:id="@+id/preview"-->
 <!--        android:layout_width="match_parent"-->
@@ -59,6 +68,7 @@
             android:id="@+id/parameters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="inputPivOptions"
             android:layout_marginTop="10dp"
             android:enabled="false"
             android:text="Input PIV Parameters"
@@ -73,6 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:enabled="false"
+            android:onClick="processFile"
             android:background="@drawable/buttons"
             android:textColor="#FFFFFF"
             android:layout_below="@+id/parameters"
@@ -118,14 +129,5 @@
             android:textColor="#FFFFFF" />
 
     </RelativeLayout>
-
-<!--    <Button-->
-<!--        android:id="@+id/save"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:enabled="false"-->
-<!--        android:onClick="saveFile"-->
-<!--        android:text="save" />-->
 
 </RelativeLayout>

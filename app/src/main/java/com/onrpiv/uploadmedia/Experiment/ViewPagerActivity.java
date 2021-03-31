@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.text.LineBreaker;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.onrpiv.uploadmedia.R;
 
@@ -47,10 +48,6 @@ public class ViewPagerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         urls = intent.getStringArrayExtra("string-array-urls");
-        popupWindowReviewRun();
-//        ViewPager viewPager = (ViewPager) findViewById(R.id.pager_adapter);
-//        ViewPagerAdapterTest adapter = new ViewPagerAdapterTest(this, urls);
-//        viewPager.setAdapter(adapter);
     }
 
     @Override

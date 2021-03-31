@@ -48,12 +48,12 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/imageSaveButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:onClick="OnClick_SaveImage"
             android:layout_weight="1"
             android:background="@drawable/buttons"
-            android:onClick="OnClick_SaveImage"
             android:contentDescription="Save Current Image"
             app:srcCompat="@android:drawable/ic_menu_save" />
 
@@ -367,50 +367,5 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <!--    <Button-->
-    <!--        android:id="@+id/firstReplace"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="10dp"-->
-    <!--        android:onClick="singlePassReplaceDisplay"-->
-    <!--        android:backgroundTint="#243EDF"-->
-    <!--        android:textColor="#FFFFFF"-->
-    <!--        android:layout_below="@+id/firstPass"-->
-    <!--        android:text="Replacement After Single Pass" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/firstPass"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@+id/baseZoomageView"-->
-<!--        android:layout_marginTop="532dp"-->
-<!--        android:backgroundTint="#243EDF"-->
-<!--        android:onClick="singlePassDisplay"-->
-<!--        android:text="Single Pass"-->
-<!--        android:textColor="#FFFFFF" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/secondReplace"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@+id/secondPass"-->
-<!--        android:layout_marginTop="17dp"-->
-<!--        android:backgroundTint="#243EDF"-->
-<!--        android:onClick="multiPassReplaceDisplay"-->
-<!--        android:text="Replacement After MultiPass"-->
-<!--        android:textColor="#FFFFFF" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/secondPass"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@+id/firstPass"-->
-<!--        android:layout_marginTop="15dp"-->
-<!--        android:backgroundTint="#243EDF"-->
-<!--        android:onClick="multiPassDisplay"-->
-<!--        android:text="Multiple Pass"-->
-<!--        android:textColor="#FFFFFF" />-->
-
 </RelativeLayout>
 

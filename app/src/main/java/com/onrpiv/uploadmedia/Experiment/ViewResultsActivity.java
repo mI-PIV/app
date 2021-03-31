@@ -11,12 +11,13 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -30,7 +31,11 @@ import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMapPicker;
+import com.onrpiv.uploadmedia.Utilities.PathUtil;
+import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.Utilities.ResultSettings;
+import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
+import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,8 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
-
-import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_IMG;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_SOLID;
@@ -64,10 +67,10 @@ public class ViewResultsActivity extends AppCompatActivity {
 
     // paths
     private String imgFileToDisplay;
-    private File storageDirectory;
+    private File outputDirectory;
 
     // maps and settings
-    private HashMap<String, Bitmap> bmpHash = new HashMap<>();
+    private final HashMap<String, Bitmap> bmpHash = new HashMap<>();
     private HashMap<String, HashMap<String, double[][]>> correlationMaps;
     private ArrayList<ColorMap> colorMaps;
     private ResultSettings settings;
@@ -91,16 +94,19 @@ public class ViewResultsActivity extends AppCompatActivity {
         // Bring in variables from ImageActivity
         Bundle extras = displayIntent.getExtras();
         assert extras != null;
-        pivCorrelation = (HashMap<String, double[][]>) extras.getSerializable("pivCorrelation");
-        interrCenters = (HashMap<String, double[]>) extras.getSerializable("interrCenters");
-        vorticityValues = (double[][]) extras.get("vorticityValues");
-        rows = (int) extras.get("rows");
-        cols = (int) extras.get("cols");
-        pivCorrelationMulti = (HashMap<String, double[][]>) extras.getSerializable("pivCorrelationMulti");
-        int selectedId = (int) extras.get("selection-Id");
+        pivCorrelation = (HashMap<String, double[][]>) extras.getSerializable(PivResultData.CORRELATION);
+        interrCenters = (HashMap<String, double[]>) extras.getSerializable(PivResultData.INTERR_CENTERS);
+        vorticityValues = (double[][]) extras.get(PivResultData.VORTICITY);
+        rows = (int) extras.get(PivResultData.ROWS);
+        cols = (int) extras.get(PivResultData.COLS);
+        pivCorrelationMulti = (HashMap<String, double[][]>) extras.getSerializable(PivResultData.MULTI);
+        boolean replaced = (boolean) extras.get(PivResultData.REPLACED);
 
-        if (selectedId == 0) {
-            pivReplaceMissing2 = (HashMap<String, double[][]>) extras.getSerializable("pivReplaceMissing2");
+        if (replaced) {
+            pivReplaceMissing2 = (HashMap<String, double[][]>) extras.getSerializable(PivResultData.REPLACE2);
+        } else {
+            RadioButton replacedRadioButton = findViewById(R.id.replace);
+            replacedRadioButton.setVisibility(View.GONE);
         }
 
         // load our maps and settings
@@ -145,7 +151,6 @@ public class ViewResultsActivity extends AppCompatActivity {
         });
 
         // image containers
-        // TODO check listeners in Utilites.FrameView for interactive images
         baseImage = findViewById(R.id.baseView);
         vectorFieldImage = findViewById(R.id.vectorsView);
         vorticityImage = findViewById(R.id.vortView);
@@ -221,18 +226,15 @@ public class ViewResultsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // popups
-        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
-        double maxDisplacement = displayIntent.getDoubleExtra("max-displacement", 0);
-        popups(nMaxLower, maxDisplacement);
+//        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
+//        double maxDisplacement = displayIntent.getDoubleExtra("max-displacement", 0);
+//        popups(nMaxLower, maxDisplacement);
 
         // Setup images and paths
-        ArrayList<String> postPathMultiple = displayIntent.getStringArrayListExtra("image-paths");
-        String userName = displayIntent.getStringExtra("username");
-
-        imgFileToDisplay = postPathMultiple.get(0).split("/")[6].split(".png")[0]
-                + "-"
-                + postPathMultiple.get(1).split("/")[6].split("_")[3].split(".png")[0]+".png";
-        storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
+        String userName = displayIntent.getStringExtra(PivResultData.USERNAME);
+        int currentExpDir = PersistedData.getTotalExperiments(this, userName);
+        imgFileToDisplay = PathUtil.getExperimentImageFileSuffix(currentExpDir);
+        outputDirectory = PathUtil.getExperimentNumberedDirectory(userName, currentExpDir);
 
         // Display base image
         displayBaseImage("background" + BACKGRND_IMG, BACKGRND_IMG);
@@ -352,10 +354,14 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     public void OnClick_SaveImage(View view) {
+        ImageButton saveImageButton = findViewById(R.id.imageSaveButton);
+        saveImageButton.setEnabled(false);
+        saveImageButton.setBackgroundColor(Color.parseColor("#576674"));
+
         View imageStack = findViewById(R.id.img_frame);
         imageStack.setDrawingCacheEnabled(true);
         Bitmap bmp = imageStack.getDrawingCache();
-        File pngFile = new File(storageDirectory, "PIV_" + imageCounter++ + ".png");
+        File pngFile = new File(outputDirectory, "Saved_Image_" + imageCounter++ + ".png");
 
         try {
             if (!pngFile.exists()) {
@@ -372,6 +378,8 @@ public class ViewResultsActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, "Current image saved as " + pngFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+        saveImageButton.setEnabled(true);
+        saveImageButton.setBackgroundColor(Color.parseColor("#243EDF"));
     }
 
     private void displayVectorImage(String key, HashMap<String, double[][]> correlation) {
@@ -401,7 +409,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             baseImage.setImageBitmap(bmpHash.get(key));
         } else {
             if (backgroundCode.equals(BACKGRND_IMG)) {
-                File pngFile = new File(storageDirectory, "Base" + "_" + imgFileToDisplay);
+                File pngFile = new File(outputDirectory, "Base_" + imgFileToDisplay);
                 Bitmap bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
                 baseImage.setImageBitmap(bmp);
             } else {

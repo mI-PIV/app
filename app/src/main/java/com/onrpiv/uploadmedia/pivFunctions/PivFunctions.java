@@ -1,7 +1,6 @@
 package com.onrpiv.uploadmedia.pivFunctions;
 
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.util.Log;
 
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
@@ -44,26 +43,32 @@ import static org.opencv.imgproc.Imgproc.cvtColor;
  */
 
 public class PivFunctions {
-    private int windowSize;
-    private int overlap;
-    private double dt;
-    private String sig2noise_method;
     private final Mat frame1;
-    private final Mat frame2;
     private final Mat grayFrame1;
     private final Mat grayFrame2;
     private final int rows;
     private final int cols;
+    private final int windowSize;
+    private final int overlap;
+    private final double _e;
+    private final double qMin;
+    private final double nMaxUpper;
+    private final double dt;
+
+    private final File outputDirectory;
+    private final String imageFileSaveName;
+    private final String textFileSaveName;
 
     public PivFunctions(String imagePath1,
                         String imagePath2,
-                        int mWindow_size,
-                        int mOverlap,
-                        double mDt,
-                        String mSig2noise_method) {
+                        String mSig2noise_method,
+                        PivParameters parameters,
+                        File outputDirectory,
+                        String imageFileSaveName,
+                        String textFileSaveName) {
 
         frame1 = Imgcodecs.imread(imagePath1);
-        frame2 = Imgcodecs.imread(imagePath2);
+        Mat frame2 = Imgcodecs.imread(imagePath2);
 
         rows = frame1.rows();
         cols = frame1.cols();
@@ -74,13 +79,19 @@ public class PivFunctions {
         grayFrame2 = new Mat(frame2.rows(), frame2.cols(), frame2.type());
         cvtColor(frame2, grayFrame2, COLOR_BGR2GRAY);
 
-        windowSize = mWindow_size;
-        overlap = mOverlap;
-        dt = mDt;
-        sig2noise_method = mSig2noise_method;
+        this.outputDirectory = outputDirectory;
+        this.imageFileSaveName = imageFileSaveName;
+        this.textFileSaveName = textFileSaveName;
+
+        windowSize = parameters.getWindowSize();
+        overlap = parameters.getOverlap();
+        _e = parameters.getE();
+        qMin = parameters.getqMin();
+        nMaxUpper = parameters.getnMaxUpper();
+        dt = parameters.getDt();
     }
 
-    private static Map<String, Integer> getFieldShape(int imgCols, int imgRows, int areaSize, int overlap) {
+    private Map<String, Integer> getFieldShape(int imgCols, int imgRows, int areaSize, int overlap) {
         int nRows = ((imgRows - areaSize) / (areaSize - overlap) + 1);
         int nCols = ((imgCols - areaSize) / (areaSize - overlap) + 1);
         Map<String, Integer> map = new HashMap();
@@ -127,20 +138,12 @@ public class PivFunctions {
     }
 
 
-    public static Map<String, double[][]> extendedSearchAreaPiv_update(
-            Mat grayFrame1,
-            Mat grayFrame2,
-            int rows,
-            int cols,
-            int windowSize,
-            int overlap) {
+    public Map<String, double[][]> extendedSearchAreaPiv_update() {
         int i1t, j1l;
         int i2t, j2l;
 
-        int search_area_size = windowSize;
-
         //get field shape
-        Map<String, Integer> fieldShape = getFieldShape(cols, rows, search_area_size, overlap);
+        Map<String, Integer> fieldShape = getFieldShape(cols, rows, windowSize, overlap);
 
         double[][] dr1 = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
         double[][] dc1 = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
@@ -241,7 +244,7 @@ public class PivFunctions {
         return map;
     }
 
-    public static Map<String, double[]> getCoordinates(int rows, int cols, int windowSize, int overlap) {
+    public Map<String, double[]> getCoordinates() {
         Map<String, Integer> fieldShape = getFieldShape(cols, rows, windowSize, overlap);
 
         double[] x = new double[fieldShape.get("nCols")];
@@ -262,12 +265,9 @@ public class PivFunctions {
         return map;
     }
 
-    private static void saveToFile(String data, String userName, String stepName, String imgFileSaveName) {
+    private void saveToFile(String data, String stepName) {
         try {
-            File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
-            // Then we create the storage directory if does not exists
-            if (!storageDirectory.exists()) storageDirectory.mkdir();
-            File txtFile = new File(storageDirectory, stepName + "_" + imgFileSaveName + ".txt");
+            File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
 
             FileOutputStream fileOutputStream = new FileOutputStream(txtFile, true);
             fileOutputStream.write((data + System.getProperty("line.separator")).getBytes());
@@ -279,15 +279,12 @@ public class PivFunctions {
         }
     }
 
-    public static void saveVectors(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, double dt) {
+    public void saveVectors(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters,
+                            String stepName) {
         double ux, vy, q, x, y;
         ArrayList<String> toPrint = new ArrayList<>();
 
-        //clear out old file////////////////////////
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
-        // Then we create the storage directory if does not exists
-        if (!storageDirectory.exists()) storageDirectory.mkdir();
-        File txtFile = new File(storageDirectory, stepName + "_" + imgFileSaveName + ".txt");
+        File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
         if (txtFile.exists() && txtFile.isFile()) {
             txtFile.delete();
         }
@@ -309,21 +306,26 @@ public class PivFunctions {
 
                 StringJoiner sj1 = new StringJoiner(",  ");
                 sj1.add(toPrint.get(0)).add(toPrint.get(1)).add(toPrint.get(2)).add(toPrint.get(3)).add(toPrint.get(4));
-                saveToFile(sj1.toString(), userName, stepName, imgFileSaveName);
+                saveToFile(sj1.toString(), stepName);
                 toPrint.clear();
             }
         }
     }
 
-    public static void saveVectorCentimeters(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, double pixelToCM, String userName, String stepName, String imgFileSaveName, double dt) {
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+
+    public void saveVectorCentimeters(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters,
+                                      double pixelToCM, String stepName) {
         double ux, vy, q, x, y;
         ArrayList<String> toPrint = new ArrayList<>();
 
-        //clear out old file////////////////////////
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
-        // Then we create the storage directory if does not exists
-        if (!storageDirectory.exists()) storageDirectory.mkdir();
-        File txtFile = new File(storageDirectory, stepName + "_" + imgFileSaveName + ".txt");
+        File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
         if (txtFile.exists() && txtFile.isFile()) {
             txtFile.delete();
         }
@@ -345,7 +347,7 @@ public class PivFunctions {
 
                 StringJoiner sj1 = new StringJoiner(",  ");
                 sj1.add(toPrint.get(0)).add(toPrint.get(1)).add(toPrint.get(2)).add(toPrint.get(3)).add(toPrint.get(4));
-                saveToFile(sj1.toString(), userName, stepName, imgFileSaveName);
+                saveToFile(sj1.toString(), stepName);
                 toPrint.clear();
 //                Log.d("TEXT: ", "y: "+y+" x: "+x+" ux: "+ux+" vy: "+vy+" q: "+q);
 //                Log.d("JOIN: ", "string join: "+ sj1.toString());
@@ -353,15 +355,11 @@ public class PivFunctions {
         }
     }
 
-    public static void saveVortMapFile(double[][] vortMap, String userName, String stepName, String imgFileSaveName) {
+    public void saveVortMapFile(double[][] vortMap, String stepName) {
         double v;
         ArrayList<String> toPrint = new ArrayList<>();
 
-        //clear out old file////////////////////////
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
-        // Then we create the storage directory if does not exists
-        if (!storageDirectory.exists()) storageDirectory.mkdir();
-        File txtFile = new File(storageDirectory, stepName + "_" + imgFileSaveName + ".txt");
+        File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
         if (txtFile.exists() && txtFile.isFile()) {
             txtFile.delete();
         }
@@ -377,17 +375,18 @@ public class PivFunctions {
 
                 StringJoiner sj1 = new StringJoiner(",  ");
                 sj1.add(toPrint.get(0)).add(toPrint.get(1)).add(toPrint.get(2));
-                saveToFile(sj1.toString(), userName, stepName, imgFileSaveName);
+                saveToFile(sj1.toString(), stepName);
                 toPrint.clear();
             }
         }
     }
 
-    public void saveBaseImage(String userName, String stepName, String imgFileName) {
-        saveImage(frame1, userName, stepName, imgFileName);
+    public void saveBaseImage(String stepName) {
+        saveImage(frame1, stepName);
     }
 
-    public static void createVectorField(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, String userName, String stepName, String imgFileSaveName, ArrowDrawOptions arrowOptions, int rows, int cols) {
+    public void createVectorField(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters,
+                                  String stepName, ArrowDrawOptions arrowOptions) {
         Mat transparentBackground = new Mat(rows, cols, CV_8UC4, new Scalar(255, 255, 255, 0));
 
         int lineType = arrowOptions.lineType;
@@ -436,14 +435,17 @@ public class PivFunctions {
                     endPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
                 }
 
-                Imgproc.arrowedLine(transparentBackground, startPoint, endPoint, new Scalar(255, 255, 255, 255), thickness, lineType, 0, tipLength);
+                Imgproc.arrowedLine(transparentBackground, startPoint, endPoint, new Scalar(255, 255, 255, 255),
+                        thickness, lineType, 0, tipLength);
             }
         }
 
-        saveImage(transparentBackground, userName, stepName, imgFileSaveName);
+        saveImage(transparentBackground, stepName);
     }
 
-    public static Bitmap createVectorFieldBitmap(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters, ArrowDrawOptions arrowOptions, int rows, int cols) {
+    public static Bitmap createVectorFieldBitmap(Map<String, double[][]> pivCorrelation,
+                                                 Map<String, double[]> interrCenters,
+                                                 ArrowDrawOptions arrowOptions, int rows, int cols) {
         Mat transparentBackground = new Mat(rows, cols, CV_8UC4, new Scalar(255, 255, 255, 0));
 
         int lineType = arrowOptions.lineType;
@@ -496,7 +498,8 @@ public class PivFunctions {
                 int green = (int) arrowOptions.color.green() * 255;
                 int blue = (int) arrowOptions.color.blue() * 255;
 
-                Imgproc.arrowedLine(transparentBackground, startPoint, endPoint, new Scalar(red, green, blue, 255), thickness, lineType, 0, tipLength);
+                Imgproc.arrowedLine(transparentBackground, startPoint, endPoint, new Scalar(red, green, blue, 255),
+                        thickness, lineType, 0, tipLength);
             }
         }
 
@@ -507,11 +510,8 @@ public class PivFunctions {
         return bmp;
     }
 
-    public static void saveImage(Mat image1, String userName, String stepName, String imgFileSaveName) {
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/Save_Output_" + userName);
-
-        if (!storageDirectory.exists()) storageDirectory.mkdir();
-        File pngFile = new File(storageDirectory, stepName + "_" + imgFileSaveName);
+    public void saveImage(Mat image1, String stepName) {
+        File pngFile = new File(outputDirectory, stepName + "_" + imageFileSaveName);
         Mat resized = resizeMat(image1);
         Imgcodecs.imwrite(pngFile.getAbsolutePath(), resized);
     }
@@ -523,18 +523,20 @@ public class PivFunctions {
         return resized;
     }
 
-    public static void saveColorMapImage(double[][] mapValues, String userName, String stepName, String imageFileSaveName) {
+    public void saveColorMapImage(double[][] mapValues, String stepName) {
         Mat mapValuesMat = new Mat(mapValues.length, mapValues[0].length, CV_8UC1);
         double[] minMax = findMinMax2D(mapValues);
         List<int[]> transparentCoords = findTransparentCoords(mapValuesMat, mapValues, 120, 135, minMax[0], minMax[1]);
         Mat colorMapImage = createColorMap(mapValuesMat, transparentCoords, COLORMAP_JET);
-        saveImage(colorMapImage, userName, stepName, imageFileSaveName);
+        saveImage(colorMapImage, stepName);
     }
 
-    public static Bitmap createColorMapBitmap(double[][] mapValues, int threshMin, int threshMax, int openCVColorMapCode) {
+    public static Bitmap createColorMapBitmap(double[][] mapValues, int threshMin, int threshMax,
+                                              int openCVColorMapCode) {
         Mat mapValuesMat = new Mat(mapValues.length, mapValues[0].length, CV_8UC1);
         double[] minMax = findMinMax2D(mapValues);
-        List<int[]> transparentCoords = findTransparentCoords(mapValuesMat, mapValues, threshMin, threshMax, minMax[0], minMax[1]);
+        List<int[]> transparentCoords = findTransparentCoords(mapValuesMat, mapValues, threshMin,
+                threshMax, minMax[0], minMax[1]);
         Mat colorMap = createColorMap(mapValuesMat, transparentCoords, openCVColorMapCode);
 
         Mat resized = resizeMat(colorMap);
@@ -544,7 +546,8 @@ public class PivFunctions {
         return result;
     }
 
-    private static List<int[]> findTransparentCoords(Mat valuesMat, double[][] values, int threshMin, int threshMax, double min, double max) {
+    private static List<int[]> findTransparentCoords(Mat valuesMat, double[][] values, int threshMin,
+                                                     int threshMax, double min, double max) {
         // Determine which values are transparent
         List<int[]> transparentCoords = new ArrayList<>();
 
@@ -620,16 +623,7 @@ public class PivFunctions {
         return (a[(n - 1) / 2] + a[n / 2]) / 2.0;
     }
 
-    public static Map<String, double[][]> vectorPostProcessing(
-            Map<String, double[][]> pivCorrelation,
-            int cols,
-            int rows,
-            int windowSize,
-            int overlap,
-            double dt,
-            double mMax,
-            double qMin,
-            double E) {
+    public Map<String, double[][]> vectorPostProcessing(Map<String, double[][]> pivCorrelation) {
         Map<String, Integer> fieldShape = getFieldShape(cols, rows, windowSize, overlap);
 
         double[][] dr1_p = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
@@ -672,7 +666,7 @@ public class PivFunctions {
                 r_r = Math.abs(pivCorrelation.get("v")[k][l] - sm_r) / sigma_s_r;
                 r_c = Math.abs(pivCorrelation.get("u")[k][l] - sm_c) / sigma_s_c;
 
-                if (pivCorrelation.get("magnitude")[k][l] * dt < mMax && pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < E && r_c < E) {
+                if (pivCorrelation.get("magnitude")[k][l] * dt < nMaxUpper && pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
                     dr1_p[k][l] = pivCorrelation.get("v")[k][l];
                     dc1_p[k][l] = pivCorrelation.get("u")[k][l];
                     mag_p[k][l] = pivCorrelation.get("magnitude")[k][l];
@@ -691,18 +685,11 @@ public class PivFunctions {
         return map;
     }
 
-    public static Map<String, double[][]> calculateMultipass(
-            Map<String, double[][]> pivCorrelation,
-            Map<String, double[]> interrCenters,
-            Mat grayFrame1,
-            Mat grayFrame2,
-            int rows,
-            int cols,
-            int windowSize,
-            int overlap) {
-        int search_area_size = windowSize;
+    public Map<String, double[][]> calculateMultipass(Map<String, double[][]> pivCorrelation,
+            Map<String, double[]> interrCenters) {
+
         //get field shape
-        Map<String, Integer> fieldShape = getFieldShape(cols, rows, search_area_size, overlap);
+        Map<String, Integer> fieldShape = getFieldShape(cols, rows, windowSize, overlap);
 
         double[][] dr_new = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
         double[][] dc_new = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
@@ -802,15 +789,9 @@ public class PivFunctions {
         return map;
     }
 
-    public static Map<String, double[][]> replaceMissingVectors(
-            Map<String, double[][]> pivCorrelation,
-            int rows,
-            int cols,
-            int windowSize,
-            int overlap) {
-        int search_area_size = windowSize;
+    public Map<String, double[][]> replaceMissingVectors(Map<String, double[][]> pivCorrelation) {
         //get field shape
-        Map<String, Integer> fieldShape = getFieldShape(cols, rows, search_area_size, overlap);
+        Map<String, Integer> fieldShape = getFieldShape(cols, rows, windowSize, overlap);
 
         double[][] dr2 = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
         double[][] dc2 = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
@@ -914,21 +895,5 @@ public class PivFunctions {
         }
 
         return vortMap;
-    }
-
-    public Mat getFirstFrameGray() {
-        return grayFrame1;
-    }
-
-    public Mat getSecondFrameGray() {
-        return grayFrame2;
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public int getCols() {
-        return cols;
     }
 }
