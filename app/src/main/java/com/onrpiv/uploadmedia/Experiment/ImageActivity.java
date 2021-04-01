@@ -1,42 +1,23 @@
 package com.onrpiv.uploadmedia.Experiment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.text.LineBreaker;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcelable;
-import android.provider.MediaStore;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.onrpiv.uploadmedia.BuildConfig;
 import com.onrpiv.uploadmedia.Learn.PIVBasics3;
 import com.onrpiv.uploadmedia.Learn.PIVBasicsLayout;
 import com.onrpiv.uploadmedia.R;
@@ -67,11 +48,7 @@ public class ImageActivity extends AppCompatActivity {
     // tooltips variables
     private PopupWindow popupWindow;
     private RelativeLayout relativeLayout;
-
-    private Button lightbulb1;
-    private Button lightbulb2;
-    private Button lightbulb3;
-    private Button lightbulb4;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +68,9 @@ public class ImageActivity extends AppCompatActivity {
         userName = userNameIntent.getStringExtra("UserName");
 
         OpenCVLoader.initDebug();
+        popupWindowImageLayoutRun();
         // Add popupwindow here
-
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -167,23 +145,23 @@ public class ImageActivity extends AppCompatActivity {
     /* Initialize popup dialog view and ui controls in the popup dialog. */
     private void initPopupViewControls()
     {
-        // Get layout inflater object.
-        LayoutInflater layoutInflater = LayoutInflater.from(ImageActivity.this);
-
-        // Inflate the popup dialog from a layout xml file.
-        popupInputDialogView = layoutInflater.inflate(R.layout.popup_input_dialog, null);
-
-        // Get user input edittext and button ui controls in the popup dialog.
-        setEditText = (TextView) popupInputDialogView.findViewById(R.id.textView);
-        setNumberEditText = (EditText) popupInputDialogView.findViewById(R.id.imgSet);
-        img1EditText = (EditText) popupInputDialogView.findViewById(R.id.img1);
-        img2EditText = (EditText) popupInputDialogView.findViewById(R.id.img2);
-        saveUserDataButton = popupInputDialogView.findViewById(R.id.button_save_user_data);
-        cancelUserDataButton = popupInputDialogView.findViewById(R.id.button_cancel_user_data);
-        Button lightbulb1 = popupInputDialogView.findViewById(R.id.lightbulbUserDialog1);
-        Button lightbulb2 = popupInputDialogView.findViewById(R.id.lightbulbUserDialog2);
-
-        popupWindowUserDialogRun(lightbulb1, lightbulb2);
+//        // Get layout inflater object.
+//        LayoutInflater layoutInflater = LayoutInflater.from(ImageActivity.this);
+//
+//        // Inflate the popup dialog from a layout xml file.
+//        popupInputDialogView = layoutInflater.inflate(R.layout.popup_input_dialog, null);
+//
+//        // Get user input edittext and button ui controls in the popup dialog.
+//        setEditText = (TextView) popupInputDialogView.findViewById(R.id.textView);
+//        setNumberEditText = (EditText) popupInputDialogView.findViewById(R.id.imgSet);
+//        img1EditText = (EditText) popupInputDialogView.findViewById(R.id.img1);
+//        img2EditText = (EditText) popupInputDialogView.findViewById(R.id.img2);
+//        saveUserDataButton = popupInputDialogView.findViewById(R.id.button_save_user_data);
+//        cancelUserDataButton = popupInputDialogView.findViewById(R.id.button_cancel_user_data);
+//        Button lightbulb1 = popupInputDialogView.findViewById(R.id.lightbulbUserDialog1);
+//        Button lightbulb2 = popupInputDialogView.findViewById(R.id.lightbulbUserDialog2);
+//
+//        popupWindowUserDialogRun(lightbulb1, lightbulb2);
     }
 
     public void reviewFile(View view) {
