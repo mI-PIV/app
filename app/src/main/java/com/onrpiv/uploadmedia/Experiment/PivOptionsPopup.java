@@ -27,13 +27,17 @@ public class PivOptionsPopup extends AlertDialog {
     private final TextView windowSizeText;
     private final TextView overlapText;
     private final TextView dtText;
-    private final TextView nMaxUpperText;
-    private final TextView nMaxLowerText;
+    //private final TextView nMaxUpperText;
+    //private final TextView nMaxLowerText;
     private final TextView qMinText;
     private final TextView EText;
     private final Button savePIVDataButton;
     private final RadioGroup radioGroup;
     private final Button cancelPIVDataButton;
+    private final Button lightbulb1;
+    private final Button lightbulb2;
+    private final Button lightbulb3;
+    private final Button lightbulb4;
     private final CheckBox advancedCheckbox;
 
     public PivParameters parameters;
@@ -59,10 +63,10 @@ public class PivOptionsPopup extends AlertDialog {
         overlapText = (EditText) findViewById(R.id.overlap);
         dtText = (EditText) findViewById(R.id.dt);
         TextView dt_text = (TextView) findViewById(R.id.dt_text);
-        nMaxUpperText = findViewById(R.id.nMaxUpper);
-        TextView nMaxUpper_text = (TextView) findViewById(R.id.nMaxUpper_text);
-        nMaxLowerText = findViewById(R.id.nMaxLower);
-        TextView nMaxLower_text = (TextView) findViewById(R.id.nMaxLower_text);
+        //nMaxUpperText = findViewById(R.id.nMaxUpper);
+        //TextView nMaxUpper_text = (TextView) findViewById(R.id.nMaxUpper_text);
+        //nMaxLowerText = findViewById(R.id.nMaxLower);
+        //TextView nMaxLower_text = (TextView) findViewById(R.id.nMaxLower_text);
         qMinText = findViewById(R.id.qMin);
         TextView qMin_text = (TextView) findViewById(R.id.qMin_text);
         EText = findViewById(R.id.E);
@@ -73,20 +77,35 @@ public class PivOptionsPopup extends AlertDialog {
         cancelPIVDataButton = findViewById(R.id.button_cancel_piv_data);
         advancedCheckbox = findViewById(R.id.advancedCheckbox);
         advancedCheckbox.setChecked(false);
+        lightbulb1 = findViewById(R.id.lightbulbInputDialog1);
+        lightbulb2 = findViewById(R.id.lightbulbInputDialog2);
+        lightbulb3 = findViewById(R.id.lightbulbInputDialog3);
+        lightbulb4 = findViewById(R.id.lightbulbInputDialog4);
 
         // keep advanced views in list for easy iteration
         hiddenViewList = new ArrayList<View>(
+//                Arrays.asList(
+//                        dtText, dt_text, nMaxUpperText, e_text, groupradio_text, radioGroup,
+//                        nMaxUpper_text, nMaxLowerText, nMaxLower_text, qMinText, qMin_text, EText,
+//                        lightbulb3, lightbulb4
+//                )
+                // got rid of nMaxUpperText, nMaxLowerText, nMaxUpper_text and nMaxLower_text
                 Arrays.asList(
-                        dtText, dt_text, nMaxUpperText, e_text, groupradio_text, radioGroup,
-                        nMaxUpper_text, nMaxLowerText, nMaxLower_text, qMinText, qMin_text, EText
+                        dtText, dt_text, e_text, groupradio_text, radioGroup, qMinText, qMin_text, EText,
+                        lightbulb3, lightbulb4
                 )
         );
 
         // keep all textviews in list for easy iteration
         allTextViewList = new ArrayList<TextView>(
+//                Arrays.asList(
+//                        windowSizeText, overlapText, dtText, nMaxUpperText, nMaxLowerText, EText,
+//                        qMinText, lightbulb3, lightbulb4
+//                )
+                // got rid of nMaxUpperText and nMaxLowerText
                 Arrays.asList(
-                        windowSizeText, overlapText, dtText, nMaxUpperText, nMaxLowerText, EText,
-                        qMinText
+                        windowSizeText, overlapText, dtText, EText,
+                        qMinText, lightbulb3, lightbulb4
                 )
         );
 
@@ -96,8 +115,8 @@ public class PivOptionsPopup extends AlertDialog {
         windowSizeText.setText("64");
         overlapText.setText("32");
         dtText.setText("1");
-        nMaxUpperText.setText("25");
-        nMaxLowerText.setText("5");
+        //nMaxUpperText.setText("25");
+        //nMaxLowerText.setText("5");
         qMinText.setText("1");
         EText.setText("2");
         radioGroup.check(R.id.yesRadio);
@@ -210,8 +229,8 @@ public class PivOptionsPopup extends AlertDialog {
         idToKey.put(windowSizeText.getId(), PivParameters.WINDOW_SIZE_KEY);
         idToKey.put(overlapText.getId(), PivParameters.OVERLAP_KEY);
         idToKey.put(dtText.getId(), PivParameters.DT_KEY);
-        idToKey.put(nMaxUpperText.getId(), PivParameters.NUM_MAX_UPPER_KEY);
-        idToKey.put(nMaxLowerText.getId(), PivParameters.NUM_MAX_LOWER_KEY);
+        //idToKey.put(nMaxUpperText.getId(), PivParameters.NUM_MAX_UPPER_KEY);
+        //idToKey.put(nMaxLowerText.getId(), PivParameters.NUM_MAX_LOWER_KEY);
         idToKey.put(EText.getId(), PivParameters.E_KEY);
         idToKey.put(qMinText.getId(), PivParameters.QMIN_KEY);
     }
