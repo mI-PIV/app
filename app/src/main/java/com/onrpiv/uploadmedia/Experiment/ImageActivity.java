@@ -249,7 +249,7 @@ public class ImageActivity extends AppCompatActivity {
 
     private void popupWindowWithLink(Button button, final String popUpWindowTitle, final String popupWindowMessage, final String linkText, final Object myClass) {
 
-        if (button.isSelected() == false) {
+        if (!button.isSelected()) {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
