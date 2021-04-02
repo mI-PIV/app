@@ -48,6 +48,7 @@ public class ViewPagerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         urls = intent.getStringArrayExtra("string-array-urls");
+        popupWindowReviewRun();
     }
 
     @Override

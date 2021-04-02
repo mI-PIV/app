@@ -249,48 +249,53 @@ public class ImageActivity extends AppCompatActivity {
 
     private void popupWindowWithLink(Button button, final String popUpWindowTitle, final String popupWindowMessage, final String linkText, final Object myClass) {
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        if (button.isSelected() == false) {
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                final View customView = inflater.inflate(R.layout.popup_window_with_link, null);
+                    LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
 
-                TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
-                windowTitle.setText(popUpWindowTitle);
+                    final View customView = inflater.inflate(R.layout.popup_window_with_link, null);
 
-                TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
-                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
-                windowMessage.setText(popupWindowMessage);
+                    TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
+                    windowTitle.setText(popUpWindowTitle);
 
-                // New instance of popup window
-                popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
+                    windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+                    windowMessage.setText(popupWindowMessage);
 
-                // Setting an elevation value for popup window, it requires API level 21
-                if (Build.VERSION.SDK_INT >= 21) {
-                    popupWindow.setElevation(5.0f);
+                    // New instance of popup window
+                    popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                    // Setting an elevation value for popup window, it requires API level 21
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        popupWindow.setElevation(5.0f);
+                    }
+
+                    Button navigateButton = (Button) customView.findViewById(R.id.button_navigate);
+                    navigateButton.setText(linkText);
+                    navigateButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startActivity(new Intent(ImageActivity.this, myClass.getClass()));
+                        }
+                    });
+
+                    Button closeButton = (Button) customView.findViewById(R.id.button_close);
+                    closeButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                        }
+                    });
+
+                    popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
                 }
+            });
+        }
 
-                Button navigateButton = (Button) customView.findViewById(R.id.button_navigate);
-                navigateButton.setText(linkText);
-                navigateButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startActivity(new Intent(ImageActivity.this, myClass.getClass()));
-                    }
-                });
 
-                Button closeButton = (Button) customView.findViewById(R.id.button_close);
-                closeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        popupWindow.dismiss();
-                    }
-                });
-
-                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
-            }
-        });
     }
 
     private void popupWindowNoLink(Button button, final String popUpWindowTitle, final String popupWindowMessage) {
