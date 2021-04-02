@@ -112,8 +112,8 @@ public class PivOptionsPopup extends AlertDialog {
 //                )
                 // got rid of nMaxUpperText, nMaxLowerText, nMaxUpper_text and nMaxLower_text
                 Arrays.asList(
-                        dtText, dt_text, e_text, groupradio_text, radioGroup, qMinText, qMin_text, EText,
-                        lightbulb3, lightbulb4, lightbulb5, lightbulb6
+                        dtText, dt_text, e_text, groupradio_text, radioGroup, qMinText, qMin_text,
+                        EText, lightbulb3, lightbulb4, lightbulb5, lightbulb6
                 )
         );
 
@@ -126,7 +126,7 @@ public class PivOptionsPopup extends AlertDialog {
                 // got rid of nMaxUpperText and nMaxLowerText
                 Arrays.asList(
                         windowSizeText, overlapText, dtText, EText,
-                        qMinText, lightbulb3, lightbulb4, lightbulb5, lightbulb6
+                        qMinText
                 )
         );
 
