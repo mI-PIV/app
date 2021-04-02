@@ -285,6 +285,28 @@
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_marginStart="310dp"
+                android:layout_marginTop="170dp"
+                android:visibility="gone"
+                android:background="@drawable/lightbulb"
+                android:textColor="#FFFFFF"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/lightbulbInputDialog5"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="310dp"
+                android:layout_marginTop="215dp"
+                android:visibility="gone"
+                android:background="@drawable/lightbulb"
+                android:textColor="#FFFFFF"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/lightbulbInputDialog6"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="310dp"
                 android:layout_marginTop="260dp"
                 android:visibility="gone"
                 android:background="@drawable/lightbulb"

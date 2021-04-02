@@ -306,14 +306,4 @@ public class PivFrameSelectionPopup extends AlertDialog {
     private boolean checkAllSelections() {
         return frame1IsReady && frame2IsReady && setIsReady;
     }
-
-    private void setLightbulbInfo(String myLightbulbTitle, String myLightbulbInfo) {
-
-        popupWindowNoLink(lightbulb1, "hello", "no", context);
-    }
-
-    private void popupWindowNoLink(Button button, final String popUpWindowTitle, final String popupWindowMessage, final Context myContext) {
-
-
-    }
 }
