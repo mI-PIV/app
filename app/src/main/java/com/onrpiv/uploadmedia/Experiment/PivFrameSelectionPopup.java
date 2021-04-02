@@ -116,73 +116,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
         final String popupWindowMessage2 = "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).";
         relativeLayout = findViewById(R.id.popupDialogRelativeLayout);
 
-        lightbulb2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
-
-                TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
-                windowTitle.setText(popupWindowTitle2);
-
-                TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
-                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
-                windowMessage.setText(popupWindowMessage2);
-
-                // New instance of popup window
-                popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                // Setting an elevation value for popup window, it requires API level 21
-                if (Build.VERSION.SDK_INT >= 21) {
-                    popupWindow.setElevation(5.0f);
-                }
-
-                Button closeButton = (Button) customView.findViewById(R.id.button_close);
-                closeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        popupWindow.dismiss();
-                    }
-                });
-
-                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
-            }
-        });
-
-        lightbulb1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
-
-                TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
-                windowTitle.setText(popupWindowTitle1);
-
-                TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
-                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
-                windowMessage.setText(popupWindowMessage1);
-
-                // New instance of popup window
-                popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                // Setting an elevation value for popup window, it requires API level 21
-                if (Build.VERSION.SDK_INT >= 21) {
-                    popupWindow.setElevation(5.0f);
-                }
-
-                Button closeButton = (Button) customView.findViewById(R.id.button_close);
-                closeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        popupWindow.dismiss();
-                    }
-                });
-
-                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
-            }
-        });
+        popupWindowListenerWithoutLink(lightbulb1, popupWindowTitle1, popupWindowMessage1, relativeLayout, context);
+        popupWindowListenerWithoutLink(lightbulb2, popupWindowTitle2, popupWindowMessage2, relativeLayout, context);
 
         //set selection listeners
         setTextListeners();
@@ -305,5 +240,41 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
     private boolean checkAllSelections() {
         return frame1IsReady && frame2IsReady && setIsReady;
+    }
+
+    private void popupWindowListenerWithoutLink(Button button, final String title, final String message, final RelativeLayout relativeLayout, final Context context) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
+
+                TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
+                windowTitle.setText(title);
+
+                TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
+                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+                windowMessage.setText(message);
+
+                // New instance of popup window
+                popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                // Setting an elevation value for popup window, it requires API level 21
+                if (Build.VERSION.SDK_INT >= 21) {
+                    popupWindow.setElevation(5.0f);
+                }
+
+                Button closeButton = (Button) customView.findViewById(R.id.button_close);
+                closeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        popupWindow.dismiss();
+                    }
+                });
+
+                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
+            }
+        });
     }
 }
