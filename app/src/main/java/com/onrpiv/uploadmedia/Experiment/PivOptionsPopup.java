@@ -159,54 +159,16 @@ public class PivOptionsPopup extends AlertDialog {
         final String popupWindowMessage5 = "Set a median threshold value of two. Increasing the median threshold value will result in a less stringent comparison and decreasing the median parameter will result in a more stringent comparison.";
         final PIVBasics4 pivBasics4 = new PIVBasics4();
         final String popupWindowTitle6 = "Replacing Missing Vectors";
-        final String popupWindowMessage6 = "When would you choose yes vs no? \nYes - qualitative image analysis.\nNo - if you're using the vector data for further analysis.";
+        final String popupWindowMessage6 = "When would you choose yes vs no? \n\nYes: qualitative image analysis.\nNo: if you're using the vector data for further analysis.";
 
         relativeLayout = findViewById(R.id.popupDialogInputRelativeLayout);
 
-        lightbulb1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                final View customView = inflater.inflate(R.layout.popup_window_with_link, null);
-
-                TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
-                windowTitle.setText(popupWindowTitle1);
-
-                TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
-                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
-                windowMessage.setText(popupWindowMessage1);
-
-                // New instance of popup window
-                popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                // Setting an elevation value for popup window, it requires API level 21
-                if (Build.VERSION.SDK_INT >= 21) {
-                    popupWindow.setElevation(5.0f);
-                }
-
-                Button navigateButton = (Button) customView.findViewById(R.id.button_navigate);
-                navigateButton.setText(linkText);
-//                navigateButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        startActivity(new Intent(PivOptionsPopup.this, class1.getClass()));
-//                    }
-//                });
-
-                Button closeButton = (Button) customView.findViewById(R.id.button_close);
-                closeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        popupWindow.dismiss();
-                    }
-                });
-
-                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
-            }
-        });
-
+        popupWindowListenerWithLink(lightbulb1, popupWindowTitle1, popupWindowMessage1, relativeLayout, context, pivBasics3, linkText);
+        popupWindowListenerWithLink(lightbulb2, popupWindowTitle2, popupWindowMessage2, relativeLayout, context, pivBasics5, linkText);
+        popupWindowListenerWithoutLink(lightbulb3, popupWindowTitle3, popupWindowMessage3, relativeLayout, context);
+        popupWindowListenerWithLink(lightbulb4, popupWindowTitle4, popupWindowMessage4, relativeLayout, context, pivBasics2, linkText);
+        popupWindowListenerWithLink(lightbulb5, popupWindowTitle5, popupWindowMessage5, relativeLayout, context, pivBasics4, linkText);
+        popupWindowListenerWithoutLink(lightbulb6, popupWindowTitle6, popupWindowMessage6, relativeLayout, context);
 
         // load our ids to keys translation dictionary
         loadIdToKey();
@@ -319,5 +281,87 @@ public class PivOptionsPopup extends AlertDialog {
         //idToKey.put(nMaxLowerText.getId(), PivParameters.NUM_MAX_LOWER_KEY);
         idToKey.put(EText.getId(), PivParameters.E_KEY);
         idToKey.put(qMinText.getId(), PivParameters.QMIN_KEY);
+    }
+
+    private void popupWindowListenerWithoutLink(Button button, final String title, final String message, final RelativeLayout relativeLayout, final Context context) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
+
+                TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
+                windowTitle.setText(title);
+
+                TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
+                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+                windowMessage.setText(message);
+
+                // New instance of popup window
+                popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                // Setting an elevation value for popup window, it requires API level 21
+                if (Build.VERSION.SDK_INT >= 21) {
+                    popupWindow.setElevation(5.0f);
+                }
+
+                Button closeButton = (Button) customView.findViewById(R.id.button_close);
+                closeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        popupWindow.dismiss();
+                    }
+                });
+
+                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
+            }
+        });
+    }
+
+    private void popupWindowListenerWithLink(Button button, final String title, final String message, final RelativeLayout relativeLayout, final Context context, final Object linkedClass, final String linkText) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                final View customView = inflater.inflate(R.layout.popup_window_with_link, null);
+
+                TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
+                windowTitle.setText(title);
+
+                TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
+                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+                windowMessage.setText(message);
+
+                // New instance of popup window
+                popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                // Setting an elevation value for popup window, it requires API level 21
+                if (Build.VERSION.SDK_INT >= 21) {
+                    popupWindow.setElevation(5.0f);
+                }
+
+                Button navigateButton = (Button) customView.findViewById(R.id.button_navigate);
+                navigateButton.setText(linkText);
+//                navigateButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        startActivity(new Intent(PivOptionsPopup.this, class1.getClass()));
+//                    }
+//                });
+
+                Button closeButton = (Button) customView.findViewById(R.id.button_close);
+                closeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        popupWindow.dismiss();
+                    }
+                });
+
+                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
+            }
+        });
     }
 }
