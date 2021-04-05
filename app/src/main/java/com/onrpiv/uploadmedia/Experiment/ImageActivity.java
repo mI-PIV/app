@@ -130,28 +130,6 @@ public class ImageActivity extends AppCompatActivity {
         popupWindowWithLink(lightbulb3, lightbulb3Title, lightbulb3Info, "PIV Basics", pivBasicsLayout);
     }
 
-    /* Initialize popup dialog view and ui controls in the popup dialog. */
-    private void initPopupViewControls()
-    {
-//        // Get layout inflater object.
-//        LayoutInflater layoutInflater = LayoutInflater.from(ImageActivity.this);
-//
-//        // Inflate the popup dialog from a layout xml file.
-//        popupInputDialogView = layoutInflater.inflate(R.layout.popup_input_dialog, null);
-//
-//        // Get user input edittext and button ui controls in the popup dialog.
-//        setEditText = (TextView) popupInputDialogView.findViewById(R.id.textView);
-//        setNumberEditText = (EditText) popupInputDialogView.findViewById(R.id.imgSet);
-//        img1EditText = (EditText) popupInputDialogView.findViewById(R.id.img1);
-//        img2EditText = (EditText) popupInputDialogView.findViewById(R.id.img2);
-//        saveUserDataButton = popupInputDialogView.findViewById(R.id.button_save_user_data);
-//        cancelUserDataButton = popupInputDialogView.findViewById(R.id.button_cancel_user_data);
-//        Button lightbulb1 = popupInputDialogView.findViewById(R.id.lightbulbUserDialog1);
-//        Button lightbulb2 = popupInputDialogView.findViewById(R.id.lightbulbUserDialog2);
-//
-//        popupWindowUserDialogRun(lightbulb1, lightbulb2);
-    }
-
     public void reviewFile(View view) {
         reviewImageFromUrl();
         review.setBackgroundColor(Color.parseColor("#00CC00"));
