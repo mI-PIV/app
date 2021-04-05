@@ -53,16 +53,8 @@ public class PivOptionsPopup extends AlertDialog {
     private final ArrayList<TextView> allTextViewList;
     private final ArrayMap<Integer, String> idToKey;
 
-    // tooltips variables
+    // tooltips variable
     private PopupWindow popupWindow;
-    private RelativeLayout relativeLayout;
-    private Context context;
-    private final Button lightbulb1;
-    private final Button lightbulb2;
-    private final Button lightbulb3;
-    private final Button lightbulb4;
-    private final Button lightbulb5;
-    private final Button lightbulb6;
 
     public PivOptionsPopup(final Context context) {
         super(context);
@@ -96,12 +88,12 @@ public class PivOptionsPopup extends AlertDialog {
         cancelPIVDataButton = findViewById(R.id.button_cancel_piv_data);
         advancedCheckbox = findViewById(R.id.advancedCheckbox);
         advancedCheckbox.setChecked(false);
-        lightbulb1 = findViewById(R.id.lightbulbInputDialog1);
-        lightbulb2 = findViewById(R.id.lightbulbInputDialog2);
-        lightbulb3 = findViewById(R.id.lightbulbInputDialog3);
-        lightbulb4 = findViewById(R.id.lightbulbInputDialog4);
-        lightbulb5 = findViewById(R.id.lightbulbInputDialog5);
-        lightbulb6 = findViewById(R.id.lightbulbInputDialog6);
+        Button lightbulb1 = findViewById(R.id.lightbulbInputDialog1);
+        Button lightbulb2 = findViewById(R.id.lightbulbInputDialog2);
+        Button lightbulb3 = findViewById(R.id.lightbulbInputDialog3);
+        Button lightbulb4 = findViewById(R.id.lightbulbInputDialog4);
+        Button lightbulb5 = findViewById(R.id.lightbulbInputDialog5);
+        Button lightbulb6 = findViewById(R.id.lightbulbInputDialog6);
 
         // keep advanced views in list for easy iteration
         hiddenViewList = new ArrayList<View>(
@@ -161,14 +153,14 @@ public class PivOptionsPopup extends AlertDialog {
         final String popupWindowTitle6 = "Replacing Missing Vectors";
         final String popupWindowMessage6 = "When would you choose yes vs no? \n\nYes: qualitative image analysis.\nNo: if you're using the vector data for further analysis.";
 
-        relativeLayout = findViewById(R.id.popupDialogInputRelativeLayout);
+        RelativeLayout relativeLayout = findViewById(R.id.popupDialogInputRelativeLayout);
 
-        popupWindowListenerWithLink(lightbulb1, popupWindowTitle1, popupWindowMessage1, relativeLayout, context, pivBasics3, linkText);
-        popupWindowListenerWithLink(lightbulb2, popupWindowTitle2, popupWindowMessage2, relativeLayout, context, pivBasics5, linkText);
-        popupWindowListenerWithoutLink(lightbulb3, popupWindowTitle3, popupWindowMessage3, relativeLayout, context);
-        popupWindowListenerWithLink(lightbulb4, popupWindowTitle4, popupWindowMessage4, relativeLayout, context, pivBasics2, linkText);
-        popupWindowListenerWithLink(lightbulb5, popupWindowTitle5, popupWindowMessage5, relativeLayout, context, pivBasics4, linkText);
-        popupWindowListenerWithoutLink(lightbulb6, popupWindowTitle6, popupWindowMessage6, relativeLayout, context);
+        popupWindow(lightbulb1, popupWindowTitle1, popupWindowMessage1, relativeLayout, context, pivBasics3, linkText, true, R.layout.popup_window_with_link);
+        popupWindow(lightbulb2, popupWindowTitle2, popupWindowMessage2, relativeLayout, context, pivBasics5, linkText, true, R.layout.popup_window_with_link);
+        popupWindow(lightbulb3, popupWindowTitle3, popupWindowMessage3, relativeLayout, context, pivBasics2, "", false, R.layout.popup_window_no_link);
+        popupWindow(lightbulb4, popupWindowTitle4, popupWindowMessage4, relativeLayout, context, pivBasics2, linkText, true, R.layout.popup_window_with_link);
+        popupWindow(lightbulb5, popupWindowTitle5, popupWindowMessage5, relativeLayout, context, pivBasics4, linkText, true, R.layout.popup_window_with_link);
+        popupWindow(lightbulb6, popupWindowTitle6, popupWindowMessage6, relativeLayout, context, pivBasics2, "", false, R.layout.popup_window_no_link);
 
         // load our ids to keys translation dictionary
         loadIdToKey();
@@ -283,13 +275,14 @@ public class PivOptionsPopup extends AlertDialog {
         idToKey.put(qMinText.getId(), PivParameters.QMIN_KEY);
     }
 
-    private void popupWindowListenerWithoutLink(Button button, final String title, final String message, final RelativeLayout relativeLayout, final Context context) {
+    private void popupWindow(Button button, final String title, final String message, final RelativeLayout relativeLayout, final Context context, final Object linkedClass, final String linkText, final boolean hasLink, final int xml) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-                final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
+                final View customView = inflater.inflate(xml, null);
 
                 TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
                 windowTitle.setText(title);
@@ -306,51 +299,16 @@ public class PivOptionsPopup extends AlertDialog {
                     popupWindow.setElevation(5.0f);
                 }
 
-                Button closeButton = (Button) customView.findViewById(R.id.button_close);
-                closeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        popupWindow.dismiss();
-                    }
-                });
-
-                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
-            }
-        });
-    }
-
-    private void popupWindowListenerWithLink(Button button, final String title, final String message, final RelativeLayout relativeLayout, final Context context, final Object linkedClass, final String linkText) {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                final View customView = inflater.inflate(R.layout.popup_window_with_link, null);
-
-                TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
-                windowTitle.setText(title);
-
-                TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
-                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
-                windowMessage.setText(message);
-
-                // New instance of popup window
-                popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                // Setting an elevation value for popup window, it requires API level 21
-                if (Build.VERSION.SDK_INT >= 21) {
-                    popupWindow.setElevation(5.0f);
+                if (hasLink) {
+                    Button navigateButton = (Button) customView.findViewById(R.id.button_navigate);
+                    navigateButton.setText(linkText);
+//                    navigateButton.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            startActivity(new Intent(ImageActivity.this, myClass.getClass()));
+//                        }
+//                    });
                 }
-
-                Button navigateButton = (Button) customView.findViewById(R.id.button_navigate);
-                navigateButton.setText(linkText);
-//                navigateButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        startActivity(new Intent(PivOptionsPopup.this, class1.getClass()));
-//                    }
-//                });
 
                 Button closeButton = (Button) customView.findViewById(R.id.button_close);
                 closeButton.setOnClickListener(new View.OnClickListener() {

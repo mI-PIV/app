@@ -40,10 +40,6 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
     // tooltips variables
     private PopupWindow popupWindow;
-    private RelativeLayout relativeLayout;
-    private Context context;
-    private final Button lightbulb1;
-    private final Button lightbulb2;
 
     private final String userName;
 
@@ -79,8 +75,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
         frame1Text = (EditText) findViewById(R.id.img1);
         frame2Text = (EditText) findViewById(R.id.img2);
 
-        lightbulb1 = findViewById(R.id.lightbulbUserDialog1);
-        lightbulb2 = findViewById(R.id.lightbulbUserDialog2);
+        Button lightbulb1 = findViewById(R.id.lightbulbUserDialog1);
+        Button lightbulb2 = findViewById(R.id.lightbulbUserDialog2);
         saveButton = findViewById(R.id.button_save_frame_selection);
         saveButton.setEnabled(false);
 
@@ -110,14 +106,14 @@ public class PivFrameSelectionPopup extends AlertDialog {
             setNumText.setHint("Set 1 - "+ numberOfSets);
         }
 
-        final String popupWindowTitle1 = "Image Set";
-        final String popupWindowMessage1 = "The image set numbers are in order (time-wise) for each users' frame generation";
-        final String popupWindowTitle2 = "Images";
-        final String popupWindowMessage2 = "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).";
-        relativeLayout = findViewById(R.id.popupDialogRelativeLayout);
+        final String title1 = "Image Set";
+        final String message1 = "The image set numbers are in order (time-wise) for each users' frame generation";
+        final String title2 = "Images";
+        final String message2 = "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).";
+        RelativeLayout relativeLayout = findViewById(R.id.popupDialogRelativeLayout);
 
-        popupWindowListenerWithoutLink(lightbulb1, popupWindowTitle1, popupWindowMessage1, relativeLayout, context);
-        popupWindowListenerWithoutLink(lightbulb2, popupWindowTitle2, popupWindowMessage2, relativeLayout, context);
+        popupWindowListenerWithoutLink(lightbulb1, title1, message1, relativeLayout, context);
+        popupWindowListenerWithoutLink(lightbulb2, title2, message2, relativeLayout, context);
 
         //set selection listeners
         setTextListeners();

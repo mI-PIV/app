@@ -95,10 +95,10 @@ public class ViewPagerActivity extends AppCompatActivity {
 
         Button lightbulb1 = (Button) findViewById(R.id.lightbulbReviewLayout1);
 
-        String lightbulb1Title = "Start Animation";
-        String lightbulb1Info = "View the animation and consider if you can tell where the particles move between the first and second frame. If you can't correlate the images with your eyes, the PIV algorithm is less likely to be able to do so.";
+        String title = "Start Animation";
+        String message = "View the animation and consider if you can tell where the particles move between the first and second frame. If you can't correlate the images with your eyes, the PIV algorithm is less likely to be able to do so.";
 
-        popupWindowNoLink(lightbulb1, lightbulb1Title, lightbulb1Info);
+        popupWindowNoLink(lightbulb1, title, message);
     }
 
     private void popupWindowNoLink(Button button, final String popUpWindowTitle, final String popupWindowMessage) {
