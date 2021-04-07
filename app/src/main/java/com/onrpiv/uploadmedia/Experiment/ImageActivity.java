@@ -125,7 +125,7 @@ public class ImageActivity extends AppCompatActivity {
         PIVBasics3 pivBasics3 = new PIVBasics3(); // Interrogation Region or Window Size
         PIVBasicsLayout pivBasicsLayout = new PIVBasicsLayout();
 
-        popupWindow(lightbulb1, title1, message1, "", pivBasics3, false, R.layout.popup_window_no_link);
+        popupWindow(lightbulb1, title1, message1, "", null, false, R.layout.popup_window_no_link);
         popupWindow(lightbulb2, title2, message2, "Window Size", pivBasics3, true, R.layout.popup_window_with_link);
         popupWindow(lightbulb3, title3, message3, "PIV Basics", pivBasicsLayout, true, R.layout.popup_window_with_link);
     }

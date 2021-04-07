@@ -157,10 +157,10 @@ public class PivOptionsPopup extends AlertDialog {
 
         popupWindow(lightbulb1, popupWindowTitle1, popupWindowMessage1, relativeLayout, context, pivBasics3, linkText, true, R.layout.popup_window_with_link);
         popupWindow(lightbulb2, popupWindowTitle2, popupWindowMessage2, relativeLayout, context, pivBasics5, linkText, true, R.layout.popup_window_with_link);
-        popupWindow(lightbulb3, popupWindowTitle3, popupWindowMessage3, relativeLayout, context, pivBasics2, "", false, R.layout.popup_window_no_link);
+        popupWindow(lightbulb3, popupWindowTitle3, popupWindowMessage3, relativeLayout, context, null, "", false, R.layout.popup_window_no_link);
         popupWindow(lightbulb4, popupWindowTitle4, popupWindowMessage4, relativeLayout, context, pivBasics2, linkText, true, R.layout.popup_window_with_link);
         popupWindow(lightbulb5, popupWindowTitle5, popupWindowMessage5, relativeLayout, context, pivBasics4, linkText, true, R.layout.popup_window_with_link);
-        popupWindow(lightbulb6, popupWindowTitle6, popupWindowMessage6, relativeLayout, context, pivBasics2, "", false, R.layout.popup_window_no_link);
+        popupWindow(lightbulb6, popupWindowTitle6, popupWindowMessage6, relativeLayout, context, null, "", false, R.layout.popup_window_no_link);
 
         // load our ids to keys translation dictionary
         loadIdToKey();
