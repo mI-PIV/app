@@ -213,10 +213,16 @@ public class ImageActivity extends AppCompatActivity {
         fileUri = savedInstanceState.getParcelable("file_uri");
     }
 
-    private void popupWindow(Button button, final String popUpWindowTitle, final String popupWindowMessage, final String linkText, final Object myClass, final boolean hasLink, final int xml) {
+    private void popupWindow(final Button button, final String popUpWindowTitle, final String popupWindowMessage, final String linkText, final Object myClass, final boolean hasLink, final int xml) {
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // when button is clicked, revert back to main layout. Put code for that here. Once
+                // it's functional, there's no need for the button.setEnabled().
+
+                button.setEnabled(false);
 
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
 
@@ -253,6 +259,7 @@ public class ImageActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         popupWindow.dismiss();
+                        button.setEnabled(true);
                     }
                 });
 

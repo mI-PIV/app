@@ -275,10 +275,12 @@ public class PivOptionsPopup extends AlertDialog {
         idToKey.put(qMinText.getId(), PivParameters.QMIN_KEY);
     }
 
-    private void popupWindow(Button button, final String title, final String message, final RelativeLayout relativeLayout, final Context context, final Object linkedClass, final String linkText, final boolean hasLink, final int xml) {
+    private void popupWindow(final Button button, final String title, final String message, final RelativeLayout relativeLayout, final Context context, final Object linkedClass, final String linkText, final boolean hasLink, final int xml) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                button.setEnabled(false);
 
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -305,7 +307,7 @@ public class PivOptionsPopup extends AlertDialog {
 //                    navigateButton.setOnClickListener(new View.OnClickListener() {
 //                        @Override
 //                        public void onClick(View v) {
-//                            startActivity(new Intent(ImageActivity.this, myClass.getClass()));
+//                            startActivity(new Intent(context.this, linkedClass.getClass()));
 //                        }
 //                    });
                 }
@@ -315,6 +317,7 @@ public class PivOptionsPopup extends AlertDialog {
                     @Override
                     public void onClick(View v) {
                         popupWindow.dismiss();
+                        button.setEnabled(true);
                     }
                 });
 
