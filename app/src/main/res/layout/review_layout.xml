@@ -36,7 +36,7 @@
         <Button
             android:id="@+id/startAnim"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_marginTop="10dp"
             android:onClick="startAnimation"
             android:backgroundTint="#243EDF"
@@ -46,7 +46,7 @@
         <Button
             android:id="@+id/stopAnim"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_marginTop="10dp"
             android:onClick="stopAnimation"
             android:backgroundTint="#243EDF"
@@ -57,7 +57,7 @@
         <Button
             android:id="@+id/lightbulbReviewLayout1"
             android:layout_width="45dp"
-            android:layout_height="35dp"
+            android:layout_height="45dp"
             android:layout_marginStart="350dp"
             android:layout_marginTop="15dp"
             android:background="@drawable/lightbulb"

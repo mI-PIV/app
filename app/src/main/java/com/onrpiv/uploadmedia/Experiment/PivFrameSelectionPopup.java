@@ -110,6 +110,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
         final String message1 = "The image set numbers are in order (time-wise) for each users' frame generation";
         final String title2 = "Images";
         final String message2 = "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).";
+
         RelativeLayout relativeLayout = findViewById(R.id.popupDialogRelativeLayout);
 
         popupWindowListenerWithoutLink(lightbulb1, title1, message1, relativeLayout, context);
