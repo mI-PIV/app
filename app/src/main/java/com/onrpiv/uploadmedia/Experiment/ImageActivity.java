@@ -110,24 +110,41 @@ public class ImageActivity extends AppCompatActivity {
         context = getApplicationContext();
         relativeLayout = (RelativeLayout) findViewById(R.id.imageActivityRelativeLayout);
 
-        Button lightbulb1 = (Button) findViewById(R.id.lightbulbImageLayout1);
-        Button lightbulb2 = (Button) findViewById(R.id.lightbulbImagelayout2);
-        Button lightbulb3 = (Button) findViewById(R.id.lightbulbImageLayout3);
+        final Button lightbulb1 = (Button) findViewById(R.id.lightbulbImageLayout1);
+        final Button lightbulb2 = (Button) findViewById(R.id.lightbulbImagelayout2);
+        final Button lightbulb3 = (Button) findViewById(R.id.lightbulbImageLayout3);
 
-        String title1 = "Image Pair";
+        final String title1 = "Image Pair";
         String title2 = "Image Correlation";
         String title3 = "Compute PIV";
 
-        String message1 = "You need to select two images to compute movement of the particles from the first to the second image.";
+        final String message1 = "You need to select two images to compute movement of the particles from the first to the second image.";
         String message2 = "Review the images selected in \"select an image pair\" and consider whether the images will result in a useful PIV output.";
         String message3 = "Compute PIV computes the velocity field between the first and second image from \"Select An Image Pair\" according to the parameters in \"Input PIV Parameters\". For more information see: ";
 
         PIVBasics3 pivBasics3 = new PIVBasics3(); // Interrogation Region or Window Size
         PIVBasicsLayout pivBasicsLayout = new PIVBasicsLayout();
 
-        popupWindow(lightbulb1, title1, message1, "", null, false, R.layout.popup_window_no_link);
-        popupWindow(lightbulb2, title2, message2, "Window Size", pivBasics3, true, R.layout.popup_window_with_link);
-        popupWindow(lightbulb3, title3, message3, "PIV Basics", pivBasicsLayout, true, R.layout.popup_window_with_link);
+        // make a list of buttons and disable them, then pass in that list to the function and when
+        // the close button is pressed in the function, enable all the buttons again.
+
+        // listeners: when a lightbulb is clicked, disable all other buttons.
+        lightbulb1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // create the list here.
+                pickImageMultiple.setEnabled(false);
+                lightbulb2.setEnabled(false);
+                lightbulb3.setEnabled(false);
+                popupWindow(lightbulb1, title1, message1, "", null, false, R.layout.popup_window_no_link);
+            }
+        });
+
+
+
+        //popupWindow(lightbulb2, title2, message2, "Window Size", pivBasics3, true, R.layout.popup_window_with_link);
+        //popupWindow(lightbulb3, title3, message3, "PIV Basics", pivBasicsLayout, true, R.layout.popup_window_with_link);
     }
 
     public void reviewFile(View view) {
@@ -215,56 +232,51 @@ public class ImageActivity extends AppCompatActivity {
 
     private void popupWindow(final Button button, final String popUpWindowTitle, final String popupWindowMessage, final String linkText, final Object myClass, final boolean hasLink, final int xml) {
 
-        button.setOnClickListener(new View.OnClickListener() {
+        // when button is clicked, revert back to main layout. Put code for that here. Once
+        // it's functional, there's no need for the button.setEnabled().
+
+        button.setEnabled(false);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        final View customView = inflater.inflate(xml, null);
+
+        TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
+        windowTitle.setText(popUpWindowTitle);
+
+        TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
+        windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+        windowMessage.setText(popupWindowMessage);
+
+        // New instance of popup window
+        popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        // Setting an elevation value for popup window, it requires API level 21
+        if (Build.VERSION.SDK_INT >= 21) {
+            popupWindow.setElevation(5.0f);
+        }
+
+        if (hasLink) {
+            Button navigateButton = (Button) customView.findViewById(R.id.button_navigate);
+            navigateButton.setText(linkText);
+            navigateButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(ImageActivity.this, myClass.getClass()));
+                }
+            });
+        }
+
+        Button closeButton = (Button) customView.findViewById(R.id.button_close);
+        closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
-                // when button is clicked, revert back to main layout. Put code for that here. Once
-                // it's functional, there's no need for the button.setEnabled().
-
-                button.setEnabled(false);
-
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-
-                final View customView = inflater.inflate(xml, null);
-
-                TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
-                windowTitle.setText(popUpWindowTitle);
-
-                TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
-                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
-                windowMessage.setText(popupWindowMessage);
-
-                // New instance of popup window
-                popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                // Setting an elevation value for popup window, it requires API level 21
-                if (Build.VERSION.SDK_INT >= 21) {
-                    popupWindow.setElevation(5.0f);
-                }
-
-                if (hasLink) {
-                    Button navigateButton = (Button) customView.findViewById(R.id.button_navigate);
-                    navigateButton.setText(linkText);
-                    navigateButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            startActivity(new Intent(ImageActivity.this, myClass.getClass()));
-                        }
-                    });
-                }
-
-                Button closeButton = (Button) customView.findViewById(R.id.button_close);
-                closeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        popupWindow.dismiss();
-                        button.setEnabled(true);
-                    }
-                });
-
-                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
+            public void onClick(View v) {
+                popupWindow.dismiss();
+                button.setEnabled(true);
             }
         });
+
+        popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
+
     }
 }
