@@ -101,12 +101,14 @@ public class ViewPagerActivity extends AppCompatActivity {
         popupWindowNoLink(lightbulb1, title, message);
     }
 
-    private void popupWindowNoLink(Button button, final String popUpWindowTitle, final String popupWindowMessage) {
+    private void popupWindowNoLink(final Button button, final String popUpWindowTitle, final String popupWindowMessage) {
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+                button.setEnabled(false);
 
                 final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
 
@@ -129,6 +131,7 @@ public class ViewPagerActivity extends AppCompatActivity {
                 closeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        button.setEnabled(true);
                         popupWindow.dismiss();
                     }
                 });
