@@ -552,15 +552,16 @@ public class CameraFragment extends Fragment
 
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-        switch (mSensorOrientation) {
-            case SENSOR_ORIENTATION_DEFAULT_DEGREES:
-                mMediaRecorder.setOrientationHint(DEFAULT_ORIENTATIONS.get(rotation));
-                break;
-            case SENSOR_ORIENTATION_INVERSE_DEGREES:
-                mMediaRecorder.setOrientationHint(INVERSE_ORIENTATIONS.get(rotation));
-                break;
-        }
+        mMediaRecorder.setOrientationHint(0);
+//        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+//        switch (mSensorOrientation) {
+//            case SENSOR_ORIENTATION_DEFAULT_DEGREES:
+//                mMediaRecorder.setOrientationHint(DEFAULT_ORIENTATIONS.get(rotation));
+//                break;
+//            case SENSOR_ORIENTATION_INVERSE_DEGREES:
+//                mMediaRecorder.setOrientationHint(INVERSE_ORIENTATIONS.get(rotation));
+//                break;
+//        }
         mMediaRecorder.prepare();
     }
 
