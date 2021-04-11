@@ -5,21 +5,22 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
-import android.os.Environment;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.calib3d.Calib3d;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.MatOfPoint3f;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Size;
-import org.opencv.core.TermCriteria;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 //https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
@@ -27,20 +28,15 @@ import org.opencv.imgproc.Imgproc;
 public final class CameraCalibration {
     private final static int patternRows = 21;
     private final static int patternCols = 27;
-
-    private final static double physicalX = 1d;  // width distance between circles/dots on calibration pattern in centimeters
-    private final static double physicalY = 1d;  // height distance between circles/dots on calibration pattern in centimeters
+    private final static int physicalLineLength = 300;  // The triangle's lines are 300 pixels long on a 8x11 paper
 
     //https://docs.opencv.org/master/d9/d0c/group__calib3d.html#ga687a1ab946686f0d85ae0363b5af1d7b
-    private MatOfPoint3f objPoints;                       // Calibration input of frames in 3D real-world space; Note: We are only using one camera so this will be frames with a zero z-dimension.
     private Mat cameraMatrix = new Mat();                 // Calibration input/output of 3x3 camera intrinsic matrix
     private MatOfDouble distCoeffs = new MatOfDouble();   // Calibration output of distortion coefficients
-    private Mat rVecs = new Mat();                        // Calibration output of rotation vectors
-    private Mat tVecs = new Mat();                        // Calibration output of translation vectors
-    private MatOfPoint2f circleCenters = new MatOfPoint2f();
-
     private Mat frame1;
     private Mat frame2;
+
+    public boolean foundTriangle = false;
 
 
     public CameraCalibration(Context context) {
@@ -50,12 +46,11 @@ public final class CameraCalibration {
         Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distCoeffs);
 
         getCameraProperties(context);
-        objPoints = new MatOfPoint3f(createPatternImagePoints3D());
     }
 
     /**
-     * Calibrate will look to find a circle grid pattern in an image, then find distortion coefficients, translation and rotation vectors,
-     * and finally stores them into member variables for further calculations and undistortions.
+     * Tries to find a triangle calibration pattern, calculates and returns the pixels per centimeter.
+     * Will return 1.0 if no triangle calibration pattern found.
      * @param calibrationImagePath1: Path to first image that might have a circle grid pattern.
      * @param calibrationImagePath2: Path to second image that might have a circle grid pattern.
      * @return pixel to centimeter ratio for both frames
@@ -68,8 +63,11 @@ public final class CameraCalibration {
         Imgproc.cvtColor(frame1, frame1, Imgproc.COLOR_BGR2GRAY);
         Imgproc.cvtColor(frame2, frame2, Imgproc.COLOR_BGR2GRAY);
 
-        double pixelCMRatio1 = calibratePipeline(frame1);
-        double pixelCMRatio2 = calibratePipeline(frame2);
+        Mat frame1Quad = getTopRightQuadrant(frame1);
+        Mat frame2Quad = getTopRightQuadrant(frame2);
+
+        double pixelCMRatio1 = findTriangle(frame1Quad);
+        double pixelCMRatio2 = findTriangle(frame2Quad);
 
         return (pixelCMRatio1 + pixelCMRatio2) / 2;
     }
@@ -78,22 +76,23 @@ public final class CameraCalibration {
      * Undistort a single image using stored member variables found with calibrate() function.
      */
     public Mat undistortImage() {
+        // TODO try with a 0 alpha parameter
+        // TODO also try without this
         cameraMatrix = Calib3d.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, frame1.size(), 1);
         Mat result = new Mat();
         Imgproc.undistort(frame1, result, cameraMatrix, distCoeffs);
         return result;
     }
 
-    private double calibratePipeline(Mat img) {
-        double pixelsPerCentimeter = 1d;
-        boolean patternFound = findCirclesGrid(img);
-        if (patternFound) {
-            calibrateCamera(img);
-            if (isCalibrated()) {
-                pixelsPerCentimeter = calcPixelsPerCentimeter();
-            }
-        }
-        return pixelsPerCentimeter;
+    private Mat getTopRightQuadrant(Mat img) {
+        Size origSize = img.size();
+        double midY = origSize.height/2;
+        double midX = origSize.width/2;
+        Point tl = new Point(midX, 0);
+        Point br = new Point(origSize.width, midY);
+
+        Rect topRightQuad = new Rect(tl, br);
+        return img.submat(topRightQuad);
     }
 
     private void getCameraProperties(Context context) {
@@ -146,44 +145,41 @@ public final class CameraCalibration {
         }
     }
 
-    private boolean findCirclesGrid(Mat calibrationImage) {
-        boolean found = false;
-        for (int rows = (int) (patternRows * 0.75); rows > 1; rows--) {
-            for (int cols = (int) (patternCols * 0.75); cols > 1; cols--) {
-                found = Calib3d.findCirclesGrid(calibrationImage, new Size(cols, rows), circleCenters);
-                if (found) { break; }
+    private double findTriangle(Mat calibrationImage) {
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+        Mat edges = new Mat();
+
+        // blur before edge detection to filter out smaller particles
+        Imgproc.blur(calibrationImage, calibrationImage, new Size(3, 3));
+        // edge detection
+        Imgproc.Canny(calibrationImage, edges, (double)(255/3), 255);
+        // contour detection
+        Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
+
+        for (MatOfPoint contour: contours) {
+            MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
+            MatOfPoint2f approx = new MatOfPoint2f();
+            Imgproc.approxPolyDP(contour2f, approx, 0.01*Imgproc.arcLength(contour2f, true), true);
+            List<Point> points = approx.toList();
+            if(points.size() == 3) {
+                double d1 = euclidean(points.get(0), points.get(1));
+                double d2 = euclidean(points.get(1), points.get(2));
+                double d3 = euclidean(points.get(2), points.get(0));
+                if (compareDistances(d1, d2, d3)) {
+                    // Our triangle was found, now we just need to calculate pixels per metric
+                    foundTriangle = true;
+                    return calcPixelsPerCentimeter(d1, d2, d3);
+                }
             }
-            if (found) { break; }
         }
-        return found;
+        // triangle wasn't found
+        return 1d;
     }
 
-    private void calibrateCamera(Mat calibrationImage) {
-        // Optimize circle center positions; this might not be needed
-//        Imgproc.cornerSubPix(calibrationImage, circleCenters, new Size(5, 5), new Size(-1, -1), new TermCriteria(new double[] {TermCriteria.MAX_ITER, 30}));
-
-        // Calibrate
-        Calib3d.solvePnP(objPoints, circleCenters, cameraMatrix, distCoeffs, rVecs, tVecs);
-    }
-
-    //https://www.pyimagesearch.com/2016/04/04/measuring-distance-between-objects-in-an-image-with-opencv/
-    private double calcPixelsPerCentimeter() {
-        double sumDistance = 0d;
-        int count = 0;
-        for (int i = 1; i < patternCols*patternRows; i++) {
-            // Make sure our two points are in the same row
-            if (i/patternCols != (i-1)/patternCols) { continue; }
-
-            Point point0 = new Point(circleCenters.get(i-1, 0));
-            Point point1 = new Point(circleCenters.get(i, 0));
-
-            sumDistance += euclidean(point0, point1);
-            count++;
-        }
-
-        // since our circle centers will be 1 cm away from each other (on an 8.5 x 11 inch paper),
-        // then the average distance between the circle centers will be our pixels/cm ratio.
-        return sumDistance / count;
+    private double calcPixelsPerCentimeter(double d1, double d2, double d3) {
+        double averageLength = (d1 + d2 + d3)/3;
+        return averageLength/physicalLineLength;
     }
 
     private Mat createPatternImagePoints3D() {
@@ -209,22 +205,26 @@ public final class CameraCalibration {
         return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
     }
 
-    public boolean isCalibrated() {
-        return Core.checkRange(cameraMatrix)
-                && Core.checkRange(distCoeffs)
-                && Core.checkRange(rVecs)
-                && Core.checkRange(tVecs);
+    private static boolean compareDistances(double d1, double d2, double d3) {
+        boolean result = false;
+        double tolerance = 0.05;
+
+        // Because we don't know how close/far our triangle is, we have to compare based on
+        // ratios and not on a static number.
+        double d1Ratio = Math.abs(d1 - d2) / ((d1 + d2)/2);
+        double d2Ratio = Math.abs(d2 - d3) / ((d2 + d3)/2);
+        double d3Ratio = Math.abs(d3 - d1) / ((d3 + d1)/2);
+
+        if (d1Ratio < tolerance && d2Ratio < tolerance && d3Ratio < tolerance) {
+            result = true;
+        }
+        return result;
     }
+
     public Mat getCameraMatrix() {
         return cameraMatrix;
     }
     public Mat getDistortionCoeffs() {
         return distCoeffs;
-    }
-    public Mat getRotationVectors() {
-        return rVecs;
-    }
-    public Mat getTranslationVectors() {
-        return tVecs;
     }
 }
