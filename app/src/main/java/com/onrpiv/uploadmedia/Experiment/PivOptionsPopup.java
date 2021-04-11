@@ -304,12 +304,13 @@ public class PivOptionsPopup extends AlertDialog {
                 if (hasLink) {
                     Button navigateButton = (Button) customView.findViewById(R.id.button_navigate);
                     navigateButton.setText(linkText);
-//                    navigateButton.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
+                    navigateButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 //                            startActivity(new Intent(context.this, linkedClass.getClass()));
-//                        }
-//                    });
+                            context.startActivity(new Intent(context, linkedClass.getClass()));
+                        }
+                    });
                 }
 
                 Button closeButton = (Button) customView.findViewById(R.id.button_close);
