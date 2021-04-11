@@ -14,6 +14,7 @@ import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -62,8 +63,11 @@ public final class CameraCalibration {
         Imgproc.cvtColor(frame1, frame1, Imgproc.COLOR_BGR2GRAY);
         Imgproc.cvtColor(frame2, frame2, Imgproc.COLOR_BGR2GRAY);
 
-        double pixelCMRatio1 = findTriangle(frame1);
-        double pixelCMRatio2 = findTriangle(frame2);
+        Mat frame1Quad = getTopRightQuadrant(frame1);
+        Mat frame2Quad = getTopRightQuadrant(frame2);
+
+        double pixelCMRatio1 = findTriangle(frame1Quad);
+        double pixelCMRatio2 = findTriangle(frame2Quad);
 
         return (pixelCMRatio1 + pixelCMRatio2) / 2;
     }
@@ -78,6 +82,17 @@ public final class CameraCalibration {
         Mat result = new Mat();
         Imgproc.undistort(frame1, result, cameraMatrix, distCoeffs);
         return result;
+    }
+
+    private Mat getTopRightQuadrant(Mat img) {
+        Size origSize = img.size();
+        double midY = origSize.height/2;
+        double midX = origSize.width/2;
+        Point tl = new Point(midX, 0);
+        Point br = new Point(origSize.width, midY);
+
+        Rect topRightQuad = new Rect(tl, br);
+        return img.submat(topRightQuad);
     }
 
     private void getCameraProperties(Context context) {
