@@ -5,7 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 /**
  * Basic implementation of LoaderCallbackInterface.
@@ -16,6 +19,7 @@ public abstract class BaseLoaderCallback implements LoaderCallbackInterface {
         mAppContext = AppContext;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     public void onManagerConnected(int status)
     {
         switch (status)
@@ -81,6 +85,7 @@ public abstract class BaseLoaderCallback implements LoaderCallbackInterface {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     public void onPackageInstall(final int operation, final InstallCallbackInterface callback)
     {
         switch (operation)

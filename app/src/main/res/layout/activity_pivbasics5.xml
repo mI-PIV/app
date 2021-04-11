@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Learn.PIVBasics5">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="7.5dp"
+        android:layout_marginBottom="60dp"
+        android:scrollbarStyle="outsideInset"
+        tools:ignore="MissingConstraints">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/overlapHeadingTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_centerHorizontal="true"
+                android:textStyle="bold"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/overlapTextView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/overlapHeadingTextView"
+                tools:ignore="MissingConstraints" />
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/overlapImageView1"
+                android:layout_width="match_parent"
+                android:layout_height="247dp"
+                android:layout_below="@id/overlapTextView1"
+                android:src="@drawable/overlap1"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/overlapTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/overlapImageView1"
+                tools:ignore="MissingConstraints" />
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/overlapImageView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/overlapTextView2"
+                android:src="@drawable/overlap2"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/overlapTextView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/overlapImageView2"
+                tools:ignore="MissingConstraints" />
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/overlapImageView3"
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:layout_below="@id/overlapTextView3"
+                android:src="@drawable/overlap3"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/overlapTextView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/overlapImageView3"
+                tools:ignore="MissingConstraints" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/bottom_navigation2"
+        app:itemBackground="@android:color/white" />
+
+</RelativeLayout>

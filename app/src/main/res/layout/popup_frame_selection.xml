@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/frame_selection_description"
+        android:layout_width="match_parent"
+        android:layout_height="77dp"
+        android:gravity="center_horizontal"
+        android:textSize="15dp" />
+
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="10dp">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:gravity="end"
+                android:text="Which Image Set : " />
+
+            <EditText
+                android:id="@+id/imgSet"
+                android:inputType="number" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:gravity="end"
+                android:text="First Image : " />
+
+            <EditText
+                android:id="@+id/img1"
+                android:inputType="number" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:gravity="end"
+                android:text="Second Image : " />
+
+            <EditText
+                android:id="@+id/img2"
+                android:inputType="number" />
+
+        </TableRow>
+
+        <TableRow android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/button_cancel_frame_selection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:textSize="20dp"
+                android:textAllCaps="false"
+                android:backgroundTint="#243EDF"
+                android:textColor="#FFFFFF"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="20dp"/>
+
+
+            <Button
+                android:id="@+id/button_save_frame_selection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Images"
+                android:textSize="20dp"
+                android:textAllCaps="false"
+                android:backgroundTint="#243EDF"
+                android:textColor="#FFFFFF"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="20dp"/>
+
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.github.chrisbanes.photoview.PhotoView
+            android:id="@+id/frame_selection_preview1"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start" />
+
+        <com.github.chrisbanes.photoview.PhotoView
+            android:id="@+id/frame_selection_preview2"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"/>
+    </LinearLayout>
+
+</LinearLayout>

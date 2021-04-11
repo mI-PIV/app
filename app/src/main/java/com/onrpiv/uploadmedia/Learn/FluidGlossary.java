@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
+import androidx.annotation.NonNull;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,27 +16,28 @@ import com.onrpiv.uploadmedia.Experiment.HomeActivity;
 import com.onrpiv.uploadmedia.Experiment.VideoActivity;
 import com.onrpiv.uploadmedia.R;
 
-public class FluidGlossary extends Activity {
+public class FluidGlossary extends LearnFluids {
     // Array of strings...
     String[] mobileArray = {"Boundary Layer","Laminar and Turbulent Flow","Reynolds Number","Vorticity/Circulation",
             "Fluid","Wake","Shear","Velocity profile","Streamline","Steady/Unsteady",
-            "Bernoulli Equation","External/Internal Flow","Major/Minor losses","Common Assumptions","Viscocity","Gas"};
+            "Bernoulli Equation","External/Internal Flow","Major/Minor losses","Common Assumptions","Viscosity"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fluid_gloassary);
+        setContentView(R.layout.fluid_glossary);
 
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
                 R.layout.activity_listview, mobileArray);
 
-        ListView listView = (ListView) findViewById(R.id.mobile_list);
+        final ListView listView = (ListView) findViewById(R.id.mobile_list);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
                 if (position == 0) {
                     Intent myIntent = new Intent(view.getContext(), Pos1_Activity.class);
                     startActivityForResult(myIntent,0);
@@ -92,6 +93,10 @@ public class FluidGlossary extends Activity {
                 if (position == 13) {
                     Intent myIntent = new Intent(view.getContext(), Pos14_Activity.class);
                     startActivityForResult(myIntent,13);
+                }
+                if (position == 14) {
+                    Intent myIntent = new Intent(view.getContext(), Pos15_Activity.class);
+                    startActivityForResult(myIntent,14);
                 }
             }
         });

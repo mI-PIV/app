@@ -18,7 +18,7 @@
 
     <TextView
         android:id="@+id/learnPIVTextView"
-        android:text="Learn About Our PIV"
+        android:text="Learn About PIV"
         android:background="#0F2439"
         android:gravity="center"
         android:layout_width="match_parent"
@@ -36,7 +36,7 @@
         android:layout_below="@+id/learnPIVTextView">
     </ListView>
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

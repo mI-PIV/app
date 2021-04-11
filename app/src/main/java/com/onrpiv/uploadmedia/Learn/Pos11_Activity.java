@@ -1,13 +1,12 @@
 package com.onrpiv.uploadmedia.Learn;
 
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.BottomNavigationView;
+import androidx.annotation.RequiresApi;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.os.Bundle;
 import android.text.Layout;
 import android.widget.TextView;
 
-import com.onrpiv.uploadmedia.Learn.FluidGlossary;
 import com.onrpiv.uploadmedia.R;
 
 public class Pos11_Activity extends FluidGlossary {
@@ -34,23 +33,7 @@ public class Pos11_Activity extends FluidGlossary {
         t2.setText("This equation states that the sum of the flow energy (\uD835\uDC43\uD835\uDF0C), kinetic energy ((\uD835\uDC49^2)/2), and potential energy (\uD835\uDC54\uD835\uDC67) is constant along a streamline in steady, incompressible, inviscid flow. A common application of this is to pick two points along a streamline and estimate fluid properties using a known value.This is stated mathematically from points 1 and 2 as:");
         t2.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
 
-        TextView t3 = (TextView)findViewById(R.id.pos11TextView3);
-        t3.setText("\nConsiderations for mI-PIV:");
-        t3.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
-
-        TextView t4 = (TextView)findViewById(R.id.pos11TextView4);
-        t4.setText("An example of using the Bernoulli equation for mI-PIV is in the horizontal jet experiment. By knowing the height of the water line in the pipe, and the depth of the pipe, the user can approximate the velocity at the pipe outlet:");
-        t4.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
-
-        TextView t5 = (TextView)findViewById(R.id.pos11TextView5);
-        t5.setText("Adding relevant terms into the Bernoulli equation shows that the velocity at point 2 will be approximately described as shown:");
-        t5.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
-
-        TextView t6 = (TextView)findViewById(R.id.pos11TextView6);
-        t6.setText("Solving for the velocity yields:");
-        t6.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
-
-        TextView[] textViews = {t1, t2, t3, t4, t5, t6};
+        TextView[] textViews = {t1, t2};
         for (int i = 0; i < textViews.length; i++) {
             textViews[i].setTextSize(paraTextSize);
         }

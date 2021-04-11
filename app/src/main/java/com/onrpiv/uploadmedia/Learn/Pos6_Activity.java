@@ -1,13 +1,12 @@
 package com.onrpiv.uploadmedia.Learn;
 
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.BottomNavigationView;
+import androidx.annotation.RequiresApi;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.os.Bundle;
 import android.text.Layout;
 import android.widget.TextView;
 
-import com.onrpiv.uploadmedia.Learn.FluidGlossary;
 import com.onrpiv.uploadmedia.R;
 
 public class Pos6_Activity extends FluidGlossary {

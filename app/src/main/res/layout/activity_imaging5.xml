@@ -6,13 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".Learn.Imaging5">
 
-    <ScrollView
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="175dp"
+        android:background="#6D353232"
+        android:backgroundTint="#6D353232"
+        android:src="@drawable/ic_baseline_arrow_upward_24"
+        android:visibility="gone"
+        app:backgroundTint="#6D353232" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScroll"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="7.5dp"
         android:layout_marginBottom="60dp"
         android:scrollbarStyle="outsideInset"
+        android:scrollbars="vertical"
         tools:ignore="MissingConstraints">
 
         <RelativeLayout
@@ -47,7 +60,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView0"
                 android:layout_width="match_parent"
                 android:layout_height="272dp"
@@ -65,7 +78,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView1"
                 android:layout_width="match_parent"
                 android:layout_height="272dp"
@@ -83,7 +96,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView2"
                 android:layout_width="match_parent"
                 android:layout_height="277dp"
@@ -101,7 +114,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView3"
                 android:layout_width="match_parent"
                 android:layout_height="273dp"
@@ -119,7 +132,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView4"
                 android:layout_width="match_parent"
                 android:layout_height="275dp"
@@ -145,7 +158,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView5"
                 android:layout_width="match_parent"
                 android:layout_height="277dp"
@@ -163,7 +176,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView6"
                 android:layout_width="match_parent"
                 android:layout_height="278dp"
@@ -181,7 +194,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView7"
                 android:layout_width="match_parent"
                 android:layout_height="276dp"
@@ -199,7 +212,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView8"
                 android:layout_width="match_parent"
                 android:layout_height="273dp"
@@ -217,7 +230,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView9"
                 android:layout_width="match_parent"
                 android:layout_height="269dp"
@@ -235,7 +248,7 @@
                 android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
-            <com.zolad.zoominimageview.ZoomInImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/imaging5ImageView10"
                 android:layout_width="match_parent"
                 android:layout_height="269dp"
@@ -253,9 +266,9 @@
 
         </RelativeLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
