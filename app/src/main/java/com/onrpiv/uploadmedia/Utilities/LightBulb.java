@@ -1,5 +1,6 @@
 package com.onrpiv.uploadmedia.Utilities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -19,51 +20,68 @@ import android.widget.TextView;
 import com.onrpiv.uploadmedia.R;
 
 
+@SuppressLint("ViewConstructor")
 public class LightBulb extends LinearLayout {
-    private final View baseView;
-    private ImageButton lightbulbButton;
+    public final View baseView;
+    public ImageButton lightbulbButton;
+    private final Context context;
 
-    public LightBulb(Context context) {
-        super(context);
-        baseView = new View(context);
-        Init(context);
-    }
-
-    public LightBulb(Context context, Button baseView) {
+    public LightBulb(Context context, View baseView) {
         super(context);
         this.baseView = baseView;
-        Init(context);
-    }
+        ViewGroup baseViewParent = (ViewGroup) baseView.getParent();
+        this.context = context;
 
-    private void Init(Context context) {
         // init lightbulb button
         lightbulbButton = new ImageButton(context);
         lightbulbButton.setBackgroundResource(R.drawable.lightbulb);
 
+        // swap places with base view
+        baseViewParent.addView(this);
+        baseViewParent.removeView(baseView);
+
         // this linearlayout
         setOrientation(HORIZONTAL);
-        setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        setLayoutParams(baseView.getLayoutParams());
         addView(baseView, 0);
         addView(lightbulbButton, 1);
+        setVisibility(baseView.getVisibility());
 
         // base view layout
-        baseView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        baseView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
         // lightbulb button layout
-        LayoutParams params = new LinearLayout.LayoutParams(
-                getPixelsFromDP(context, 45),
-                getPixelsFromDP(context, 45),
-                1);
-            //overlap our basebutton
-        params.setMarginStart(-100);
-            //make sure the lightbulb is on top of basebutton
-        if (Build.VERSION.SDK_INT >= 21) {
-            lightbulbButton.setElevation(getPixelsFromDP(context, 2));
-        }
-        lightbulbButton.setLayoutParams(params);
+        setBulbLayout(45, 45, 1, -45); //Negative values are required so the bulb overlaps the base view
     }
 
-    public void setLightbulbOnClick(final Context context, final String title, final String message,
+    public void setBulbLayout(int dpWidth, int dpHeight, float weight, int dpMarginStart) {
+        LayoutParams params = new LinearLayout.LayoutParams(
+                getPixelsFromDP(dpWidth),
+                getPixelsFromDP(dpHeight),
+                weight);
+        params.setMarginStart(getPixelsFromDP(dpMarginStart));
+        if (Build.VERSION.SDK_INT >= 21) {
+            lightbulbButton.setElevation(getPixelsFromDP(2));
+        }
+        lightbulbButton.setLayoutParams(params);
+        requestLayout();
+    }
+
+    public void setBulbMarginStart(int dpMarginStart) {
+        LayoutParams params = (LinearLayout.LayoutParams) lightbulbButton.getLayoutParams();
+        params.setMarginStart(getPixelsFromDP(dpMarginStart));
+        lightbulbButton.setLayoutParams(params);
+        requestLayout();
+    }
+
+    @Override
+    public void setVisibility(int visibility) {
+        super.setVisibility(visibility);
+        lightbulbButton.setVisibility(visibility);
+        baseView.setVisibility(visibility);
+    }
+
+    public void setLightbulbOnClick(final String title, final String message,
                                     final Object linkedClass, final String linkText){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View customView = inflater.inflate(R.layout.popup_window_with_link, null);
@@ -80,7 +98,7 @@ public class LightBulb extends LinearLayout {
         popup(customView, this, title, message);
     }
 
-    public void setLightbulbOnClick(final Context context, final String title, final String message) {
+    public void setLightbulbOnClick(final String title, final String message) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
 
@@ -123,7 +141,7 @@ public class LightBulb extends LinearLayout {
         });
     }
 
-    private int getPixelsFromDP(Context context, int dp) {
+    private int getPixelsFromDP(int dp) {
         Resources resources = context.getResources();
         return (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
