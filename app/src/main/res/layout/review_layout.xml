@@ -17,9 +17,10 @@
 
 <!--    0-->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="fill_parent"
-android:layout_height="fill_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
     <ImageView
     android:id="@+id/reviewView"
@@ -27,26 +28,42 @@ android:layout_height="fill_parent">
     android:layout_height="wrap_content"
     android:layout_centerInParent="true" />
 
-    <Button
-        android:id="@+id/startAnim"
+    <RelativeLayout
+        android:id="@+id/popupReviewRelativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:onClick="startAnimation"
-        android:backgroundTint="#243EDF"
-        android:textColor="#FFFFFF"
-        android:text="Start Animation" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/stopAnim"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:onClick="stopAnimation"
-        android:backgroundTint="#243EDF"
-        android:textColor="#FFFFFF"
-        android:layout_below="@+id/startAnim"
-        android:text="Stop Animation" />
+        <Button
+            android:id="@+id/startAnim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:onClick="startAnimation"
+            android:background="@drawable/lightbulb_button"
+            android:textColor="#FFFFFF"
+            android:text="Start Animation" />
+
+        <Button
+            android:id="@+id/stopAnim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:onClick="stopAnimation"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/buttons"
+            android:layout_below="@+id/startAnim"
+            android:text="Stop Animation" />
+
+        <Button
+            android:id="@+id/lightbulbReviewLayout1"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="350dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/lightbulb"
+            android:textColor="#FFFFFF" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
 

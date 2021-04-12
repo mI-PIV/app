@@ -11,60 +11,65 @@
         android:gravity="center_horizontal"
         android:textSize="15dp" />
 
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
+        android:id="@+id/popupDialogRelativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="10dp">
+        android:layout_height="213dp">
 
-        <TableRow
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:paddingTop="10dp">
 
-            <TextView
-                android:gravity="end"
-                android:text="Which Image Set : " />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/imgSet"
-                android:inputType="number" />
+                <TextView
+                    android:gravity="end"
+                    android:text="Which Image Set : " />
 
-        </TableRow>
+                <EditText
+                    android:id="@+id/imgSet"
+                    android:inputType="number" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            </TableRow>
 
-            <TextView
-                android:gravity="end"
-                android:text="First Image : " />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/img1"
-                android:inputType="number" />
+                <TextView
+                    android:gravity="end"
+                    android:text="First Image : " />
 
-        </TableRow>
+                <EditText
+                    android:id="@+id/img1"
+                    android:inputType="number" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            </TableRow>
 
-            <TextView
-                android:gravity="end"
-                android:text="Second Image : " />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/img2"
-                android:inputType="number" />
+                <TextView
+                    android:gravity="end"
+                    android:text="Second Image : " />
 
-        </TableRow>
+                <EditText
+                    android:id="@+id/img2"
+                    android:inputType="number" />
 
-        <TableRow android:gravity="center_horizontal">
+            </TableRow>
+
+            <TableRow android:gravity="center_horizontal">
 
             <Button
                 android:id="@+id/button_cancel_frame_selection"
@@ -91,25 +96,47 @@
                 android:gravity="center_horizontal"
                 android:layout_marginBottom="20dp"/>
 
-        </TableRow>
-    </TableLayout>
+            </TableRow>
+        </TableLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/frame_selection_preview1"
-            android:layout_width="25dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="start" />
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/frame_selection_preview1"
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="start" />
 
-        <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/frame_selection_preview2"
-            android:layout_width="25dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"/>
-    </LinearLayout>
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/frame_selection_preview2"
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/lightbulbUserDialog1"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="315dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/lightbulb"
+            android:textColor="#FFFFFF"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/lightbulbUserDialog2"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="315dp"
+            android:layout_marginTop="80dp"
+            android:background="@drawable/lightbulb"
+            android:textColor="#FFFFFF"
+            android:textSize="10dp" />
+
+    </RelativeLayout>
 
 </LinearLayout>

@@ -16,50 +16,55 @@
             android:gravity="center_horizontal"
             android:textSize="15dp" />
 
-        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="10dp">
+        <RelativeLayout
+            android:id="@+id/popupDialogInputRelativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-            <TableRow
+            <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+                android:paddingTop="10dp">
 
-                <TextView
-                    android:gravity="end"
-                    android:text="Window Size (in pixels) : " />
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/windowSize"
-                    android:hint=""
-                    android:inputType="number" />
+                    <TextView
+                        android:gravity="end"
+                        android:text="Window Size (in pixels) : " />
 
-            </TableRow>
+                    <EditText
+                        android:id="@+id/windowSize"
+                        android:hint=""
+                        android:inputType="number" />
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+                </TableRow>
 
-                <TextView
-                    android:gravity="end"
-                    android:text="Overlap (in pixels): " />
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/overlap"
-                    android:hint=""
-                    android:inputType="number" />
+                    <TextView
+                        android:gravity="end"
+                        android:text="Overlap (in pixels): " />
 
-            </TableRow>
+                    <EditText
+                        android:id="@+id/overlap"
+                        android:hint=""
+                        android:inputType="number" />
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
 
                 <CheckBox
                     android:layout_width="wrap_content"
@@ -67,181 +72,248 @@
                     android:id="@+id/advancedCheckbox"
                     android:text="Advanced Parameters"/>
 
-            </TableRow>
+                </TableRow>
 
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/dt_text"
-                    android:visibility="gone"
-                    android:gravity="end"
-                    android:text="dt: " />
-
-                <EditText
-                    android:id="@+id/dt"
-                    android:visibility="gone"
-                    android:hint=""
-                    android:inputType="numberDecimal" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/nMaxUpper_text"
-                    android:visibility="gone"
-                    android:gravity="end"
-                    android:text="Magnitude Threshold (upper): " />
-
-                <EditText
-                    android:id="@+id/nMaxUpper"
-                    android:visibility="gone"
-                    android:hint=""
-                    android:inputType="numberDecimal" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/nMaxLower_text"
-                    android:visibility="gone"
-                    android:gravity="end"
-                    android:text="Magnitude Threshold (lower): " />
-
-                <EditText
-                    android:id="@+id/nMaxLower"
-                    android:visibility="gone"
-                    android:hint=""
-                    android:inputType="numberDecimal" />
-
-            </TableRow>
-
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/qMin_text"
-                    android:visibility="gone"
-                    android:gravity="end"
-                    android:text="Minimum Q Threshold: " />
-
-                <EditText
-                    android:id="@+id/qMin"
-                    android:visibility="gone"
-                    android:hint=""
-                    android:inputType="numberDecimal" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/E_text"
-                    android:visibility="gone"
-                    android:gravity="end"
-                    android:text="Median Threshold: " />
-
-                <EditText
-                    android:id="@+id/E"
-                    android:visibility="gone"
-                    android:hint=""
-                    android:inputType="numberDecimal" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/groupradio_text"
-                    android:visibility="gone"
-                    android:gravity="end"
-                    android:text="Replace Missing Vectors: " />
-
-
-                <RadioGroup
-                    android:id="@+id/groupradio"
-                    android:layout_marginLeft="20dp"
-                    android:visibility="gone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
                     android:orientation="horizontal">
 
-                    <RadioButton
-                        android:id="@+id/yesRadio"
-                        android:gravity="center"
-                        android:text="YES"
+                    <TextView
+                        android:id="@+id/dt_text"
+                        android:visibility="gone"
+                        android:gravity="end"
+                        android:text="dt: " />
+
+                    <EditText
+                        android:id="@+id/dt"
+                        android:visibility="gone"
+                        android:hint=""
+                        android:inputType="numberDecimal" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/nMaxUpper_text"
+                        android:visibility="gone"
+                        android:gravity="end"
+                        android:text="Magnitude Threshold (upper): " />
+
+                    <EditText
+                        android:id="@+id/nMaxUpper"
+                        android:visibility="gone"
+                        android:hint=""
+                        android:inputType="numberDecimal" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/nMaxLower_text"
+                        android:visibility="gone"
+                        android:gravity="end"
+                        android:text="Magnitude Threshold (lower): " />
+
+                    <EditText
+                        android:id="@+id/nMaxLower"
+                        android:visibility="gone"
+                        android:hint=""
+                        android:inputType="numberDecimal" />
+
+                </TableRow>
+
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/qMin_text"
+                        android:visibility="gone"
+                        android:gravity="end"
+                        android:text="Minimum Q Threshold: " />
+
+                    <EditText
+                        android:id="@+id/qMin"
+                        android:visibility="gone"
+                        android:hint=""
+                        android:inputType="numberDecimal" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/E_text"
+                        android:visibility="gone"
+                        android:gravity="end"
+                        android:text="Median Threshold: " />
+
+                    <EditText
+                        android:id="@+id/E"
+                        android:visibility="gone"
+                        android:hint=""
+                        android:inputType="numberDecimal" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/groupradio_text"
+                        android:visibility="gone"
+                        android:gravity="end"
+                        android:text="Replace Missing Vectors: " />
+
+
+                    <RadioGroup
+                        android:id="@+id/groupradio"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:checked="true"
-                        />
+                        android:orientation="horizontal">
 
-                    <RadioButton
-                        android:id="@+id/noRadio"
-                        android:gravity="center"
-                        android:text="NO"
+                        <RadioButton
+                            android:id="@+id/yesRadio"
+                            android:gravity="center"
+                            android:text="YES"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="true"
+                            />
+
+                        <RadioButton
+                            android:id="@+id/noRadio"
+                            android:gravity="center"
+                            android:text="NO"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            />
+                    </RadioGroup>
+                </TableRow>
+
+
+                <TableRow android:gravity="center_horizontal">
+
+                    <Button
+                        android:id="@+id/button_cancel_piv_data"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        />
-                </RadioGroup>
-            </TableRow>
+                        android:text="Cancel"
+                        android:textSize="20dp"
+                        android:textAllCaps="false"
+                        android:backgroundTint="#243EDF"
+                        android:textColor="#FFFFFF"
+                        android:gravity="center_horizontal"
+                        android:layout_marginBottom="20dp"/>
 
 
-            <TableRow android:gravity="center_horizontal">
+                    <Button
+                        android:id="@+id/button_save_piv_data"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Select Values"
+                        android:textSize="20dp"
+                        android:textAllCaps="false"
+                        android:backgroundTint="#243EDF"
+                        android:textColor="#FFFFFF"
+                        android:gravity="center_horizontal"
+                        android:layout_marginBottom="20dp"/>
 
-                <Button
-                    android:id="@+id/button_cancel_piv_data"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Cancel"
-                    android:textSize="20dp"
-                    android:textAllCaps="false"
-                    android:backgroundTint="#243EDF"
-                    android:textColor="#FFFFFF"
-                    android:gravity="center_horizontal"
-                    android:layout_marginBottom="20dp"/>
+                </TableRow>
+            </TableLayout>
 
+            <Button
+                android:id="@+id/lightbulbInputDialog1"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="310dp"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/lightbulb"
+                android:textColor="#FFFFFF"
+                android:textSize="10dp" />
 
-                <Button
-                    android:id="@+id/button_save_piv_data"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Select Values"
-                    android:textSize="20dp"
-                    android:textAllCaps="false"
-                    android:backgroundTint="#243EDF"
-                    android:textColor="#FFFFFF"
-                    android:gravity="center_horizontal"
-                    android:layout_marginBottom="20dp"/>
+            <Button
+                android:id="@+id/lightbulbInputDialog2"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="310dp"
+                android:layout_marginTop="47dp"
+                android:background="@drawable/lightbulb"
+                android:textColor="#FFFFFF"
+                android:textSize="10dp" />
 
-            </TableRow>
-        </TableLayout>
+            <Button
+                android:id="@+id/lightbulbInputDialog3"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="310dp"
+                android:layout_marginTop="125dp"
+                android:visibility="gone"
+                android:background="@drawable/lightbulb"
+                android:textColor="#FFFFFF"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/lightbulbInputDialog4"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="310dp"
+                android:layout_marginTop="170dp"
+                android:visibility="gone"
+                android:background="@drawable/lightbulb"
+                android:textColor="#FFFFFF"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/lightbulbInputDialog5"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="310dp"
+                android:layout_marginTop="215dp"
+                android:visibility="gone"
+                android:background="@drawable/lightbulb"
+                android:textColor="#FFFFFF"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/lightbulbInputDialog6"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="310dp"
+                android:layout_marginTop="260dp"
+                android:visibility="gone"
+                android:background="@drawable/lightbulb"
+                android:textColor="#FFFFFF"
+                android:textSize="10dp" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 </ScrollView>
