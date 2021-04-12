@@ -19,13 +19,24 @@ import android.widget.TextView;
 
 import com.onrpiv.uploadmedia.R;
 
-
+/**
+ * The LightBulb class adds a light bulb to a widget (defaults to the right side) by extending a
+ * LinearLayout and positioning the new linear layout to where the widget was in it's parent's
+ * layout. Then the LightBulb class takes the widget as a child and creates a LightBulb image button.
+ * If you want the LightBulb image button to have functionality, then you MUST set the onClick listener
+ * using the 'SetLightBulbOnClick' method.
+ */
 @SuppressLint("ViewConstructor")
 public class LightBulb extends LinearLayout {
     public final View baseView;
     public ImageButton lightbulbButton;
     private final Context context;
 
+    /**
+     * Add a light bulb to a widget view.
+     * @param context The activity context.
+     * @param baseView Add a light bulb to this View (widget).
+     */
     public LightBulb(Context context, View baseView) {
         super(context);
         this.baseView = baseView;
@@ -54,6 +65,14 @@ public class LightBulb extends LinearLayout {
         setBulbLayout(45, 45, 1, -45); //Negative values are required so the bulb overlaps the base view
     }
 
+    /**
+     * Set the layout of the lightbulb.
+     * @param dpWidth The desired width in dp.
+     * @param dpHeight The desired height in dp.
+     * @param weight The layout weight.
+     * @param dpMarginStart The horizontal position in dp. A negative number should be used so the
+     *                      lightbulb overlaps the base view.
+     */
     public void setBulbLayout(int dpWidth, int dpHeight, float weight, int dpMarginStart) {
         LayoutParams params = new LinearLayout.LayoutParams(
                 getPixelsFromDP(dpWidth),
@@ -67,6 +86,12 @@ public class LightBulb extends LinearLayout {
         requestLayout();
     }
 
+    /**
+     * Set the lightbulb horizontal position. A negative number should be used so the lightbulb
+     * overlaps the base view.
+     * @param dpMarginStart The horizontal position in dp. A negative number should be used so the
+     *                      lightbulb overlaps the base view.
+     */
     public void setBulbMarginStart(int dpMarginStart) {
         LayoutParams params = (LinearLayout.LayoutParams) lightbulbButton.getLayoutParams();
         params.setMarginStart(getPixelsFromDP(dpMarginStart));
@@ -81,7 +106,15 @@ public class LightBulb extends LinearLayout {
         baseView.setVisibility(visibility);
     }
 
-    public void setLightbulbOnClick(final String title, final String message,
+    /**
+     * Set the popup title and message when the lightbulb is clicked. A navigation button is created
+     * using the linkedClass parameter and linkText.
+     * @param title popup title
+     * @param message popup message
+     * @param linkedClass The navigation button directs to this class
+     * @param linkText The navigation button text
+     */
+    public void setLightBulbOnClick(final String title, final String message,
                                     final Object linkedClass, final String linkText){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View customView = inflater.inflate(R.layout.popup_window_with_link, null);
@@ -95,17 +128,23 @@ public class LightBulb extends LinearLayout {
             }
         });
 
-        popup(customView, this, title, message);
+        popup(customView, title, message);
     }
 
-    public void setLightbulbOnClick(final String title, final String message) {
+    /**
+     * Set the popup title and message when the lightbulb is clicked. Only a 'close' button is created.
+     * @param title popup title
+     * @param message popup message
+     */
+    public void setLightBulbOnClick(final String title, final String message) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
 
-        popup(customView, this, title, message);
+        popup(customView, title, message);
     }
 
-    private void popup(final View customView, final View parent, final String title, final String message) {
+    private void popup(final View customView, final String title, final String message) {
+        final View parent = this;
         lightbulbButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

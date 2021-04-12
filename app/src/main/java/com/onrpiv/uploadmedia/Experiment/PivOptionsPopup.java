@@ -117,26 +117,26 @@ public class PivOptionsPopup extends AlertDialog {
 
         final String linkText = "Learn More";
 
-        windowSizeText.setLightbulbOnClick("Window Size",
+        windowSizeText.setLightBulbOnClick("Window Size",
                 "Interrogation regions should contain at least five particles to result in a good correlation value.",
                 new PIVBasics3(), linkText);
 
-        overlapText.setLightbulbOnClick("Overlap",
+        overlapText.setLightBulbOnClick("Overlap",
                 "Normally the overlap is set at 50% of the window size.",
                 new PIVBasics5(), linkText);
 
-        dtText.setLightbulbOnClick("Time Interval",
+        dtText.setLightBulbOnClick("Time Interval",
                 "The time between images. If you selected sequential images, this is 1/framerate");
 
-        qMinText.setLightbulbOnClick("Minimum Threshold",
+        qMinText.setLightBulbOnClick("Minimum Threshold",
                 "Set an initial Q value threshold of 1.3. Users can relax this standard by decreasing Q (minimum of one), or tighten this standard by increasing Q.",
                 new PIVBasics2(), linkText);
 
-        EText.setLightbulbOnClick("Median",
+        EText.setLightBulbOnClick("Median",
                 "Set a median threshold value of two. Increasing the median threshold value will result in a less stringent comparison and decreasing the median parameter will result in a more stringent comparison.",
                 new PIVBasics4(), linkText);
 
-        radioGroup.setLightbulbOnClick("Replace Missing Vectors",
+        radioGroup.setLightBulbOnClick("Replace Missing Vectors",
                 "When would you choose yes vs no? \n\nYes: qualitative image analysis.\nNo: if you're using the vector data for further analysis.");
         // TODO some gui work needs to be done on this bulb
 //        radioGroup.setBulbMarginStart(-45);
