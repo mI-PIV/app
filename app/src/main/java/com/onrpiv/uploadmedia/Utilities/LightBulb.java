@@ -29,7 +29,7 @@ import com.onrpiv.uploadmedia.R;
 @SuppressLint("ViewConstructor")
 public class LightBulb extends LinearLayout {
     public final View baseView;
-    public ImageButton lightbulbButton;
+    private ImageButton lightbulbButton;
     private final Context context;
 
     /**
@@ -66,12 +66,12 @@ public class LightBulb extends LinearLayout {
     }
 
     /**
-     * Set the layout of the lightbulb.
+     * Set the layout of the light bulb.
      * @param dpWidth The desired width in dp.
      * @param dpHeight The desired height in dp.
      * @param weight The layout weight.
      * @param dpMarginStart The horizontal position in dp. A negative number should be used so the
-     *                      lightbulb overlaps the base view.
+     *                      light bulb overlaps the base view.
      */
     public void setBulbLayout(int dpWidth, int dpHeight, float weight, int dpMarginStart) {
         LayoutParams params = new LinearLayout.LayoutParams(
@@ -87,10 +87,10 @@ public class LightBulb extends LinearLayout {
     }
 
     /**
-     * Set the lightbulb horizontal position. A negative number should be used so the lightbulb
+     * Set the light bulb horizontal position. A negative number should be used so the light bulb
      * overlaps the base view.
      * @param dpMarginStart The horizontal position in dp. A negative number should be used so the
-     *                      lightbulb overlaps the base view.
+     *                      light bulb overlaps the base view.
      */
     public void setBulbMarginStart(int dpMarginStart) {
         LayoutParams params = (LinearLayout.LayoutParams) lightbulbButton.getLayoutParams();
@@ -132,7 +132,7 @@ public class LightBulb extends LinearLayout {
     }
 
     /**
-     * Set the popup title and message when the lightbulb is clicked. Only a 'close' button is created.
+     * Set the popup title and message when the light bulb is clicked. Only a 'close' button is created.
      * @param title popup title
      * @param message popup message
      */
