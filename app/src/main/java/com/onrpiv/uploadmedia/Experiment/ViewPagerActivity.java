@@ -39,6 +39,7 @@ public class ViewPagerActivity extends AppCompatActivity {
     Context context;
     private PopupWindow popupWindow;
     private RelativeLayout relativeLayout;
+    private Button lightbulb1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,22 +94,25 @@ public class ViewPagerActivity extends AppCompatActivity {
         context = getApplicationContext();
         relativeLayout = (RelativeLayout) findViewById(R.id.popupReviewRelativeLayout);
 
-        Button lightbulb1 = (Button) findViewById(R.id.lightbulbReviewLayout1);
+        lightbulb1 = (Button) findViewById(R.id.lightbulbReviewLayout1);
 
         String title = "Start Animation";
         String message = "View the animation and consider if you can tell where the particles move between the first and second frame. If you can't correlate the images with your eyes, the PIV algorithm is less likely to be able to do so.";
 
-        popupWindowNoLink(lightbulb1, title, message);
+        popupWindow(lightbulb1, title, message);
     }
 
-    private void popupWindowNoLink(final Button button, final String popUpWindowTitle, final String popupWindowMessage) {
+    private void popupWindow(final Button button, final String popUpWindowTitle, final String popupWindowMessage) {
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
 
-                button.setEnabled(false);
+                // disabling buttons while the popup window is up
+                lightbulb1.setEnabled(false);
+                startAnimation.setEnabled(false);
+
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
 
                 final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
 
@@ -132,6 +136,7 @@ public class ViewPagerActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         button.setEnabled(true);
+                        startAnimation.setEnabled(true);
                         popupWindow.dismiss();
                     }
                 });

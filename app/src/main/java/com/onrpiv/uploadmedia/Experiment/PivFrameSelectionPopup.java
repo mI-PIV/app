@@ -40,6 +40,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
     // tooltips variables
     private PopupWindow popupWindow;
+    private Button lightbulb1;
+    private Button lightbulb2;
 
     private final String userName;
 
@@ -75,8 +77,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
         frame1Text = (EditText) findViewById(R.id.img1);
         frame2Text = (EditText) findViewById(R.id.img2);
 
-        Button lightbulb1 = findViewById(R.id.lightbulbUserDialog1);
-        Button lightbulb2 = findViewById(R.id.lightbulbUserDialog2);
+        lightbulb1 = findViewById(R.id.lightbulbUserDialog1);
+        lightbulb2 = findViewById(R.id.lightbulbUserDialog2);
         saveButton = findViewById(R.id.button_save_frame_selection);
         saveButton.setEnabled(false);
 
@@ -113,8 +115,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
         RelativeLayout relativeLayout = findViewById(R.id.popupDialogRelativeLayout);
 
-        popupWindowListenerWithoutLink(lightbulb1, title1, message1, relativeLayout, context);
-        popupWindowListenerWithoutLink(lightbulb2, title2, message2, relativeLayout, context);
+        popupWindow(lightbulb1, title1, message1, relativeLayout, context);
+        popupWindow(lightbulb2, title2, message2, relativeLayout, context);
 
         //set selection listeners
         setTextListeners();
@@ -239,10 +241,15 @@ public class PivFrameSelectionPopup extends AlertDialog {
         return frame1IsReady && frame2IsReady && setIsReady;
     }
 
-    private void popupWindowListenerWithoutLink(Button button, final String title, final String message, final RelativeLayout relativeLayout, final Context context) {
+    private void popupWindow(Button button, final String title, final String message, final RelativeLayout relativeLayout, final Context context) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // disable lightbulbs
+                lightbulb1.setEnabled(false);
+                lightbulb2.setEnabled(false);
+
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
                 final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
@@ -266,6 +273,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 closeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        lightbulb1.setEnabled(true);
+                        lightbulb2.setEnabled(true);
                         popupWindow.dismiss();
                     }
                 });
