@@ -2,18 +2,11 @@ package com.onrpiv.uploadmedia.Experiment;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.graphics.text.LineBreaker;
-import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.BoolIntStructure;
+import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.Utilities.UserInputUtils;
@@ -38,10 +32,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
     private final EditText frame2Text;
     private final Button saveButton;
 
-    // tooltips variables
-    private PopupWindow popupWindow;
-    private Button lightbulb1;
-    private Button lightbulb2;
+    private LightBulb imageSet;
+    private LightBulb images;
 
     private final String userName;
 
@@ -77,8 +69,6 @@ public class PivFrameSelectionPopup extends AlertDialog {
         frame1Text = (EditText) findViewById(R.id.img1);
         frame2Text = (EditText) findViewById(R.id.img2);
 
-        lightbulb1 = findViewById(R.id.lightbulbUserDialog1);
-        lightbulb2 = findViewById(R.id.lightbulbUserDialog2);
         saveButton = findViewById(R.id.button_save_frame_selection);
         saveButton.setEnabled(false);
 
@@ -98,25 +88,21 @@ public class PivFrameSelectionPopup extends AlertDialog {
         numberOfSets = PersistedData.getTotalFrameDirectories(context, userName);
 
         //description and framesets text
-        descriptionText.setText("User '"+userName+"' has "+ numberOfSets +" image sets. The highest number set corresponds to the most recent generated frames.");
+        descriptionText.setText("User '" + userName + "' has " + numberOfSets + " image sets. The highest number set corresponds to the most recent generated frames.");
         descriptionText.setTextSize(15);
         if (numberOfSets < 1) {
             setNumText.setHint("No Frame Sets Found!");
-        }else if (numberOfSets == 1) {
+        } else if (numberOfSets == 1) {
             setNumText.setHint("Set 1");
         } else {
-            setNumText.setHint("Set 1 - "+ numberOfSets);
+            setNumText.setHint("Set 1 - " + numberOfSets);
         }
 
-        final String title1 = "Image Set";
-        final String message1 = "The image set numbers are in order (time-wise) for each users' frame generation";
-        final String title2 = "Images";
-        final String message2 = "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).";
+        imageSet = new LightBulb(context, setNumText);
+        imageSet.setLightBulbOnClick("Image Set", "The image set numbers are in order (time-wise) for each users' frame generation");
 
-        RelativeLayout relativeLayout = findViewById(R.id.popupDialogRelativeLayout);
-
-        popupWindow(lightbulb1, title1, message1, relativeLayout, context);
-        popupWindow(lightbulb2, title2, message2, relativeLayout, context);
+        images = new LightBulb(context, frame1Text);
+        images.setLightBulbOnClick("Images", "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).");
 
         //set selection listeners
         setTextListeners();
@@ -150,9 +136,9 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     numFramesInSet = setFrames.size();
 
                     frame1Text.setText("", TextView.BufferType.EDITABLE);
-                    frame1Text.setHint("Frame 1 - "+numFramesInSet);
+                    frame1Text.setHint("Frame 1 - " + numFramesInSet);
                     frame2Text.setText("", TextView.BufferType.EDITABLE);
-                    frame2Text.setHint("Frame 2 - "+numFramesInSet);
+                    frame2Text.setHint("Frame 2 - " + numFramesInSet);
                 }
             }
         });
@@ -177,8 +163,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     frame1IsReady = true;
                     userInput = checkFrameSelections(userInput);
                     int userInt = userInput.getInt();
-                    frame2Text.setHint("Frame "+userInt+" - "+numFramesInSet);
-                    frame1Path = setFrames.get(userInt-1).getAbsoluteFile();
+                    frame2Text.setHint("Frame " + userInt + " - " + numFramesInSet);
+                    frame1Path = setFrames.get(userInt - 1).getAbsoluteFile();
 
                     preview1.setImageBitmap(BitmapFactory.decodeFile(frame1Path.getAbsolutePath()));
 
@@ -207,7 +193,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     frame2IsReady = true;
                     userInput = checkFrameSelections(userInput);
                     int userInt = userInput.getInt();
-                    frame2Path = setFrames.get(userInt-1).getAbsoluteFile();
+                    frame2Path = setFrames.get(userInt - 1).getAbsoluteFile();
 
                     preview2.setImageBitmap(BitmapFactory.decodeFile(frame2Path.getAbsolutePath()));
 
@@ -229,9 +215,9 @@ public class PivFrameSelectionPopup extends AlertDialog {
         //only check if they're the same; want to keep the possibility of reverse flow visualization
         if (frame1 == frame2) {
             if (inputInt == numFramesInSet) {
-                input.setInt(inputInt-1);
+                input.setInt(inputInt - 1);
             } else {
-                input.setInt(inputInt+1);
+                input.setInt(inputInt + 1);
             }
         }
         return input;
@@ -240,47 +226,5 @@ public class PivFrameSelectionPopup extends AlertDialog {
     private boolean checkAllSelections() {
         return frame1IsReady && frame2IsReady && setIsReady;
     }
-
-    private void popupWindow(Button button, final String title, final String message, final RelativeLayout relativeLayout, final Context context) {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                // disable lightbulbs
-                lightbulb1.setEnabled(false);
-                lightbulb2.setEnabled(false);
-
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
-
-                TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
-                windowTitle.setText(title);
-
-                TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
-                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
-                windowMessage.setText(message);
-
-                // New instance of popup window
-                popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                // Setting an elevation value for popup window, it requires API level 21
-                if (Build.VERSION.SDK_INT >= 21) {
-                    popupWindow.setElevation(5.0f);
-                }
-
-                Button closeButton = (Button) customView.findViewById(R.id.button_close);
-                closeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        lightbulb1.setEnabled(true);
-                        lightbulb2.setEnabled(true);
-                        popupWindow.dismiss();
-                    }
-                });
-
-                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
-            }
-        });
-    }
 }
+
