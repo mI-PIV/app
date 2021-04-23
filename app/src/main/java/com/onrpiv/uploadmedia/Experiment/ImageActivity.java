@@ -80,7 +80,7 @@ public class ImageActivity extends AppCompatActivity {
         context = getApplicationContext();
         imagePair = new LightBulb(context, findViewById(R.id.imageActivityRelativeLayout));
         imagePair.setLightBulbOnClick("Image Pair", "You need to select two images to compute movement of the particles from the first to the second image.");
-        imagePair.setPosition(100, -45);
+        //imagePair.setPosition(100, 0);
 
 //        imageCorrelation = new LightBulb(context, review);
 //        imageCorrelation.setLightBulbOnClick("Image Correlation", "Review the images selected in \"select an image pair\" and consider whether the images will result in a useful PIV output.", new PIVBasics3(), "Learn More");
