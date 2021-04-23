@@ -49,6 +49,10 @@ public class ImageActivity extends AppCompatActivity {
     private File frame2File;
     private PivResultData resultData;
 
+    private LightBulb imagePair;
+    private LightBulb imageCorrelation;
+    private LightBulb computePIV;
+
     // tooltips variables
     private PopupWindow popupWindow;
     private RelativeLayout relativeLayout;
@@ -73,6 +77,17 @@ public class ImageActivity extends AppCompatActivity {
 
         OpenCVLoader.initDebug();
 
+        context = getApplicationContext();
+        imagePair = new LightBulb(context, findViewById(R.id.imageActivityRelativeLayout));
+        imagePair.setLightBulbOnClick("Image Pair", "You need to select two images to compute movement of the particles from the first to the second image.");
+        imagePair.setPosition(100, -45);
+
+//        imageCorrelation = new LightBulb(context, review);
+//        imageCorrelation.setLightBulbOnClick("Image Correlation", "Review the images selected in \"select an image pair\" and consider whether the images will result in a useful PIV output.", new PIVBasics3(), "Learn More");
+//
+//        computePIV = new LightBulb(context, compute);
+//        computePIV.setLightBulbOnClick("Compute PIV", "Compute PIV computes the velocity field between the first and second image from \"Select An Image Pair\" according to the parameters in \"Input PIV Parameters\". For more information see: ", new PIVBasicsLayout(), "Learn More");
+
         // all the buttons (that aren't lightbulbs)
         allButtons = new ArrayList<>();
         allButtons.add(pickImageMultiple);
@@ -81,7 +96,7 @@ public class ImageActivity extends AppCompatActivity {
         allButtons.add(display);
         allButtons.add(review);
 
-        popupWindowImageLayoutRun();
+        //popupWindowImageLayoutRun();
         // Add popupwindow here
     }
     @Override
@@ -126,6 +141,7 @@ public class ImageActivity extends AppCompatActivity {
         lightbulb1 = (Button) findViewById(R.id.lightbulbImageLayout1);
         lightbulb2 = (Button) findViewById(R.id.lightbulbImagelayout2);
         lightbulb3 = (Button) findViewById(R.id.lightbulbImageLayout3);
+        lightbulb1.setHovered(true);
 
         final String title1 = "Image Pair";
         final String title2 = "Image Correlation";

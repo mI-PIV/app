@@ -32,6 +32,24 @@ public class LightBulb extends LinearLayout {
     private ImageButton lightbulbButton;
     private final Context context;
 
+    // Here I'm assuming that every lightbulb has the same size and weight, however, we still have
+    // setBulbLayout if we want that to change.
+    private final int lightBulbWidth = 45;
+    private final int lightBulbHeight = 45;
+    private final float lightBulbWeight = 1;
+
+    // Goal: To have it so we just add a lightbulb button to a relativeLayout,
+    // just like any other button. Then add a function called something like setPosition() that
+    // takes a marginStart integer and a marginTop integer, this way we can place the button anywhere
+    // in the RelativeLayout.
+    // Possible issues:
+    //      * Each activity that uses a button must call the function setPosition() which
+    //      will be given "magic numbers" (numbers that are unique based on the lightbulbs position)
+    //      * Each activity must have a RelativeLayout in the xml so that the lightbulb can be
+    //      anywhere in the RelativeLayout.
+
+
+
     /**
      * Add a light bulb to a widget view.
      * @param context The activity context.
@@ -79,6 +97,32 @@ public class LightBulb extends LinearLayout {
                 getPixelsFromDP(dpHeight),
                 weight);
         params.setMarginStart(getPixelsFromDP(dpMarginStart));
+        params.topMargin = 100;
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            lightbulbButton.setElevation(getPixelsFromDP(2));
+        }
+        lightbulbButton.setLayoutParams(params);
+        requestLayout();
+    }
+
+    /** Sets the position of the light bulb in a RelativeLayout.
+     * @param dpMarginStart The horizontal position in dp.
+     * @param dpMarginTop The vertical position in dp.
+     */
+    public void setPosition(int dpMarginTop, int dpMarginStart) {
+        LayoutParams params = new LinearLayout.LayoutParams(
+                getPixelsFromDP(lightBulbWidth),
+                getPixelsFromDP(lightBulbHeight),
+                lightBulbWeight);
+
+        // dpMarginStart+45-320 because the bulb is placed to the left of the View, which in this
+        // case is a RelativeLayout. The user gives a dp that would act similar to one given from an
+        // xml. (For example: if the user gave 50 dp, they'd expect the bulb to be place 50 dp to
+        // to the right of the screen.) Problem: -320 doesn't move the bulb, it just stretches it, why?
+        params.setMarginStart(getPixelsFromDP(dpMarginStart+45-320));
+        params.topMargin = dpMarginTop;
+
         if (Build.VERSION.SDK_INT >= 21) {
             lightbulbButton.setElevation(getPixelsFromDP(2));
         }
