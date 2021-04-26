@@ -40,12 +40,33 @@
         android:text="Pick a video"
         android:textColor="#FFFFFF" />
 
+    <LinearLayout
+        android:theme="@style/MaterialTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Select which frames to generate:" />
+
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/vid_rangeSlider"
+            android:layout_gravity="center"
+            android:layout_width="374dp"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/generateFrames"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@drawable/buttons"
+        android:enabled="false"
         android:text="Generate Frames"
         android:textColor="#FFFFFF" />
 
