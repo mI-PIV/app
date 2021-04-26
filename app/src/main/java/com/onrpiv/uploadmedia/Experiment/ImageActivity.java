@@ -31,20 +31,12 @@ import java.io.Serializable;
 
 public class ImageActivity extends AppCompatActivity {
     Button parameters, compute, display, pickImageMultiple, review;
-//    Button lightbulb1, lightbulb2, lightbulb3;
-//    ArrayList<Button> allButtons;
     private Uri fileUri;
     private String userName;
     private PivParameters pivParameters;
     private File frame1File;
     private File frame2File;
     private PivResultData resultData;
-
-    private LightBulb imagePair;
-    private LightBulb imageCorrelation;
-    private LightBulb computePIV;
-
-    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,38 +57,19 @@ public class ImageActivity extends AppCompatActivity {
 
         OpenCVLoader.initDebug();
 
-        context = getApplicationContext();
-//        imagePair = new LightBulb(context, findViewById(R.id.imageActivityRelativeLayout));
-//        imagePair.setLightBulbOnClick("Image Pair",
-//                "You need to select two images to compute movement of the particles from the first to the second image.",
-//                getWindow());
-        //imagePair.setPosition(100, 0);
+        Context context = getApplicationContext();
 
-        imagePair = new LightBulb(context, pickImageMultiple);
-        imagePair.setLightBulbOnClick("Image Pair",
+        new LightBulb(context, pickImageMultiple).setLightBulbOnClick("Image Pair",
                 "You need to select two images to compute movement of the particles from the first to the second image.",
                 getWindow());
 
-        imageCorrelation = new LightBulb(context, review);
-        imageCorrelation.setLightBulbOnClick("Image Correlation",
+        new LightBulb(context, review).setLightBulbOnClick("Image Correlation",
                 "Review the images selected in \"select an image pair\" and consider whether the images will result in a useful PIV output.",
                 new PIVBasics3(), "Learn More", getWindow());
 
-        computePIV = new LightBulb(context, compute);
-        computePIV.setLightBulbOnClick("Compute PIV",
+        new LightBulb(context, compute).setLightBulbOnClick("Compute PIV",
                 "Compute PIV computes the velocity field between the first and second image from \"Select An Image Pair\" according to the parameters in \"Input PIV Parameters\". For more information see: ",
                 new PIVBasicsLayout(), "Learn More", getWindow());
-
-        // all the buttons (that aren't lightbulbs)
-//        allButtons = new ArrayList<>();
-//        allButtons.add(pickImageMultiple);
-//        allButtons.add(parameters);
-//        allButtons.add(compute);
-//        allButtons.add(display);
-//        allButtons.add(review);
-
-        //popupWindowImageLayoutRun();
-        // Add popupwindow here
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -130,51 +103,6 @@ public class ImageActivity extends AppCompatActivity {
         frameSelectionPopup.setSaveListener(saveListener);
         frameSelectionPopup.show();
     }
-
-    // creates a popupwindow that gives information and possibly a link to somewhere else in the app
-//    private void popupWindowImageLayoutRun()
-//    {
-//        context = getApplicationContext();
-        // tooltips variables
-        //    private PopupWindow popupWindow;
-//        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.imageActivityRelativeLayout);
-
-//        lightbulb1 = (Button) findViewById(R.id.lightbulbImageLayout1);
-//        lightbulb2 = (Button) findViewById(R.id.lightbulbImagelayout2);
-//        lightbulb3 = (Button) findViewById(R.id.lightbulbImageLayout3);
-//        lightbulb1.setHovered(true);
-
-//        final String title1 = "Image Pair";
-//        final String title2 = "Image Correlation";
-//        final String title3 = "Compute PIV";
-//
-//        final String message1 = "You need to select two images to compute movement of the particles from the first to the second image.";
-//        final String message2 = "Review the images selected in \"select an image pair\" and consider whether the images will result in a useful PIV output.";
-//        final String message3 = "Compute PIV computes the velocity field between the first and second image from \"Select An Image Pair\" according to the parameters in \"Input PIV Parameters\". For more information see: ";
-//
-//        final PIVBasics3 pivBasics3 = new PIVBasics3(); // Interrogation Region or Window Size
-//        final PIVBasicsLayout pivBasicsLayout = new PIVBasicsLayout();
-
-        // listeners: when a lightbulb is clicked, disable all other buttons.
-//        lightbulb1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                popupWindow(title1, message1, "", null, false, R.layout.popup_window_no_link, enabledCheck(allButtons));
-//            }
-//        });
-//        lightbulb2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                popupWindow(title2, message2, "Learn More", pivBasics3, true, R.layout.popup_window_with_link, enabledCheck(allButtons));
-//            }
-//        });
-//        lightbulb3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                popupWindow(title3, message3, "Learn More", pivBasicsLayout, true, R.layout.popup_window_with_link, enabledCheck(allButtons));
-//            }
-//        });
-//    }
 
     public void reviewFile(View view) {
         reviewImageFromUrl();
