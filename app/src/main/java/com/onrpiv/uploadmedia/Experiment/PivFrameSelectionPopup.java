@@ -99,10 +99,14 @@ public class PivFrameSelectionPopup extends AlertDialog {
         }
 
         imageSet = new LightBulb(context, setNumText);
-        imageSet.setLightBulbOnClick("Image Set", "The image set numbers are in order (time-wise) for each users' frame generation");
+        imageSet.setLightBulbOnClick("Image Set",
+                "The image set numbers are in order (time-wise) for each users' frame generation",
+                getWindow());
 
         images = new LightBulb(context, frame1Text);
-        images.setLightBulbOnClick("Images", "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).");
+        images.setLightBulbOnClick("Images",
+                "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).",
+                getWindow());
 
         //set selection listeners
         setTextListeners();

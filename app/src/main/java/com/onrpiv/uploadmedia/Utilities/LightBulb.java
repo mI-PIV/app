@@ -11,6 +11,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -37,6 +39,8 @@ public class LightBulb extends LinearLayout {
     private final int lightBulbWidth = 45;
     private final int lightBulbHeight = 45;
     private final float lightBulbWeight = 1;
+
+    private Window activityWindow;
 
     // Goal: To have it so we just add a lightbulb button to a relativeLayout,
     // just like any other button. Then add a function called something like setPosition() that
@@ -159,7 +163,8 @@ public class LightBulb extends LinearLayout {
      * @param linkText The navigation button text
      */
     public void setLightBulbOnClick(final String title, final String message,
-                                    final Object linkedClass, final String linkText){
+                                    final Object linkedClass, final String linkText,
+                                    Window activityWindow){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View customView = inflater.inflate(R.layout.popup_window_with_link, null);
 
@@ -172,7 +177,7 @@ public class LightBulb extends LinearLayout {
             }
         });
 
-        popup(customView, title, message);
+        popup(customView, title, message, activityWindow);
     }
 
     /**
@@ -180,19 +185,21 @@ public class LightBulb extends LinearLayout {
      * @param title popup title
      * @param message popup message
      */
-    public void setLightBulbOnClick(final String title, final String message) {
+    public void setLightBulbOnClick(final String title, final String message, final Window activityWindow) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View customView = inflater.inflate(R.layout.popup_window_no_link, null);
 
-        popup(customView, title, message);
+        popup(customView, title, message, activityWindow);
     }
 
-    private void popup(final View customView, final String title, final String message) {
+    private void popup(final View customView, final String title, final String message, final Window activityWindow) {
         final View parent = this;
         lightbulbButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                lightbulbButton.setEnabled(false);
+                // Disable all activity interactions
+                activityWindow.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                 // set title and message
                 TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
@@ -215,7 +222,7 @@ public class LightBulb extends LinearLayout {
                     @Override
                     public void onClick(View v) {
                         popupWindow.dismiss();
-                        lightbulbButton.setEnabled(true);
+                        activityWindow.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                     }
                 });
 

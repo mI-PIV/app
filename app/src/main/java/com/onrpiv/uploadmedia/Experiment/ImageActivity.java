@@ -3,26 +3,16 @@ package com.onrpiv.uploadmedia.Experiment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.text.LineBreaker;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.onrpiv.uploadmedia.Utilities.LightBulb;
-import com.onrpiv.uploadmedia.Learn.PIVBasics3;
-import com.onrpiv.uploadmedia.Learn.PIVBasicsLayout;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 import com.onrpiv.uploadmedia.pivFunctions.PivRunner;
@@ -31,7 +21,6 @@ import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * author: sarbajit mukherjee
@@ -40,8 +29,8 @@ import java.util.ArrayList;
 
 public class ImageActivity extends AppCompatActivity {
     Button parameters, compute, display, pickImageMultiple, review;
-    Button lightbulb1, lightbulb2, lightbulb3;
-    ArrayList<Button> allButtons;
+//    Button lightbulb1, lightbulb2, lightbulb3;
+//    ArrayList<Button> allButtons;
     private Uri fileUri;
     private String userName;
     private PivParameters pivParameters;
@@ -53,9 +42,6 @@ public class ImageActivity extends AppCompatActivity {
     private LightBulb imageCorrelation;
     private LightBulb computePIV;
 
-    // tooltips variables
-    private PopupWindow popupWindow;
-    private RelativeLayout relativeLayout;
     private Context context;
 
     @Override
@@ -79,7 +65,9 @@ public class ImageActivity extends AppCompatActivity {
 
         context = getApplicationContext();
         imagePair = new LightBulb(context, findViewById(R.id.imageActivityRelativeLayout));
-        imagePair.setLightBulbOnClick("Image Pair", "You need to select two images to compute movement of the particles from the first to the second image.");
+        imagePair.setLightBulbOnClick("Image Pair",
+                "You need to select two images to compute movement of the particles from the first to the second image.",
+                getWindow());
         //imagePair.setPosition(100, 0);
 
 //        imageCorrelation = new LightBulb(context, review);
@@ -89,12 +77,12 @@ public class ImageActivity extends AppCompatActivity {
 //        computePIV.setLightBulbOnClick("Compute PIV", "Compute PIV computes the velocity field between the first and second image from \"Select An Image Pair\" according to the parameters in \"Input PIV Parameters\". For more information see: ", new PIVBasicsLayout(), "Learn More");
 
         // all the buttons (that aren't lightbulbs)
-        allButtons = new ArrayList<>();
-        allButtons.add(pickImageMultiple);
-        allButtons.add(parameters);
-        allButtons.add(compute);
-        allButtons.add(display);
-        allButtons.add(review);
+//        allButtons = new ArrayList<>();
+//        allButtons.add(pickImageMultiple);
+//        allButtons.add(parameters);
+//        allButtons.add(compute);
+//        allButtons.add(display);
+//        allButtons.add(review);
 
         //popupWindowImageLayoutRun();
         // Add popupwindow here
@@ -133,53 +121,54 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     // creates a popupwindow that gives information and possibly a link to somewhere else in the app
-    private void popupWindowImageLayoutRun()
-    {
-        context = getApplicationContext();
-        relativeLayout = (RelativeLayout) findViewById(R.id.imageActivityRelativeLayout);
+//    private void popupWindowImageLayoutRun()
+//    {
+//        context = getApplicationContext();
+        // tooltips variables
+        //    private PopupWindow popupWindow;
+//        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.imageActivityRelativeLayout);
 
-        lightbulb1 = (Button) findViewById(R.id.lightbulbImageLayout1);
-        lightbulb2 = (Button) findViewById(R.id.lightbulbImagelayout2);
-        lightbulb3 = (Button) findViewById(R.id.lightbulbImageLayout3);
-        lightbulb1.setHovered(true);
+//        lightbulb1 = (Button) findViewById(R.id.lightbulbImageLayout1);
+//        lightbulb2 = (Button) findViewById(R.id.lightbulbImagelayout2);
+//        lightbulb3 = (Button) findViewById(R.id.lightbulbImageLayout3);
+//        lightbulb1.setHovered(true);
 
-        final String title1 = "Image Pair";
-        final String title2 = "Image Correlation";
-        final String title3 = "Compute PIV";
-
-        final String message1 = "You need to select two images to compute movement of the particles from the first to the second image.";
-        final String message2 = "Review the images selected in \"select an image pair\" and consider whether the images will result in a useful PIV output.";
-        final String message3 = "Compute PIV computes the velocity field between the first and second image from \"Select An Image Pair\" according to the parameters in \"Input PIV Parameters\". For more information see: ";
-
-        final PIVBasics3 pivBasics3 = new PIVBasics3(); // Interrogation Region or Window Size
-        final PIVBasicsLayout pivBasicsLayout = new PIVBasicsLayout();
+//        final String title1 = "Image Pair";
+//        final String title2 = "Image Correlation";
+//        final String title3 = "Compute PIV";
+//
+//        final String message1 = "You need to select two images to compute movement of the particles from the first to the second image.";
+//        final String message2 = "Review the images selected in \"select an image pair\" and consider whether the images will result in a useful PIV output.";
+//        final String message3 = "Compute PIV computes the velocity field between the first and second image from \"Select An Image Pair\" according to the parameters in \"Input PIV Parameters\". For more information see: ";
+//
+//        final PIVBasics3 pivBasics3 = new PIVBasics3(); // Interrogation Region or Window Size
+//        final PIVBasicsLayout pivBasicsLayout = new PIVBasicsLayout();
 
         // listeners: when a lightbulb is clicked, disable all other buttons.
-        lightbulb1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popupWindow(title1, message1, "", null, false, R.layout.popup_window_no_link, enabledCheck(allButtons));
-            }
-        });
-        lightbulb2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popupWindow(title2, message2, "Learn More", pivBasics3, true, R.layout.popup_window_with_link, enabledCheck(allButtons));
-            }
-        });
-        lightbulb3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popupWindow(title3, message3, "Learn More", pivBasicsLayout, true, R.layout.popup_window_with_link, enabledCheck(allButtons));
-            }
-        });
-    }
+//        lightbulb1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                popupWindow(title1, message1, "", null, false, R.layout.popup_window_no_link, enabledCheck(allButtons));
+//            }
+//        });
+//        lightbulb2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                popupWindow(title2, message2, "Learn More", pivBasics3, true, R.layout.popup_window_with_link, enabledCheck(allButtons));
+//            }
+//        });
+//        lightbulb3.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                popupWindow(title3, message3, "Learn More", pivBasicsLayout, true, R.layout.popup_window_with_link, enabledCheck(allButtons));
+//            }
+//        });
+//    }
 
     public void reviewFile(View view) {
         reviewImageFromUrl();
         review.setBackgroundColor(Color.parseColor("#00CC00"));
     }
-
 
     private void reviewImageFromUrl() {
         String[] urls = new String[2];
@@ -223,7 +212,6 @@ public class ImageActivity extends AppCompatActivity {
 
         if (pivParameters.isReplace()) {
             displayIntent.putExtra(PivResultData.REPLACE2, (Serializable) resultData.getPivReplaceMissing2());
-
         }
 
         startActivity(displayIntent);
@@ -256,78 +244,5 @@ public class ImageActivity extends AppCompatActivity {
 
         // get the file url
         fileUri = savedInstanceState.getParcelable("file_uri");
-    }
-
-    private void popupWindow(final String popUpWindowTitle, final String popupWindowMessage, final String linkText, final Object myClass, final boolean hasLink, final int xml, final ArrayList<Button> buttons) {
-
-        // disabling all other buttons
-        for (int i = 0; i < buttons.size(); i++) {
-            buttons.get(i).setEnabled(false);
-        }
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-
-        final View customView = inflater.inflate(xml, null);
-
-        TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
-        windowTitle.setText(popUpWindowTitle);
-
-        TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
-        windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
-        windowMessage.setText(popupWindowMessage);
-
-        // New instance of popup window
-        popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        // Setting an elevation value for popup window, it requires API level 21
-        if (Build.VERSION.SDK_INT >= 21) {
-            popupWindow.setElevation(5.0f);
-        }
-
-        if (hasLink) {
-            Button navigateButton = (Button) customView.findViewById(R.id.button_navigate);
-            navigateButton.setText(linkText);
-            navigateButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(ImageActivity.this, myClass.getClass()));
-                }
-            });
-        }
-
-        Button closeButton = (Button) customView.findViewById(R.id.button_close);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-                for (int i = 0; i < buttons.size(); i++) {
-                    buttons.get(i).setEnabled(true);
-                }
-            }
-        });
-
-        popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
-
-    }
-
-    // this function checks all buttons to see if they're enabled and returns a list of those buttons
-    private ArrayList<Button> enabledCheck(ArrayList<Button> allButtons) {
-
-        ArrayList<Button> allEnabledButtons = new ArrayList<>();
-
-        // all lightbulb buttons must be in list list, regardless if they're enabled
-        allEnabledButtons.add(lightbulb1);
-        allEnabledButtons.add(lightbulb2);
-        allEnabledButtons.add(lightbulb3);
-
-        // check for all other buttons
-        for (int i = 0; i < allButtons.size(); i++) {
-            if (allButtons.get(i) != null) {
-                if (allButtons.get(i).isEnabled()) {
-                    allEnabledButtons.add(allButtons.get(i));
-                }
-            }
-        }
-        return allEnabledButtons;
     }
 }
