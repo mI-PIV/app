@@ -263,7 +263,8 @@ public class VideoActivity extends AppCompatActivity{
             }
         };
 
-        FrameExtractor.generateFrames(view.getContext(), userName, videoPath, fps, successCallBack);
+        FrameExtractor.generateFrames(view.getContext(), userName, videoPath, fps, vidStart, vidEnd,
+                successCallBack);
     }
 
     private void releasePlayer() {
@@ -325,7 +326,6 @@ public class VideoActivity extends AppCompatActivity{
         rangeSlider.setValueTo(videoDuration/1000);
         rangeSlider.setValues(0f, 1f);
         rangeSlider.setMinSeparation(1f);
-//        rangeSlider.setStepSize(1f);
         rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
             @Override
             public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
