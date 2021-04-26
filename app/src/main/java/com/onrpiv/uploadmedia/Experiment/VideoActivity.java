@@ -322,10 +322,10 @@ public class VideoActivity extends AppCompatActivity{
         }
 
         rangeSlider.setValueFrom(0);
-        rangeSlider.setValueTo(videoDuration);
+        rangeSlider.setValueTo(videoDuration/1000);
         rangeSlider.setValues(0f, 1f);
         rangeSlider.setMinSeparation(1f);
-        rangeSlider.setStepSize(1f);
+//        rangeSlider.setStepSize(1f);
         rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
             @Override
             public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
@@ -333,7 +333,7 @@ public class VideoActivity extends AppCompatActivity{
                 vidStart = Math.min(vals.get(0), vals.get(1));
                 vidEnd = Math.max(vals.get(0), vals.get(1));
 
-                mVideoView.seekTo((int) (value == vidStart? vidStart : vidEnd));
+                mVideoView.seekTo((int) (value == vidStart? vidStart*1000 : vidEnd*1000));
             }
         });
         ((ViewGroup) rangeSlider.getParent()).setVisibility(View.VISIBLE);
