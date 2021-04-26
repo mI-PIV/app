@@ -14,10 +14,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatImageButton;
 
 import com.onrpiv.uploadmedia.R;
 
@@ -29,18 +31,18 @@ import com.onrpiv.uploadmedia.R;
  * using the 'SetLightBulbOnClick' method.
  */
 @SuppressLint("ViewConstructor")
-public class LightBulb extends LinearLayout {
+public class LightBulb extends AppCompatImageButton {
     public final View baseView;
-    private ImageButton lightbulbButton;
+//    private ImageButton lightbulbButton;
     private final Context context;
+
+    private final ViewGroup baseParent;
 
     // Here I'm assuming that every lightbulb has the same size and weight, however, we still have
     // setBulbLayout if we want that to change.
     private final int lightBulbWidth = 45;
     private final int lightBulbHeight = 45;
     private final float lightBulbWeight = 1;
-
-    private Window activityWindow;
 
     // Goal: To have it so we just add a lightbulb button to a relativeLayout,
     // just like any other button. Then add a function called something like setPosition() that
@@ -62,26 +64,26 @@ public class LightBulb extends LinearLayout {
     public LightBulb(Context context, View baseView) {
         super(context);
         this.baseView = baseView;
-        ViewGroup baseViewParent = (ViewGroup) baseView.getParent();
+        baseParent = (ViewGroup) baseView.getParent();
         this.context = context;
 
         // init lightbulb button
-        lightbulbButton = new ImageButton(context);
-        lightbulbButton.setBackgroundResource(R.drawable.lightbulb);
+//        lightbulbButton = new ImageButton(context);
+        setBackgroundResource(R.drawable.lightbulb);
 
         // swap places with base view
-        baseViewParent.addView(this);
-        baseViewParent.removeView(baseView);
-
-        // this linearlayout
-        setOrientation(HORIZONTAL);
-        setLayoutParams(baseView.getLayoutParams());
-        addView(baseView, 0);
-        addView(lightbulbButton, 1);
-        setVisibility(baseView.getVisibility());
+//        baseViewParent.addView(this);
+//        baseViewParent.removeView(baseView);
 
         // base view layout
-        baseView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+//        baseView.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+
+        // this layout
+//        RelativeLayout.LayoutParams baseViewParams = (RelativeLayout.LayoutParams)baseView.getLayoutParams();
+//        setLayoutParams(baseViewParams);
+//        addView(baseView, 0);
+        baseParent.addView(this);
+        setVisibility(baseView.getVisibility());
 
         // lightbulb button layout
         setBulbLayout(45, 45, 1, -45); //Negative values are required so the bulb overlaps the base view
@@ -96,61 +98,74 @@ public class LightBulb extends LinearLayout {
      *                      light bulb overlaps the base view.
      */
     public void setBulbLayout(int dpWidth, int dpHeight, float weight, int dpMarginStart) {
-        LayoutParams params = new LinearLayout.LayoutParams(
-                getPixelsFromDP(dpWidth),
-                getPixelsFromDP(dpHeight),
-                weight);
-        params.setMarginStart(getPixelsFromDP(dpMarginStart));
-        params.topMargin = 100;
+        if (baseParent instanceof TableRow) {
+            TableRow.LayoutParams params = new TableRow.LayoutParams(
+                    getPixelsFromDP(dpWidth),
+                    getPixelsFromDP(dpHeight)
+            );
+            setLayoutParams(params);
+
+        } else {
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    getPixelsFromDP(dpWidth),
+                    getPixelsFromDP(dpHeight));
+
+            params.addRule(RelativeLayout.ALIGN_RIGHT, baseView.getId());
+            params.addRule(RelativeLayout.ALIGN_TOP, baseView.getId());
+            setLayoutParams(params);
+        }
+
+//        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)lightbulbButton.getLayoutParams();
+
+//        params.setMarginStart(getPixelsFromDP(dpMarginStart));
+//        params.topMargin = 100;
 
         if (Build.VERSION.SDK_INT >= 21) {
-            lightbulbButton.setElevation(getPixelsFromDP(2));
+            setElevation(getPixelsFromDP(2));
         }
-        lightbulbButton.setLayoutParams(params);
         requestLayout();
     }
 
-    /** Sets the position of the light bulb in a RelativeLayout.
-     * @param dpMarginStart The horizontal position in dp.
-     * @param dpMarginTop The vertical position in dp.
-     */
-    public void setPosition(int dpMarginTop, int dpMarginStart) {
-        LayoutParams params = new LinearLayout.LayoutParams(
-                getPixelsFromDP(lightBulbWidth),
-                getPixelsFromDP(lightBulbHeight),
-                lightBulbWeight);
+//    /** Sets the position of the light bulb in a RelativeLayout.
+//     * @param dpMarginStart The horizontal position in dp.
+//     * @param dpMarginTop The vertical position in dp.
+//     */
+//    public void setPosition(int dpMarginTop, int dpMarginStart) {
+//        LayoutParams params = new LinearLayout.LayoutParams(
+//                getPixelsFromDP(lightBulbWidth),
+//                getPixelsFromDP(lightBulbHeight),
+//                lightBulbWeight);
+//
+//        // dpMarginStart+45-320 because the bulb is placed to the left of the View, which in this
+//        // case is a RelativeLayout. The user gives a dp that would act similar to one given from an
+//        // xml. (For example: if the user gave 50 dp, they'd expect the bulb to be place 50 dp to
+//        // to the right of the screen.) Problem: -320 doesn't move the bulb, it just stretches it, why?
+//        params.setMarginStart(getPixelsFromDP(dpMarginStart+45-320));
+//        params.topMargin = dpMarginTop;
+//
+//        if (Build.VERSION.SDK_INT >= 21) {
+//            lightbulbButton.setElevation(getPixelsFromDP(2));
+//        }
+//        lightbulbButton.setLayoutParams(params);
+//        requestLayout();
+//    }
 
-        // dpMarginStart+45-320 because the bulb is placed to the left of the View, which in this
-        // case is a RelativeLayout. The user gives a dp that would act similar to one given from an
-        // xml. (For example: if the user gave 50 dp, they'd expect the bulb to be place 50 dp to
-        // to the right of the screen.) Problem: -320 doesn't move the bulb, it just stretches it, why?
-        params.setMarginStart(getPixelsFromDP(dpMarginStart+45-320));
-        params.topMargin = dpMarginTop;
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            lightbulbButton.setElevation(getPixelsFromDP(2));
-        }
-        lightbulbButton.setLayoutParams(params);
-        requestLayout();
-    }
-
-    /**
-     * Set the light bulb horizontal position. A negative number should be used so the light bulb
-     * overlaps the base view.
-     * @param dpMarginStart The horizontal position in dp. A negative number should be used so the
-     *                      light bulb overlaps the base view.
-     */
-    public void setBulbMarginStart(int dpMarginStart) {
-        LayoutParams params = (LinearLayout.LayoutParams) lightbulbButton.getLayoutParams();
-        params.setMarginStart(getPixelsFromDP(dpMarginStart));
-        lightbulbButton.setLayoutParams(params);
-        requestLayout();
-    }
+//    /**
+//     * Set the light bulb horizontal position. A negative number should be used so the light bulb
+//     * overlaps the base view.
+//     * @param dpMarginStart The horizontal position in dp. A negative number should be used so the
+//     *                      light bulb overlaps the base view.
+//     */
+//    public void setBulbMarginStart(int dpMarginStart) {
+//        LayoutParams params = (LinearLayout.LayoutParams) lightbulbButton.getLayoutParams();
+//        params.setMarginStart(getPixelsFromDP(dpMarginStart));
+//        lightbulbButton.setLayoutParams(params);
+//        requestLayout();
+//    }
 
     @Override
     public void setVisibility(int visibility) {
         super.setVisibility(visibility);
-        lightbulbButton.setVisibility(visibility);
         baseView.setVisibility(visibility);
     }
 
@@ -193,8 +208,8 @@ public class LightBulb extends LinearLayout {
     }
 
     private void popup(final View customView, final String title, final String message, final Window activityWindow) {
-        final View parent = this;
-        lightbulbButton.setOnClickListener(new View.OnClickListener(){
+//        final View parent = this;
+        this.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 // Disable all activity interactions
@@ -226,7 +241,7 @@ public class LightBulb extends LinearLayout {
                     }
                 });
 
-                popupWindow.showAtLocation(parent, Gravity.CENTER, 0, 0);
+                popupWindow.showAtLocation(baseParent, Gravity.CENTER, 0, 0);
             }
         });
     }

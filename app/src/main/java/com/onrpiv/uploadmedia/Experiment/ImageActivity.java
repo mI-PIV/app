@@ -11,6 +11,8 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.onrpiv.uploadmedia.Learn.PIVBasics3;
+import com.onrpiv.uploadmedia.Learn.PIVBasicsLayout;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
@@ -64,17 +66,26 @@ public class ImageActivity extends AppCompatActivity {
         OpenCVLoader.initDebug();
 
         context = getApplicationContext();
-        imagePair = new LightBulb(context, findViewById(R.id.imageActivityRelativeLayout));
+//        imagePair = new LightBulb(context, findViewById(R.id.imageActivityRelativeLayout));
+//        imagePair.setLightBulbOnClick("Image Pair",
+//                "You need to select two images to compute movement of the particles from the first to the second image.",
+//                getWindow());
+        //imagePair.setPosition(100, 0);
+
+        imagePair = new LightBulb(context, pickImageMultiple);
         imagePair.setLightBulbOnClick("Image Pair",
                 "You need to select two images to compute movement of the particles from the first to the second image.",
                 getWindow());
-        //imagePair.setPosition(100, 0);
 
-//        imageCorrelation = new LightBulb(context, review);
-//        imageCorrelation.setLightBulbOnClick("Image Correlation", "Review the images selected in \"select an image pair\" and consider whether the images will result in a useful PIV output.", new PIVBasics3(), "Learn More");
-//
-//        computePIV = new LightBulb(context, compute);
-//        computePIV.setLightBulbOnClick("Compute PIV", "Compute PIV computes the velocity field between the first and second image from \"Select An Image Pair\" according to the parameters in \"Input PIV Parameters\". For more information see: ", new PIVBasicsLayout(), "Learn More");
+        imageCorrelation = new LightBulb(context, review);
+        imageCorrelation.setLightBulbOnClick("Image Correlation",
+                "Review the images selected in \"select an image pair\" and consider whether the images will result in a useful PIV output.",
+                new PIVBasics3(), "Learn More", getWindow());
+
+        computePIV = new LightBulb(context, compute);
+        computePIV.setLightBulbOnClick("Compute PIV",
+                "Compute PIV computes the velocity field between the first and second image from \"Select An Image Pair\" according to the parameters in \"Input PIV Parameters\". For more information see: ",
+                new PIVBasicsLayout(), "Learn More", getWindow());
 
         // all the buttons (that aren't lightbulbs)
 //        allButtons = new ArrayList<>();
