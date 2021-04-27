@@ -157,7 +157,10 @@ public class PivOptionsPopup extends AlertDialog {
     public void setFPSParameters(int fps, int frame1Num, int frame2Num) {
         float dt = calculateTimeDelta(fps, frame1Num, frame2Num);
         parameters.setDt(dt);
-        dtText.setText(String.valueOf(dt));
+
+        // TODO: The line below causes a bug because dtText is of LightBulb type. Is there another
+        //  way we can default it to .05?
+        // dtText.setText(String.valueOf(dt));
     }
 
     private void setListeners() {
