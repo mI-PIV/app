@@ -139,9 +139,6 @@ public class PivOptionsPopup extends AlertDialog {
         radioGroup.setLightBulbOnClick("Replace Missing Vectors",
                 "When would you choose yes vs no? \n\nYes: qualitative image analysis.\nNo: if you're using the vector data for further analysis.",
                 getWindow());
-        // TODO some gui work needs to be done on this bulb
-//        radioGroup.setBulbMarginStart(-45);
-
 
         // load our ids to keys translation dictionary
         loadIdToKey();
