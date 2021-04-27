@@ -15,6 +15,7 @@ import com.onrpiv.uploadmedia.Learn.PIVBasics3;
 import com.onrpiv.uploadmedia.Learn.PIVBasicsLayout;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
+import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 import com.onrpiv.uploadmedia.pivFunctions.PivRunner;
@@ -36,6 +37,9 @@ public class ImageActivity extends AppCompatActivity {
     private PivParameters pivParameters;
     private File frame1File;
     private File frame2File;
+    private int frame1Num;
+    private int frame2Num;
+    private int fps;
     private PivResultData resultData;
 
     @Override
@@ -92,6 +96,13 @@ public class ImageActivity extends AppCompatActivity {
             public void onClick(View v) {
                 frame1File = frameSelectionPopup.frame1Path;
                 frame2File = frameSelectionPopup.frame2Path;
+                frame1Num = frameSelectionPopup.frame1Num;
+                frame2Num = frameSelectionPopup.frame2Num;
+
+                int framesDirNum = PersistedData.getFrameDirPath(ImageActivity.this, userName,
+                        frameSelectionPopup.frameSetPath.getAbsolutePath());
+                fps = PersistedData.getFrameDirFPS(ImageActivity.this, userName,
+                        framesDirNum);
 
                 review.setEnabled(true);
                 parameters.setEnabled(true);
@@ -135,6 +146,7 @@ public class ImageActivity extends AppCompatActivity {
         };
 
         parameterPopup.setSaveListener(saveListener);
+        parameterPopup.setFPSParameters(fps, frame1Num, frame2Num);
         parameterPopup.show();
     }
 

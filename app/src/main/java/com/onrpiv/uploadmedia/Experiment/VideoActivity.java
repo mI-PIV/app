@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -15,6 +16,7 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.MediaController;
 import android.widget.TextView;
@@ -26,11 +28,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 
+import com.google.android.material.slider.RangeSlider;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
 import com.onrpiv.uploadmedia.Utilities.FrameExtractor;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -40,6 +44,7 @@ import java.util.concurrent.Callable;
 
 public class VideoActivity extends AppCompatActivity{
     private Button pickVideo, generateFramesButton, recordVideo;
+    private RangeSlider rangeSlider;
     public static final int REQUEST_PICK_VIDEO = 3;
     private static final int REQUEST_VIDEO_CAPTURE = 300;
     private VideoView mVideoView;
@@ -47,6 +52,8 @@ public class VideoActivity extends AppCompatActivity{
     private String videoPath;
     private String userName;
     private String fps = "20";
+    private float vidStart = 0f;
+    private float vidEnd = 0f;
 
     // Current playback position (in milliseconds).
     private int mCurrentPosition = 0;
@@ -64,10 +71,12 @@ public class VideoActivity extends AppCompatActivity{
         Intent userNameIntent = getIntent();
         userName = userNameIntent.getStringExtra("UserName");
 
+        // widgets
         recordVideo = (Button) findViewById(R.id.recordVideo);
         pickVideo = (Button) findViewById(R.id.pickVideo);
         generateFramesButton = (Button) findViewById(R.id.generateFrames);
-        generateFramesButton.setEnabled(false);
+        rangeSlider = findViewById(R.id.vid_rangeSlider);
+        ((ViewGroup) rangeSlider.getParent()).setVisibility(View.GONE);
 
         recordVideo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -232,6 +241,7 @@ public class VideoActivity extends AppCompatActivity{
                 }
             }
             generateFramesButton.setEnabled(true);
+            setupRangeSlider();
         }
         else if (resultCode != RESULT_CANCELED) {
             Toast.makeText(this, "Sorry, there was an error!", Toast.LENGTH_LONG).show();
@@ -253,7 +263,8 @@ public class VideoActivity extends AppCompatActivity{
             }
         };
 
-        FrameExtractor.generateFrames(view.getContext(), userName, videoPath, fps, successCallBack);
+        FrameExtractor.generateFrames(view.getContext(), userName, videoPath, fps, vidStart, vidEnd,
+                successCallBack);
     }
 
     private void releasePlayer() {
@@ -266,6 +277,7 @@ public class VideoActivity extends AppCompatActivity{
 
         videoPath = PathUtil.getRealPath(VideoActivity.this, video);
         initializePlayer(video);
+        setupRangeSlider();
         recordVideo.setBackgroundColor(Color.parseColor("#00CC00"));
         pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
     }
@@ -295,6 +307,37 @@ public class VideoActivity extends AppCompatActivity{
             e.printStackTrace();
         }
         return hasHighFPS;
+    }
+
+    private void setupRangeSlider() {
+        MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
+        float videoDuration = 0;
+        try {
+            metaRetriever.setDataSource(videoPath);
+            videoDuration = Float.parseFloat(metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+
+        if (videoDuration == 0f) {
+            return;
+        }
+
+        rangeSlider.setValueFrom(0);
+        rangeSlider.setValueTo(videoDuration/1000);
+        rangeSlider.setValues(0f, 1f);
+        rangeSlider.setMinSeparation(1f);
+        rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
+                List<Float> vals = slider.getValues();
+                vidStart = Math.min(vals.get(0), vals.get(1));
+                vidEnd = Math.max(vals.get(0), vals.get(1));
+
+                mVideoView.seekTo((int) (value == vidStart? vidStart*1000 : vidEnd*1000));
+            }
+        });
+        ((ViewGroup) rangeSlider.getParent()).setVisibility(View.VISIBLE);
     }
 }
 
