@@ -172,14 +172,10 @@ public class LightBulb extends AppCompatImageButton {
                     public void onClick(View v) {
                         popupWindow.dismiss();
                         activityWindow.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        baseParent.bringChildToFront(LightBulb.this);
-                        bringToFront();
                     }
                 });
 
                 popupWindow.showAtLocation(baseParent, Gravity.CENTER, 0, 0);
-                baseParent.bringChildToFront(LightBulb.this);
-                bringToFront();
             }
         });
     }
