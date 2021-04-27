@@ -32,9 +32,6 @@ public class PivFrameSelectionPopup extends AlertDialog {
     private final EditText frame2Text;
     private final Button saveButton;
 
-    private LightBulb imageSet;
-    private LightBulb images;
-
     private final String userName;
 
     public File frameSetPath;
@@ -100,13 +97,11 @@ public class PivFrameSelectionPopup extends AlertDialog {
             setNumText.setHint("Set 1 - " + numberOfSets);
         }
 
-        imageSet = new LightBulb(context, setNumText);
-        imageSet.setLightBulbOnClick("Image Set",
+        // lightbulbs
+        new LightBulb(context, setNumText).setLightBulbOnClick("Image Set",
                 "The image set numbers are in order (time-wise) for each users' frame generation",
                 getWindow());
-
-        images = new LightBulb(context, frame1Text);
-        images.setLightBulbOnClick("Images",
+        new LightBulb(context, frame1Text).setLightBulbOnClick("Images",
                 "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).",
                 getWindow());
 
