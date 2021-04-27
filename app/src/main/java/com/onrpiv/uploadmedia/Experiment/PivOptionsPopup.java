@@ -154,7 +154,7 @@ public class PivOptionsPopup extends AlertDialog {
     public void setFPSParameters(int fps, int frame1Num, int frame2Num) {
         float dt = calculateTimeDelta(fps, frame1Num, frame2Num);
         parameters.setDt(dt);
-        dtText.setText(String.valueOf(dt));
+        ((EditText)dtText.baseView).setText(String.valueOf(dt));
     }
 
     private void setListeners() {
