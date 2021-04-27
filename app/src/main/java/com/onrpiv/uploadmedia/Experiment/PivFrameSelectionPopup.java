@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.BoolIntStructure;
+import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.Utilities.UserInputUtils;
@@ -30,6 +31,9 @@ public class PivFrameSelectionPopup extends AlertDialog {
     private final EditText frame1Text;
     private final EditText frame2Text;
     private final Button saveButton;
+
+    private LightBulb imageSet;
+    private LightBulb images;
 
     private final String userName;
 
@@ -50,7 +54,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
     private boolean frame1IsReady = false;
     private boolean frame2IsReady = false;
 
-    public PivFrameSelectionPopup(@NonNull Context context, String userName) {
+    public PivFrameSelectionPopup(@NonNull final Context context, String userName) {
         super(context);
 
         //set alert dialog stuff
@@ -86,15 +90,25 @@ public class PivFrameSelectionPopup extends AlertDialog {
         numberOfSets = PersistedData.getTotalFrameDirectories(context, userName);
 
         //description and framesets text
-        descriptionText.setText("User '"+userName+"' has "+ numberOfSets +" image sets. The highest number set corresponds to the most recent generated frames.");
+        descriptionText.setText("User '" + userName + "' has " + numberOfSets + " image sets. The highest number set corresponds to the most recent generated frames.");
         descriptionText.setTextSize(15);
         if (numberOfSets < 1) {
             setNumText.setHint("No Frame Sets Found!");
-        }else if (numberOfSets == 1) {
+        } else if (numberOfSets == 1) {
             setNumText.setHint("Set 1");
         } else {
-            setNumText.setHint("Set 1 - "+ numberOfSets);
+            setNumText.setHint("Set 1 - " + numberOfSets);
         }
+
+        imageSet = new LightBulb(context, setNumText);
+        imageSet.setLightBulbOnClick("Image Set",
+                "The image set numbers are in order (time-wise) for each users' frame generation",
+                getWindow());
+
+        images = new LightBulb(context, frame1Text);
+        images.setLightBulbOnClick("Images",
+                "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).",
+                getWindow());
 
         //set selection listeners
         setTextListeners();
@@ -128,9 +142,9 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     numFramesInSet = setFrames.size();
 
                     frame1Text.setText("", TextView.BufferType.EDITABLE);
-                    frame1Text.setHint("Frame 1 - "+numFramesInSet);
+                    frame1Text.setHint("Frame 1 - " + numFramesInSet);
                     frame2Text.setText("", TextView.BufferType.EDITABLE);
-                    frame2Text.setHint("Frame 2 - "+numFramesInSet);
+                    frame2Text.setHint("Frame 2 - " + numFramesInSet);
                 }
             }
         });
@@ -155,8 +169,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     frame1IsReady = true;
                     userInput = checkFrameSelections(userInput);
                     int userInt = userInput.getInt();
-                    frame2Text.setHint("Frame "+userInt+" - "+numFramesInSet);
-                    frame1Path = setFrames.get(userInt-1).getAbsoluteFile();
+                    frame2Text.setHint("Frame " + userInt + " - " + numFramesInSet);
+                    frame1Path = setFrames.get(userInt - 1).getAbsoluteFile();
                     frame1Num = userInt;
 
                     preview1.setImageBitmap(BitmapFactory.decodeFile(frame1Path.getAbsolutePath()));
@@ -186,7 +200,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     frame2IsReady = true;
                     userInput = checkFrameSelections(userInput);
                     int userInt = userInput.getInt();
-                    frame2Path = setFrames.get(userInt-1).getAbsoluteFile();
+                    frame2Path = setFrames.get(userInt - 1).getAbsoluteFile();
                     frame2Num = userInt;
 
                     preview2.setImageBitmap(BitmapFactory.decodeFile(frame2Path.getAbsolutePath()));
@@ -209,9 +223,9 @@ public class PivFrameSelectionPopup extends AlertDialog {
         //only check if they're the same; want to keep the possibility of reverse flow visualization
         if (frame1 == frame2) {
             if (inputInt == numFramesInSet) {
-                input.setInt(inputInt-1);
+                input.setInt(inputInt - 1);
             } else {
-                input.setInt(inputInt+1);
+                input.setInt(inputInt + 1);
             }
         }
         return input;
@@ -221,3 +235,4 @@ public class PivFrameSelectionPopup extends AlertDialog {
         return frame1IsReady && frame2IsReady && setIsReady;
     }
 }
+
