@@ -1,5 +1,6 @@
 package com.onrpiv.uploadmedia.Experiment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -10,7 +11,10 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.onrpiv.uploadmedia.Learn.PIVBasics3;
+import com.onrpiv.uploadmedia.Learn.PIVBasicsLayout;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
@@ -38,7 +42,6 @@ public class ImageActivity extends AppCompatActivity {
     private int fps;
     private PivResultData resultData;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +60,21 @@ public class ImageActivity extends AppCompatActivity {
         userName = userNameIntent.getStringExtra("UserName");
 
         OpenCVLoader.initDebug();
-    }
 
+        Context context = getApplicationContext();
+
+        new LightBulb(context, pickImageMultiple).setLightBulbOnClick("Image Pair",
+                "You need to select two images to compute movement of the particles from the first to the second image.",
+                getWindow());
+
+        new LightBulb(context, review).setLightBulbOnClick("Image Correlation",
+                "Review the images selected in \"select an image pair\" and consider whether the images will result in a useful PIV output.",
+                new PIVBasics3(), "Learn More", getWindow());
+
+        new LightBulb(context, compute).setLightBulbOnClick("Compute PIV",
+                "Compute PIV computes the velocity field between the first and second image from \"Select An Image Pair\" according to the parameters in \"Input PIV Parameters\". For more information see: ",
+                new PIVBasicsLayout(), "Learn More", getWindow());
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -104,7 +120,6 @@ public class ImageActivity extends AppCompatActivity {
         review.setBackgroundColor(Color.parseColor("#00CC00"));
     }
 
-
     private void reviewImageFromUrl() {
         String[] urls = new String[2];
         urls[0] = frame1File.getAbsolutePath();
@@ -148,7 +163,6 @@ public class ImageActivity extends AppCompatActivity {
 
         if (pivParameters.isReplace()) {
             displayIntent.putExtra(PivResultData.REPLACE2, (Serializable) resultData.getPivReplaceMissing2());
-
         }
 
         startActivity(displayIntent);

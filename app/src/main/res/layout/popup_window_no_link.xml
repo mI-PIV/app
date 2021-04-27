@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/popupWindowTitle"
+            android:layout_width="205dp"
+            android:layout_height="215dp"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="100dp"
+            android:background="#FFFFFF"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/border"
+            android:layout_width="205dp"
+            android:layout_height="215dp"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="100dp"
+            android:background="@drawable/group_text_border"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/popupWindowMessage"
+            android:layout_width="205dp"
+            android:layout_height="145dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="130dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" />
+
+        <Button
+            android:id="@+id/button_close"
+            android:layout_width="63dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="130dp"
+            android:layout_marginTop="280dp"
+            android:gravity="center_horizontal"
+            android:text="Close"
+            android:textSize="12sp" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,19 +1,30 @@
 package com.onrpiv.uploadmedia.Experiment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.text.LineBreaker;
+import android.os.Build;
 import android.os.Bundle;
+
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.LightBulb;
 
 /**
  * author: sarbajit mukherjee
@@ -24,6 +35,7 @@ public class ViewPagerActivity extends AppCompatActivity {
     Button startAnimation;
     String [] urls;
     AnimationDrawable animation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +44,12 @@ public class ViewPagerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         urls = intent.getStringArrayExtra("string-array-urls");
+
+        Context context = getApplicationContext();
+
+        new LightBulb(context, startAnimation).setLightBulbOnClick("Start Animation",
+                "View the animation and consider if you can tell where the particles move between the first and second frame. If you can't correlate the images with your eyes, the PIV algorithm is less likely to be able to do so.",
+                getWindow());
     }
 
     @Override
