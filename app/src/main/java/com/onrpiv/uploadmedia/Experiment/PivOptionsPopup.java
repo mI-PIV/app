@@ -77,20 +77,39 @@ public class PivOptionsPopup extends AlertDialog {
         advancedCheckbox = findViewById(R.id.advancedCheckbox);
         advancedCheckbox.setChecked(false);
 
+        // lightbulbs
+        final String linkText = "Learn More";
+        new LightBulb(context, windowSizeText).setLightBulbOnClick("Window Size",
+                "Interrogation regions should contain at least five particles to result in a good correlation value.",
+                new PIVBasics3(), linkText, getWindow());
+        new LightBulb(context, overlapText).setLightBulbOnClick("Overlap",
+                "Normally the overlap is set at 50% of the window size.",
+                new PIVBasics5(), linkText, getWindow());
+        LightBulb dtLB = new LightBulb(context, dtText).setLightBulbOnClick("Time Interval",
+                "The time between images. If you selected sequential images, this is 1/framerate.",
+                getWindow());
+        LightBulb qMinLB = new LightBulb(context, qMinText).setLightBulbOnClick("Minimum Threshold",
+                "Set an initial Q value threshold of 1.3. Users can relax this standard by decreasing Q (minimum of one), or tighten this standard by increasing Q.",
+                new PIVBasics2(), linkText, getWindow());
+        LightBulb eTextLB = new LightBulb(context, EText).setLightBulbOnClick("Median",
+                "Set a median threshold value of two. Increasing the median threshold value will result in a less stringent comparison and decreasing the median parameter will result in a more stringent comparison.",
+                new PIVBasics4(), linkText, getWindow());
+        LightBulb radioGroupLB = new LightBulb(context, radioGroup).setLightBulbOnClick("Replace Missing Vectors",
+                "When would you choose yes vs no? \n\nYes: qualitative image analysis.\nNo: if you're using the vector data for further analysis.",
+                getWindow());
+
         // keep advanced views in list for easy iteration
         hiddenViewList = new ArrayList<View>(
                 Arrays.asList(
                         dtText, dt_text, e_text, radioGroup_text, radioGroup, qMinText, qMin_text,
-                        EText
+                        EText, dtLB, qMinLB, eTextLB, radioGroupLB
                 )
         );
 
         // keep all textviews in list for easy iteration
         allTextViewList = new ArrayList<TextView>(
                 Arrays.asList(
-                        windowSizeText, overlapText,
-                        dtText, EText,
-                        qMinText
+                        windowSizeText, overlapText, dtText, EText, qMinText
                 )
         );
 
@@ -104,32 +123,6 @@ public class PivOptionsPopup extends AlertDialog {
         EText.setText("2");
         radioGroup.check(R.id.yesRadio);
         savePIVDataButton.setEnabled(true);
-
-        final String linkText = "Learn More";
-
-        new LightBulb(context, windowSizeText).setLightBulbOnClick("Window Size",
-                "Interrogation regions should contain at least five particles to result in a good correlation value.",
-                new PIVBasics3(), linkText, getWindow());
-
-        new LightBulb(context, overlapText).setLightBulbOnClick("Overlap",
-                "Normally the overlap is set at 50% of the window size.",
-                new PIVBasics5(), linkText, getWindow());
-
-        new LightBulb(context, dtText).setLightBulbOnClick("Time Interval",
-                "The time between images. If you selected sequential images, this is 1/framerate.",
-                getWindow());
-
-        new LightBulb(context, qMinText).setLightBulbOnClick("Minimum Threshold",
-                "Set an initial Q value threshold of 1.3. Users can relax this standard by decreasing Q (minimum of one), or tighten this standard by increasing Q.",
-                new PIVBasics2(), linkText, getWindow());
-
-        new LightBulb(context, EText).setLightBulbOnClick("Median",
-                "Set a median threshold value of two. Increasing the median threshold value will result in a less stringent comparison and decreasing the median parameter will result in a more stringent comparison.",
-                new PIVBasics4(), linkText, getWindow());
-
-        new LightBulb(context, radioGroup).setLightBulbOnClick("Replace Missing Vectors",
-                "When would you choose yes vs no? \n\nYes: qualitative image analysis.\nNo: if you're using the vector data for further analysis.",
-                getWindow());
 
         // load our ids to keys translation dictionary
         loadIdToKey();
