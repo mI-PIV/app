@@ -125,7 +125,7 @@ public class PivOptionsPopup extends AlertDialog {
                 new PIVBasics5(), linkText, getWindow());
 
         dtText.setLightBulbOnClick("Time Interval",
-                "The time between images. If you selected sequential images, this is 1/framerate",
+                "The time between images. If you selected sequential images, this is 1/framerate.",
                 getWindow());
 
         qMinText.setLightBulbOnClick("Minimum Threshold",
