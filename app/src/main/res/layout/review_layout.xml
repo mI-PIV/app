@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:onClick="startAnimation"
-            android:background="@drawable/lightbulb_button"
+            android:background="@drawable/buttons"
             android:textColor="#FFFFFF"
             android:text="Start Animation" />
 
@@ -53,15 +53,6 @@
             android:background="@drawable/buttons"
             android:layout_below="@+id/startAnim"
             android:text="Stop Animation" />
-
-        <Button
-            android:id="@+id/lightbulbReviewLayout1"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_marginStart="350dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/lightbulb"
-            android:textColor="#FFFFFF" />
 
     </RelativeLayout>
 
