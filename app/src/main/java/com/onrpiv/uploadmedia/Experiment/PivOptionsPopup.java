@@ -43,7 +43,6 @@ public class PivOptionsPopup extends AlertDialog {
 
     public PivOptionsPopup(Context context) {
         super(context);
-
         parameters = new PivParameters();
         idToKey = new ArrayMap<>();
 
@@ -112,6 +111,12 @@ public class PivOptionsPopup extends AlertDialog {
 
     public void setSaveListener(View.OnClickListener saveListener) {
         savePIVDataButton.setOnClickListener(saveListener);
+    }
+
+    public void setFPSParameters(int fps, int frame1Num, int frame2Num) {
+        float dt = calculateTimeDelta(fps, frame1Num, frame2Num);
+        parameters.setDt(dt);
+        dtText.setText(String.valueOf(dt));
     }
 
     private void setListeners() {
@@ -214,5 +219,10 @@ public class PivOptionsPopup extends AlertDialog {
         idToKey.put(nMaxLowerText.getId(), PivParameters.NUM_MAX_LOWER_KEY);
         idToKey.put(EText.getId(), PivParameters.E_KEY);
         idToKey.put(qMinText.getId(), PivParameters.QMIN_KEY);
+    }
+
+    private float calculateTimeDelta(int fps, int frame1Num, int frame2Num) {
+        int deltaFrameNums = frame2Num - frame1Num;
+        return (float) deltaFrameNums/ (float) fps;
     }
 }

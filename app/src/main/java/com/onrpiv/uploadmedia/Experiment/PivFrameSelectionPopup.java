@@ -33,9 +33,11 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
     private final String userName;
 
-    private File frameSetPath;
+    public File frameSetPath;
     public File frame1Path;
     public File frame2Path;
+    public int frame1Num;
+    public int frame2Num;
 
     private final int numberOfSets;
     private List<File> setFrames = new ArrayList<>();
@@ -155,6 +157,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     int userInt = userInput.getInt();
                     frame2Text.setHint("Frame "+userInt+" - "+numFramesInSet);
                     frame1Path = setFrames.get(userInt-1).getAbsoluteFile();
+                    frame1Num = userInt;
 
                     preview1.setImageBitmap(BitmapFactory.decodeFile(frame1Path.getAbsolutePath()));
 
@@ -184,6 +187,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     userInput = checkFrameSelections(userInput);
                     int userInt = userInput.getInt();
                     frame2Path = setFrames.get(userInt-1).getAbsoluteFile();
+                    frame2Num = userInt;
 
                     preview2.setImageBitmap(BitmapFactory.decodeFile(frame2Path.getAbsolutePath()));
 

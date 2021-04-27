@@ -19,11 +19,9 @@ public class FrameExtractor {
     /**
      * Command for extracting images from video
      */
-    public static void generateFrames(Context context, String userName, String videoPath, String fps, Callable<Void> successCallback){
+    public static void generateFrames(Context context, String userName, String videoPath, String fps,
+                                      float videoStart, float videoEnd, Callable<Void> successCallback){
         String fileExtn = ".jpg";
-
-        double startMs= 0.0;
-        double endMs= 1000.0;
 
         String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
         String filePrefix = "EXTRACT_" + timeStamp + "_";
@@ -34,6 +32,13 @@ public class FrameExtractor {
         PersistedData.setTotalFrameDirectories(context, userName, totalFrameDirs);
 
         if (!framesNumDir.exists()) framesNumDir.mkdirs();
+
+        // persist fps for this frame dir
+        PersistedData.setFrameDirFPS(context, userName, totalFrameDirs, Integer.parseInt(fps));
+
+        // persist path for frame dir
+        PersistedData.setFrameDirPath(context, userName,
+                framesNumDir.getAbsolutePath(), totalFrameDirs);
 
         File jpegFile = new File(framesNumDir, filePrefix + "%03d" + fileExtn);
 
@@ -48,7 +53,7 @@ public class FrameExtractor {
         -t  total duration or when to stop processing.
             The value is a time duration. See more https://ffmpeg.org/ffmpeg-utils.html#Time-duration.
          */
-        String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", fps, "-ss", "" + startMs / 1000, "-t", "" + (endMs - startMs) / 1000, jpegFile.getAbsolutePath()};
+        String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", fps, "-ss", "" + videoStart, "-t", "" + (videoEnd - videoStart), jpegFile.getAbsolutePath()};
         /*   Remove -r 1 if you want to extract all video frames as images from the specified time duration.*/
         execFFmpegBinary(complexCommand, context, successCallback);
     }
