@@ -57,6 +57,7 @@ public class LightBulb extends AppCompatImageButton {
 
         // lightbulb button layout
         setBulbLayout(lightBulbWidth, lightBulbHeight);
+
     }
 
     /**
@@ -82,7 +83,7 @@ public class LightBulb extends AppCompatImageButton {
         }
 
         if (Build.VERSION.SDK_INT >= 21) {
-            setElevation(dpToPixels(2));
+            setElevation(dpToPixels(50));
         }
         requestLayout();
     }
@@ -171,10 +172,14 @@ public class LightBulb extends AppCompatImageButton {
                     public void onClick(View v) {
                         popupWindow.dismiss();
                         activityWindow.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        baseParent.bringChildToFront(LightBulb.this);
+                        bringToFront();
                     }
                 });
 
                 popupWindow.showAtLocation(baseParent, Gravity.CENTER, 0, 0);
+                baseParent.bringChildToFront(LightBulb.this);
+                bringToFront();
             }
         });
     }
