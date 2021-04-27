@@ -33,6 +33,13 @@ public class FrameExtractor {
 
         if (!framesNumDir.exists()) framesNumDir.mkdirs();
 
+        // persist fps for this frame dir
+        PersistedData.setFrameDirFPS(context, userName, totalFrameDirs, Integer.parseInt(fps));
+
+        // persist path for frame dir
+        PersistedData.setFrameDirPath(context, userName,
+                framesNumDir.getAbsolutePath(), totalFrameDirs);
+
         File jpegFile = new File(framesNumDir, filePrefix + "%03d" + fileExtn);
 
         /* https://ffmpeg.org/ffmpeg.html
