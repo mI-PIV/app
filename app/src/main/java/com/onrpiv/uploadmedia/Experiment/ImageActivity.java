@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -138,10 +137,8 @@ public class ImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pivParameters = parameterPopup.parameters;
-
                 compute.setEnabled(true);
                 parameters.setBackgroundColor(Color.parseColor("#00CC00"));
-
                 parameterPopup.dismiss();
             }
         };
@@ -176,8 +173,7 @@ public class ImageActivity extends AppCompatActivity {
     // Process Images
     public void processFile(View view) {
         PivRunner pivRunner = new PivRunner(ImageActivity.this, userName, pivParameters,
-                frame1File, frame2File, (RelativeLayout) findViewById(R.id.imageActivityRelativeLayout),
-                getWindow());
+                frame1File, frame2File);
         resultData = pivRunner.Run();
         display.setEnabled(true);
         compute.setBackgroundColor(Color.parseColor("#00CC00"));
