@@ -137,10 +137,8 @@ public class ImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pivParameters = parameterPopup.parameters;
-
                 compute.setEnabled(true);
                 parameters.setBackgroundColor(Color.parseColor("#00CC00"));
-
                 parameterPopup.dismiss();
             }
         };
@@ -174,7 +172,8 @@ public class ImageActivity extends AppCompatActivity {
 
     // Process Images
     public void processFile(View view) {
-        PivRunner pivRunner = new PivRunner(ImageActivity.this, userName, pivParameters, frame1File, frame2File);
+        PivRunner pivRunner = new PivRunner(ImageActivity.this, userName, pivParameters,
+                frame1File, frame2File);
         resultData = pivRunner.Run();
         display.setEnabled(true);
         compute.setBackgroundColor(Color.parseColor("#00CC00"));

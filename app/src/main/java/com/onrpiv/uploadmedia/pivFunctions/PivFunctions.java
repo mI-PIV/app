@@ -218,10 +218,12 @@ public class PivFunctions {
                 int c = (int) mmr.maxLoc.x;
                 int r = (int) mmr.maxLoc.y;
 
-//                Log.d("WINDOWS: ", "i: "+i+" j:"+j);
                 try {
-                    eps_r[i][j] = (Math.log(corr.get(r - 1, c)[0]) - Math.log(corr.get(r + 1, c)[0])) / (2 * (Math.log(corr.get(r - 1, c)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r + 1, c)[0])));
-                    eps_c[i][j] = (Math.log(corr.get(r, c - 1)[0]) - Math.log(corr.get(r, c + 1)[0])) / (2 * (Math.log(corr.get(r, c - 1)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r, c + 1)[0])));
+                    double epsr = (Math.log(corr.get(r - 1, c)[0]) - Math.log(corr.get(r + 1, c)[0])) / (2 * (Math.log(corr.get(r - 1, c)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r + 1, c)[0])));
+                    double epsc = (Math.log(corr.get(r, c - 1)[0]) - Math.log(corr.get(r, c + 1)[0])) / (2 * (Math.log(corr.get(r, c - 1)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r, c + 1)[0])));
+
+                    eps_r[i][j] = Double.isNaN(epsr)? 0.0 : epsr;
+                    eps_c[i][j] = Double.isNaN(epsc)? 0.0 : epsc;
 
                     dr1[i][j] = (windowSize - 1) - (r + eps_r[i][j]);
                     dc1[i][j] = (windowSize - 1) - (c + eps_c[i][j]);

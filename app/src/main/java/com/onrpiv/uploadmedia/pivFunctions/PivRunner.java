@@ -12,6 +12,7 @@ import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import java.io.File;
 import java.util.Map;
 
+
 public class PivRunner {
     private final PivParameters parameters;
     private final Context context;
@@ -20,7 +21,8 @@ public class PivRunner {
     private final String userName;
 
 
-    public PivRunner(Context context, String userName, PivParameters parameters, File frame1File, File frame2File) {
+    public PivRunner(Context context, String userName, PivParameters parameters, File frame1File,
+                     File frame2File) {
         this.parameters = parameters;
         this.frame1File = frame1File;
         this.frame2File = frame2File;
@@ -56,6 +58,7 @@ public class PivRunner {
         pDialog.setMessage(context.getString(R.string.msg_loading));
         pDialog.setCancelable(false);
         if (!pDialog.isShowing()) pDialog.show();
+
 
         //---------------------------------Using Threads--------------------------------------//
         Thread thread = new Thread() {
@@ -145,9 +148,10 @@ public class PivRunner {
                 if (pDialog.isShowing()) pDialog.dismiss();
             }
         };
+        //-------------------------------Thread End-------------------------------------------//
 
         thread.start();
-        //-------------------------------Thread End-------------------------------------------//
+
         return resultData;
     }
 }
