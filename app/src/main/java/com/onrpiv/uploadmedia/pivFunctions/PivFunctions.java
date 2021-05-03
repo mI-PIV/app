@@ -898,10 +898,4 @@ public class PivFunctions {
 
         return vortMap;
     }
-
-    private static float[] matToArray(Mat mat) {
-        float[] arr = new float[(int)(mat.total()*mat.channels())];
-        mat.get(0,0, arr);
-        return arr;
-    }
 }
