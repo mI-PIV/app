@@ -70,33 +70,6 @@
             android:layout_below="@+id/compute"
             android:text="View results" />
 
-<!--        <Button-->
-<!--            android:id="@+id/lightbulbImageLayout1"-->
-<!--            android:layout_width="45dp"-->
-<!--            android:layout_height="45dp"-->
-<!--            android:layout_marginStart="350dp"-->
-<!--            android:layout_marginTop="50dp"-->
-<!--            android:background="@drawable/lightbulb"-->
-<!--            android:textColor="#FFFFFF" />-->
-
-<!--        <Button-->
-<!--            android:id="@+id/lightbulbImagelayout2"-->
-<!--            android:layout_width="45dp"-->
-<!--            android:layout_height="45dp"-->
-<!--            android:layout_marginStart="350dp"-->
-<!--            android:layout_marginTop="108dp"-->
-<!--            android:background="@drawable/lightbulb"-->
-<!--            android:textColor="#FFFFFF" />-->
-
-<!--        <Button-->
-<!--            android:id="@+id/lightbulbImageLayout3"-->
-<!--            android:layout_width="45dp"-->
-<!--            android:layout_height="45dp"-->
-<!--            android:layout_marginStart="350dp"-->
-<!--            android:layout_marginTop="224dp"-->
-<!--            android:background="@drawable/lightbulb"-->
-<!--            android:textColor="#FFFFFF" />-->
-
     </RelativeLayout>
 
 </RelativeLayout>

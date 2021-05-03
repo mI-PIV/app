@@ -277,7 +277,6 @@ public class VideoActivity extends AppCompatActivity{
 
         videoPath = PathUtil.getRealPath(VideoActivity.this, video);
         initializePlayer(video);
-        setupRangeSlider();
         recordVideo.setBackgroundColor(Color.parseColor("#00CC00"));
         pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
     }

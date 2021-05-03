@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -174,7 +175,9 @@ public class ImageActivity extends AppCompatActivity {
 
     // Process Images
     public void processFile(View view) {
-        PivRunner pivRunner = new PivRunner(ImageActivity.this, userName, pivParameters, frame1File, frame2File);
+        PivRunner pivRunner = new PivRunner(ImageActivity.this, userName, pivParameters,
+                frame1File, frame2File, (RelativeLayout) findViewById(R.id.imageActivityRelativeLayout),
+                getWindow());
         resultData = pivRunner.Run();
         display.setEnabled(true);
         compute.setBackgroundColor(Color.parseColor("#00CC00"));

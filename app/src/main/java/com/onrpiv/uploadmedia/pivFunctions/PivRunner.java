@@ -1,9 +1,12 @@
 package com.onrpiv.uploadmedia.pivFunctions;
 
-import android.app.ProgressDialog;
 import android.content.Context;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
-import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraCalibration;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
@@ -12,20 +15,26 @@ import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import java.io.File;
 import java.util.Map;
 
+
 public class PivRunner {
     private final PivParameters parameters;
     private final Context context;
     private final File frame1File;
     private final File frame2File;
     private final String userName;
+    private final RelativeLayout imageActivityLayout;
+    private final Window imageActivityWindow;
 
 
-    public PivRunner(Context context, String userName, PivParameters parameters, File frame1File, File frame2File) {
+    public PivRunner(Context context, String userName, PivParameters parameters, File frame1File,
+                     File frame2File, RelativeLayout imageActivityLayout, Window imageActivityWindow) {
         this.parameters = parameters;
         this.frame1File = frame1File;
         this.frame2File = frame2File;
         this.context = context;
         this.userName = userName;
+        this.imageActivityLayout = imageActivityLayout;
+        this.imageActivityWindow = imageActivityWindow;
     }
 
     public PivResultData Run() {
@@ -52,16 +61,20 @@ public class PivRunner {
         resultData.setRows(pivFunctions.getRows());
 
         // progress dialog
-        final ProgressDialog pDialog = new ProgressDialog(context);
-        pDialog.setMessage(context.getString(R.string.msg_loading));
-        pDialog.setCancelable(false);
-        if (!pDialog.isShowing()) pDialog.show();
+//        final ProgressDialog pDialog = new ProgressDialog(context);
+//        pDialog.setMessage(context.getString(R.string.msg_loading));
+//        pDialog.setCancelable(false);
+//        if (!pDialog.isShowing()) pDialog.show();
+
+
+        final ProgressBar pBar = buildProgressBar();
+        pBar.animate();
 
         //---------------------------------Using Threads--------------------------------------//
         Thread thread = new Thread() {
             @Override
             public void run() {
-                pDialog.setMessage("Calculating PIV");
+//                pDialog.setMessage("Calculating PIV");
                 Map<String, double[][]> pivCorrelation = pivFunctions.extendedSearchAreaPiv_update();
 
                 Map<String, double[]> interrCenters = pivFunctions.getCoordinates();
@@ -72,27 +85,27 @@ public class PivRunner {
                 // Save first frame for output base image
                 pivFunctions.saveBaseImage("Base");
 
-                pDialog.setMessage("Calculating Pixels per Metric");
+//                pDialog.setMessage("Calculating Pixels per Metric");
                 CameraCalibration calibration = new CameraCalibration(context);
                 double pixelToCmRatio = calibration.calibrate(frame1File.getAbsolutePath(), frame2File.getAbsolutePath());
                 if (calibration.foundTriangle) {
                     pivFunctions.saveVectorCentimeters(pivCorrelation, interrCenters, pixelToCmRatio, "CENTIMETERS");
                 }
 
-                pDialog.setMessage("Calculating vorticity");
+//                pDialog.setMessage("Calculating vorticity");
                 String vortStep = "Vorticity";
                 double[][] vorticityValues = PivFunctions.calculateVorticityMap(pivCorrelation,
                         (int) (interrCenters.get("x")[1] - interrCenters.get("x")[0]));
                 pivFunctions.saveVortMapFile(vorticityValues, vortStep);
                 pivFunctions.saveColorMapImage(vorticityValues, vortStep);
 
-                pDialog.setMessage("Saving single pass data");
+//                pDialog.setMessage("Saving single pass data");
                 String step = "SinglePass";
                 pivFunctions.saveVectors(pivCorrelation, interrCenters, step);
                 pivFunctions.createVectorField(pivCorrelation, interrCenters, step, arrowDrawOptions);
                 Map<String, double[][]> pivCorrelationProcessed = pivFunctions.vectorPostProcessing(pivCorrelation);
 
-                pDialog.setMessage("Saving post processing data");
+//                pDialog.setMessage("Saving post processing data");
                 String stepPro = "VectorPostProcess";
                 pivFunctions.saveVectors(pivCorrelationProcessed, interrCenters, stepPro);
                 pivFunctions.createVectorField(pivCorrelationProcessed, interrCenters, stepPro, arrowDrawOptions);
@@ -102,7 +115,7 @@ public class PivRunner {
                 Map<String, double[][]> pivReplaceMissing;
 
                 if (parameters.isReplace()) {
-                    pDialog.setMessage("Calculating multi-pass PIV");
+//                    pDialog.setMessage("Calculating multi-pass PIV");
                     pivReplaceMissing = pivFunctions.replaceMissingVectors(pivCorrelationProcessed);
                     pivCorrelationMulti = pivFunctions.calculateMultipass(pivReplaceMissing, interrCenters);
 
@@ -111,7 +124,7 @@ public class PivRunner {
                     pivFunctions.createVectorField(pivCorrelationMulti, interrCenters, stepMulti, arrowDrawOptions);
                     pivReplaceMissing2 = pivFunctions.replaceMissingVectors(pivCorrelationMulti);
 
-                    pDialog.setMessage("Calculating replaced vectors");
+//                    pDialog.setMessage("Calculating replaced vectors");
                     String stepReplace2 = "Replaced2";
                     pivFunctions.saveVectors(pivReplaceMissing2, interrCenters, stepReplace2);
                     pivFunctions.createVectorField(pivReplaceMissing2, interrCenters, stepReplace2, arrowDrawOptions);
@@ -123,7 +136,7 @@ public class PivRunner {
 
                 } else {
 
-                    pDialog.setMessage("Calculating multi-pass PIV");
+//                    pDialog.setMessage("Calculating multi-pass PIV");
                     pivCorrelationMulti = pivFunctions.calculateMultipass(pivCorrelationProcessed,
                             interrCenters);
 
@@ -142,12 +155,36 @@ public class PivRunner {
                 resultData.setPivCorrelationProcessed(pivCorrelationProcessed);
 
 
-                if (pDialog.isShowing()) pDialog.dismiss();
+//                if (pDialog.isShowing()) pDialog.dismiss();
+//                clearProgressBar();
+                pBar.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageActivityWindow.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        pBar.setVisibility(View.GONE);
+                    }
+                });
             }
         };
+        //-------------------------------Thread End-------------------------------------------//
 
         thread.start();
-        //-------------------------------Thread End-------------------------------------------//
+
         return resultData;
+    }
+
+    private ProgressBar buildProgressBar() {
+        ProgressBar pBar = new ProgressBar(context);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100, 100);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        imageActivityLayout.addView(pBar, params);
+        imageActivityWindow.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        return pBar;
+    }
+
+    private void clearProgressBar(ProgressBar pBar) {
+        imageActivityWindow.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        pBar.setVisibility(View.GONE);
     }
 }
