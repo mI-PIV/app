@@ -22,7 +22,7 @@ import com.onrpiv.uploadmedia.R;
  * Created by sarbajit mukherjee on 09/07/2020.
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button image, video, changeUser;
+    private Button image, video, userSettings;
     // Below edittext and button are all exist in the popup dialog view.
     private View popupInputDialogView = null;
     // Get Image1.
@@ -41,9 +41,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         image = (Button) findViewById(R.id.image);
         video = (Button) findViewById(R.id.video);
-        changeUser = (Button) findViewById(R.id.changeUser);
+        userSettings = (Button) findViewById(R.id.userSettings);
 
-        alertDialogFunction();
+        getUserDialog();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             image.setEnabled(false);
@@ -55,21 +55,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         image.setOnClickListener(this);
         video.setOnClickListener(this);
-        changeUser.setOnClickListener(this);
+        userSettings.setOnClickListener(this);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 0) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 image.setEnabled(true);
                 video.setEnabled(true);
             }
         }
     }
 
-    private void alertDialogFunction(){
+    private void getUserDialog(){
         // Create a AlertDialog Builder.
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
         // Set title, icon, can not cancel properties (the box still remains on the screen if clicked outside).
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startActivity(intent1);
                 } else {
                     Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
-                    alertDialogFunction();
+                    getUserDialog();
                 }
                 break;
             case R.id.video:
@@ -126,11 +126,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startActivity(intent2);
                 } else {
                     Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
-                    alertDialogFunction();
+                    getUserDialog();
                 }
                 break;
-            case R.id.changeUser:
-                alertDialogFunction();
+            case R.id.userSettings:
+                getUserDialog();
         }
 
     }
