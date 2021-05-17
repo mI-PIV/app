@@ -2,13 +2,21 @@ package com.onrpiv.uploadmedia.Experiment;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +30,8 @@ import com.onrpiv.uploadmedia.R;
  * Created by sarbajit mukherjee on 09/07/2020.
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button image, video, userSettings;
+    private Button image;
+    private Button video;
     // Below edittext and button are all exist in the popup dialog view.
     private View popupInputDialogView = null;
     // Get Image1.
@@ -41,9 +50,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         image = (Button) findViewById(R.id.image);
         video = (Button) findViewById(R.id.video);
-        userSettings = (Button) findViewById(R.id.userSettings);
+        Button userSettings = (Button) findViewById(R.id.userSettings);
 
-        getUserDialog();
+        userNameDialog();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             image.setEnabled(false);
@@ -69,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void getUserDialog(){
+    private void userNameDialog(){
         // Create a AlertDialog Builder.
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
         // Set title, icon, can not cancel properties (the box still remains on the screen if clicked outside).
@@ -116,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startActivity(intent1);
                 } else {
                     Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
-                    getUserDialog();
+                    userNameDialog();
                 }
                 break;
             case R.id.video:
@@ -126,13 +135,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startActivity(intent2);
                 } else {
                     Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
-                    getUserDialog();
+                    userNameDialog();
                 }
                 break;
             case R.id.userSettings:
-                getUserDialog();
+                userSettingsPopup(MainActivity.this, getWindow());
         }
-
     }
 
     /* Initialize popup dialog view and ui controls in the popup dialog. */
@@ -148,5 +156,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userNameEditText = (EditText) popupInputDialogView.findViewById(R.id.userName);
         saveUserDataButton = popupInputDialogView.findViewById(R.id.button_save_user);
         cancelUserDataButton = popupInputDialogView.findViewById(R.id.button_cancel_user);
+    }
+
+    private void userSettingsPopup(Context context, final Window activityWindow)
+    {
+        // inflate view
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View userSettingsView = inflater.inflate(R.layout.user_settings, null);
+
+        // buttons
+        ImageButton exitBtn = userSettingsView.findViewById(R.id.userSettingsCloseBtn);
+        Button changeUserBtn = userSettingsView.findViewById(R.id.changeUserBtn);
+        Button deleteDataBtn = userSettingsView.findViewById(R.id.deleteDataBtn);
+
+        // listeners
+        changeUserBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userNameDialog();
+            }
+        });
+
+        deleteDataBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO loop through user data and delete all local files
+                // TODO check that userName is not null/empty
+//            PersistedData.clearUserPersistedData(context, userName);
+            }
+        });
+
+        // popup
+        activityWindow.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        final PopupWindow userSettingsPopup = new PopupWindow(userSettingsView,
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            userSettingsPopup.setElevation(5f);
+        }
+        exitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userSettingsPopup.dismiss();
+                activityWindow.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            }
+        });
+
+        // TODO test that getDecorView() works
+        userSettingsPopup.showAtLocation(activityWindow.getDecorView(), Gravity.CENTER, 0, 0);
     }
 }

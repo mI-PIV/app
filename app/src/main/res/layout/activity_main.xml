@@ -30,7 +30,7 @@
         android:layout_below="@+id/image"
         android:backgroundTint="#243EDF"
         android:textColor="#FFFFFF"
-        android:text="Change User" />
+        android:text="User Settings" />
 
     <ImageView
         android:id="@+id/unicorn"
