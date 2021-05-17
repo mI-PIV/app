@@ -204,7 +204,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        // TODO test that getDecorView() works
         userSettingsPopup.showAtLocation(activityWindow.getDecorView(), Gravity.CENTER, 0, 0);
     }
 }
