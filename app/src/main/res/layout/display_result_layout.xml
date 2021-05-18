@@ -192,8 +192,8 @@
                     android:layout_width="239dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:max="10"
-                    android:min="-10"
+                    android:max="30"
+                    android:min="0"
                     android:progress="1" />
 
             </LinearLayout>
