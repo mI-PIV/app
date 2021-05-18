@@ -46,7 +46,6 @@ public class ImageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_layout);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // init buttons
         pickImageMultiple = (Button) findViewById(R.id.pickImageMultiple);
@@ -74,16 +73,6 @@ public class ImageActivity extends AppCompatActivity {
         new LightBulb(context, compute).setLightBulbOnClick("Compute PIV",
                 "Compute PIV computes the velocity field between the first and second image from \"Select An Image Pair\" according to the parameters in \"Input PIV Parameters\". For more information see: ",
                 new PIVBasicsLayout(), "Learn More", getWindow());
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public void onClick_MultipleImages(View view) {

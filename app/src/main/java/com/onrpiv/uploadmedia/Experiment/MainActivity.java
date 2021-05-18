@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         image = (Button) findViewById(R.id.image);
         video = (Button) findViewById(R.id.video);
@@ -148,5 +150,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userNameEditText = (EditText) popupInputDialogView.findViewById(R.id.userName);
         saveUserDataButton = popupInputDialogView.findViewById(R.id.button_save_user);
         cancelUserDataButton = popupInputDialogView.findViewById(R.id.button_cancel_user);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
