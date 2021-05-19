@@ -1,4 +1,4 @@
-package com.onrpiv.uploadmedia.Utilities;
+package com.onrpiv.uploadmedia.Utilities.UserInput;
 
 
 public class BoolIntStructure {

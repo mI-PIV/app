@@ -19,9 +19,9 @@ import com.onrpiv.uploadmedia.Learn.PIVBasics3;
 import com.onrpiv.uploadmedia.Learn.PIVBasics4;
 import com.onrpiv.uploadmedia.Learn.PIVBasics5;
 import com.onrpiv.uploadmedia.R;
-import com.onrpiv.uploadmedia.Utilities.BoolIntStructure;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
-import com.onrpiv.uploadmedia.Utilities.UserInputUtils;
+import com.onrpiv.uploadmedia.Utilities.UserInput.BoolIntStructure;
+import com.onrpiv.uploadmedia.Utilities.UserInput.UserInputUtils;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 
 import java.util.ArrayList;
@@ -118,9 +118,9 @@ public class PivOptionsPopup extends AlertDialog {
         setEditTextPIV.setTextSize(20);
         windowSizeText.setText("64");
         overlapText.setText("32");
-        dtText.setText("1");
-        qMinText.setText("1");
-        EText.setText("2");
+        dtText.setText("1.0");
+        qMinText.setText("1.0");
+        EText.setText("2.0");
         radioGroup.check(R.id.yesRadio);
         savePIVDataButton.setEnabled(true);
 
@@ -182,7 +182,7 @@ public class PivOptionsPopup extends AlertDialog {
                                                  int checkedId)
                     {
                         boolean replaced = checkedId == R.id.yesRadio;
-                        parameters.parameterDictionary.put(PivParameters.REPLACE_KEY, String.valueOf(replaced));
+                        parameters.setReplace(replaced);
                         savePIVDataButton.setEnabled(checkTexts());
                     }
                 });

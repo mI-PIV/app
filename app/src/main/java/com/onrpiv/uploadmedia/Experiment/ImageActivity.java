@@ -125,7 +125,7 @@ public class ImageActivity extends AppCompatActivity {
         View.OnClickListener saveListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pivParameters = parameterPopup.parameters;
+                pivParameters = new PivParameters(parameterPopup.parameters.parameterDictionary);
                 compute.setEnabled(true);
                 parameters.setBackgroundColor(Color.parseColor("#00CC00"));
                 parameterPopup.dismiss();

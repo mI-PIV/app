@@ -1,4 +1,4 @@
-package com.onrpiv.uploadmedia.Utilities;
+package com.onrpiv.uploadmedia.Utilities.UserInput;
 
 public class UserInputUtils {
 
@@ -14,6 +14,20 @@ public class UserInputUtils {
             integer = 0;
         }
         return new BoolIntStructure(success, integer);
+    }
+
+    public static BoolDoubleStruct checkUserInputDouble(String userInput)
+    {
+        boolean success = false;
+        double d;
+        try {
+            d = Double.parseDouble(userInput);
+            success = true;
+        }
+        catch (NumberFormatException e) {
+            d = 0d;
+        }
+        return new BoolDoubleStruct(success, d);
     }
 
     public static BoolIntStructure checkUserInputIntClamp(String userInput, int min, int max) {
