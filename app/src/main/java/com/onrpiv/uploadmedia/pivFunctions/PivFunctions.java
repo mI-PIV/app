@@ -667,7 +667,10 @@ public class PivFunctions {
                 r_r = Math.abs(pivCorrelation.get("v")[k][l] - sm_r) / sigma_s_r;
                 r_c = Math.abs(pivCorrelation.get("u")[k][l] - sm_c) / sigma_s_c;
 
-                if (pivCorrelation.get("magnitude")[k][l] * dt < nMaxUpper && pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
+                // DONT ERASE COMMENTED LINE BELOW IN CASE WE NEED TO USE A SIMILAR LOGIC LATER
+                //if (pivCorrelation.get("magnitude")[k][l] * dt < nMaxUpper && pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
+                if (pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
+
                     dr1_p[k][l] = pivCorrelation.get("v")[k][l];
                     dc1_p[k][l] = pivCorrelation.get("u")[k][l];
                     mag_p[k][l] = pivCorrelation.get("magnitude")[k][l];

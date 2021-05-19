@@ -41,7 +41,6 @@ public class PivRunner {
         final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(newExpTotal);
         final String txtFileSaveName = PathUtil.getExperimentTextFileSuffix(newExpTotal);
 
-
         final PivFunctions pivFunctions = new PivFunctions(frame1File.getAbsolutePath(),
                 frame2File.getAbsolutePath(),
                 "peak2peak",
@@ -70,7 +69,6 @@ public class PivRunner {
                 Map<String, double[]> interrCenters = pivFunctions.getCoordinates();
 
                 ArrowDrawOptions arrowDrawOptions = new ArrowDrawOptions();
-                arrowDrawOptions.scale = 5d;
 
                 // Save first frame for output base image
                 pivFunctions.saveBaseImage("Base");
@@ -125,7 +123,6 @@ public class PivRunner {
                     resultData.setPivReplaceMissing2(pivReplaceMissing2);
 
                 } else {
-
                     pDialog.setMessage("Calculating multi-pass PIV");
                     pivCorrelationMulti = pivFunctions.calculateMultipass(pivCorrelationProcessed,
                             interrCenters);

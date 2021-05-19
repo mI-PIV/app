@@ -4,7 +4,7 @@ import android.util.ArrayMap;
 
 public class PivParameters {
     private int windowSize = 64, overlap = 32;
-    private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin, dt, E = 0.0;
+    private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.0, dt = 1.0, E = 2.0;
     private boolean replace = true;
 
     // Use the map/dictionary for quickly moving values between Activities; if needed
