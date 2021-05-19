@@ -251,7 +251,6 @@ public class PivFunctions {
 
         double[] x = new double[fieldShape.get("nCols")];
         double[] y = new double[fieldShape.get("nRows")];
-        double[][] yx;
 
         for (int i = 0; i < fieldShape.get("nCols"); i++) {
             x[i] = i * (windowSize - overlap) + (windowSize) / 2.0;
@@ -731,20 +730,20 @@ public class PivFunctions {
 
                     //Interrogation window for Image 1
                     int IA1_x_s = (int) Math.round((IA1_x_int - (windowSize / 2) + 1));
-                    int IA1_x_e = Math.round(IA1_x_s + windowSize - 1);
+//                    int IA1_x_e = Math.round(IA1_x_s + windowSize - 1);
 
                     int IA1_y_s = (int) Math.round((IA1_y_int - (windowSize / 2) + 1));
-                    int IA1_y_e = Math.round(IA1_y_s + windowSize - 1);
+//                    int IA1_y_e = Math.round(IA1_y_s + windowSize - 1);
 
                     Rect rectWin_a = new Rect((IA1_x_s - 1), (IA1_y_s - 1), windowSize, windowSize);
                     Mat IA1_new_t = new Mat(grayFrame1, rectWin_a);
 
                     //Interrogation window for Image 2
                     int IA2_x_s = (int) Math.round((IA2_x_int - (windowSize / 2) + 1));
-                    int IA2_x_e = Math.round(IA2_x_s + windowSize - 1);
+//                    int IA2_x_e = Math.round(IA2_x_s + windowSize - 1);
 
                     int IA2_y_s = (int) Math.round((IA2_y_int - (windowSize / 2) + 1));
-                    int IA2_y_e = Math.round(IA2_y_s + windowSize - 1);
+//                    int IA2_y_e = Math.round(IA2_y_s + windowSize - 1);
 
                     Rect rectWin_b = new Rect((IA2_x_s - 1), (IA2_y_s - 1), windowSize, windowSize);
                     Mat IA2_new_t = new Mat(grayFrame2, rectWin_b);
@@ -762,8 +761,11 @@ public class PivFunctions {
                     int r = (int) mmr.maxLoc.y;
 
                     try {
-                        eps_r_new[ii][jj] = (Math.log(corr.get(r - 1, c)[0]) - Math.log(corr.get(r + 1, c)[0])) / (2 * (Math.log(corr.get(r - 1, c)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r + 1, c)[0])));
-                        eps_c_new[ii][jj] = (Math.log(corr.get(r, c - 1)[0]) - Math.log(corr.get(r, c + 1)[0])) / (2 * (Math.log(corr.get(r, c - 1)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r, c + 1)[0])));
+                        double epsr_new = (Math.log(corr.get(r - 1, c)[0]) - Math.log(corr.get(r + 1, c)[0])) / (2 * (Math.log(corr.get(r - 1, c)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r + 1, c)[0])));
+                        double epsc_new = (Math.log(corr.get(r, c - 1)[0]) - Math.log(corr.get(r, c + 1)[0])) / (2 * (Math.log(corr.get(r, c - 1)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r, c + 1)[0])));
+
+                        eps_r_new[ii][jj] = Double.isNaN(epsr_new)? 0.0 : epsr_new;
+                        eps_c_new[ii][jj] = Double.isNaN(epsc_new)? 0.0 : epsc_new;
 
                         dr_new[ii][jj] = (windowSize - 1) - (r + eps_r_new[ii][jj]);
                         dc_new[ii][jj] = (windowSize - 1) - (c + eps_c_new[ii][jj]);
@@ -777,7 +779,6 @@ public class PivFunctions {
 
                     Map<String, Double> sig2NoiseRatio = sig2Noise_update(corr);
                     sig2noise[ii][jj] = sig2NoiseRatio.get("sig2Noise");
-                    int x = 2;
                 }
                 mag[ii][jj] = Math.sqrt(Math.pow(dr2[ii][jj], 2) + Math.pow(dc2[ii][jj], 2));
             }
