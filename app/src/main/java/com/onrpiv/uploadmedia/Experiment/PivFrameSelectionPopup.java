@@ -27,7 +27,7 @@ import java.util.List;
 
 public class PivFrameSelectionPopup extends AlertDialog {
 
-    private final EditText setNumText;
+    private final EditText imgSetNumText;
     private final EditText frame1Text;
     private final EditText frame2Text;
     private final Button saveButton;
@@ -64,7 +64,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
         //init buttons
         TextView descriptionText = (TextView) findViewById(R.id.frame_selection_description);
-        setNumText = (EditText) findViewById(R.id.imgSet);
+        imgSetNumText = (EditText) findViewById(R.id.imgSet);
         frame1Text = (EditText) findViewById(R.id.img1);
         frame2Text = (EditText) findViewById(R.id.img2);
 
@@ -90,15 +90,15 @@ public class PivFrameSelectionPopup extends AlertDialog {
         descriptionText.setText("User '" + userName + "' has " + numberOfSets + " image sets. The highest number set corresponds to the most recent generated frames.");
         descriptionText.setTextSize(15);
         if (numberOfSets < 1) {
-            setNumText.setHint("No Frame Sets Found!");
+            imgSetNumText.setHint("No Frame Sets Found");
         } else if (numberOfSets == 1) {
-            setNumText.setHint("Set 1");
+            imgSetNumText.setHint("Set 1");
         } else {
-            setNumText.setHint("Set 1 - " + numberOfSets);
+            imgSetNumText.setHint("Set 1 - " + numberOfSets);
         }
 
         // lightbulbs
-        new LightBulb(context, setNumText).setLightBulbOnClick("Image Set",
+        new LightBulb(context, imgSetNumText).setLightBulbOnClick("Image Set",
                 "The image set numbers are in order (time-wise) for each users' frame generation",
                 getWindow());
         new LightBulb(context, frame1Text).setLightBulbOnClick("Images",
@@ -114,7 +114,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
     }
 
     private void setTextListeners() {
-        setNumText.addTextChangedListener(new TextWatcher() {
+        imgSetNumText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 setIsReady = false;
@@ -140,6 +140,9 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     frame1Text.setHint("Frame 1 - " + numFramesInSet);
                     frame2Text.setText("", TextView.BufferType.EDITABLE);
                     frame2Text.setHint("Frame 2 - " + numFramesInSet);
+
+                    preview1.setImageResource(android.R.color.transparent);
+                    preview2.setImageResource(android.R.color.transparent);
                 }
             }
         });
