@@ -24,19 +24,19 @@
         android:text="select images for PIV"/>
 
     <Button
-        android:id="@+id/changeUser"
+        android:id="@+id/userSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/image"
         android:backgroundTint="#243EDF"
         android:textColor="#FFFFFF"
-        android:text="Change User" />
+        android:text="User Settings" />
 
     <ImageView
         android:id="@+id/unicorn"
         android:layout_width="wrap_content"
         android:layout_height="476dp"
-        android:layout_below="@+id/changeUser"
+        android:layout_below="@+id/userSettings"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="4dp"
@@ -49,7 +49,7 @@
         android:id="@+id/bottomLabel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/changeUser"
+        android:layout_below="@+id/userSettings"
         android:layout_marginTop="308dp"
         android:scaleType="centerInside"
         android:src="@drawable/usuonr" />

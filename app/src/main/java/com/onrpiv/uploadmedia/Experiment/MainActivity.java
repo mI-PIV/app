@@ -2,14 +2,24 @@ package com.onrpiv.uploadmedia.Experiment;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,13 +27,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.PathUtil;
+import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
 /**
  * author: sarbajit mukherjee
  * Created by sarbajit mukherjee on 09/07/2020.
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button image, video, changeUser;
+    private Button image;
+    private Button video;
     // Below edittext and button are all exist in the popup dialog view.
     private View popupInputDialogView = null;
     // Get Image1.
@@ -43,9 +56,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         image = (Button) findViewById(R.id.image);
         video = (Button) findViewById(R.id.video);
-        changeUser = (Button) findViewById(R.id.changeUser);
+        Button userSettings = (Button) findViewById(R.id.userSettings);
 
-        alertDialogFunction();
+        userNameDialog();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             image.setEnabled(false);
@@ -57,21 +70,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         image.setOnClickListener(this);
         video.setOnClickListener(this);
-        changeUser.setOnClickListener(this);
+        userSettings.setOnClickListener(this);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 0) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 image.setEnabled(true);
                 video.setEnabled(true);
             }
         }
     }
 
-    private void alertDialogFunction(){
+    private void userNameDialog(){
         // Create a AlertDialog Builder.
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
         // Set title, icon, can not cancel properties (the box still remains on the screen if clicked outside).
@@ -118,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startActivity(intent1);
                 } else {
                     Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
-                    alertDialogFunction();
+                    userNameDialog();
                 }
                 break;
             case R.id.video:
@@ -128,13 +141,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startActivity(intent2);
                 } else {
                     Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
-                    alertDialogFunction();
+                    userNameDialog();
                 }
                 break;
-            case R.id.changeUser:
-                alertDialogFunction();
+            case R.id.userSettings:
+                userSettingsPopup(MainActivity.this, getWindow());
         }
-
     }
 
     /* Initialize popup dialog view and ui controls in the popup dialog. */
@@ -152,6 +164,87 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cancelUserDataButton = popupInputDialogView.findViewById(R.id.button_cancel_user);
     }
 
+    private void userSettingsPopup(final Context context, final Window activityWindow)
+    {
+        // inflate view
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View userSettingsView = inflater.inflate(R.layout.user_settings, null);
+
+        // buttons
+        ImageButton exitBtn = userSettingsView.findViewById(R.id.userSettingsCloseBtn);
+        Button changeUserBtn = userSettingsView.findViewById(R.id.changeUserBtn);
+        Button deleteDataBtn = userSettingsView.findViewById(R.id.deleteDataBtn);
+
+        // listeners
+        changeUserBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userNameDialog();
+            }
+        });
+
+        deleteDataBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // warning dialog
+                new androidx.appcompat.app.AlertDialog.Builder(context)
+                        .setTitle("Delete User Settings")
+                        .setMessage("All extracted frames and experiments will be deleted." +
+                                " Are you sure you wish to continue?")
+
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                final ProgressDialog pDialog = new ProgressDialog(context);
+                                pDialog.setCancelable(false);
+                                if (!pDialog.isShowing()) pDialog.show();
+
+                                Thread thread = new Thread() {
+                                    @Override
+                                    public void run(){
+                                        // delete all frames
+                                        pDialog.setMessage("Deleting Frames...");
+                                        PathUtil.deleteRecursive(PathUtil.getFramesDirectory(userName));
+
+                                        // delete all experiments
+                                        pDialog.setMessage("Deleting Experiments...");
+                                        PathUtil.deleteRecursive(PathUtil.getExperimentsDirectory(userName));
+
+                                        // delete all persisted data
+                                        pDialog.setMessage("Deleting persisted data...");
+                                        PersistedData.clearUserPersistedData(context, userName);
+                                        if (pDialog.isShowing()) pDialog.dismiss();
+                                    }
+                                };
+                                thread.start();
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+            }
+        });
+
+        // popup
+        activityWindow.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        final PopupWindow userSettingsPopup = new PopupWindow(userSettingsView,
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            userSettingsPopup.setElevation(5f);
+        }
+        exitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userSettingsPopup.dismiss();
+                activityWindow.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            }
+        });
+
+        userSettingsPopup.showAtLocation(activityWindow.getDecorView(), Gravity.CENTER, 0, 0);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -159,7 +252,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 onBackPressed();
                 return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
