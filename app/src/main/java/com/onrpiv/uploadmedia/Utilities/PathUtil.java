@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 
 public class PathUtil {
 
@@ -250,6 +251,15 @@ public class PathUtil {
 
     public static String getExperimentTextFileSuffix(int currentExperiment) {
         return "_Experiment_" + currentExperiment + ".txt";
+    }
+
+    public static void deleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory()) {
+            for (File child : Objects.requireNonNull(fileOrDirectory.listFiles())) {
+                deleteRecursive(child);
+            }
+        }
+        fileOrDirectory.delete();
     }
 
     private static File checkDir(File dir) {

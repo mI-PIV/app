@@ -2,7 +2,9 @@ package com.onrpiv.uploadmedia.Experiment;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -24,6 +26,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.PathUtil;
+import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
 /**
  * author: sarbajit mukherjee
@@ -158,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cancelUserDataButton = popupInputDialogView.findViewById(R.id.button_cancel_user);
     }
 
-    private void userSettingsPopup(Context context, final Window activityWindow)
+    private void userSettingsPopup(final Context context, final Window activityWindow)
     {
         // inflate view
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -180,9 +184,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         deleteDataBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO loop through user data and delete all local files
-                // TODO check that userName is not null/empty
-//            PersistedData.clearUserPersistedData(context, userName);
+                // warning dialog
+                new androidx.appcompat.app.AlertDialog.Builder(context)
+                        .setTitle("Delete User Settings")
+                        .setMessage("All extracted frames and experiments will be deleted." +
+                                " Are you sure you wish to continue?")
+
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                final ProgressDialog pDialog = new ProgressDialog(context);
+                                pDialog.setCancelable(false);
+                                if (!pDialog.isShowing()) pDialog.show();
+
+                                Thread thread = new Thread() {
+                                    @Override
+                                    public void run(){
+                                        // delete all frames
+                                        pDialog.setMessage("Deleting Frames...");
+                                        PathUtil.deleteRecursive(PathUtil.getFramesDirectory(userName));
+
+                                        // delete all experiments
+                                        pDialog.setMessage("Deleting Experiments...");
+                                        PathUtil.deleteRecursive(PathUtil.getExperimentsDirectory(userName));
+
+                                        // delete all persisted data
+                                        pDialog.setMessage("Deleting persisted data...");
+                                        PersistedData.clearUserPersistedData(context, userName);
+                                        if (pDialog.isShowing()) pDialog.dismiss();
+                                    }
+                                };
+                                thread.start();
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
             }
         });
 
