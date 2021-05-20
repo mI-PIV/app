@@ -19,28 +19,46 @@ public class FrameExtractor {
     /**
      * Command for extracting images from video
      */
-    public static void generateFrames(Context context, String userName, String videoPath, String fps,
-                                      float videoStart, float videoEnd, Callable<Void> successCallback){
+    public static void generateFrames(final Context context, final String userName, String videoPath,
+                                      final String fps, float videoStart, float videoEnd,
+                                      final Callable<Void> successCallback){
         String fileExtn = ".jpg";
 
         String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
         String filePrefix = "EXTRACT_" + timeStamp + "_";
 
         // create and retrieve the new frames directory
-        int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName) + 1);
-        File framesNumDir = PathUtil.getFramesNumberedDirectory(userName, totalFrameDirs);
-        PersistedData.setTotalFrameDirectories(context, userName, totalFrameDirs);
+        final int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName) + 1);
+        final File framesNumDir = PathUtil.getFramesNumberedDirectory(userName, totalFrameDirs);
 
         if (!framesNumDir.exists()) framesNumDir.mkdirs();
 
-        // persist fps for this frame dir
-        PersistedData.setFrameDirFPS(context, userName, totalFrameDirs, Integer.parseInt(fps));
-
-        // persist path for frame dir
-        PersistedData.setFrameDirPath(context, userName,
-                framesNumDir.getAbsolutePath(), totalFrameDirs);
-
         File jpegFile = new File(framesNumDir, filePrefix + "%03d" + fileExtn);
+
+        // Callback on frame extraction completion that checks if the directory is empty.
+        final Callable<Void> thisCallback = new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                // If the frame dir is empty after extraction (something bad happened),
+                // then we don't update the persisted data
+                // and we don't call the activity's callback
+                if (framesNumDir.listFiles().length < 1) return null;
+
+                // persist number of frame dirs
+                PersistedData.setTotalFrameDirectories(context, userName, totalFrameDirs);
+
+                // persist fps for this frame dir
+                PersistedData.setFrameDirFPS(context, userName, totalFrameDirs, Integer.parseInt(fps));
+
+                // persist path for this frame dir
+                PersistedData.setFrameDirPath(context, userName, framesNumDir.getAbsolutePath(),
+                        totalFrameDirs);
+
+                // call the activity's callback
+                successCallback.call();
+                return null;
+            }
+        };
 
         /* https://ffmpeg.org/ffmpeg.html
         ffmpeg command line options
@@ -55,7 +73,7 @@ public class FrameExtractor {
          */
         String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", fps, "-ss", "" + videoStart, "-t", "" + (videoEnd - videoStart), jpegFile.getAbsolutePath()};
         /*   Remove -r 1 if you want to extract all video frames as images from the specified time duration.*/
-        execFFmpegBinary(complexCommand, context, successCallback);
+        execFFmpegBinary(complexCommand, context, thisCallback);
     }
 
 
@@ -81,13 +99,13 @@ public class FrameExtractor {
                         Log.e("FFMPEG", "Unable to call success callback!");
                         e.printStackTrace();
                     }
-                    if (pDialog.isShowing()) pDialog.dismiss();
                 } else if (returnCode == Config.RETURN_CODE_CANCEL) {
                     Log.d("FFMPEG", "Frame extraction cancelled!");
                 } else {
                     Toast.makeText(context, "Frames Generation FAILED", Toast.LENGTH_SHORT).show();
                     Log.e("FFMPEG", "Async frame extraction failed with return code = " + returnCode);
                 }
+                if (pDialog.isShowing()) pDialog.dismiss();
             }
         });
     }

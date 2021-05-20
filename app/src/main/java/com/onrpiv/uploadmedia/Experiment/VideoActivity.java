@@ -323,9 +323,9 @@ public class VideoActivity extends AppCompatActivity{
         }
 
         rangeSlider.setValueFrom(0);
-        rangeSlider.setValueTo(videoDuration/1000);
-        rangeSlider.setValues(0f, 1f);
-        rangeSlider.setMinSeparation(1f);
+        rangeSlider.setValueTo(videoDuration/1000f);
+        rangeSlider.setValues(0f, 0.1f);
+        rangeSlider.setMinSeparation(0.1f);
         rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
             @Override
             public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
