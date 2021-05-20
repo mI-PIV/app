@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Select which frames to generate:" />
+            android:text="Select which frames to extract (values are in seconds):" />
 
         <com.google.android.material.slider.RangeSlider
             android:id="@+id/vid_rangeSlider"
