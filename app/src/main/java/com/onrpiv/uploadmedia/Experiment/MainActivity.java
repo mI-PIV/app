@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         image = (Button) findViewById(R.id.image);
         video = (Button) findViewById(R.id.video);
@@ -241,5 +243,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         userSettingsPopup.showAtLocation(activityWindow.getDecorView(), Gravity.CENTER, 0, 0);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

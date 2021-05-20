@@ -14,11 +14,11 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.onrpiv.uploadmedia.R;
-import com.onrpiv.uploadmedia.Utilities.BoolIntStructure;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
-import com.onrpiv.uploadmedia.Utilities.UserInputUtils;
+import com.onrpiv.uploadmedia.Utilities.UserInput.BoolIntStructure;
+import com.onrpiv.uploadmedia.Utilities.UserInput.UserInputUtils;
 
 import java.io.File;
 import java.util.ArrayList;
