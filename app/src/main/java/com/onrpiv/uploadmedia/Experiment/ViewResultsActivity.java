@@ -500,7 +500,7 @@ public class ViewResultsActivity extends AppCompatActivity {
         else if (maxDisplacement > 4) {
             AlertDialog.Builder alertDialogParametersBuilder = new AlertDialog.Builder(ViewResultsActivity.this);
             alertDialogParametersBuilder.setTitle("Note!");
-            alertDialogParametersBuilder.setMessage(R.string.move_forward);
+            alertDialogParametersBuilder.setMessage(R.string.move_back);
             alertDialogParametersBuilder.setCancelable(false);
 
             alertDialogParametersBuilder
@@ -521,28 +521,28 @@ public class ViewResultsActivity extends AppCompatActivity {
             alertDialogParameters.show();
         }
 
-        else {
-            AlertDialog.Builder alertDialogParametersBuilder = new AlertDialog.Builder(ViewResultsActivity.this);
-            alertDialogParametersBuilder.setTitle("Note!");
-            alertDialogParametersBuilder.setMessage(R.string.final_display);
-            alertDialogParametersBuilder.setCancelable(false);
-
-            alertDialogParametersBuilder
-                    .setNegativeButton(
-                            "I Understand",
-                            new DialogInterface
-                                    .OnClickListener() {
-
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                                    int which)
-                                {
-                                    dialog.cancel();
-                                }
-                            });
-
-            final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
-            alertDialogParameters.show();
-        }
+//        else {
+//            AlertDialog.Builder alertDialogParametersBuilder = new AlertDialog.Builder(ViewResultsActivity.this);
+//            alertDialogParametersBuilder.setTitle("Note!");
+//            alertDialogParametersBuilder.setMessage(R.string.final_display);
+//            alertDialogParametersBuilder.setCancelable(false);
+//
+//            alertDialogParametersBuilder
+//                    .setNegativeButton(
+//                            "I Understand",
+//                            new DialogInterface
+//                                    .OnClickListener() {
+//
+//                                @Override
+//                                public void onClick(DialogInterface dialog,
+//                                                    int which)
+//                                {
+//                                    dialog.cancel();
+//                                }
+//                            });
+//
+//            final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
+//            alertDialogParameters.show();
+//        }
     }
 }
