@@ -226,9 +226,15 @@ public class ViewResultsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // popups
-//        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
-//        double maxDisplacement = displayIntent.getDoubleExtra("max-displacement", 0);
-//        popups(nMaxLower, maxDisplacement);
+        // The following 3 lines of code are not getting the correct values. Why not? For window
+        // size, if defaulted to 64, we need 64, but it remains at 0. How do we get the values from
+        // PivFunctions?
+
+        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
+        double maxDisplacement = displayIntent.getDoubleExtra("max-displacement", 0);
+        double windowSize = displayIntent.getDoubleExtra("window-size", 0);
+        System.out.println(windowSize);
+        popups(nMaxLower, maxDisplacement);
 
         // Setup images and paths
         String userName = displayIntent.getStringExtra(PivResultData.USERNAME);
@@ -465,9 +471,11 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     private void popups(double nMaxLower, double maxDisplacement) {
-        if (maxDisplacement < nMaxLower) {
+
+        // why 4?
+        if (maxDisplacement < 4) {
             AlertDialog.Builder alertDialogParametersBuilder = new AlertDialog.Builder(ViewResultsActivity.this);
-            alertDialogParametersBuilder.setTitle("Alert !");
+            alertDialogParametersBuilder.setTitle("Note!");
             alertDialogParametersBuilder.setMessage(R.string.move_forward);
             alertDialogParametersBuilder.setCancelable(false);
 
@@ -488,9 +496,34 @@ public class ViewResultsActivity extends AppCompatActivity {
             final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
             alertDialogParameters.show();
 
-        } else {
+        }
+        else if (maxDisplacement > 4) {
             AlertDialog.Builder alertDialogParametersBuilder = new AlertDialog.Builder(ViewResultsActivity.this);
-            alertDialogParametersBuilder.setTitle("Alert !");
+            alertDialogParametersBuilder.setTitle("Note!");
+            alertDialogParametersBuilder.setMessage(R.string.move_forward);
+            alertDialogParametersBuilder.setCancelable(false);
+
+            alertDialogParametersBuilder
+                    .setNegativeButton(
+                            "I Understand",
+                            new DialogInterface
+                                    .OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                                    int which)
+                                {
+                                    dialog.cancel();
+                                }
+                            });
+
+            final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
+            alertDialogParameters.show();
+        }
+
+        else {
+            AlertDialog.Builder alertDialogParametersBuilder = new AlertDialog.Builder(ViewResultsActivity.this);
+            alertDialogParametersBuilder.setTitle("Note!");
             alertDialogParametersBuilder.setMessage(R.string.final_display);
             alertDialogParametersBuilder.setCancelable(false);
 
