@@ -52,7 +52,6 @@ public class PivFunctions {
     private final int overlap;
     private final double _e;
     private final double qMin;
-    private final double nMaxUpper;
     private final double dt;
 
     private final File outputDirectory;
@@ -87,7 +86,6 @@ public class PivFunctions {
         overlap = parameters.getOverlap();
         _e = parameters.getE();
         qMin = parameters.getqMin();
-        nMaxUpper = parameters.getnMaxUpper();
         dt = parameters.getDt();
     }
 
@@ -101,9 +99,9 @@ public class PivFunctions {
 
     }
 
-    private static Mat openCvPIV(Mat image, Mat temp) {
-        int P = temp.rows();
-        int Q = temp.cols();
+    private static Mat openCvPIV(Mat image, Mat template) {
+        int P = template.rows();
+        int Q = template.cols();
 
         int M = image.rows();
         int N = image.cols();
@@ -113,12 +111,13 @@ public class PivFunctions {
         Mat submat = Xt.submat(rect);
         image.copyTo(submat);
 
-        Mat outputCorr = new Mat();
-        Imgproc.matchTemplate(Xt, temp, outputCorr, Imgproc.TM_CCORR);
-        return outputCorr;
+//        Mat outputCorr = new Mat();
+        Imgproc.matchTemplate(Xt, template, image, Imgproc.TM_CCORR);
+//        return outputCorr;
+        return image;
     }
 
-    private static Map<String, Double> sig2Noise_update(Mat corr) {
+    private static double sig2Noise_update(Mat corr) {
         Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
 
         int peak1_i = (int) mmr.maxLoc.x;
@@ -132,15 +131,14 @@ public class PivFunctions {
 
         double sig2Noise = peak1_value / peak2_value;
 
-        Map<String, Double> map = new HashMap();
-        map.put("sig2Noise", sig2Noise);
-        return map;
+//        Map<String, Double> map = new HashMap();
+//        map.put("sig2Noise", sig2Noise);
+        return sig2Noise;
     }
 
 
     public Map<String, double[][]> extendedSearchAreaPiv_update() {
         int i1t, j1l;
-        int i2t, j2l;
 
         //get field shape
         Map<String, Integer> fieldShape = getFieldShape(cols, rows, windowSize, overlap);
@@ -148,8 +146,8 @@ public class PivFunctions {
         double[][] dr1 = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
         double[][] dc1 = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
 
-        double[][] eps_r = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-        double[][] eps_c = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
+//        double[][] eps_r = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
+//        double[][] eps_c = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
 
         double[][] mag = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
         double[][] sig2noise = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
@@ -164,7 +162,6 @@ public class PivFunctions {
 
         for (int i = 0; i < nr; i++) {
             for (int j = 0; j < nc; j++) {
-
                 Mat window_a_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
                 Mat window_b_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
 
@@ -222,19 +219,27 @@ public class PivFunctions {
                     double epsr = (Math.log(corr.get(r - 1, c)[0]) - Math.log(corr.get(r + 1, c)[0])) / (2 * (Math.log(corr.get(r - 1, c)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r + 1, c)[0])));
                     double epsc = (Math.log(corr.get(r, c - 1)[0]) - Math.log(corr.get(r, c + 1)[0])) / (2 * (Math.log(corr.get(r, c - 1)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r, c + 1)[0])));
 
-                    eps_r[i][j] = Double.isNaN(epsr)? 0.0 : epsr;
-                    eps_c[i][j] = Double.isNaN(epsc)? 0.0 : epsc;
+//                    eps_r[i][j] = Double.isNaN(epsr)? 0.0 : epsr;
+//                    eps_c[i][j] = Double.isNaN(epsc)? 0.0 : epsc;
 
-                    dr1[i][j] = (windowSize - 1) - (r + eps_r[i][j]);
-                    dc1[i][j] = (windowSize - 1) - (c + eps_c[i][j]);
+//                    dr1[i][j] = (windowSize - 1) - (r + eps_r[i][j]);
+//                    dc1[i][j] = (windowSize - 1) - (c + eps_c[i][j]);
+
+                    epsr = Double.isNaN(epsr)? 0.0 : epsr;
+                    epsc = Double.isNaN(epsc)? 0.0 : epsc;
+
+                    dr1[i][j] = (windowSize - 1) - (r + epsr);
+                    dc1[i][j] = (windowSize - 1) - (c + epsc);
+
                 } catch (Exception e) {
                     dr1[i][j] = 0.0;
                     dc1[i][j] = 0.0;
                 }
                 mag[i][j] = Math.sqrt(Math.pow(dr1[i][j], 2) + Math.pow(dc1[i][j], 2));
 
-                Map<String, Double> sig2NoiseRatio = sig2Noise_update(corr);
-                sig2noise[i][j] = sig2NoiseRatio.get("sig2Noise");
+//                Map<String, Double> sig2NoiseRatio = sig2Noise_update(corr);
+//                sig2noise[i][j] = sig2NoiseRatio.get("sig2Noise");
+                sig2noise[i][j] = sig2Noise_update(corr);
             }
         }
 
@@ -780,8 +785,9 @@ public class PivFunctions {
                     dr2[ii][jj] = pivCorrelation.get("v")[ii][jj] + dr_new[ii][jj];
                     dc2[ii][jj] = pivCorrelation.get("u")[ii][jj] + dc_new[ii][jj];
 
-                    Map<String, Double> sig2NoiseRatio = sig2Noise_update(corr);
-                    sig2noise[ii][jj] = sig2NoiseRatio.get("sig2Noise");
+//                    Map<String, Double> sig2NoiseRatio = sig2Noise_update(corr);
+//                    sig2noise[ii][jj] = sig2NoiseRatio.get("sig2Noise");
+                    sig2noise[ii][jj] = sig2Noise_update(corr);
                 }
                 mag[ii][jj] = Math.sqrt(Math.pow(dr2[ii][jj], 2) + Math.pow(dc2[ii][jj], 2));
             }
@@ -899,7 +905,6 @@ public class PivFunctions {
                 vortMap[r][c] = (((v[r][c + 1] - v[r][c - 1]) - (u[r + 1][c] - u[r - 1][c]))) / gap;
             }
         }
-
         return vortMap;
     }
 }
