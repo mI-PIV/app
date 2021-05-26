@@ -1,18 +1,14 @@
 package com.onrpiv.uploadmedia.pivFunctions;
 
 public class PivResultData {
+    private final String name;
     private double[][] _u;
     private double[][] _v;
     private double[][] _mag;
     private double[][] _sig2noise;
-
-//    private Map<String, double[][]> pivCorrelation;
-//    private Map<String, double[]> interrCenters;
+    private double[] _interrX;
+    private double[] _interrY;
     private double[][] vorticityValues;
-//    private Map<String, double[][]> pivCorrelationProcessed;
-//    private Map<String, double[][]> pivReplaceMissing;
-//    private Map<String, double[][]> pivCorrelationMulti;
-//    private Map<String, double[][]> pivReplaceMissing2;
     private int rows;
     private int cols;
 
@@ -27,6 +23,10 @@ public class PivResultData {
             ROWS = "rows",
             COLS = "cols",
             USERNAME = "username";
+
+    public PivResultData(String name) {
+        this.name = name;
+    }
 
     public double[][] getMag() {
         return _mag;
@@ -60,61 +60,34 @@ public class PivResultData {
         _v = v;
     }
 
-    //    public Map<String, double[][]> getPivCorrelation() {
-//        return pivCorrelation;
-//    }
-//
-//    public void setPivCorrelation(Map<String, double[][]> pivCorrelation) {
-//        this.pivCorrelation = pivCorrelation;
-//    }
-//
-//    public Map<String, double[]> getInterrCenters() {
-//        return interrCenters;
-//    }
-//
-//    public void setInterrCenters(Map<String, double[]> interrCenters) {
-//        this.interrCenters = interrCenters;
-//    }
-//
-//    public double[][] getVorticityValues() {
-//        return vorticityValues;
-//    }
-//
-//    public void setVorticityValues(double[][] vorticityValues) {
-//        this.vorticityValues = vorticityValues;
-//    }
-//
-//    public Map<String, double[][]> getPivCorrelationProcessed() {
-//        return pivCorrelationProcessed;
-//    }
-//
-//    public void setPivCorrelationProcessed(Map<String, double[][]> pivCorrelationProcessed) {
-//        this.pivCorrelationProcessed = pivCorrelationProcessed;
-//    }
-//
-//    public Map<String, double[][]> getPivReplaceMissing() {
-//        return pivReplaceMissing;
-//    }
-//
-//    public void setPivReplaceMissing(Map<String, double[][]> pivReplaceMissing) {
-//        this.pivReplaceMissing = pivReplaceMissing;
-//    }
-//
-//    public Map<String, double[][]> getPivCorrelationMulti() {
-//        return pivCorrelationMulti;
-//    }
-//
-//    public void setPivCorrelationMulti(Map<String, double[][]> pivCorrelationMulti) {
-//        this.pivCorrelationMulti = pivCorrelationMulti;
-//    }
-//
-//    public Map<String, double[][]> getPivReplaceMissing2() {
-//        return pivReplaceMissing2;
-//    }
-//
-//    public void setPivReplaceMissing2(Map<String, double[][]> pivReplaceMissing2) {
-//        this.pivReplaceMissing2 = pivReplaceMissing2;
-//    }
+    public double[] getInterrX() {
+        return _interrX;
+    }
+
+    public void setInterrX(double[] interrX) {
+        _interrX = interrX;
+    }
+
+    public double[] getInterrY() {
+        return _interrY;
+    }
+
+    public void setInterrY(double[] interrY) {
+        _interrY = interrY;
+    }
+
+    public void setInterrCenters(double[][] interrCenters) {
+        _interrX = interrCenters[0];
+        _interrY = interrCenters[1];
+    }
+
+    public double[][] getVorticityValues() {
+        return vorticityValues;
+    }
+
+    public void setVorticityValues(double[][] vorticityValues) {
+        this.vorticityValues = vorticityValues;
+    }
 
     public int getRows() {
         return rows;
