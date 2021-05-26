@@ -23,7 +23,7 @@ import com.onrpiv.uploadmedia.pivFunctions.PivRunner;
 import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
-import java.io.Serializable;
+import java.util.List;
 
 /**
  * author: sarbajit mukherjee
@@ -40,7 +40,7 @@ public class ImageActivity extends AppCompatActivity {
     private int frame1Num;
     private int frame2Num;
     private int fps;
-    private PivResultData resultData;
+    private List<PivResultData> resultData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,17 +150,11 @@ public class ImageActivity extends AppCompatActivity {
 
     public void displayFile(View view) {
         Intent displayIntent = new Intent(this, ViewResultsActivity.class);
-        displayIntent.putExtra(PivResultData.REPLACED, pivParameters.isReplace());
-        displayIntent.putExtra(PivResultData.CORRELATION, (Serializable) resultData.getPivCorrelation());
-        displayIntent.putExtra(PivResultData.INTERR_CENTERS, (Serializable) resultData.getInterrCenters());
-        displayIntent.putExtra(PivResultData.VORTICITY, resultData.getVorticityValues());
-        displayIntent.putExtra(PivResultData.MULTI, (Serializable) resultData.getPivCorrelationMulti());
-        displayIntent.putExtra(PivResultData.ROWS, resultData.getRows());
-        displayIntent.putExtra(PivResultData.COLS, resultData.getCols());
-        displayIntent.putExtra(PivResultData.USERNAME, userName);
 
-        if (pivParameters.isReplace()) {
-            displayIntent.putExtra(PivResultData.REPLACE2, (Serializable) resultData.getPivReplaceMissing2());
+        displayIntent.putExtra(PivResultData.USERNAME, userName);
+        displayIntent.putExtra(PivResultData.REPLACED_BOOL, pivParameters.isReplace());
+        for (PivResultData pivResult : resultData) {
+            displayIntent.putExtra(pivResult.getName(), pivResult);
         }
 
         startActivity(displayIntent);

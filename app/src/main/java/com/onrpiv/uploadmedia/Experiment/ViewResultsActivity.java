@@ -77,11 +77,9 @@ public class ViewResultsActivity extends AppCompatActivity {
     private int imageCounter = 0;
 
     // From Image Activity
-    private HashMap<String, double[][]> pivCorrelation;
-    private HashMap<String, double[]> interrCenters;
-    private double[][] vorticityValues;
-    private HashMap<String, double[][]> pivCorrelationMulti;
-    private HashMap<String, double[][]> pivReplaceMissing2;
+    private PivResultData singlePass;
+    private PivResultData multiPass;
+    private PivResultData replacedPass;
     private int rows;
     private int cols;
 
@@ -93,17 +91,14 @@ public class ViewResultsActivity extends AppCompatActivity {
 
         // Bring in variables from ImageActivity
         Bundle extras = displayIntent.getExtras();
-        assert extras != null;
-        pivCorrelation = (HashMap<String, double[][]>) extras.getSerializable(PivResultData.CORRELATION);
-        interrCenters = (HashMap<String, double[]>) extras.getSerializable(PivResultData.INTERR_CENTERS);
-        vorticityValues = (double[][]) extras.get(PivResultData.VORTICITY);
-        rows = (int) extras.get(PivResultData.ROWS);
-        cols = (int) extras.get(PivResultData.COLS);
-        pivCorrelationMulti = (HashMap<String, double[][]>) extras.getSerializable(PivResultData.MULTI);
-        boolean replaced = (boolean) extras.get(PivResultData.REPLACED);
 
+        singlePass = (PivResultData) extras.getSerializable(PivResultData.SINGLE);
+        multiPass = (PivResultData) extras.getSerializable(PivResultData.MULTI);
+        rows = singlePass.getRows();
+        cols = singlePass.getCols();
+        boolean replaced = (boolean) extras.get(PivResultData.REPLACED_BOOL);
         if (replaced) {
-            pivReplaceMissing2 = (HashMap<String, double[][]>) extras.getSerializable(PivResultData.REPLACE2);
+            replacedPass = (PivResultData) extras.getSerializable(PivResultData.REPLACE2);
         } else {
             RadioButton replacedRadioButton = findViewById(R.id.replace);
             replacedRadioButton.setVisibility(View.GONE);
@@ -260,7 +255,6 @@ public class ViewResultsActivity extends AppCompatActivity {
             displayVectorImage(key, correlation);
         } else if (!settings.getVecDisplay()) {
             vectorFieldImage.setVisibility(View.INVISIBLE);
-//            vectorFieldImage.invalidate();
         }
 
         // Vorticity

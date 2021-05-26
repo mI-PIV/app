@@ -1,6 +1,8 @@
 package com.onrpiv.uploadmedia.pivFunctions;
 
-public class PivResultData {
+import java.io.Serializable;
+
+public class PivResultData implements Serializable {
     private final String name;
     private double[][] _u;
     private double[][] _v;
@@ -14,18 +16,18 @@ public class PivResultData {
 
     // intent keys
     public static final String
-            REPLACED = "replaced",
-            CORRELATION = "pivCorrelation",
-            INTERR_CENTERS = "interrCenters",
-            VORTICITY = "vorticityValues",
+            REPLACED_BOOL = "replaced",
+            SINGLE = "singlepass",
             MULTI = "pivCorrelationMulti",
             REPLACE2 = "pivReplaceMissing2",
-            ROWS = "rows",
-            COLS = "cols",
             USERNAME = "username";
 
     public PivResultData(String name) {
         this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public double[][] getMag() {

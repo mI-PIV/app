@@ -63,7 +63,7 @@ public class PivRunner {
             public void run() {
                 pDialog.setMessage("Calculating PIV");
                 // single pass
-                PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update("SinglePass");
+                PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE);
                 singlePassResult.setInterrCenters(pivFunctions.getCoordinates());
 
                 // Save first frame for output base image
@@ -105,16 +105,14 @@ public class PivRunner {
 
                 if (parameters.isReplace()) {
                     pDialog.setMessage("Calculating multi-pass PIV");
-                    PivResultData pivReplaceMissing = pivFunctions.replaceMissingVectors(pivCorrelationProcessed, "Replaced");
-                    resultData.add(pivReplaceMissing);
-
-                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivReplaceMissing, "MultiPass");
+                    PivResultData pivReplaceMissing = pivFunctions.replaceMissingVectors(pivCorrelationProcessed, null);
+                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivReplaceMissing, PivResultData.MULTI);
 
                     String stepMulti = "Multipass";
                     pivFunctions.saveVectors(pivCorrelationMulti, stepMulti);
                     pivFunctions.createVectorField(pivCorrelationMulti, stepMulti, arrowDrawOptions);
                     pDialog.setMessage("Calculating replaced vectors");
-                    PivResultData pivReplaceMissing2 = pivFunctions.replaceMissingVectors(pivCorrelationMulti, "Replaced2");
+                    PivResultData pivReplaceMissing2 = pivFunctions.replaceMissingVectors(pivCorrelationMulti, PivResultData.REPLACE2);
                     resultData.add(pivReplaceMissing2);
 
                     String stepReplace2 = "Replaced2";
@@ -124,7 +122,7 @@ public class PivRunner {
                     parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivReplaceMissing2.getMag()));
                 } else {
                     pDialog.setMessage("Calculating multi-pass PIV");
-                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivCorrelationProcessed, "MultiPass");
+                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivCorrelationProcessed, PivResultData.MULTI);
 
                     String stepMulti = "Multipass";
                     pivFunctions.saveVectors(pivCorrelationMulti, stepMulti);
