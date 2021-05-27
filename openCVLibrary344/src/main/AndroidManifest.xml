@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="org.opencv"
       android:versionCode="3440"
-      android:versionName="3.4.4">
+      android:versionName="3.4.4"
+      android:largeHeap="true">
 
 </manifest>
