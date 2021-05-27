@@ -72,7 +72,7 @@ public class FrameExtractor {
             The value is a time duration. See more https://ffmpeg.org/ffmpeg-utils.html#Time-duration.
         scale= Set the resolution of the frames. See more https://trac.ffmpeg.org/wiki/Scaling
          */
-        String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", fps, "-ss", "" + videoStart, "-t", "" + (videoEnd - videoStart), "-vf", "scale=1080:-1", jpegFile.getAbsolutePath()};
+        String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", fps, "-ss", "" + videoStart, "-t", "" + (videoEnd - videoStart), jpegFile.getAbsolutePath()};
         execFFmpegBinary(complexCommand, context, thisCallback);
     }
 
