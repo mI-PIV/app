@@ -76,18 +76,16 @@ public class PivRunner {
                     pivFunctions.saveVectorCentimeters(singlePassResult, pixelToCmRatio, "CENTIMETERS");
                 }
 
-                pDialog.setMessage("Calculating vorticity");
+                pDialog.setMessage("Calculating single pass vorticity");
                 String vortStep = "Vorticity";
                 PivFunctions.calculateVorticityMap(singlePassResult);
-                pivFunctions.saveVortMapFile(singlePassResult.getVorticityValues(), vortStep);
-                pivFunctions.saveColorMapImage(singlePassResult.getVorticityValues(), vortStep);
+                pivFunctions.saveVorticityValues(singlePassResult.getVorticityValues(), vortStep);
 
                 pDialog.setMessage("Saving single pass data");
                 ArrowDrawOptions arrowDrawOptions = new ArrowDrawOptions();
 
                 String step = "SinglePass";
-                pivFunctions.saveVectors(singlePassResult, step);
-                pivFunctions.createVectorField(singlePassResult, step, arrowDrawOptions);
+                pivFunctions.saveVectorsValues(singlePassResult, step);
 
                 pDialog.setMessage("Processing Single Pass PIV");
                 PivResultData pivCorrelationProcessed =
@@ -95,8 +93,7 @@ public class PivRunner {
 
                 pDialog.setMessage("Saving post processing data");
                 String stepPro = "VectorPostProcess";
-                pivFunctions.saveVectors(pivCorrelationProcessed, stepPro);
-                pivFunctions.createVectorField(pivCorrelationProcessed, stepPro, arrowDrawOptions);
+                pivFunctions.saveVectorsValues(pivCorrelationProcessed, stepPro);
 
                 resultData.add(singlePassResult);
                 resultData.add(pivCorrelationProcessed);
@@ -109,15 +106,13 @@ public class PivRunner {
                     pivCorrelationMulti = pivFunctions.calculateMultipass(pivReplaceMissing, PivResultData.MULTI);
 
                     String stepMulti = "Multipass";
-                    pivFunctions.saveVectors(pivCorrelationMulti, stepMulti);
-                    pivFunctions.createVectorField(pivCorrelationMulti, stepMulti, arrowDrawOptions);
+                    pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);
                     pDialog.setMessage("Calculating replaced vectors");
                     PivResultData pivReplaceMissing2 = pivFunctions.replaceMissingVectors(pivCorrelationMulti, PivResultData.REPLACE2);
                     resultData.add(pivReplaceMissing2);
 
                     String stepReplace2 = "Replaced2";
-                    pivFunctions.saveVectors(pivReplaceMissing2, stepReplace2);
-                    pivFunctions.createVectorField(pivReplaceMissing2, stepReplace2, arrowDrawOptions);
+                    pivFunctions.saveVectorsValues(pivReplaceMissing2, stepReplace2);
 
                     parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivReplaceMissing2.getMag()));
                 } else {
@@ -125,8 +120,7 @@ public class PivRunner {
                     pivCorrelationMulti = pivFunctions.calculateMultipass(pivCorrelationProcessed, PivResultData.MULTI);
 
                     String stepMulti = "Multipass";
-                    pivFunctions.saveVectors(pivCorrelationMulti, stepMulti);
-                    pivFunctions.createVectorField(pivCorrelationMulti, stepMulti, arrowDrawOptions);
+                    pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);
 
                     parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivCorrelationMulti.getMag()));
                 }
