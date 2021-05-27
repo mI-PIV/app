@@ -22,16 +22,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.StringJoiner;
 
 import static org.opencv.core.Core.mean;
 import static org.opencv.core.Core.subtract;
 import static org.opencv.core.CvType.CV_8UC1;
 import static org.opencv.core.CvType.CV_8UC4;
-import static org.opencv.imgproc.Imgproc.COLORMAP_JET;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
@@ -52,8 +49,9 @@ public class PivFunctions {
     private final int overlap;
     private final double _e;
     private final double qMin;
-    private final double nMaxUpper;
     private final double dt;
+    private final int fieldRows;
+    private final int fieldCols;
 
     private final File outputDirectory;
     private final String imageFileSaveName;
@@ -78,6 +76,7 @@ public class PivFunctions {
 
         grayFrame2 = new Mat(frame2.rows(), frame2.cols(), frame2.type());
         cvtColor(frame2, grayFrame2, COLOR_BGR2GRAY);
+        frame2.release();
 
         this.outputDirectory = outputDirectory;
         this.imageFileSaveName = imageFileSaveName;
@@ -87,23 +86,30 @@ public class PivFunctions {
         overlap = parameters.getOverlap();
         _e = parameters.getE();
         qMin = parameters.getqMin();
-        nMaxUpper = parameters.getnMaxUpper();
         dt = parameters.getDt();
+
+        int[] fieldShape = getFieldShape(cols, rows, windowSize, overlap);
+        fieldCols = fieldShape[0];
+        fieldRows = fieldShape[1];
     }
 
-    private Map<String, Integer> getFieldShape(int imgCols, int imgRows, int areaSize, int overlap) {
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        grayFrame1.release();
+        grayFrame2.release();
+        frame1.release();
+    }
+
+    private int[] getFieldShape(int imgCols, int imgRows, int areaSize, int overlap) {
         int nRows = ((imgRows - areaSize) / (areaSize - overlap) + 1);
         int nCols = ((imgCols - areaSize) / (areaSize - overlap) + 1);
-        Map<String, Integer> map = new HashMap();
-        map.put("nRows", nRows);
-        map.put("nCols", nCols);
-        return map;
-
+        return new int[]{nCols, nRows};
     }
 
-    private static Mat openCvPIV(Mat image, Mat temp) {
-        int P = temp.rows();
-        int Q = temp.cols();
+    private static Mat openCvPIV(Mat image, Mat template) {
+        int P = template.rows();
+        int Q = template.cols();
 
         int M = image.rows();
         int N = image.cols();
@@ -113,58 +119,41 @@ public class PivFunctions {
         Mat submat = Xt.submat(rect);
         image.copyTo(submat);
 
-        Mat outputCorr = new Mat();
-        Imgproc.matchTemplate(Xt, temp, outputCorr, Imgproc.TM_CCORR);
-        return outputCorr;
+        Imgproc.matchTemplate(Xt, template, image, Imgproc.TM_CCORR);
+
+        // cleanup mats
+        Xt.release();
+        submat.release();
+
+        return image;
     }
 
-    private static Map<String, Double> sig2Noise_update(Mat corr) {
-        Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
-
+    private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr) {
+        // find first peak location and value
         int peak1_i = (int) mmr.maxLoc.x;
         int peak1_j = (int) mmr.maxLoc.y;
         double peak1_value = mmr.maxVal;
 
-        corr.put(peak1_j, peak1_i, 0.0);
+        // set first peak to zero
+        corr.put(peak1_j, peak1_i, 0.0d);
 
+        // find second peak value
         Core.MinMaxLocResult mmr2 = Core.minMaxLoc(corr);
         double peak2_value = mmr2.maxVal;
 
-        double sig2Noise = peak1_value / peak2_value;
-
-        Map<String, Double> map = new HashMap();
-        map.put("sig2Noise", sig2Noise);
-        return map;
+        return peak1_value / peak2_value;
     }
 
 
-    public Map<String, double[][]> extendedSearchAreaPiv_update() {
-        int i1t, j1l;
-        int i2t, j2l;
+    public PivResultData extendedSearchAreaPiv_update(String resultName) {
+        double[][] dr1 = new double[fieldRows][fieldCols];
+        double[][] dc1 = new double[fieldRows][fieldCols];
 
-        //get field shape
-        Map<String, Integer> fieldShape = getFieldShape(cols, rows, windowSize, overlap);
+        double[][] mag = new double[fieldRows][fieldCols];
+        double[][] sig2noise = new double[fieldRows][fieldCols];
 
-        double[][] dr1 = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-        double[][] dc1 = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-
-        double[][] eps_r = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-        double[][] eps_c = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-
-        double[][] mag = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-        double[][] sig2noise = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-
-
-        Mat corr;
-        double win1_avg;
-        double win2_avg;
-
-        int nr = fieldShape.get("nRows");
-        int nc = fieldShape.get("nCols");
-
-        for (int i = 0; i < nr; i++) {
-            for (int j = 0; j < nc; j++) {
-
+        for (int i = 0; i < fieldRows; i++) {
+            for (int j = 0; j < fieldCols; j++) {
                 Mat window_a_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
                 Mat window_b_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
 
@@ -191,10 +180,10 @@ public class PivFunctions {
 //             Select first the largest window, work like usual from the top left corner the left edge goes as:
 //            # e.g. 0, (search_area_size - overlap), 2*(search_area_size - overlap),....
 
-                i1t = i * (windowSize - overlap);
+                int i1t = i * (windowSize - overlap);
 
 //              same for top-bottom
-                j1l = j * (windowSize - overlap);
+                int j1l = j * (windowSize - overlap);
 
                 Rect rectWin_a = new Rect(j1l, i1t, windowSize, windowSize);
                 Mat window_a = new Mat(grayFrame1, rectWin_a);
@@ -206,64 +195,73 @@ public class PivFunctions {
                 Rect rectWin_b = new Rect(j1l, i1t, windowSize, windowSize);
                 Mat window_b = new Mat(grayFrame2, rectWin_b);
 
-                win1_avg = mean(window_a).val[0];
-                win2_avg = mean(window_b).val[0];
+                double win1_avg = mean(window_a).val[0];
+                double win2_avg = mean(window_b).val[0];
 
                 subtract(window_a, new Scalar(win1_avg), window_a_1);
                 subtract(window_b, new Scalar(win2_avg), window_b_1);
 
-                corr = openCvPIV(window_a_1, window_b_1);
+                Mat corr = openCvPIV(window_a_1, window_b_1);
                 Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
 
                 int c = (int) mmr.maxLoc.x;
                 int r = (int) mmr.maxLoc.y;
 
+                double bottomCenter = corr.get(r-1, c)[0];
+                double topCenter = corr.get(r+1, c)[0];
+                double center = corr.get(r, c)[0];
+                double leftCenter = corr.get(r, c-1)[0];
+                double rightCenter = corr.get(r, c+1)[0];
+
                 try {
-                    double epsr = (Math.log(corr.get(r - 1, c)[0]) - Math.log(corr.get(r + 1, c)[0])) / (2 * (Math.log(corr.get(r - 1, c)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r + 1, c)[0])));
-                    double epsc = (Math.log(corr.get(r, c - 1)[0]) - Math.log(corr.get(r, c + 1)[0])) / (2 * (Math.log(corr.get(r, c - 1)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r, c + 1)[0])));
+                    double epsr = (Math.log(bottomCenter) - Math.log(topCenter)) / (2 * (Math.log(bottomCenter) - 2 * Math.log(center) + Math.log(topCenter)));
+                    double epsc = (Math.log(leftCenter) - Math.log(rightCenter)) / (2 * (Math.log(leftCenter) - 2 * Math.log(center) + Math.log(rightCenter)));
 
-                    eps_r[i][j] = Double.isNaN(epsr)? 0.0 : epsr;
-                    eps_c[i][j] = Double.isNaN(epsc)? 0.0 : epsc;
+                    epsr = Double.isNaN(epsr)? 0.0 : epsr;
+                    epsc = Double.isNaN(epsc)? 0.0 : epsc;
 
-                    dr1[i][j] = (windowSize - 1) - (r + eps_r[i][j]);
-                    dc1[i][j] = (windowSize - 1) - (c + eps_c[i][j]);
+                    dr1[i][j] = (windowSize - 1) - (r + epsr);
+                    dc1[i][j] = (windowSize - 1) - (c + epsc);
+
                 } catch (Exception e) {
                     dr1[i][j] = 0.0;
                     dc1[i][j] = 0.0;
                 }
                 mag[i][j] = Math.sqrt(Math.pow(dr1[i][j], 2) + Math.pow(dc1[i][j], 2));
+                sig2noise[i][j] = sig2Noise_update(corr, mmr);
 
-                Map<String, Double> sig2NoiseRatio = sig2Noise_update(corr);
-                sig2noise[i][j] = sig2NoiseRatio.get("sig2Noise");
+                // cleanup mats
+                window_a_1.release();
+                window_b_1.release();
+                window_a.release();
+                window_b.release();
+                corr.release();
+                System.gc();
             }
         }
 
-        Map<String, double[][]> map = new HashMap();
-        map.put("u", dc1);
-        map.put("v", dr1);
-        map.put("magnitude", mag);
-        map.put("sig2Noise", sig2noise);
-        return map;
+        PivResultData singlePassResults = new PivResultData(resultName);
+        singlePassResults.setU(dc1);
+        singlePassResults.setV(dr1);
+        singlePassResults.setMag(mag);
+        singlePassResults.setSig2Noise(sig2noise);
+        singlePassResults.setCols(cols);
+        singlePassResults.setRows(rows);
+        return singlePassResults;
     }
 
-    public Map<String, double[]> getCoordinates() {
-        Map<String, Integer> fieldShape = getFieldShape(cols, rows, windowSize, overlap);
+    public double[][] getCoordinates() {
+        double[] x = new double[fieldCols];
+        double[] y = new double[fieldRows];
 
-        double[] x = new double[fieldShape.get("nCols")];
-        double[] y = new double[fieldShape.get("nRows")];
-
-        for (int i = 0; i < fieldShape.get("nCols"); i++) {
+        for (int i = 0; i < fieldCols; i++) {
             x[i] = i * (windowSize - overlap) + (windowSize) / 2.0;
         }
 
-        for (int j = 0; j < fieldShape.get("nRows"); j++) {
+        for (int j = 0; j < fieldRows; j++) {
             y[j] = j * (windowSize - overlap) + (windowSize) / 2.0;
         }
-
-        Map<String, double[]> map = new HashMap();
-        map.put("x", x);
-        map.put("y", y);
-        return map;
+        return new double[][] {x, y};
     }
 
     private void saveToFile(String data, String stepName) {
@@ -280,24 +278,22 @@ public class PivFunctions {
         }
     }
 
-    public void saveVectors(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters,
-                            String stepName) {
-        double ux, vy, q, x, y;
-        ArrayList<String> toPrint = new ArrayList<>();
-
+    public void saveVectorsValues(PivResultData pivResultData, String stepName) {
+        // delete vector field file if it already exists
         File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
         if (txtFile.exists() && txtFile.isFile()) {
             txtFile.delete();
         }
-        ////////////////////////////////////////////////////////////
 
-        for (int i = 0; i < interrCenters.get("y").length; i++) {
-            for (int j = 0; j < interrCenters.get("x").length; j++) {
-                x = interrCenters.get("x")[j];
-                y = interrCenters.get("y")[i];
-                ux = pivCorrelation.get("u")[i][j] * dt;
-                vy = pivCorrelation.get("v")[i][j] * dt;
-                q = pivCorrelation.get("sig2Noise")[i][j];
+        double ux, vy, q, x, y;
+        ArrayList<String> toPrint = new ArrayList<>();
+        for (int i = 0; i < pivResultData.getInterrY().length; i++) {
+            for (int j = 0; j < pivResultData.getInterrX().length; j++) {
+                x = pivResultData.getInterrX()[j];
+                y = pivResultData.getInterrY()[i];
+                ux = pivResultData.getU()[i][j] * dt;
+                vy = pivResultData.getV()[i][j] * dt;
+                q = pivResultData.getSig2Noise()[i][j];
 
                 toPrint.add(String.valueOf(x));
                 toPrint.add(String.valueOf(y));
@@ -313,16 +309,7 @@ public class PivFunctions {
         }
     }
 
-    public int getRows() {
-        return rows;
-    }
-
-    public int getCols() {
-        return cols;
-    }
-
-    public void saveVectorCentimeters(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters,
-                                      double pixelToCM, String stepName) {
+    public void saveVectorCentimeters(PivResultData pivCorrelation, double pixelToCM, String stepName) {
         double ux, vy, q, x, y;
         ArrayList<String> toPrint = new ArrayList<>();
 
@@ -330,15 +317,14 @@ public class PivFunctions {
         if (txtFile.exists() && txtFile.isFile()) {
             txtFile.delete();
         }
-        ////////////////////////////////////////////////////////////
 
-        for (int i = 0; i < interrCenters.get("y").length; i++) {
-            for (int j = 0; j < interrCenters.get("x").length; j++) {
-                x = interrCenters.get("x")[j];
-                y = interrCenters.get("y")[i];
-                ux = (pivCorrelation.get("u")[i][j] * dt) * pixelToCM;
-                vy = (pivCorrelation.get("v")[i][j] * dt) * pixelToCM;
-                q = pivCorrelation.get("sig2Noise")[i][j];
+        for (int i = 0; i < pivCorrelation.getInterrY().length; i++) {
+            for (int j = 0; j < pivCorrelation.getInterrX().length; j++) {
+                x = pivCorrelation.getInterrX()[j];
+                y = pivCorrelation.getInterrY()[i];
+                ux = (pivCorrelation.getU()[i][j] * dt) * pixelToCM;
+                vy = (pivCorrelation.getV()[i][j] * dt) * pixelToCM;
+                q = pivCorrelation.getSig2Noise()[i][j];
 
                 toPrint.add(String.valueOf(x));
                 toPrint.add(String.valueOf(y));
@@ -350,22 +336,19 @@ public class PivFunctions {
                 sj1.add(toPrint.get(0)).add(toPrint.get(1)).add(toPrint.get(2)).add(toPrint.get(3)).add(toPrint.get(4));
                 saveToFile(sj1.toString(), stepName);
                 toPrint.clear();
-//                Log.d("TEXT: ", "y: "+y+" x: "+x+" ux: "+ux+" vy: "+vy+" q: "+q);
-//                Log.d("JOIN: ", "string join: "+ sj1.toString());
             }
         }
     }
 
-    public void saveVortMapFile(double[][] vortMap, String stepName) {
+    public void saveVorticityValues(double[][] vortMap, String stepName) {
+        // delete old vortmap file if it exists
+        File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
+        if (txtFile.exists() && txtFile.isFile()) {
+            txtFile.delete();
+        }
+
         double v;
         ArrayList<String> toPrint = new ArrayList<>();
-
-        File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
-        if (txtFile.exists() && txtFile.isFile()) {
-            txtFile.delete();
-        }
-        ////////////////////////////////////////////////////////////
-
         for (int y = 0; y < vortMap.length; y++) {
             for (int x = 0; x < vortMap[0].length; x++) {
                 v = vortMap[y][x];
@@ -386,66 +369,7 @@ public class PivFunctions {
         saveImage(frame1, stepName);
     }
 
-    public void createVectorField(Map<String, double[][]> pivCorrelation, Map<String, double[]> interrCenters,
-                                  String stepName, ArrowDrawOptions arrowOptions) {
-        Mat transparentBackground = new Mat(rows, cols, CV_8UC4, new Scalar(255, 255, 255, 0));
-
-        int lineType = arrowOptions.lineType;
-        int thickness = arrowOptions.thickness;
-        double tipLength = arrowOptions.tipLength;
-        double scale = arrowOptions.scale;
-
-        double dx, dy;
-        Point startPoint = null, endPoint = null;
-
-        for (int i = 0; i < interrCenters.get("y").length; i++) {
-            for (int j = 0; j < interrCenters.get("x").length; j++) {
-                dx = pivCorrelation.get("u")[i][j];
-                dy = -pivCorrelation.get("v")[i][j];
-
-                if (dx < 0 && dy > 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] - (Math.abs(dx) * scale)),
-                            (interrCenters.get("y")[i] - (Math.abs(dy) * scale)));
-                } else if (dx > 0 && dy > 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] + (Math.abs(dx) * scale)),
-                            (interrCenters.get("y")[i] - (Math.abs(dy) * scale)));
-                } else if (dx > 0 && dy < 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] + (Math.abs(dx) * scale)),
-                            (interrCenters.get("y")[i] + (Math.abs(dy) * scale)));
-                } else if (dx < 0 && dy < 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] - (Math.abs(dx) * scale)),
-                            (interrCenters.get("y")[i] + (Math.abs(dy) * scale)));
-                } else if (dx == 0 && dy < 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point(interrCenters.get("x")[j], (interrCenters.get("y")[i] + (Math.abs(dy) * scale)));
-                } else if (dx == 0 && dy > 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point(interrCenters.get("x")[j], (interrCenters.get("y")[i] - (Math.abs(dy) * scale)));
-                } else if (dx < 0 && dy == 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] - (Math.abs(dx) * scale)), interrCenters.get("y")[i]);
-                } else if (dx > 0 && dy == 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] + (Math.abs(dx) * scale)), interrCenters.get("y")[i]);
-                } else if (dx == 0 && dy == 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                }
-
-                Imgproc.arrowedLine(transparentBackground, startPoint, endPoint, new Scalar(255, 255, 255, 255),
-                        thickness, lineType, 0, tipLength);
-            }
-        }
-
-        saveImage(transparentBackground, stepName);
-    }
-
-    public static Bitmap createVectorFieldBitmap(Map<String, double[][]> pivCorrelation,
-                                                 Map<String, double[]> interrCenters,
+    public static Bitmap createVectorFieldBitmap(PivResultData pivResultData,
                                                  ArrowDrawOptions arrowOptions, int rows, int cols) {
         Mat transparentBackground = new Mat(rows, cols, CV_8UC4, new Scalar(255, 255, 255, 0));
 
@@ -454,45 +378,50 @@ public class PivFunctions {
         double tipLength = arrowOptions.tipLength;
         double scale = arrowOptions.scale;
 
+        double[][] u = pivResultData.getU();
+        double[][] v = pivResultData.getV();
+        double[] x = pivResultData.getInterrX();
+        double[] y = pivResultData.getInterrY();
+
         double dx, dy;
         Point startPoint = null, endPoint = null;
 
-        for (int i = 0; i < interrCenters.get("y").length; i++) {
-            for (int j = 0; j < interrCenters.get("x").length; j++) {
-                dx = pivCorrelation.get("u")[i][j];
-                dy = -pivCorrelation.get("v")[i][j];
+        for (int i = 0; i < y.length; i++) {
+            for (int j = 0; j < x.length; j++) {
+                dx = u[i][j];
+                dy = -v[i][j];
 
                 if (dx < 0 && dy > 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] - (Math.abs(dx) * scale)),
-                            (interrCenters.get("y")[i] - (Math.abs(dy) * scale)));
+                    startPoint = new Point(x[j], y[i]);
+                    endPoint = new Point((x[j] - (Math.abs(dx) * scale)),
+                            (y[i] - (Math.abs(dy) * scale)));
                 } else if (dx > 0 && dy > 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] + (Math.abs(dx) * scale)),
-                            (interrCenters.get("y")[i] - (Math.abs(dy) * scale)));
+                    startPoint = new Point(x[j], y[i]);
+                    endPoint = new Point((x[j] + (Math.abs(dx) * scale)),
+                            (y[i] - (Math.abs(dy) * scale)));
                 } else if (dx > 0 && dy < 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] + (Math.abs(dx) * scale)),
-                            (interrCenters.get("y")[i] + (Math.abs(dy) * scale)));
+                    startPoint = new Point(x[j], y[i]);
+                    endPoint = new Point((x[j] + (Math.abs(dx) * scale)),
+                            (y[i] + (Math.abs(dy) * scale)));
                 } else if (dx < 0 && dy < 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] - (Math.abs(dx) * scale)),
-                            (interrCenters.get("y")[i] + (Math.abs(dy) * scale)));
+                    startPoint = new Point(x[j], y[i]);
+                    endPoint = new Point((x[j] - (Math.abs(dx) * scale)),
+                            (y[i] + (Math.abs(dy) * scale)));
                 } else if (dx == 0 && dy < 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point(interrCenters.get("x")[j], (interrCenters.get("y")[i] + (Math.abs(dy) * scale)));
+                    startPoint = new Point(x[j], y[i]);
+                    endPoint = new Point(x[j], (y[i] + (Math.abs(dy) * scale)));
                 } else if (dx == 0 && dy > 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point(interrCenters.get("x")[j], (interrCenters.get("y")[i] - (Math.abs(dy) * scale)));
+                    startPoint = new Point(x[j], y[i]);
+                    endPoint = new Point(x[j], (y[i] - (Math.abs(dy) * scale)));
                 } else if (dx < 0 && dy == 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] - (Math.abs(dx) * scale)), interrCenters.get("y")[i]);
+                    startPoint = new Point(x[j], y[i]);
+                    endPoint = new Point((x[j] - (Math.abs(dx) * scale)), y[i]);
                 } else if (dx > 0 && dy == 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point((interrCenters.get("x")[j] + (Math.abs(dx) * scale)), interrCenters.get("y")[i]);
+                    startPoint = new Point(x[j], y[i]);
+                    endPoint = new Point((x[j] + (Math.abs(dx) * scale)), y[i]);
                 } else if (dx == 0 && dy == 0) {
-                    startPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
-                    endPoint = new Point(interrCenters.get("x")[j], interrCenters.get("y")[i]);
+                    startPoint = new Point(x[j], y[i]);
+                    endPoint = new Point(x[j], y[i]);
                 }
 
                 int red = (int) arrowOptions.color.red() * 255;
@@ -508,6 +437,11 @@ public class PivFunctions {
         Bitmap bmp = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
         bmp.setHasAlpha(true);
         Utils.matToBitmap(resized, bmp, true);
+
+        //clean up mats
+        transparentBackground.release();
+        resized.release();
+        System.gc();
         return bmp;
     }
 
@@ -515,21 +449,18 @@ public class PivFunctions {
         File pngFile = new File(outputDirectory, stepName + "_" + imageFileSaveName);
         Mat resized = resizeMat(image1);
         Imgcodecs.imwrite(pngFile.getAbsolutePath(), resized);
+
+        //clean up mats
+        resized.release();
+        System.gc();
     }
 
     private static Mat resizeMat(Mat mat) {
         Mat resized = new Mat();
+        // TODO fix hard code
         Size scaleSize = new Size(2560, 1440);
         Imgproc.resize(mat, resized, scaleSize, 0, 0, INTER_CUBIC);
         return resized;
-    }
-
-    public void saveColorMapImage(double[][] mapValues, String stepName) {
-        Mat mapValuesMat = new Mat(mapValues.length, mapValues[0].length, CV_8UC1);
-        double[] minMax = findMinMax2D(mapValues);
-        List<int[]> transparentCoords = findTransparentCoords(mapValuesMat, mapValues, 120, 135, minMax[0], minMax[1]);
-        Mat colorMapImage = createColorMap(mapValuesMat, transparentCoords, COLORMAP_JET);
-        saveImage(colorMapImage, stepName);
     }
 
     public static Bitmap createColorMapBitmap(double[][] mapValues, int threshMin, int threshMax,
@@ -544,6 +475,13 @@ public class PivFunctions {
         Bitmap result = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
         result.setHasAlpha(true);
         Utils.matToBitmap(resized, result, true);
+
+        //clean up mats
+        mapValuesMat.release();
+        colorMap.release();
+        resized.release();
+        System.gc();
+
         return result;
     }
 
@@ -562,7 +500,6 @@ public class PivFunctions {
                 if (newVal > threshMin && newVal < threshMax) {
                     transparentCoords.add(new int[]{y, x});
                 }
-
                 valuesMat.put(y, x, newVal);
             }
         }
@@ -603,77 +540,58 @@ public class PivFunctions {
     }
 
     private static double findMedian(double a1, double a2, double a3, double a4, double a5, double a6, double a7, double a8) {
-        double[] a = new double[8];
-        a[0] = a1;
-        a[1] = a2;
-        a[2] = a3;
-        a[3] = a4;
-        a[4] = a5;
-        a[5] = a6;
-        a[6] = a7;
-        a[7] = a8;
-
-        int n = a.length;
-        // First we sort the array
+        double[] a = new double[]{ a1, a2, a3, a4, a5, a6, a7, a8 };
         Arrays.sort(a);
-
-        // check for even case
-        if (n % 2 != 0) {
-            return a[n / 2];
-        }
-        return (a[(n - 1) / 2] + a[n / 2]) / 2.0;
+        return (a[(8 - 1) / 2] + a[8 / 2]) / 2.0;
     }
 
-    public Map<String, double[][]> vectorPostProcessing(Map<String, double[][]> pivCorrelation) {
-        Map<String, Integer> fieldShape = getFieldShape(cols, rows, windowSize, overlap);
+    public PivResultData vectorPostProcessing(PivResultData singlePassResult, String resultName) {
+        double[][] dr1_p = new double[fieldRows][fieldCols];
+        double[][] dc1_p = new double[fieldRows][fieldCols];
+        double[][] mag_p = new double[fieldRows][fieldCols];
 
-        double[][] dr1_p = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-        double[][] dc1_p = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-        double[][] mag_p = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
+        double[][] u = singlePassResult.getU();
+        double[][] v = singlePassResult.getV();
 
-        double sm_r = 0.0, sm_c = 0.0, rm_r = 0.0, rm_c = 0.0, sigma_s_r = 0.0, sigma_s_c = 0.0, r_r = 0.0, r_c = 0.0;
+        double sm_r, sm_c, rm_r, rm_c, sigma_s_r, sigma_s_c, r_r, r_c;
 
-        int nr = fieldShape.get("nRows");
-        int nc = fieldShape.get("nCols");
+        for (int k = 1; k < fieldRows - 1; k++) {
+            for (int l = 1; l < fieldCols - 1; l++) {
 
-        for (int k = 1; k < nr - 1; k++) {
-            for (int l = 1; l < nc - 1; l++) {
+                sm_r = findMedian(v[k - 1][l - 1], v[k - 1][l],
+                        v[k - 1][l + 1], v[k][l - 1],
+                        v[k][l + 1], v[k + 1][l - 1],
+                        v[k + 1][l], v[k + 1][l + 1]);
 
-                sm_r = findMedian(pivCorrelation.get("v")[k - 1][l - 1], pivCorrelation.get("v")[k - 1][l],
-                        pivCorrelation.get("v")[k - 1][l + 1], pivCorrelation.get("v")[k][l - 1],
-                        pivCorrelation.get("v")[k][l + 1], pivCorrelation.get("v")[k + 1][l - 1],
-                        pivCorrelation.get("v")[k + 1][l], pivCorrelation.get("v")[k + 1][l + 1]);
+                sm_c = findMedian(u[k - 1][l - 1], u[k - 1][l],
+                        u[k - 1][l + 1], u[k][l - 1],
+                        u[k][l + 1], u[k + 1][l - 1],
+                        u[k + 1][l], u[k + 1][l + 1]);
 
-                sm_c = findMedian(pivCorrelation.get("u")[k - 1][l - 1], pivCorrelation.get("u")[k - 1][l],
-                        pivCorrelation.get("u")[k - 1][l + 1], pivCorrelation.get("u")[k][l - 1],
-                        pivCorrelation.get("u")[k][l + 1], pivCorrelation.get("u")[k + 1][l - 1],
-                        pivCorrelation.get("u")[k + 1][l], pivCorrelation.get("u")[k + 1][l + 1]);
+                rm_r = findMedian(Math.abs(v[k - 1][l - 1] - sm_r), Math.abs(v[k - 1][l] - sm_r),
+                        Math.abs(v[k - 1][l + 1] - sm_r), Math.abs(v[k][l - 1] - sm_r),
+                        Math.abs(v[k][l + 1] - sm_r), Math.abs(v[k + 1][l - 1] - sm_r),
+                        Math.abs(v[k + 1][l] - sm_r), Math.abs(v[k + 1][l + 1] - sm_r));
 
-                rm_r = findMedian(Math.abs(pivCorrelation.get("v")[k - 1][l - 1] - sm_r), Math.abs(pivCorrelation.get("v")[k - 1][l] - sm_r),
-                        Math.abs(pivCorrelation.get("v")[k - 1][l + 1] - sm_r), Math.abs(pivCorrelation.get("v")[k][l - 1] - sm_r),
-                        Math.abs(pivCorrelation.get("v")[k][l + 1] - sm_r), Math.abs(pivCorrelation.get("v")[k + 1][l - 1] - sm_r),
-                        Math.abs(pivCorrelation.get("v")[k + 1][l] - sm_r), Math.abs(pivCorrelation.get("v")[k + 1][l + 1] - sm_r));
-
-                rm_c = findMedian(Math.abs(pivCorrelation.get("u")[k - 1][l - 1] - sm_c), Math.abs(pivCorrelation.get("u")[k - 1][l] - sm_c),
-                        Math.abs(pivCorrelation.get("u")[k - 1][l + 1] - sm_c), Math.abs(pivCorrelation.get("u")[k][l - 1] - sm_c),
-                        Math.abs(pivCorrelation.get("u")[k][l + 1] - sm_c), Math.abs(pivCorrelation.get("u")[k + 1][l - 1] - sm_c),
-                        Math.abs(pivCorrelation.get("u")[k + 1][l] - sm_c), Math.abs(pivCorrelation.get("u")[k + 1][l + 1] - sm_c));
+                rm_c = findMedian(Math.abs(u[k - 1][l - 1] - sm_c), Math.abs(u[k - 1][l] - sm_c),
+                        Math.abs(u[k - 1][l + 1] - sm_c), Math.abs(u[k][l - 1] - sm_c),
+                        Math.abs(u[k][l + 1] - sm_c), Math.abs(u[k + 1][l - 1] - sm_c),
+                        Math.abs(u[k + 1][l] - sm_c), Math.abs(u[k + 1][l + 1] - sm_c));
 
                 //Normalization factor
                 sigma_s_r = rm_r + 0.1;
                 sigma_s_c = rm_c + 0.1;
 
                 //absolute deviation of pixel displacement with respect to the media pixel displacement of the 8 nearest neighbors
-                r_r = Math.abs(pivCorrelation.get("v")[k][l] - sm_r) / sigma_s_r;
-                r_c = Math.abs(pivCorrelation.get("u")[k][l] - sm_c) / sigma_s_c;
+                r_r = Math.abs(v[k][l] - sm_r) / sigma_s_r;
+                r_c = Math.abs(u[k][l] - sm_c) / sigma_s_c;
 
                 // DONT ERASE COMMENTED LINE BELOW IN CASE WE NEED TO USE A SIMILAR LOGIC LATER
                 //if (pivCorrelation.get("magnitude")[k][l] * dt < nMaxUpper && pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
-                if (pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
-
-                    dr1_p[k][l] = pivCorrelation.get("v")[k][l];
-                    dc1_p[k][l] = pivCorrelation.get("u")[k][l];
-                    mag_p[k][l] = pivCorrelation.get("magnitude")[k][l];
+                if (singlePassResult.getSig2Noise()[k][l] > qMin && r_r < _e && r_c < _e) {
+                    dr1_p[k][l] = singlePassResult.getV()[k][l];
+                    dc1_p[k][l] = singlePassResult.getU()[k][l];
+                    mag_p[k][l] = singlePassResult.getMag()[k][l];
                 } else {
                     dr1_p[k][l] = 0.0;
                     dc1_p[k][l] = 0.0;
@@ -681,43 +599,43 @@ public class PivFunctions {
             }
         }
 
-        Map<String, double[][]> map = new HashMap();
-        map.put("u", dc1_p);
-        map.put("v", dr1_p);
-        map.put("magnitude", mag_p);
-        map.put("sig2Noise", pivCorrelation.get("sig2Noise"));
-        return map;
+        PivResultData postprocessingResult = new PivResultData(resultName);
+        postprocessingResult.setU(dc1_p);
+        postprocessingResult.setV(dr1_p);
+        postprocessingResult.setMag(mag_p);
+        postprocessingResult.setSig2Noise(singlePassResult.getSig2Noise());
+        postprocessingResult.setInterrX(singlePassResult.getInterrX());
+        postprocessingResult.setInterrY(singlePassResult.getInterrY());
+        postprocessingResult.setCols(cols);
+        postprocessingResult.setRows(rows);
+        return postprocessingResult;
     }
 
-    public Map<String, double[][]> calculateMultipass(Map<String, double[][]> pivCorrelation,
-            Map<String, double[]> interrCenters) {
+    public PivResultData calculateMultipass(PivResultData pivResultData, String resultName) {
+        double[][] dr_new = new double[fieldRows][fieldCols];
+        double[][] dc_new = new double[fieldRows][fieldCols];
 
-        //get field shape
-        Map<String, Integer> fieldShape = getFieldShape(cols, rows, windowSize, overlap);
+        double[][] dr2 = new double[fieldRows][fieldCols];
+        double[][] dc2 = new double[fieldRows][fieldCols];
 
-        double[][] dr_new = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-        double[][] dc_new = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
+        double[][] eps_r_new = new double[fieldRows][fieldCols];
+        double[][] eps_c_new = new double[fieldRows][fieldCols];
 
-        double[][] dr2 = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-        double[][] dc2 = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
+        double[][] mag = new double[fieldRows][fieldCols];
+        double[][] sig2noise = new double[fieldRows][fieldCols];
 
-        double[][] eps_r_new = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-        double[][] eps_c_new = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
+        double[][] u = pivResultData.getU();
+        double[][] v = pivResultData.getV();
+        double[] x = pivResultData.getInterrX();
+        double[] y = pivResultData.getInterrY();
 
-        double[][] mag = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-        double[][] sig2noise = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-
-
-        Mat corr;
-        int nr = fieldShape.get("nRows");
-        int nc = fieldShape.get("nCols");
-
-        for (int ii = 1; ii < nr - 1; ii++) {
-            for (int jj = 1; jj < nc - 1; jj++) {
+        for (int ii = 1; ii < fieldRows - 1; ii++) {
+            for (int jj = 1; jj < fieldCols - 1; jj++) {
                 Mat window_a_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
                 Mat window_b_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
+
                 //if pixel displacements from 1st pass are zero keep them as zero in 2nd phase
-                if (pivCorrelation.get("v")[ii][jj] == 0 && pivCorrelation.get("u")[ii][jj] == 0) {
+                if (v[ii][jj] == 0 && u[ii][jj] == 0) {
                     dr2[ii][jj] = 0.0;
                     dc2[ii][jj] = 0.0;
                     sig2noise[ii][jj] = 0.0;
@@ -725,39 +643,34 @@ public class PivFunctions {
                     //subtract/add half the pixel displacement from interrogation region center
                     //to  find the center of the new interrogation region based on the direction
                     //of the pixel displacement
-                    double IA1_x_int = interrCenters.get("x")[jj] - (pivCorrelation.get("u")[ii][jj] / 2);
-                    double IA1_y_int = interrCenters.get("y")[ii] - (pivCorrelation.get("v")[ii][jj] / 2);
+                    double IA1_x_int = x[jj] - (u[ii][jj] / 2);
+                    double IA1_y_int = y[ii] - (v[ii][jj] / 2);
 
-                    double IA2_x_int = interrCenters.get("x")[jj] + (pivCorrelation.get("u")[ii][jj] / 2);
-                    double IA2_y_int = interrCenters.get("y")[ii] + (pivCorrelation.get("v")[ii][jj] / 2);
+                    double IA2_x_int = x[jj] + (u[ii][jj] / 2);
+                    double IA2_y_int = y[ii] + (v[ii][jj] / 2);
 
                     //Interrogation window for Image 1
                     int IA1_x_s = (int) Math.round((IA1_x_int - (windowSize / 2) + 1));
-//                    int IA1_x_e = Math.round(IA1_x_s + windowSize - 1);
-
                     int IA1_y_s = (int) Math.round((IA1_y_int - (windowSize / 2) + 1));
-//                    int IA1_y_e = Math.round(IA1_y_s + windowSize - 1);
 
                     Rect rectWin_a = new Rect((IA1_x_s - 1), (IA1_y_s - 1), windowSize, windowSize);
                     Mat IA1_new_t = new Mat(grayFrame1, rectWin_a);
 
                     //Interrogation window for Image 2
                     int IA2_x_s = (int) Math.round((IA2_x_int - (windowSize / 2) + 1));
-//                    int IA2_x_e = Math.round(IA2_x_s + windowSize - 1);
-
                     int IA2_y_s = (int) Math.round((IA2_y_int - (windowSize / 2) + 1));
-//                    int IA2_y_e = Math.round(IA2_y_s + windowSize - 1);
 
                     Rect rectWin_b = new Rect((IA2_x_s - 1), (IA2_y_s - 1), windowSize, windowSize);
                     Mat IA2_new_t = new Mat(grayFrame2, rectWin_b);
 
+                    //Subtract the means from the windows
                     double i1_avg_new = mean(IA1_new_t).val[0];
                     double i2_avg_new = mean(IA2_new_t).val[0];
-
                     subtract(IA1_new_t, new Scalar(i1_avg_new), window_a_1);
                     subtract(IA2_new_t, new Scalar(i2_avg_new), window_b_1);
 
-                    corr = openCvPIV(window_a_1, window_b_1);
+                    //Find the correlation
+                    Mat corr = openCvPIV(window_a_1, window_b_1);
                     Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
 
                     int c = (int) mmr.maxLoc.x;
@@ -775,75 +688,87 @@ public class PivFunctions {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
                     //Add new pixel displacement to pixel displacements from 1st pass
-                    dr2[ii][jj] = pivCorrelation.get("v")[ii][jj] + dr_new[ii][jj];
-                    dc2[ii][jj] = pivCorrelation.get("u")[ii][jj] + dc_new[ii][jj];
+                    dr2[ii][jj] = v[ii][jj] + dr_new[ii][jj];
+                    dc2[ii][jj] = u[ii][jj] + dc_new[ii][jj];
+                    sig2noise[ii][jj] = sig2Noise_update(corr, mmr);
 
-                    Map<String, Double> sig2NoiseRatio = sig2Noise_update(corr);
-                    sig2noise[ii][jj] = sig2NoiseRatio.get("sig2Noise");
+                    //cleanup mats
+                    IA1_new_t.release();
+                    IA2_new_t.release();
+                    corr.release();
                 }
                 mag[ii][jj] = Math.sqrt(Math.pow(dr2[ii][jj], 2) + Math.pow(dc2[ii][jj], 2));
+
+                //cleanup mats
+                window_a_1.release();
+                window_b_1.release();
+                System.gc();
             }
         }
 
-        Map<String, double[][]> map = new HashMap();
-        map.put("u", dc2);
-        map.put("v", dr2);
-        map.put("magnitude", mag);
-        map.put("sig2Noise", sig2noise);
-        return map;
+        PivResultData multipassResult = new PivResultData(resultName);
+        multipassResult.setU(dc2);
+        multipassResult.setV(dr2);
+        multipassResult.setMag(mag);
+        multipassResult.setSig2Noise(sig2noise);
+        multipassResult.setInterrX(pivResultData.getInterrX());
+        multipassResult.setInterrY(pivResultData.getInterrY());
+        multipassResult.setCols(cols);
+        multipassResult.setRows(rows);
+        return multipassResult;
     }
 
-    public Map<String, double[][]> replaceMissingVectors(Map<String, double[][]> pivCorrelation) {
-        //get field shape
-        Map<String, Integer> fieldShape = getFieldShape(cols, rows, windowSize, overlap);
+    public PivResultData replaceMissingVectors(PivResultData pivResultData, String resultName) {
+        double[][] dr2 = new double[fieldRows][fieldCols];
+        double[][] dc2 = new double[fieldRows][fieldCols];
 
-        double[][] dr2 = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-        double[][] dc2 = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
+        double[][] mag = new double[fieldRows][fieldCols];
+        double[][] sig2noise = new double[fieldRows][fieldCols];
 
-        double[][] mag = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
-        double[][] sig2noise = new double[fieldShape.get("nRows")][fieldShape.get("nCols")];
+        double[][] u = pivResultData.getU();
+        double[][] v = pivResultData.getV();
 
-        int nr = fieldShape.get("nRows");
-        int nc = fieldShape.get("nCols");
-
-        for (int ii = 2; ii < nr - 2; ii++) {
-            for (int jj = 2; jj < nc - 2; jj++) {
+        for (int ii = 2; ii < fieldRows - 2; ii++) {
+            for (int jj = 2; jj < fieldCols - 2; jj++) {
                 //if pixel displacements from 1st pass are zero keep them as zero in 2nd phase
-                if (pivCorrelation.get("v")[ii][jj] == 0 && pivCorrelation.get("u")[ii][jj] == 0) {
-                    double bu1 = pivCorrelation.get("u")[ii - 2][jj];
-                    double bu2 = pivCorrelation.get("u")[ii - 1][jj];
-                    double bu3 = pivCorrelation.get("u")[ii + 1][jj];
-                    double bu4 = pivCorrelation.get("u")[ii + 2][jj];
+                if (v[ii][jj] == 0 && u[ii][jj] == 0) {
+                    double bu1 = u[ii - 2][jj];
+                    double bu2 = u[ii - 1][jj];
+                    double bu3 = u[ii + 1][jj];
+                    double bu4 = u[ii + 2][jj];
 
                     double[] bu = {bu1, bu2, bu3, bu4};
                     double sol1 = cubicInterpolator(bu);
                     dc2[ii][jj] = sol1;
 
-                    double bv1 = pivCorrelation.get("v")[ii][jj - 2];
-                    double bv2 = pivCorrelation.get("v")[ii][jj - 1];
-                    double bv3 = pivCorrelation.get("v")[ii][jj + 1];
-                    double bv4 = pivCorrelation.get("v")[ii][jj + 2];
+                    double bv1 = v[ii][jj - 2];
+                    double bv2 = v[ii][jj - 1];
+                    double bv3 = v[ii][jj + 1];
+                    double bv4 = v[ii][jj + 2];
 
                     double[] bv = {bv1, bv2, bv3, bv4};
                     double sol2 = cubicInterpolator(bv);
                     dr2[ii][jj] = sol2;
                 } else {
-                    dr2[ii][jj] = pivCorrelation.get("v")[ii][jj];
-                    dc2[ii][jj] = pivCorrelation.get("u")[ii][jj];
+                    dr2[ii][jj] = v[ii][jj];
+                    dc2[ii][jj] = u[ii][jj];
                 }
                 mag[ii][jj] = Math.sqrt(Math.pow(dr2[ii][jj], 2) + Math.pow(dc2[ii][jj], 2));
-                sig2noise[ii][jj] = pivCorrelation.get("sig2Noise")[ii][jj];
+                sig2noise[ii][jj] = pivResultData.getSig2Noise()[ii][jj];
             }
         }
 
-        Map<String, double[][]> map = new HashMap();
-        map.put("u", dc2);
-        map.put("v", dr2);
-        map.put("magnitude", mag);
-        map.put("sig2Noise", sig2noise);
-        return map;
+        PivResultData replaced = new PivResultData(resultName);
+        replaced.setU(dc2);
+        replaced.setV(dr2);
+        replaced.setMag(mag);
+        replaced.setSig2Noise(sig2noise);
+        replaced.setInterrX(pivResultData.getInterrX());
+        replaced.setInterrY(pivResultData.getInterrY());
+        replaced.setCols(cols);
+        replaced.setRows(rows);
+        return replaced;
     }
 
     public static double cubicInterpolator(double[] values) {
@@ -869,37 +794,34 @@ public class PivFunctions {
         return output;
     }
 
-    public static double checkMaxDisplacement(Map<String, double[][]> pivCorrelation) {
-        double maxValue = pivCorrelation.get("magnitude")[0][0];
-        for (int j = 0; j < pivCorrelation.get("magnitude").length; j++) {
-            for (int i = 0; i < pivCorrelation.get("magnitude")[j].length; i++) {
-                if (pivCorrelation.get("magnitude")[j][i] > maxValue) {
-                    maxValue = pivCorrelation.get("magnitude")[j][i];
+    public static double checkMaxDisplacement(double[][] magnitude) {
+        double maxValue = magnitude[0][0];
+        for (int j = 0; j < magnitude.length; j++) {
+            for (int i = 0; i < magnitude[j].length; i++) {
+                if (magnitude[j][i] > maxValue) {
+                    maxValue = magnitude[j][i];
                 }
             }
         }
         return maxValue;
     }
 
-    public static double[][] calculateVorticityMap(Map<String, double[][]> pivCorrelation, int gap) {
-        double[][] u = pivCorrelation.get("u");
-        double[][] v = pivCorrelation.get("v");
+    public static void calculateVorticityMap(PivResultData pivCorrelation) {
+        double[][] u = pivCorrelation.getU();
+        double[][] v = pivCorrelation.getV();
         int nc = u[0].length;
         int nr = u.length;
-
-        double[][] vortMap = new double[nr][nc];
+        int gap = (int) (pivCorrelation.getInterrX()[1] - pivCorrelation.getInterrX()[0]);
 
         // Don't divide by zero
-        if (gap == 0) {
-            return vortMap;
-        }
+        if (gap == 0) { return; }
 
+        double[][] vortMap = new double[nr][nc];
         for (int r = 1; r < nr - 1; r++) {
             for (int c = 1; c < nc - 1; c++) {
                 vortMap[r][c] = (((v[r][c + 1] - v[r][c - 1]) - (u[r + 1][c] - u[r - 1][c]))) / gap;
             }
         }
-
-        return vortMap;
+        pivCorrelation.setVorticityValues(vortMap);
     }
 }

@@ -48,6 +48,15 @@ public final class CameraCalibration {
         getCameraProperties(context);
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        cameraMatrix.release();
+        distCoeffs.release();
+        frame1.release();
+        frame2.release();
+    }
+
     /**
      * Tries to find a triangle calibration pattern, calculates and returns the pixels per centimeter.
      * Will return 1.0 if no triangle calibration pattern found.
@@ -68,6 +77,10 @@ public final class CameraCalibration {
 
         double pixelCMRatio1 = findTriangle(frame1Quad);
         double pixelCMRatio2 = findTriangle(frame2Quad);
+
+        //clean up mats
+        frame1Quad.release();
+        frame2Quad.release();
 
         return (pixelCMRatio1 + pixelCMRatio2) / 2;
     }
@@ -149,6 +162,7 @@ public final class CameraCalibration {
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Mat edges = new Mat();
+        double result = 1d;
 
         // blur before edge detection to filter out smaller particles
         Imgproc.blur(calibrationImage, calibrationImage, new Size(3, 3));
@@ -169,12 +183,27 @@ public final class CameraCalibration {
                 if (compareDistances(d1, d2, d3)) {
                     // Our triangle was found, now we just need to calculate pixels per metric
                     foundTriangle = true;
-                    return calcPixelsPerCentimeter(d1, d2, d3);
+                    result = calcPixelsPerCentimeter(d1, d2, d3);
+
+                    //cleanup mats
+                    contour2f.release();
+                    approx.release();
+                    break;
                 }
+                //cleanup mats
+                contour2f.release();
+                approx.release();
             }
         }
-        // triangle wasn't found
-        return 1d;
+        // cleanup mats
+        hierarchy.release();
+        edges.release();
+        for (MatOfPoint contour: contours) {
+            contour.release();
+        }
+        contours.clear();
+
+        return result;
     }
 
     private double calcPixelsPerCentimeter(double d1, double d2, double d3) {

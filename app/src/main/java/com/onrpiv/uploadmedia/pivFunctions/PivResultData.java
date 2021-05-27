@@ -1,45 +1,86 @@
 package com.onrpiv.uploadmedia.pivFunctions;
 
-import java.util.Map;
+import java.io.Serializable;
 
-public class PivResultData {
-    private Map<String, double[][]> pivCorrelation;
-    private Map<String, double[]> interrCenters;
+public class PivResultData implements Serializable {
+    private final String name;
+    private double[][] _u;
+    private double[][] _v;
+    private double[][] _mag;
+    private double[][] _sig2noise;
+    private double[] _interrX;
+    private double[] _interrY;
     private double[][] vorticityValues;
-    private Map<String, double[][]> pivCorrelationProcessed;
-    private Map<String, double[][]> pivReplaceMissing;
-    private Map<String, double[][]> pivCorrelationMulti;
-    private Map<String, double[][]> pivReplaceMissing2;
     private int rows;
     private int cols;
 
     // intent keys
     public static final String
-            REPLACED = "replaced",
-            CORRELATION = "pivCorrelation",
-            INTERR_CENTERS = "interrCenters",
-            VORTICITY = "vorticityValues",
+            REPLACED_BOOL = "replaced",
+            SINGLE = "singlepass",
             MULTI = "pivCorrelationMulti",
             REPLACE2 = "pivReplaceMissing2",
-            ROWS = "rows",
-            COLS = "cols",
             USERNAME = "username";
 
-
-    public Map<String, double[][]> getPivCorrelation() {
-        return pivCorrelation;
+    public PivResultData(String name) {
+        this.name = name;
     }
 
-    public void setPivCorrelation(Map<String, double[][]> pivCorrelation) {
-        this.pivCorrelation = pivCorrelation;
+    public String getName() {
+        return name;
     }
 
-    public Map<String, double[]> getInterrCenters() {
-        return interrCenters;
+    public double[][] getMag() {
+        return _mag;
     }
 
-    public void setInterrCenters(Map<String, double[]> interrCenters) {
-        this.interrCenters = interrCenters;
+    public void setMag(double[][] magnitude) {
+        _mag = magnitude;
+    }
+
+    public double[][] getSig2Noise() {
+        return _sig2noise;
+    }
+
+    public void setSig2Noise(double[][] sig2Noise) {
+        _sig2noise = sig2Noise;
+    }
+
+    public double[][] getU() {
+        return _u;
+    }
+
+    public void setU(double[][] u) {
+        _u = u;
+    }
+
+    public double[][] getV() {
+        return _v;
+    }
+
+    public void setV(double[][] v) {
+        _v = v;
+    }
+
+    public double[] getInterrX() {
+        return _interrX;
+    }
+
+    public void setInterrX(double[] interrX) {
+        _interrX = interrX;
+    }
+
+    public double[] getInterrY() {
+        return _interrY;
+    }
+
+    public void setInterrY(double[] interrY) {
+        _interrY = interrY;
+    }
+
+    public void setInterrCenters(double[][] interrCenters) {
+        _interrX = interrCenters[0];
+        _interrY = interrCenters[1];
     }
 
     public double[][] getVorticityValues() {
@@ -48,38 +89,6 @@ public class PivResultData {
 
     public void setVorticityValues(double[][] vorticityValues) {
         this.vorticityValues = vorticityValues;
-    }
-
-    public Map<String, double[][]> getPivCorrelationProcessed() {
-        return pivCorrelationProcessed;
-    }
-
-    public void setPivCorrelationProcessed(Map<String, double[][]> pivCorrelationProcessed) {
-        this.pivCorrelationProcessed = pivCorrelationProcessed;
-    }
-
-    public Map<String, double[][]> getPivReplaceMissing() {
-        return pivReplaceMissing;
-    }
-
-    public void setPivReplaceMissing(Map<String, double[][]> pivReplaceMissing) {
-        this.pivReplaceMissing = pivReplaceMissing;
-    }
-
-    public Map<String, double[][]> getPivCorrelationMulti() {
-        return pivCorrelationMulti;
-    }
-
-    public void setPivCorrelationMulti(Map<String, double[][]> pivCorrelationMulti) {
-        this.pivCorrelationMulti = pivCorrelationMulti;
-    }
-
-    public Map<String, double[][]> getPivReplaceMissing2() {
-        return pivReplaceMissing2;
-    }
-
-    public void setPivReplaceMissing2(Map<String, double[][]> pivReplaceMissing2) {
-        this.pivReplaceMissing2 = pivReplaceMissing2;
     }
 
     public int getRows() {
