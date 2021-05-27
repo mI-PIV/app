@@ -10,8 +10,7 @@ import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 
 public class PivRunner {
@@ -31,7 +30,7 @@ public class PivRunner {
         this.userName = userName;
     }
 
-    public List<PivResultData> Run() {
+    public HashMap<String, PivResultData> Run() {
         // create new experiment directory
         int newExpTotal = (PersistedData.getTotalExperiments(context, userName) + 1);
         File experimentDir = PathUtil.getExperimentNumberedDirectory(userName, newExpTotal);
@@ -54,7 +53,7 @@ public class PivRunner {
         pDialog.setCancelable(false);
         if (!pDialog.isShowing()) pDialog.show();
 
-        final List<PivResultData> resultData = new ArrayList<>();
+        final HashMap<String, PivResultData> resultData = new HashMap<>();
 
 
         //---------------------------------Using Threads--------------------------------------//
@@ -94,9 +93,7 @@ public class PivRunner {
                 pDialog.setMessage("Saving post processing data");
                 String stepPro = "VectorPostProcess";
                 pivFunctions.saveVectorsValues(pivCorrelationProcessed, stepPro);
-
-                resultData.add(singlePassResult);
-                resultData.add(pivCorrelationProcessed);
+                resultData.put(PivResultData.SINGLE, singlePassResult);
 
                 PivResultData pivCorrelationMulti;
 
@@ -109,7 +106,7 @@ public class PivRunner {
                     pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);
                     pDialog.setMessage("Calculating replaced vectors");
                     PivResultData pivReplaceMissing2 = pivFunctions.replaceMissingVectors(pivCorrelationMulti, PivResultData.REPLACE2);
-                    resultData.add(pivReplaceMissing2);
+                    resultData.put(PivResultData.REPLACE2, pivReplaceMissing2);
 
                     String stepReplace2 = "Replaced2";
                     pivFunctions.saveVectorsValues(pivReplaceMissing2, stepReplace2);
@@ -124,7 +121,7 @@ public class PivRunner {
 
                     parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivCorrelationMulti.getMag()));
                 }
-                resultData.add(pivCorrelationMulti);
+                resultData.put(PivResultData.MULTI, pivCorrelationMulti);
 
                 if (pDialog.isShowing()) pDialog.dismiss();
             }

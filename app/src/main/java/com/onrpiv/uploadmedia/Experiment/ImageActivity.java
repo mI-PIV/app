@@ -23,7 +23,7 @@ import com.onrpiv.uploadmedia.pivFunctions.PivRunner;
 import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * author: sarbajit mukherjee
@@ -40,7 +40,7 @@ public class ImageActivity extends AppCompatActivity {
     private int frame1Num;
     private int frame2Num;
     private int fps;
-    private List<PivResultData> resultData;
+    private static HashMap<String, PivResultData> resultData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,14 +148,17 @@ public class ImageActivity extends AppCompatActivity {
         parameterPopup.show();
     }
 
-    public void displayFile(View view) {
-        Intent displayIntent = new Intent(this, ViewResultsActivity.class);
+    public void displayResults(View view) {
+        // Pass PIV result data to ViewResultsActivity
+        ViewResultsActivity.singlePass = resultData.get(PivResultData.SINGLE);
+        ViewResultsActivity.multiPass = resultData.get(PivResultData.MULTI);
+        if (pivParameters.isReplace()) {
+            ViewResultsActivity.replacedPass = resultData.get(PivResultData.REPLACE2);
+        }
 
+        Intent displayIntent = new Intent(ImageActivity.this, ViewResultsActivity.class);
         displayIntent.putExtra(PivResultData.USERNAME, userName);
         displayIntent.putExtra(PivResultData.REPLACED_BOOL, pivParameters.isReplace());
-        for (PivResultData pivResult : resultData) {
-            displayIntent.putExtra(pivResult.getName(), pivResult);
-        }
 
         startActivity(displayIntent);
         pickImageMultiple.setBackgroundColor(Color.parseColor("#243EDF"));
@@ -165,7 +168,7 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     // Process Images
-    public void processFile(View view) {
+    public void processPiv(View view) {
         PivRunner pivRunner = new PivRunner(ImageActivity.this, userName, pivParameters,
                 frame1File, frame2File);
         resultData = pivRunner.Run();
