@@ -61,17 +61,14 @@ public class ViewResultsActivity extends AppCompatActivity {
     private RangeSlider rangeSlider;
     private ImageView baseImage, vectorFieldImage, vorticityImage;
     private Button arrowColor, vorticityColors, solidColor, applyButton;
-    private SeekBar arrowScale;
-    private SwitchCompat displayVectors, displayVorticity;
-    private RadioGroup vectorRadioGroup, backgroundRadioGroup;
 
     // paths
     private String imgFileToDisplay;
     private File outputDirectory;
 
     // maps and settings
-    private final HashMap<String, Bitmap> bmpHash = new HashMap<>();
-    private HashMap<String, HashMap<String, double[][]>> correlationMaps;
+    private HashMap<String, PivResultData> correlationMaps;
+
     private ArrayList<ColorMap> colorMaps;
     private ResultSettings settings;
     private int imageCounter = 0;
@@ -126,7 +123,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             }
         });
 
-        arrowScale = findViewById(R.id.arrow_scale);
+        SeekBar arrowScale = findViewById(R.id.arrow_scale);
         arrowScale.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -164,7 +161,7 @@ public class ViewResultsActivity extends AppCompatActivity {
         solidColor.setBackgroundColor(settings.getBackgroundColor());
 
         // switches
-        displayVectors = findViewById(R.id.vec_display);
+        SwitchCompat displayVectors = findViewById(R.id.vec_display);
         displayVectors.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -173,7 +170,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             }
         });
 
-        displayVorticity = findViewById(R.id.vort_display);
+        SwitchCompat displayVorticity = findViewById(R.id.vort_display);
         displayVorticity.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -183,7 +180,7 @@ public class ViewResultsActivity extends AppCompatActivity {
         });
 
         // radio groups
-        vectorRadioGroup = findViewById(R.id.vec_rgroup);
+        RadioGroup vectorRadioGroup = findViewById(R.id.vec_rgroup);
         vectorRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -203,7 +200,7 @@ public class ViewResultsActivity extends AppCompatActivity {
             }
         });
 
-        backgroundRadioGroup = findViewById(R.id.background_rgroup);
+        RadioGroup backgroundRadioGroup = findViewById(R.id.background_rgroup);
         backgroundRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -232,7 +229,7 @@ public class ViewResultsActivity extends AppCompatActivity {
         outputDirectory = PathUtil.getExperimentNumberedDirectory(userName, currentExpDir);
 
         // Display base image
-        displayBaseImage("background" + BACKGRND_IMG, BACKGRND_IMG);
+        displayBaseImage(BACKGRND_IMG);
     }
 
     @Override
@@ -247,23 +244,14 @@ public class ViewResultsActivity extends AppCompatActivity {
     public void applyDisplay(View view) {
         // Vector Field
         if (settings.vecFieldChanged && settings.getVecDisplay()) {
-            HashMap<String, double[][]> correlation = correlationMaps.get(settings.getVecOption());
-            String key = "vec"
-                    + settings.getVecOption()
-                    + settings.getArrowColor()
-                    + settings.getArrowScale();
-            displayVectorImage(key, correlation);
+            displayVectorImage(correlationMaps.get(settings.getVecOption()));
         } else if (!settings.getVecDisplay()) {
             vectorFieldImage.setVisibility(View.INVISIBLE);
         }
 
         // Vorticity
         if (settings.vortMapChanged && settings.getVortDisplay()) {
-            String key = "vort"
-                    + settings.getVortColorMap().getOpenCVCode()
-                    + settings.getVortTransVals_min()
-                    + settings.getVortTransVals_max();
-            displayVortImage(key);
+            displayVortImage(correlationMaps.get(settings.getVecOption()));
         } else if (!settings.getVortDisplay()) {
             vorticityImage.setVisibility(View.INVISIBLE);
             vorticityImage.invalidate();
@@ -271,15 +259,7 @@ public class ViewResultsActivity extends AppCompatActivity {
 
         // Background
         if (settings.backgroundChanged) {
-            String key;
-            if (settings.getBackground().equals(BACKGRND_IMG)) {
-                key = "background" + BACKGRND_IMG;
-            } else {
-                key = "background"
-                        + BACKGRND_SOLID
-                        + settings.getBackgroundColor();
-            }
-            displayBaseImage(key, settings.getBackground());
+            displayBaseImage(settings.getBackground());
         }
 
         // reset detected changes
@@ -376,57 +356,41 @@ public class ViewResultsActivity extends AppCompatActivity {
         saveImageButton.setBackgroundColor(Color.parseColor("#243EDF"));
     }
 
-    private void displayVectorImage(String key, HashMap<String, double[][]> correlation) {
-        if (bmpHash.containsKey(key)) {
-            vectorFieldImage.setImageBitmap(bmpHash.get(key));
-        } else {
-            Bitmap bmp = createVectorFieldBitmap(correlation);
-            bmpHash.put(key, bmp);
-            vectorFieldImage.setImageBitmap(bmp);
-        }
+    private void displayVectorImage(PivResultData pivResultData) {
+        Bitmap bmp = createVectorFieldBitmap(pivResultData);
+        vectorFieldImage.setImageBitmap(bmp);
         vectorFieldImage.setVisibility(View.VISIBLE);
     }
 
-    private void displayVortImage(String key) {
-        if (bmpHash.containsKey(key)) {
-            vorticityImage.setImageBitmap(bmpHash.get(key));
-        } else {
-            Bitmap bmp = createVorticityBitmap();
-            bmpHash.put(key, bmp);
-            vorticityImage.setImageBitmap(bmp);
-        }
+    private void displayVortImage(PivResultData pivResultData) {
+        Bitmap bmp = createVorticityBitmap(pivResultData);
+        vorticityImage.setImageBitmap(bmp);
         vorticityImage.setVisibility(View.VISIBLE);
     }
 
-    private void displayBaseImage(String key, String backgroundCode) {
-        if (bmpHash.containsKey(key)) {
-            baseImage.setImageBitmap(bmpHash.get(key));
+    private void displayBaseImage(String backgroundCode) {
+        if (backgroundCode.equals(BACKGRND_IMG)) {
+            File pngFile = new File(outputDirectory, "Base_" + imgFileToDisplay);
+            Bitmap bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
+            baseImage.setImageBitmap(bmp);
         } else {
-            if (backgroundCode.equals(BACKGRND_IMG)) {
-                File pngFile = new File(outputDirectory, "Base_" + imgFileToDisplay);
-                Bitmap bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
-                baseImage.setImageBitmap(bmp);
-            } else {
-                Bitmap bmp = createSolidBaseImage();
-                bmpHash.put(key, bmp);
-                baseImage.setImageBitmap(bmp);
-            }
+            Bitmap bmp = createSolidBaseImage();
+            baseImage.setImageBitmap(bmp);
         }
     }
 
-    private Bitmap createVorticityBitmap() {
+    private Bitmap createVorticityBitmap(PivResultData pivResultData) {
         return PivFunctions.createColorMapBitmap(
-                vorticityValues,
+                pivResultData.getVorticityValues(),
                 settings.getVortTransVals_min(),
                 settings.getVortTransVals_max(),
                 settings.getVortColorMap().getOpenCVCode()
         );
     }
 
-    private Bitmap createVectorFieldBitmap(HashMap<String, double[][]> correlation) {
+    private Bitmap createVectorFieldBitmap(PivResultData pivResultData) {
         return PivFunctions.createVectorFieldBitmap(
-                correlation,
-                interrCenters,
+                pivResultData,
                 new ArrowDrawOptions(Color.valueOf(settings.getArrowColor()), settings.getArrowScale()),
                 rows,
                 cols);
@@ -450,11 +414,11 @@ public class ViewResultsActivity extends AppCompatActivity {
         return result;
     }
 
-    private HashMap<String, HashMap<String, double[][]>> loadCorrelationMaps() {
-        HashMap<String, HashMap<String, double[][]>> result = new HashMap<>();
-        result.put(VEC_SINGLE, pivCorrelation);
-        result.put(VEC_REPLACED, pivReplaceMissing2);
-        result.put(VEC_MULTI, pivCorrelationMulti);
+    private HashMap<String, PivResultData> loadCorrelationMaps() {
+        HashMap<String, PivResultData> result = new HashMap<>();
+        result.put(VEC_SINGLE, singlePass);
+        result.put(VEC_REPLACED, replacedPass);
+        result.put(VEC_MULTI, multiPass);
         return result;
     }
 
