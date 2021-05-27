@@ -68,7 +68,6 @@ public class ViewResultsActivity extends AppCompatActivity {
 
     // maps and settings
     private HashMap<String, PivResultData> correlationMaps;
-
     private ArrayList<ColorMap> colorMaps;
     private ResultSettings settings;
     private int imageCounter = 0;
@@ -397,6 +396,7 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     private Bitmap createSolidBaseImage() {
+        // TODO fix the hard code
         Rect rect = new Rect(0, 0, 2560, 1440);
         Bitmap bmp = Bitmap.createBitmap(rect.right, rect.bottom, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);

@@ -29,7 +29,6 @@ import static org.opencv.core.Core.mean;
 import static org.opencv.core.Core.subtract;
 import static org.opencv.core.CvType.CV_8UC1;
 import static org.opencv.core.CvType.CV_8UC4;
-import static org.opencv.imgproc.Imgproc.COLORMAP_JET;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
@@ -77,6 +76,7 @@ public class PivFunctions {
 
         grayFrame2 = new Mat(frame2.rows(), frame2.cols(), frame2.type());
         cvtColor(frame2, grayFrame2, COLOR_BGR2GRAY);
+        frame2.release();
 
         this.outputDirectory = outputDirectory;
         this.imageFileSaveName = imageFileSaveName;
@@ -91,6 +91,14 @@ public class PivFunctions {
         int[] fieldShape = getFieldShape(cols, rows, windowSize, overlap);
         fieldCols = fieldShape[0];
         fieldRows = fieldShape[1];
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        grayFrame1.release();
+        grayFrame2.release();
+        frame1.release();
     }
 
     private int[] getFieldShape(int imgCols, int imgRows, int areaSize, int overlap) {
@@ -111,21 +119,25 @@ public class PivFunctions {
         Mat submat = Xt.submat(rect);
         image.copyTo(submat);
 
-//        Mat outputCorr = new Mat();
         Imgproc.matchTemplate(Xt, template, image, Imgproc.TM_CCORR);
-//        return outputCorr;
+
+        // cleanup mats
+        Xt.release();
+        submat.release();
+
         return image;
     }
 
-    private static double sig2Noise_update(Mat corr) {
-        Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
-
+    private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr) {
+        // find first peak location and value
         int peak1_i = (int) mmr.maxLoc.x;
         int peak1_j = (int) mmr.maxLoc.y;
         double peak1_value = mmr.maxVal;
 
-        corr.put(peak1_j, peak1_i, 0.0);
+        // set first peak to zero
+        corr.put(peak1_j, peak1_i, 0.0d);
 
+        // find second peak value
         Core.MinMaxLocResult mmr2 = Core.minMaxLoc(corr);
         double peak2_value = mmr2.maxVal;
 
@@ -134,17 +146,11 @@ public class PivFunctions {
 
 
     public PivResultData extendedSearchAreaPiv_update(String resultName) {
-        int i1t, j1l;
-
         double[][] dr1 = new double[fieldRows][fieldCols];
         double[][] dc1 = new double[fieldRows][fieldCols];
 
         double[][] mag = new double[fieldRows][fieldCols];
         double[][] sig2noise = new double[fieldRows][fieldCols];
-
-        Mat corr;
-        double win1_avg;
-        double win2_avg;
 
         for (int i = 0; i < fieldRows; i++) {
             for (int j = 0; j < fieldCols; j++) {
@@ -174,10 +180,10 @@ public class PivFunctions {
 //             Select first the largest window, work like usual from the top left corner the left edge goes as:
 //            # e.g. 0, (search_area_size - overlap), 2*(search_area_size - overlap),....
 
-                i1t = i * (windowSize - overlap);
+                int i1t = i * (windowSize - overlap);
 
 //              same for top-bottom
-                j1l = j * (windowSize - overlap);
+                int j1l = j * (windowSize - overlap);
 
                 Rect rectWin_a = new Rect(j1l, i1t, windowSize, windowSize);
                 Mat window_a = new Mat(grayFrame1, rectWin_a);
@@ -189,21 +195,27 @@ public class PivFunctions {
                 Rect rectWin_b = new Rect(j1l, i1t, windowSize, windowSize);
                 Mat window_b = new Mat(grayFrame2, rectWin_b);
 
-                win1_avg = mean(window_a).val[0];
-                win2_avg = mean(window_b).val[0];
+                double win1_avg = mean(window_a).val[0];
+                double win2_avg = mean(window_b).val[0];
 
                 subtract(window_a, new Scalar(win1_avg), window_a_1);
                 subtract(window_b, new Scalar(win2_avg), window_b_1);
 
-                corr = openCvPIV(window_a_1, window_b_1);
+                Mat corr = openCvPIV(window_a_1, window_b_1);
                 Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
 
                 int c = (int) mmr.maxLoc.x;
                 int r = (int) mmr.maxLoc.y;
 
+                double bottomCenter = corr.get(r-1, c)[0];
+                double topCenter = corr.get(r+1, c)[0];
+                double center = corr.get(r, c)[0];
+                double leftCenter = corr.get(r, c-1)[0];
+                double rightCenter = corr.get(r, c+1)[0];
+
                 try {
-                    double epsr = (Math.log(corr.get(r - 1, c)[0]) - Math.log(corr.get(r + 1, c)[0])) / (2 * (Math.log(corr.get(r - 1, c)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r + 1, c)[0])));
-                    double epsc = (Math.log(corr.get(r, c - 1)[0]) - Math.log(corr.get(r, c + 1)[0])) / (2 * (Math.log(corr.get(r, c - 1)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r, c + 1)[0])));
+                    double epsr = (Math.log(bottomCenter) - Math.log(topCenter)) / (2 * (Math.log(bottomCenter) - 2 * Math.log(center) + Math.log(topCenter)));
+                    double epsc = (Math.log(leftCenter) - Math.log(rightCenter)) / (2 * (Math.log(leftCenter) - 2 * Math.log(center) + Math.log(rightCenter)));
 
                     epsr = Double.isNaN(epsr)? 0.0 : epsr;
                     epsc = Double.isNaN(epsc)? 0.0 : epsc;
@@ -216,7 +228,15 @@ public class PivFunctions {
                     dc1[i][j] = 0.0;
                 }
                 mag[i][j] = Math.sqrt(Math.pow(dr1[i][j], 2) + Math.pow(dc1[i][j], 2));
-                sig2noise[i][j] = sig2Noise_update(corr);
+                sig2noise[i][j] = sig2Noise_update(corr, mmr);
+
+                // cleanup mats
+                window_a_1.release();
+                window_b_1.release();
+                window_a.release();
+                window_b.release();
+                corr.release();
+                System.gc();
             }
         }
 
@@ -258,7 +278,7 @@ public class PivFunctions {
         }
     }
 
-    public void saveVectors(PivResultData pivResultData, String stepName) {
+    public void saveVectorsValues(PivResultData pivResultData, String stepName) {
         // delete vector field file if it already exists
         File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
         if (txtFile.exists() && txtFile.isFile()) {
@@ -287,14 +307,6 @@ public class PivFunctions {
                 toPrint.clear();
             }
         }
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public int getCols() {
-        return cols;
     }
 
     public void saveVectorCentimeters(PivResultData pivCorrelation, double pixelToCM, String stepName) {
@@ -328,7 +340,7 @@ public class PivFunctions {
         }
     }
 
-    public void saveVortMapFile(double[][] vortMap, String stepName) {
+    public void saveVorticityValues(double[][] vortMap, String stepName) {
         // delete old vortmap file if it exists
         File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
         if (txtFile.exists() && txtFile.isFile()) {
@@ -355,65 +367,6 @@ public class PivFunctions {
 
     public void saveBaseImage(String stepName) {
         saveImage(frame1, stepName);
-    }
-
-    public void createVectorField(PivResultData pivResultData, String stepName,
-                                  ArrowDrawOptions arrowOptions) {
-        Mat transparentBackground = new Mat(rows, cols, CV_8UC4, new Scalar(255, 255, 255, 0));
-
-        int lineType = arrowOptions.lineType;
-        int thickness = arrowOptions.thickness;
-        double tipLength = arrowOptions.tipLength;
-        double scale = arrowOptions.scale;
-
-        double[] x = pivResultData.getInterrX();
-        double[] y = pivResultData.getInterrY();
-
-        double[][] u = pivResultData.getU();
-        double[][] v = pivResultData.getV();
-
-        double dx, dy;
-        Point startPoint = null, endPoint = null;
-
-        for (int i = 0; i < y.length; i++) {
-            for (int j = 0; j < x.length; j++) {
-                dx = u[i][j];
-                dy = -v[i][j];
-
-                if (dx < 0 && dy > 0) {
-                    startPoint = new Point(x[j], y[i]);
-                    endPoint = new Point((x[j] - (Math.abs(dx) * scale)), (y[i] - (Math.abs(dy) * scale)));
-                } else if (dx > 0 && dy > 0) {
-                    startPoint = new Point(x[j], y[i]);
-                    endPoint = new Point((x[j] + (Math.abs(dx) * scale)), (y[i] - (Math.abs(dy) * scale)));
-                } else if (dx > 0 && dy < 0) {
-                    startPoint = new Point(x[j], y[i]);
-                    endPoint = new Point((x[j] + (Math.abs(dx) * scale)), (y[i] + (Math.abs(dy) * scale)));
-                } else if (dx < 0 && dy < 0) {
-                    startPoint = new Point(x[j], y[i]);
-                    endPoint = new Point((x[j] - (Math.abs(dx) * scale)), (y[i] + (Math.abs(dy) * scale)));
-                } else if (dx == 0 && dy < 0) {
-                    startPoint = new Point(x[j], y[i]);
-                    endPoint = new Point(x[j], (y[i] + (Math.abs(dy) * scale)));
-                } else if (dx == 0 && dy > 0) {
-                    startPoint = new Point(x[j], y[i]);
-                    endPoint = new Point(x[j], (y[i] - (Math.abs(dy) * scale)));
-                } else if (dx < 0 && dy == 0) {
-                    startPoint = new Point(x[j], y[i]);
-                    endPoint = new Point((x[j] - (Math.abs(dx) * scale)), y[i]);
-                } else if (dx > 0 && dy == 0) {
-                    startPoint = new Point(x[j], y[i]);
-                    endPoint = new Point((x[j] + (Math.abs(dx) * scale)), y[i]);
-                } else if (dx == 0 && dy == 0) {
-                    startPoint = new Point(x[j], y[i]);
-                    endPoint = new Point(x[j], y[i]);
-                }
-
-                Imgproc.arrowedLine(transparentBackground, startPoint, endPoint, new Scalar(255, 255, 255, 255),
-                        thickness, lineType, 0, tipLength);
-            }
-        }
-        saveImage(transparentBackground, stepName);
     }
 
     public static Bitmap createVectorFieldBitmap(PivResultData pivResultData,
@@ -484,6 +437,11 @@ public class PivFunctions {
         Bitmap bmp = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
         bmp.setHasAlpha(true);
         Utils.matToBitmap(resized, bmp, true);
+
+        //clean up mats
+        transparentBackground.release();
+        resized.release();
+        System.gc();
         return bmp;
     }
 
@@ -491,21 +449,18 @@ public class PivFunctions {
         File pngFile = new File(outputDirectory, stepName + "_" + imageFileSaveName);
         Mat resized = resizeMat(image1);
         Imgcodecs.imwrite(pngFile.getAbsolutePath(), resized);
+
+        //clean up mats
+        resized.release();
+        System.gc();
     }
 
     private static Mat resizeMat(Mat mat) {
         Mat resized = new Mat();
+        // TODO fix hard code
         Size scaleSize = new Size(2560, 1440);
         Imgproc.resize(mat, resized, scaleSize, 0, 0, INTER_CUBIC);
         return resized;
-    }
-
-    public void saveColorMapImage(double[][] mapValues, String stepName) {
-        Mat mapValuesMat = new Mat(mapValues.length, mapValues[0].length, CV_8UC1);
-        double[] minMax = findMinMax2D(mapValues);
-        List<int[]> transparentCoords = findTransparentCoords(mapValuesMat, mapValues, 120, 135, minMax[0], minMax[1]);
-        Mat colorMapImage = createColorMap(mapValuesMat, transparentCoords, COLORMAP_JET);
-        saveImage(colorMapImage, stepName);
     }
 
     public static Bitmap createColorMapBitmap(double[][] mapValues, int threshMin, int threshMax,
@@ -520,6 +475,13 @@ public class PivFunctions {
         Bitmap result = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
         result.setHasAlpha(true);
         Utils.matToBitmap(resized, result, true);
+
+        //clean up mats
+        mapValuesMat.release();
+        colorMap.release();
+        resized.release();
+        System.gc();
+
         return result;
     }
 
@@ -538,7 +500,6 @@ public class PivFunctions {
                 if (newVal > threshMin && newVal < threshMax) {
                     transparentCoords.add(new int[]{y, x});
                 }
-
                 valuesMat.put(y, x, newVal);
             }
         }
@@ -668,7 +629,6 @@ public class PivFunctions {
         double[] x = pivResultData.getInterrX();
         double[] y = pivResultData.getInterrY();
 
-        Mat corr;
         for (int ii = 1; ii < fieldRows - 1; ii++) {
             for (int jj = 1; jj < fieldCols - 1; jj++) {
                 Mat window_a_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
@@ -710,7 +670,7 @@ public class PivFunctions {
                     subtract(IA2_new_t, new Scalar(i2_avg_new), window_b_1);
 
                     //Find the correlation
-                    corr = openCvPIV(window_a_1, window_b_1);
+                    Mat corr = openCvPIV(window_a_1, window_b_1);
                     Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
 
                     int c = (int) mmr.maxLoc.x;
@@ -731,9 +691,19 @@ public class PivFunctions {
                     //Add new pixel displacement to pixel displacements from 1st pass
                     dr2[ii][jj] = v[ii][jj] + dr_new[ii][jj];
                     dc2[ii][jj] = u[ii][jj] + dc_new[ii][jj];
-                    sig2noise[ii][jj] = sig2Noise_update(corr);
+                    sig2noise[ii][jj] = sig2Noise_update(corr, mmr);
+
+                    //cleanup mats
+                    IA1_new_t.release();
+                    IA2_new_t.release();
+                    corr.release();
                 }
                 mag[ii][jj] = Math.sqrt(Math.pow(dr2[ii][jj], 2) + Math.pow(dc2[ii][jj], 2));
+
+                //cleanup mats
+                window_a_1.release();
+                window_b_1.release();
+                System.gc();
             }
         }
 
