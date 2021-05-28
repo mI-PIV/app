@@ -1,6 +1,8 @@
 package com.onrpiv.uploadmedia.Learn;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -11,6 +13,7 @@ import com.onrpiv.uploadmedia.Utilities.YoutubeConfig;
 
 public class Experiment6 extends YouTubeBaseActivity {
 
+    Button backArrow;
     YouTubePlayerView mYoutubePlayerView;
     // Button btnPlay;
     YouTubePlayer.OnInitializedListener mOnInitializedListener;
@@ -20,6 +23,14 @@ public class Experiment6 extends YouTubeBaseActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment1);
+
+        backArrow = findViewById(R.id.back_arrow);
+        backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Experiment6.super.onBackPressed();
+            }
+        });
 
         //  btnPlay = (Button)findViewById(R.id.playButton);
         mYoutubePlayerView = (YouTubePlayerView) findViewById(R.id.youtubePlay);
