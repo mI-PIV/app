@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Learn.Experiment6">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimary"
+        android:maxLines="1"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:text="Back"
+        android:gravity="center_vertical"
+        android:drawablePadding="8dp"
+        android:textColor="@android:color/white"
+        android:drawableLeft="@drawable/ic_baseline_arrow_back_24"
+        android:ellipsize="end"
+        android:id="@+id/back_arrow"/>
+
+    <view
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        class="com.google.android.youtube.player.YouTubePlayerView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/back_arrow"
+        android:id="@+id/youtubePlay"
+        />
+
+
+<!--    <Button-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/youtubePlay"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:text="Play"-->
+<!--        android:id="@+id/playButton"/>-->
+
+</RelativeLayout>
