@@ -424,9 +424,9 @@ public class PivFunctions {
                     endPoint = new Point(x[j], y[i]);
                 }
 
-                int red = (int) arrowOptions.color.red() * 255;
-                int green = (int) arrowOptions.color.green() * 255;
-                int blue = (int) arrowOptions.color.blue() * 255;
+                int red = ((arrowOptions.color >> 16) & 0xFF) * 255;
+                int green = ((arrowOptions.color >> 8) & 0xFF) * 255;
+                int blue = ((arrowOptions.color) & 0xFF) * 255;
 
                 Imgproc.arrowedLine(transparentBackground, startPoint, endPoint, new Scalar(red, green, blue, 255),
                         thickness, lineType, 0, tipLength);

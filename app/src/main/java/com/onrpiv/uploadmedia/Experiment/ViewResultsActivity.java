@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -385,11 +386,19 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     private Bitmap createVectorFieldBitmap(PivResultData pivResultData) {
-        return PivFunctions.createVectorFieldBitmap(
-                pivResultData,
-                new ArrowDrawOptions(Color.valueOf(settings.getArrowColor()), settings.getArrowScale()),
-                rows,
-                cols);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return PivFunctions.createVectorFieldBitmap(
+                    pivResultData,
+                    new ArrowDrawOptions(settings.getArrowColor(), settings.getArrowScale()),
+                    rows,
+                    cols);
+        } else {
+            return PivFunctions.createVectorFieldBitmap(
+                    pivResultData,
+                    new ArrowDrawOptions(settings.getArrowColor(), settings.getArrowScale()),
+                    rows,
+                    cols);
+        }
     }
 
     private Bitmap createSolidBaseImage() {
