@@ -8,7 +8,7 @@ public class ArrowDrawOptions
     public int thickness = 2;
     public double tipLength = 0.2d;
     public double scale = 1.0d;
-    public Color color = Color.valueOf(Color.WHITE);
+    public int color = Color.WHITE;
 
     public ArrowDrawOptions()
     {
@@ -27,11 +27,11 @@ public class ArrowDrawOptions
         this.scale = scale;
     }
 
-    public ArrowDrawOptions(Color color) {
+    public ArrowDrawOptions(int color) {
         this.color = color;
     }
 
-    public ArrowDrawOptions(Color color, double scale) {
+    public ArrowDrawOptions(int color, double scale) {
         this.color = color;
         this.scale = scale;
     }

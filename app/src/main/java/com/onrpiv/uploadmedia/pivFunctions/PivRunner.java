@@ -1,10 +1,10 @@
 package com.onrpiv.uploadmedia.pivFunctions;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.onrpiv.uploadmedia.R;
-import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraCalibration;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
@@ -39,6 +39,8 @@ public class PivRunner {
         final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(newExpTotal);
         final String txtFileSaveName = PathUtil.getExperimentTextFileSuffix(newExpTotal);
 
+        final Activity imageActivity = (Activity) context;
+
         final PivFunctions pivFunctions = new PivFunctions(frame1File.getAbsolutePath(),
                 frame2File.getAbsolutePath(),
                 "peak2peak",
@@ -60,7 +62,8 @@ public class PivRunner {
         Thread thread = new Thread() {
             @Override
             public void run() {
-                pDialog.setMessage("Calculating PIV");
+//                pDialog.setMessage("Calculating PIV");
+                setMessage(imageActivity, "Calculating PIV", pDialog);
                 // single pass
                 PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE);
                 singlePassResult.setInterrCenters(pivFunctions.getCoordinates());
@@ -68,29 +71,28 @@ public class PivRunner {
                 // Save first frame for output base image
                 pivFunctions.saveBaseImage("Base");
 
-                pDialog.setMessage("Calculating Pixels per Metric");
+//                pDialog.setMessage("Calculating Pixels per Metric");
                 CameraCalibration calibration = new CameraCalibration(context);
                 double pixelToCmRatio = calibration.calibrate(frame1File.getAbsolutePath(), frame2File.getAbsolutePath());
                 if (calibration.foundTriangle) {
                     pivFunctions.saveVectorCentimeters(singlePassResult, pixelToCmRatio, "CENTIMETERS");
                 }
 
-                pDialog.setMessage("Calculating single pass vorticity");
+//                pDialog.setMessage("Calculating single pass vorticity");
                 String vortStep = "Vorticity";
                 PivFunctions.calculateVorticityMap(singlePassResult);
                 pivFunctions.saveVorticityValues(singlePassResult.getVorticityValues(), vortStep);
 
-                pDialog.setMessage("Saving single pass data");
-                ArrowDrawOptions arrowDrawOptions = new ArrowDrawOptions();
+//                pDialog.setMessage("Saving single pass data");
 
                 String step = "SinglePass";
                 pivFunctions.saveVectorsValues(singlePassResult, step);
 
-                pDialog.setMessage("Processing Single Pass PIV");
+//                pDialog.setMessage("Processing Single Pass PIV");
                 PivResultData pivCorrelationProcessed =
                         pivFunctions.vectorPostProcessing(singlePassResult, "PostProcessing");
 
-                pDialog.setMessage("Saving post processing data");
+//                pDialog.setMessage("Saving post processing data");
                 String stepPro = "VectorPostProcess";
                 pivFunctions.saveVectorsValues(pivCorrelationProcessed, stepPro);
                 resultData.put(PivResultData.SINGLE, singlePassResult);
@@ -98,13 +100,13 @@ public class PivRunner {
                 PivResultData pivCorrelationMulti;
 
                 if (parameters.isReplace()) {
-                    pDialog.setMessage("Calculating multi-pass PIV");
+//                    pDialog.setMessage("Calculating multi-pass PIV");
                     PivResultData pivReplaceMissing = pivFunctions.replaceMissingVectors(pivCorrelationProcessed, null);
                     pivCorrelationMulti = pivFunctions.calculateMultipass(pivReplaceMissing, PivResultData.MULTI);
 
                     String stepMulti = "Multipass";
                     pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);
-                    pDialog.setMessage("Calculating replaced vectors");
+//                    pDialog.setMessage("Calculating replaced vectors");
                     PivResultData pivReplaceMissing2 = pivFunctions.replaceMissingVectors(pivCorrelationMulti, PivResultData.REPLACE2);
                     resultData.put(PivResultData.REPLACE2, pivReplaceMissing2);
 
@@ -113,7 +115,7 @@ public class PivRunner {
 
                     parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivReplaceMissing2.getMag()));
                 } else {
-                    pDialog.setMessage("Calculating multi-pass PIV");
+//                    pDialog.setMessage("Calculating multi-pass PIV");
                     pivCorrelationMulti = pivFunctions.calculateMultipass(pivCorrelationProcessed, PivResultData.MULTI);
 
                     String stepMulti = "Multipass";
@@ -131,5 +133,14 @@ public class PivRunner {
         thread.start();
 
         return resultData;
+    }
+
+    private void setMessage(Activity activity, String msg, ProgressDialog pDialog) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                pDialog.setMessage(msg);
+            }
+        });
     }
 }
