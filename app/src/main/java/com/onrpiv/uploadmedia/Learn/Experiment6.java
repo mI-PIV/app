@@ -22,7 +22,7 @@ public class Experiment6 extends YouTubeBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_experiment1);
+        setContentView(R.layout.activity_experiment6);
 
         backArrow = findViewById(R.id.back_arrow);
         backArrow.setOnClickListener(new View.OnClickListener() {
