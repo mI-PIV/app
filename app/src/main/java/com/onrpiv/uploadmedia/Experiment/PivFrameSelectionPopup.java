@@ -130,7 +130,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 BoolIntStructure userInput = UserInputUtils.checkUserInputIntClamp(s.toString(), 1, numberOfSets);
                 if (s.length() > 0 && userInput.getBool() && numberOfSets > 0) {
                     setIsReady = true;
-                    frameSetPath = PathUtil.getFramesNumberedDirectory(userName, userInput.getInt());
+                    frameSetPath = PathUtil.getFramesNumberedDirectory(getContext(), userName, userInput.getInt());
                     setFrames = Arrays.asList(frameSetPath.listFiles());
 
                     setFrames.sort(null);

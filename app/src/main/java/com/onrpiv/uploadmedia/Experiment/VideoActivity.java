@@ -53,7 +53,7 @@ public class VideoActivity extends AppCompatActivity{
     private String userName;
     private String fps = "20";
     private float vidStart = 0f;
-    private float vidEnd = 0f;
+    private float vidEnd = 1f;
 
     // Current playback position (in milliseconds).
     private int mCurrentPosition = 0;

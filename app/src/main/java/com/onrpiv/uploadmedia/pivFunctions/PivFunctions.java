@@ -266,7 +266,7 @@ public class PivFunctions {
 
     private void saveToFile(String data, String stepName) {
         try {
-            File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
+            File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName);
 
             FileOutputStream fileOutputStream = new FileOutputStream(txtFile, true);
             fileOutputStream.write((data + System.getProperty("line.separator")).getBytes());
@@ -280,7 +280,7 @@ public class PivFunctions {
 
     public void saveVectorsValues(PivResultData pivResultData, String stepName) {
         // delete vector field file if it already exists
-        File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
+        File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName);
         if (txtFile.exists() && txtFile.isFile()) {
             txtFile.delete();
         }
@@ -313,7 +313,7 @@ public class PivFunctions {
         double ux, vy, q, x, y;
         ArrayList<String> toPrint = new ArrayList<>();
 
-        File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
+        File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName);
         if (txtFile.exists() && txtFile.isFile()) {
             txtFile.delete();
         }
@@ -342,7 +342,7 @@ public class PivFunctions {
 
     public void saveVorticityValues(double[][] vortMap, String stepName) {
         // delete old vortmap file if it exists
-        File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName + ".txt");
+        File txtFile = new File(outputDirectory, stepName + "_" + textFileSaveName);
         if (txtFile.exists() && txtFile.isFile()) {
             txtFile.delete();
         }

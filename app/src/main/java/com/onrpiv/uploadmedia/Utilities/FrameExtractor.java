@@ -12,6 +12,7 @@ import com.arthenica.mobileffmpeg.FFmpeg;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 public class FrameExtractor {
@@ -29,9 +30,7 @@ public class FrameExtractor {
 
         // create and retrieve the new frames directory
         final int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName) + 1);
-        final File framesNumDir = PathUtil.getFramesNumberedDirectory(userName, totalFrameDirs);
-
-        if (!framesNumDir.exists()) framesNumDir.mkdirs();
+        final File framesNumDir = PathUtil.getFramesNumberedDirectory(context, userName, totalFrameDirs);
 
         File jpegFile = new File(framesNumDir, filePrefix + "%03d" + fileExtn);
 
@@ -42,7 +41,7 @@ public class FrameExtractor {
                 // If the frame dir is empty after extraction (something bad happened),
                 // then we don't update the persisted data
                 // and we don't call the activity's callback
-                if (framesNumDir.listFiles().length < 1) return null;
+                if (Objects.requireNonNull(framesNumDir.listFiles()).length < 1) return null;
 
                 // persist number of frame dirs
                 PersistedData.setTotalFrameDirectories(context, userName, totalFrameDirs);

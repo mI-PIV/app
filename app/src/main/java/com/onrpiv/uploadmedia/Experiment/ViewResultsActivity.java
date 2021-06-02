@@ -223,7 +223,7 @@ public class ViewResultsActivity extends AppCompatActivity {
         String userName = displayIntent.getStringExtra(PivResultData.USERNAME);
         int currentExpDir = PersistedData.getTotalExperiments(this, userName);
         imgFileToDisplay = PathUtil.getExperimentImageFileSuffix(currentExpDir);
-        outputDirectory = PathUtil.getExperimentNumberedDirectory(userName, currentExpDir);
+        outputDirectory = PathUtil.getExperimentNumberedDirectory(this, userName, currentExpDir);
 
         // Display base image
         displayBaseImage(BACKGRND_IMG);

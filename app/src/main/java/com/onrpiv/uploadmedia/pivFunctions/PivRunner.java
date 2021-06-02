@@ -33,7 +33,7 @@ public class PivRunner {
     public HashMap<String, PivResultData> Run() {
         // create new experiment directory
         int newExpTotal = (PersistedData.getTotalExperiments(context, userName) + 1);
-        File experimentDir = PathUtil.getExperimentNumberedDirectory(userName, newExpTotal);
+        File experimentDir = PathUtil.getExperimentNumberedDirectory(context, userName, newExpTotal);
         PersistedData.setTotalExperiments(context, userName, newExpTotal);
 
         final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(newExpTotal);
@@ -108,6 +108,11 @@ public class PivRunner {
                     pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);
                     setMessage(imageActivity, "Calculating replaced vectors", pDialog);
                     PivResultData pivReplaceMissing2 = pivFunctions.replaceMissingVectors(pivCorrelationMulti, PivResultData.REPLACE2);
+
+                    setMessage(imageActivity, "Calculating replacement vorticity", pDialog);
+                    PivFunctions.calculateVorticityMap(pivReplaceMissing2);
+                    pivFunctions.saveVorticityValues(pivReplaceMissing2.getVorticityValues(), "Replace_Vorticity");
+
                     resultData.put(PivResultData.REPLACE2, pivReplaceMissing2);
 
                     String stepReplace2 = "Replaced2";
@@ -123,6 +128,11 @@ public class PivRunner {
 
                     parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivCorrelationMulti.getMag()));
                 }
+
+                setMessage(imageActivity, "Calculating multi-pass vorticity", pDialog);
+                PivFunctions.calculateVorticityMap(pivCorrelationMulti);
+                pivFunctions.saveVorticityValues(pivCorrelationMulti.getVorticityValues(), "Multi_Vorticity");
+
                 resultData.put(PivResultData.MULTI, pivCorrelationMulti);
 
                 if (pDialog.isShowing()) pDialog.dismiss();

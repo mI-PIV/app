@@ -204,11 +204,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     public void run(){
                                         // delete all frames
                                         pDialog.setMessage("Deleting Frames...");
-                                        PathUtil.deleteRecursive(PathUtil.getFramesDirectory(userName));
+                                        PathUtil.deleteRecursive(PathUtil.getFramesDirectory(context, userName));
 
                                         // delete all experiments
                                         pDialog.setMessage("Deleting Experiments...");
-                                        PathUtil.deleteRecursive(PathUtil.getExperimentsDirectory(userName));
+                                        PathUtil.deleteRecursive(PathUtil.getExperimentsDirectory(context, userName));
 
                                         // delete all persisted data
                                         pDialog.setMessage("Deleting persisted data...");
