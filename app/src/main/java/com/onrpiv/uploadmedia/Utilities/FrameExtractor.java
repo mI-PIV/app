@@ -29,7 +29,7 @@ public class FrameExtractor {
 
         // create and retrieve the new frames directory
         final int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName) + 1);
-        final File framesNumDir = PathUtil.getFramesNumberedDirectory(userName, totalFrameDirs);
+        final File framesNumDir = PathUtil.getFramesNumberedDirectory(context, userName, totalFrameDirs);
 
         if (!framesNumDir.exists()) framesNumDir.mkdirs();
 

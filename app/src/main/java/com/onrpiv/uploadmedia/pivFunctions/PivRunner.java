@@ -33,7 +33,7 @@ public class PivRunner {
     public HashMap<String, PivResultData> Run() {
         // create new experiment directory
         int newExpTotal = (PersistedData.getTotalExperiments(context, userName) + 1);
-        File experimentDir = PathUtil.getExperimentNumberedDirectory(userName, newExpTotal);
+        File experimentDir = PathUtil.getExperimentNumberedDirectory(context, userName, newExpTotal);
         PersistedData.setTotalExperiments(context, userName, newExpTotal);
 
         final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(newExpTotal);

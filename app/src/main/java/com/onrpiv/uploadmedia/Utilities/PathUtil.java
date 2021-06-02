@@ -220,28 +220,28 @@ public class PathUtil {
         return null;
     }
 
-    public static File getUserDirectory(String userName) {
-        File result = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/miPIV_" + userName + "/");
+    public static File getUserDirectory(Context context, String userName) {
+        File userDir = new File(context.getFilesDir(), "miPIV_" + userName);
+        return checkDir(userDir);
+    }
+
+    public static File getFramesDirectory(Context context, String userName) {
+        File result = new File(getUserDirectory(context, userName), "Extracted_Frames");
         return checkDir(result);
     }
 
-    public static File getFramesDirectory(String userName) {
-        File result = new File(getUserDirectory(userName), "Extracted_Frames");
+    public static File getFramesNumberedDirectory(Context context, String userName, int framesDirNum) {
+        File result = new File(getFramesDirectory(context, userName), "Frames_"+framesDirNum);
         return checkDir(result);
     }
 
-    public static File getFramesNumberedDirectory(String userName, int framesDirNum) {
-        File result = new File(getFramesDirectory(userName), "Frames_"+framesDirNum);
+    public static File getExperimentsDirectory(Context context, String userName) {
+        File result = new File(getUserDirectory(context, userName), "Experiments");
         return checkDir(result);
     }
 
-    public static File getExperimentsDirectory(String userName) {
-        File result = new File(getUserDirectory(userName), "Experiments");
-        return checkDir(result);
-    }
-
-    public static File getExperimentNumberedDirectory(String userName, int expDirNum) {
-        File result = new File(getExperimentsDirectory(userName), "Experiment_"+expDirNum);
+    public static File getExperimentNumberedDirectory(Context context, String userName, int expDirNum) {
+        File result = new File(getExperimentsDirectory(context, userName), "Experiment_"+expDirNum);
         return checkDir(result);
     }
 
