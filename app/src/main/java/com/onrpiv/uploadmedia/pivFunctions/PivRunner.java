@@ -104,18 +104,14 @@ public class PivRunner {
                     PivResultData pivReplaceMissing = pivFunctions.replaceMissingVectors(pivCorrelationProcessed, null);
                     pivCorrelationMulti = pivFunctions.calculateMultipass(pivReplaceMissing, PivResultData.MULTI);
 
-                    setMessage(imageActivity, "Calculating multi-pass vorticity", pDialog);
-                    PivFunctions.calculateVorticityMap(pivCorrelationMulti);
-                    pivFunctions.saveVorticityValues(pivCorrelationMulti.getVorticityValues(), "Multi_Vorticity");
-
                     String stepMulti = "Multipass";
                     pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);
                     setMessage(imageActivity, "Calculating replaced vectors", pDialog);
                     PivResultData pivReplaceMissing2 = pivFunctions.replaceMissingVectors(pivCorrelationMulti, PivResultData.REPLACE2);
 
                     setMessage(imageActivity, "Calculating replacement vorticity", pDialog);
-                    PivFunctions.calculateVorticityMap(pivReplaceMissing);
-                    pivFunctions.saveVorticityValues(pivReplaceMissing.getVorticityValues(), "Replace_Vorticity");
+                    PivFunctions.calculateVorticityMap(pivReplaceMissing2);
+                    pivFunctions.saveVorticityValues(pivReplaceMissing2.getVorticityValues(), "Replace_Vorticity");
 
                     resultData.put(PivResultData.REPLACE2, pivReplaceMissing2);
 
@@ -132,6 +128,11 @@ public class PivRunner {
 
                     parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivCorrelationMulti.getMag()));
                 }
+
+                setMessage(imageActivity, "Calculating multi-pass vorticity", pDialog);
+                PivFunctions.calculateVorticityMap(pivCorrelationMulti);
+                pivFunctions.saveVorticityValues(pivCorrelationMulti.getVorticityValues(), "Multi_Vorticity");
+
                 resultData.put(PivResultData.MULTI, pivCorrelationMulti);
 
                 if (pDialog.isShowing()) pDialog.dismiss();
