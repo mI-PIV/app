@@ -221,7 +221,7 @@ public class PathUtil {
     }
 
     public static File getUserDirectory(Context context, String userName) {
-        File userDir = new File(context.getFilesDir(), "miPIV_" + userName);
+        File userDir = new File(context.getExternalFilesDir(null), "miPIV_" + userName);
         return checkDir(userDir);
     }
 
@@ -263,7 +263,13 @@ public class PathUtil {
     }
 
     private static File checkDir(File dir) {
-        if (!dir.exists()) {dir.mkdirs();}
+        if (!dir.exists()) {
+            if (dir.mkdirs()) {
+                Log.d("MAKEDIRS", "Directory created successfully.");
+            } else {
+                Log.d("MAKEDIRS", "Failed to create directory.");
+            }
+        }
         return dir;
     }
 
