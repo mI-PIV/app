@@ -102,11 +102,6 @@ public class PivRunner {
                 if (parameters.isReplace()) {
                     setMessage(imageActivity, "Calculating multi-pass PIV", pDialog);
                     PivResultData pivReplaceMissing = pivFunctions.replaceMissingVectors(pivCorrelationProcessed, null);
-
-                    setMessage(imageActivity, "Calculating replacement vorticity", pDialog);
-                    PivFunctions.calculateVorticityMap(pivReplaceMissing);
-                    pivFunctions.saveVorticityValues(pivReplaceMissing.getVorticityValues(), "Replace_Vorticity");
-
                     pivCorrelationMulti = pivFunctions.calculateMultipass(pivReplaceMissing, PivResultData.MULTI);
 
                     setMessage(imageActivity, "Calculating multi-pass vorticity", pDialog);
@@ -117,6 +112,11 @@ public class PivRunner {
                     pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);
                     setMessage(imageActivity, "Calculating replaced vectors", pDialog);
                     PivResultData pivReplaceMissing2 = pivFunctions.replaceMissingVectors(pivCorrelationMulti, PivResultData.REPLACE2);
+
+                    setMessage(imageActivity, "Calculating replacement vorticity", pDialog);
+                    PivFunctions.calculateVorticityMap(pivReplaceMissing);
+                    pivFunctions.saveVorticityValues(pivReplaceMissing.getVorticityValues(), "Replace_Vorticity");
+
                     resultData.put(PivResultData.REPLACE2, pivReplaceMissing2);
 
                     String stepReplace2 = "Replaced2";
