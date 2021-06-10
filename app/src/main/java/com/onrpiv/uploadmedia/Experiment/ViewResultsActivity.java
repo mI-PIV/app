@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -69,6 +70,7 @@ public class ViewResultsActivity extends AppCompatActivity {
 
     // maps and settings
     private HashMap<String, PivResultData> correlationMaps;
+    private HashMap<View, LinearLayout> dropDownMaps;
     private ArrayList<ColorMap> colorMaps;
     private ResultSettings settings;
     private int imageCounter = 0;
@@ -156,6 +158,39 @@ public class ViewResultsActivity extends AppCompatActivity {
 
         solidColor = findViewById(R.id.background_color);
         solidColor.setBackgroundColor(settings.getBackgroundColor());
+
+        // drop-downs
+        ImageButton vectDropDown = findViewById(R.id.vecDropDown);
+        ImageButton vortDropDown = findViewById(R.id.vortDropDown);
+        ImageButton backgroundDropDown = findViewById(R.id.backgroundDropDown);
+
+        dropDownMaps = new HashMap<>();
+        dropDownMaps.put(vectDropDown, (LinearLayout)findViewById(R.id.vecFieldLayout));
+        dropDownMaps.put(vortDropDown, (LinearLayout)findViewById(R.id.vortLayout));
+        dropDownMaps.put(backgroundDropDown, (LinearLayout)findViewById(R.id.backgroundLayout));
+
+        View.OnClickListener dropDownListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // make section layout visible/gone
+                LinearLayout sectionLayout = dropDownMaps.get(v);
+
+                if (null == sectionLayout)
+                    return;
+
+                boolean visible = sectionLayout.getVisibility() == View.VISIBLE;
+                sectionLayout.setVisibility(visible? View.GONE : View.VISIBLE);
+
+                // change arrow image to down/up
+                ImageButton arrow = (ImageButton) v;
+                arrow.setImageResource(visible?
+                        R.drawable.drop_down : R.drawable.drop_up);
+            }
+        };
+
+        vectDropDown.setOnClickListener(dropDownListener);
+        vortDropDown.setOnClickListener(dropDownListener);
+        backgroundDropDown.setOnClickListener(dropDownListener);
 
         // switches
         SwitchCompat displayVectors = findViewById(R.id.vec_display);
