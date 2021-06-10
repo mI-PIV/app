@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/base_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
@@ -111,7 +110,7 @@
                     android:layout_gravity="right"
                     android:backgroundTint="#4CAF50"
                     android:scaleType="center"
-                    app:srcCompat="@drawable/baseline_arrow_drop_down_white_18dp" />
+                    app:srcCompat="@drawable/drop_down" />
             </LinearLayout>
 
             <View
@@ -125,7 +124,7 @@
                 android:layout_height="match_parent"
                 android:background="#404CAF50"
                 android:orientation="vertical"
-                tools:visibility="gone">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -243,7 +242,7 @@
                     android:layout_gravity="right"
                     android:backgroundTint="#F44336"
                     android:scaleType="center"
-                    app:srcCompat="@drawable/baseline_arrow_drop_down_white_18dp" />
+                    app:srcCompat="@drawable/drop_down" />
             </LinearLayout>
 
             <View
@@ -332,13 +331,13 @@
                     android:textStyle="bold" />
 
                 <ImageButton
-                    android:id="@+id/imageButton3"
+                    android:id="@+id/backgroundDropDown"
                     android:layout_width="43dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
                     android:backgroundTint="#FF9800"
                     android:scaleType="center"
-                    app:srcCompat="@drawable/baseline_arrow_drop_down_white_18dp" />
+                    app:srcCompat="@drawable/drop_down" />
             </LinearLayout>
 
             <View
