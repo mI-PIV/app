@@ -79,6 +79,9 @@ public class FrameView extends FrameLayout {
     // listener
     ZoomViewListener listener;
 
+    // current selected position callback
+    private PositionCallback positionCallback;
+
     private Bitmap ch;
 
     public float getZoom() {
@@ -199,10 +202,18 @@ public class FrameView extends FrameLayout {
         return true;
     }
 
+    public void setPositionCallback(PositionCallback callback) {
+        positionCallback = callback;
+    }
+
     private void processSingleTouchEvent(final MotionEvent ev) {
 
         final float x = ev.getX();
         final float y = ev.getY();
+
+        if (null != positionCallback) {
+            positionCallback.call(x, y);
+        }
 
         final float w = miniMapHeight * (float) getWidth() / getHeight();
         final float h = miniMapHeight;

@@ -143,6 +143,11 @@ public class ResultSettings {
         backgroundChanged = true;
     }
 
+    public String formatInfoString(int x, int y, float u, float v, float vort) {
+        return "x: " + x + "\t" + "y: " + y + "\n" + "u: " + u + "\t" + "v: " + v
+                + "\n" + "vorticity: " + vort;
+    }
+
     public void resetBools() {
         vecFieldChanged = false;
         vortMapChanged = false;

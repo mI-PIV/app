@@ -32,8 +32,10 @@ import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMapPicker;
+import com.onrpiv.uploadmedia.Utilities.FrameView;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
+import com.onrpiv.uploadmedia.Utilities.PositionCallback;
 import com.onrpiv.uploadmedia.Utilities.ResultSettings;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
@@ -57,11 +59,12 @@ import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
  * Edited by KP on 02/18/2021
  */
 
-public class ViewResultsActivity extends AppCompatActivity {
+public class ViewResultsActivity extends AppCompatActivity implements PositionCallback {
     // Widgets
     private RangeSlider rangeSlider;
     private ImageView baseImage, vectorFieldImage, vorticityImage;
     private Button arrowColor, vorticityColors, solidColor, applyButton;
+    private FrameView imagesDisplay;
 
     // paths
     private String imgFileToDisplay;
@@ -80,6 +83,10 @@ public class ViewResultsActivity extends AppCompatActivity {
     public static PivResultData replacedPass;
     private int rows;
     private int cols;
+
+    // current selected x and y
+    private float currentX;
+    private float currentY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +148,8 @@ public class ViewResultsActivity extends AppCompatActivity {
         });
 
         // image containers
+        imagesDisplay = findViewById(R.id.img_frame);
+        imagesDisplay.setPositionCallback(this);  // callback sets the current selected x and y
         baseImage = findViewById(R.id.baseView);
         vectorFieldImage = findViewById(R.id.vectorsView);
         vorticityImage = findViewById(R.id.vortView);
@@ -162,11 +171,13 @@ public class ViewResultsActivity extends AppCompatActivity {
         ImageButton vectDropDown = findViewById(R.id.vecDropDown);
         ImageButton vortDropDown = findViewById(R.id.vortDropDown);
         ImageButton backgroundDropDown = findViewById(R.id.backgroundDropDown);
+        ImageButton infoDropDown = findViewById(R.id.infoDropDown);
 
         dropDownMaps = new HashMap<>();
         dropDownMaps.put(vectDropDown, (LinearLayout)findViewById(R.id.vecFieldLayout));
         dropDownMaps.put(vortDropDown, (LinearLayout)findViewById(R.id.vortLayout));
         dropDownMaps.put(backgroundDropDown, (LinearLayout)findViewById(R.id.backgroundLayout));
+        dropDownMaps.put(infoDropDown, (LinearLayout)findViewById(R.id.infoSection));
 
         View.OnClickListener dropDownListener = new View.OnClickListener() {
             @Override
@@ -190,6 +201,7 @@ public class ViewResultsActivity extends AppCompatActivity {
         vectDropDown.setOnClickListener(dropDownListener);
         vortDropDown.setOnClickListener(dropDownListener);
         backgroundDropDown.setOnClickListener(dropDownListener);
+        infoDropDown.setOnClickListener(dropDownListener);
 
         // switches
         SwitchCompat displayVectors = findViewById(R.id.vec_display);
@@ -503,5 +515,15 @@ public class ViewResultsActivity extends AppCompatActivity {
             final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
             alertDialogParameters.show();
         }
+    }
+
+    @Override
+    public void call(float x, float y) {
+        currentX = x;
+        currentY = y;
+        // TODO find the closest grid
+        // TODO draw a circle/rect on the closest grid
+        // TODO compile the grid data
+        // TODO update the info text
     }
 }
