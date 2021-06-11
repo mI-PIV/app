@@ -3,7 +3,6 @@ package com.onrpiv.uploadmedia.Utilities;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.widget.Button;
 
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 
@@ -20,8 +19,8 @@ public class ResultSettings {
     public boolean vortMapChanged = false;
     public boolean backgroundChanged = false;
 
-    private boolean vecDisplay = false;
-    private String vecOption = VEC_SINGLE;
+    private boolean vecDisplay = true;
+    private String vecOption = VEC_REPLACED;
     private int arrowColor = Color.RED;
     private double arrowScale = 1d;
     private boolean vortDisplay = false;

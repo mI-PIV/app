@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -194,6 +193,7 @@ public class ViewResultsActivity extends AppCompatActivity {
 
         // switches
         SwitchCompat displayVectors = findViewById(R.id.vec_display);
+        displayVectors.setChecked(settings.getVecDisplay());
         displayVectors.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -260,8 +260,9 @@ public class ViewResultsActivity extends AppCompatActivity {
         imgFileToDisplay = PathUtil.getExperimentImageFileSuffix(currentExpDir);
         outputDirectory = PathUtil.getExperimentNumberedDirectory(this, userName, currentExpDir);
 
-        // Display base image
-        displayBaseImage(BACKGRND_IMG);
+        // Defaults
+        displayBaseImage(BACKGRND_SOLID);
+        displayVectorImage(correlationMaps.get(settings.getVecOption()));
     }
 
     @Override
@@ -421,19 +422,11 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     private Bitmap createVectorFieldBitmap(PivResultData pivResultData) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return PivFunctions.createVectorFieldBitmap(
-                    pivResultData,
-                    new ArrowDrawOptions(settings.getArrowColor(), settings.getArrowScale()),
-                    rows,
-                    cols);
-        } else {
-            return PivFunctions.createVectorFieldBitmap(
-                    pivResultData,
-                    new ArrowDrawOptions(settings.getArrowColor(), settings.getArrowScale()),
-                    rows,
-                    cols);
-        }
+        return PivFunctions.createVectorFieldBitmap(
+                pivResultData,
+                new ArrowDrawOptions(settings.getArrowColor(), settings.getArrowScale()),
+                rows,
+                cols);
     }
 
     private Bitmap createSolidBaseImage() {

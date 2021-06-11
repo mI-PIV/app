@@ -110,7 +110,7 @@
                     android:layout_gravity="right"
                     android:backgroundTint="#4CAF50"
                     android:scaleType="center"
-                    app:srcCompat="@drawable/drop_down" />
+                    app:srcCompat="@drawable/drop_up" />
             </LinearLayout>
 
             <View
@@ -124,7 +124,7 @@
                 android:layout_height="match_parent"
                 android:background="#404CAF50"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -144,7 +144,7 @@
                     android:id="@+id/vec_rgroup"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:checkedButton="@id/singlepass"
+                    android:checkedButton="@id/replace"
                     android:orientation="horizontal">
 
                     <Space
