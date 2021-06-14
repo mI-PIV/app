@@ -357,7 +357,7 @@
                     android:id="@+id/background_rgroup"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:checkedButton="@id/base"
+                    android:checkedButton="@id/plain"
                     android:orientation="horizontal">
 
                     <Space
