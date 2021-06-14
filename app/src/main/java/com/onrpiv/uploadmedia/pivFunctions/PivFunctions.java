@@ -445,6 +445,25 @@ public class PivFunctions {
         return bmp;
     }
 
+    public static Bitmap drawCircleOnBmp(Bitmap bmp, double x, double y) {
+        // copy original bitmap so we don't draw on it
+        Bitmap newBmp = bmp.copy(bmp.getConfig(), true);
+
+        // bitmap to mat
+        Mat bmpMat = new Mat();
+        Utils.bitmapToMat(newBmp, bmpMat);
+
+        // draw circle
+        // TODO use the piv grid 'step' size for radius
+        Imgproc.circle(bmpMat, new Point(x, y), 100, new Scalar(255, 255, 0));  // color is yellow (for now)
+        Utils.matToBitmap(bmpMat, newBmp);
+
+        // cleanup
+        bmpMat.release();
+
+        return newBmp;
+    }
+
     public void saveImage(Mat image1, String stepName) {
         File pngFile = new File(outputDirectory, stepName + "_" + imageFileSaveName);
         Mat resized = resizeMat(image1);

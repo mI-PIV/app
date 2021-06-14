@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -21,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -77,6 +79,10 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private ResultSettings settings;
     private int imageCounter = 0;
 
+    // info section
+    private Bitmap background_noSelection;
+    private TextView infoText;
+
     // From Image Activity
     public static PivResultData singlePass;
     public static PivResultData multiPass;
@@ -84,9 +90,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private int rows;
     private int cols;
 
-    // current selected x and y
-    private float currentX;
-    private float currentY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +156,9 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         baseImage = findViewById(R.id.baseView);
         vectorFieldImage = findViewById(R.id.vectorsView);
         vorticityImage = findViewById(R.id.vortView);
+
+        // text views
+        infoText = findViewById(R.id.infoText);
 
         // buttons
         applyButton = findViewById(R.id.apply);
@@ -414,14 +420,15 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     }
 
     private void displayBaseImage(String backgroundCode) {
+        Bitmap bmp;
         if (backgroundCode.equals(BACKGRND_IMG)) {
             File pngFile = new File(outputDirectory, "Base_" + imgFileToDisplay);
-            Bitmap bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
-            baseImage.setImageBitmap(bmp);
+            bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
         } else {
-            Bitmap bmp = createSolidBaseImage();
-            baseImage.setImageBitmap(bmp);
+            bmp = createSolidBaseImage();
         }
+        background_noSelection = bmp;
+        baseImage.setImageBitmap(bmp);
     }
 
     private Bitmap createVorticityBitmap(PivResultData pivResultData) {
@@ -519,11 +526,31 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
     @Override
     public void call(float x, float y) {
-        currentX = x;
-        currentY = y;
-        // TODO find the closest grid
-        // TODO draw a circle/rect on the closest grid
-        // TODO compile the grid data
+
+        // convert frameview x,y to image x,y
+        float[] imgCoords = convertViewCoordsToImageCoords(baseImage, x, y);
+        double imageX = imgCoords[0];
+        double imageY = imgCoords[1];
+
+        // Draw the selection on the vector field image
+        // TODO not here, but need to have a color picker for the info selection circle/rect
+        Bitmap selectionDrawnBmp = PivFunctions.drawCircleOnBmp(background_noSelection, imageX, imageY);
+        baseImage.setImageBitmap(selectionDrawnBmp);
+
+        // TODO convert pixel x,y to piv x,y
+
+        // TODO compile the grid data (get all vector field values, maybe vorticity also)
         // TODO update the info text
+        String updatedText = settings.formatInfoString((int)x, (int)y, (float)imageX, (float)imageY, 0.0f);
+        infoText.setText(updatedText);
+    }
+
+    private static float[] convertViewCoordsToImageCoords(ImageView view, float x, float y) {
+        Matrix m = new Matrix();
+        final float[] coords = new float[] {x, y};
+        view.getImageMatrix().invert(m);
+        m.postTranslate(view.getScrollX(), view.getScrollY());
+        m.mapPoints(coords);
+        return coords;
     }
 }

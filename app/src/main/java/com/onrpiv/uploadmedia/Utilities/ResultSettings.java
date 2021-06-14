@@ -144,7 +144,7 @@ public class ResultSettings {
     }
 
     public String formatInfoString(int x, int y, float u, float v, float vort) {
-        return "x: " + x + "\t" + "y: " + y + "\n" + "u: " + u + "\t" + "v: " + v
+        return "x: " + x + "\t\t\t" + "y: " + y + "\n" + "u: " + u + "\t\t\t" + "v: " + v
                 + "\n" + "vorticity: " + vort;
     }
 
