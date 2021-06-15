@@ -290,7 +290,8 @@ public class FrameView extends FrameLayout {
                         return;
                     } else {  // single tap
                         if (null != positionCallback) {
-                            positionCallback.call(x, y);
+                            positionCallback.call(zoomX + (x - 0.5f * getWidth()) / zoom, zoomY
+                                    + (y - 0.5f * getHeight()) / zoom);
                         }
                     }
 
