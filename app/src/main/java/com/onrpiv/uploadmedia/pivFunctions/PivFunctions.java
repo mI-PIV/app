@@ -28,6 +28,7 @@ import java.util.StringJoiner;
 import static org.opencv.core.Core.mean;
 import static org.opencv.core.Core.subtract;
 import static org.opencv.core.CvType.CV_8UC1;
+import static org.opencv.core.CvType.CV_8UC3;
 import static org.opencv.core.CvType.CV_8UC4;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
@@ -445,21 +446,33 @@ public class PivFunctions {
         return bmp;
     }
 
-    public static Bitmap drawCircleOnBmp(Bitmap bmp, double x, double y) {
-        // copy original bitmap so we don't draw on it
-        Bitmap newBmp = bmp.copy(bmp.getConfig(), true);
+    public static Bitmap createSelectedBackground(int x, int y, PivResultData pivResultData,
+                                                  int rows, int cols, int color, Bitmap.Config bmpConfig) {
+        int red = ((color >> 16) & 0xFF) * 255;
+        int green = ((color >> 8) & 0xFF) * 255;
+        int blue = ((color) & 0xFF) * 255;
 
-        // bitmap to mat
-        Mat bmpMat = new Mat();
-        Utils.bitmapToMat(newBmp, bmpMat);
+        Mat solidBackground = new Mat(rows, cols, CV_8UC3, new Scalar(red, green, blue));
 
-        // draw circle
-        // TODO use the piv grid 'step' size for radius
-        Imgproc.circle(bmpMat, new Point(x, y), 100, new Scalar(255, 255, 0));  // color is yellow (for now)
-        Utils.matToBitmap(bmpMat, newBmp);
+        double imgX = pivResultData.getInterrX()[x];
+        double imgY = pivResultData.getInterrY()[y];
+
+        // origin,end points (assuming x, y are center of the grid)
+        Point origin = new Point(imgX-(Math.round(pivResultData.getStepX()/2f)),
+                imgY-(Math.round(pivResultData.getStepY()/2f)));
+        Point end = new Point(imgX+(Math.round(pivResultData.getStepX()/2f)),
+                imgY+(Math.round(pivResultData.getStepY()/2f)));
+
+        Imgproc.rectangle(solidBackground, origin, end, new Scalar(255, 255, 0), 10);
+
+        Mat resized = resizeMat(solidBackground);
+        Bitmap newBmp = Bitmap.createBitmap(resized.cols(), resized.rows(), bmpConfig);
+        Utils.matToBitmap(resized, newBmp);
 
         // cleanup
-        bmpMat.release();
+        solidBackground.release();
+        resized.release();
+        System.gc();
 
         return newBmp;
     }
