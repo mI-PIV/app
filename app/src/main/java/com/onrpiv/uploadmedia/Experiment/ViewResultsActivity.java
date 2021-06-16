@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -80,7 +81,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private int imageCounter = 0;
 
     // info section
-    private Bitmap background_noSelection;
+    private ImageView selectionImage;
     private TextView infoText;
 
     // From Image Activity
@@ -156,6 +157,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         baseImage = findViewById(R.id.baseView);
         vectorFieldImage = findViewById(R.id.vectorsView);
         vorticityImage = findViewById(R.id.vortView);
+        selectionImage = findViewById(R.id.selectionView);
 
         // text views
         infoText = findViewById(R.id.infoText);
@@ -427,7 +429,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         } else {
             bmp = createSolidBaseImage();
         }
-        background_noSelection = bmp;
         baseImage.setImageBitmap(bmp);
     }
 
@@ -444,8 +445,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         return PivFunctions.createVectorFieldBitmap(
                 pivResultData,
                 new ArrowDrawOptions(settings.getArrowColor(), settings.getArrowScale()),
-                rows,
-                cols);
+                rows, cols);
     }
 
     private Bitmap createSolidBaseImage() {
@@ -526,31 +526,63 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
     @Override
     public void call(float x, float y) {
-
-        // convert frameview x,y to image x,y
-        float[] imgCoords = convertViewCoordsToImageCoords(baseImage, x, y);
-        double imageX = imgCoords[0];
-        double imageY = imgCoords[1];
+        // view to piv translation
+        Point pivCoords = viewCoordsToPivCoords(baseImage,
+                singlePass.getInterrY().length, singlePass.getInterrX().length, x, y);
 
         // Draw the selection on the vector field image
         // TODO not here, but need to have a color picker for the info selection circle/rect
-        Bitmap selectionDrawnBmp = PivFunctions.drawCircleOnBmp(background_noSelection, imageX, imageY);
-        baseImage.setImageBitmap(selectionDrawnBmp);
+        double imgX = singlePass.getInterrX()[pivCoords.x];
+        double imgY = singlePass.getInterrY()[pivCoords.y];
+        Bitmap selectionDrawnBmp = PivFunctions.createSelectionImage(imgX, imgY, rows, cols,
+                singlePass.getStepX(), singlePass.getStepY());
 
-        // TODO convert pixel x,y to piv x,y
+        selectionImage.setImageBitmap(selectionDrawnBmp);
 
-        // TODO compile the grid data (get all vector field values, maybe vorticity also)
-        // TODO update the info text
-        String updatedText = settings.formatInfoString((int)x, (int)y, (float)imageX, (float)imageY, 0.0f);
+        // compile the data
+        float singleU = (float)singlePass.getU()[pivCoords.y][pivCoords.x];
+        float singleV = (float)singlePass.getV()[pivCoords.y][pivCoords.x];
+        float vort = (float)singlePass.getVorticityValues()[pivCoords.y][pivCoords.x];
+        float repU = (float)replacedPass.getU()[pivCoords.y][pivCoords.x];
+        float repV = (float)replacedPass.getV()[pivCoords.y][pivCoords.x];
+        float multU = (float)multiPass.getU()[pivCoords.y][pivCoords.x];
+        float multV = (float)multiPass.getV()[pivCoords.y][pivCoords.x];
+
+        // update the info text
+        String updatedText = settings.formatInfoString(pivCoords.x, pivCoords.y, singleU, singleV,
+                repU, repV, multU, multV, vort);
         infoText.setText(updatedText);
     }
 
-    private static float[] convertViewCoordsToImageCoords(ImageView view, float x, float y) {
+    private Point viewCoordsToPivCoords(ImageView view, int pivHeight, int pivWidth, float x, float y) {
+        final int actualHeight, actualWidth;
+        final int viewWidth = view.getWidth();
+        final int viewHeight = view.getHeight();
+        final int bitmapHeight = view.getDrawable().getIntrinsicHeight();
+        final int bitmapWidth = view.getDrawable().getIntrinsicWidth();
+
+        if (viewHeight * bitmapWidth <= viewWidth * bitmapHeight) {
+            actualWidth = bitmapWidth * viewHeight / bitmapHeight;
+            actualHeight = viewHeight;
+        } else {
+            actualHeight = bitmapHeight * viewWidth /bitmapWidth;
+            actualWidth = viewWidth;
+        }
+
+
+        // TODO x-100 is a band-aid, need a real solution why the coordinates need adjusting
+        final float[] coords = new float[] {x-100, y};
         Matrix m = new Matrix();
-        final float[] coords = new float[] {x, y};
-        view.getImageMatrix().invert(m);
-        m.postTranslate(view.getScrollX(), view.getScrollY());
+        view.getMatrix().invert(m);
+        m.postScale((float)pivWidth/actualWidth, (float)pivHeight/actualHeight);
         m.mapPoints(coords);
-        return coords;
+
+        int pivX = (int)(coords[0]);
+        int pivY = (int)(coords[1]);
+
+        pivX = Math.max(0, Math.min(pivX, pivWidth - 1));
+        pivY = Math.max(0, Math.min(pivY, pivHeight - 1));
+
+        return new Point(pivX, pivY);
     }
 }
