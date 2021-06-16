@@ -13,6 +13,8 @@ public class PivResultData implements Serializable {
     private double[][] vorticityValues;
     private int rows;
     private int cols;
+    private int stepX;
+    private int stepY;
 
     // intent keys
     public static final String
@@ -81,6 +83,8 @@ public class PivResultData implements Serializable {
     public void setInterrCenters(double[][] interrCenters) {
         _interrX = interrCenters[0];
         _interrY = interrCenters[1];
+        stepX = (int) (interrCenters[0][1] - interrCenters[0][0]);
+        stepY = (int) (interrCenters[1][1] - interrCenters[1][0]);
     }
 
     public double[][] getVorticityValues() {
@@ -105,5 +109,13 @@ public class PivResultData implements Serializable {
 
     public void setCols(int cols) {
         this.cols = cols;
+    }
+
+    public int getStepX() {
+        return stepX;
+    }
+
+    public int getStepY() {
+        return stepY;
     }
 }

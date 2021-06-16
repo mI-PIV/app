@@ -79,6 +79,9 @@ public class FrameView extends FrameLayout {
     // listener
     ZoomViewListener listener;
 
+    // current selected position callback
+    private PositionCallback positionCallback;
+
     private Bitmap ch;
 
     public float getZoom() {
@@ -199,6 +202,10 @@ public class FrameView extends FrameLayout {
         return true;
     }
 
+    public void setPositionCallback(PositionCallback callback) {
+        positionCallback = callback;
+    }
+
     private void processSingleTouchEvent(final MotionEvent ev) {
 
         final float x = ev.getX();
@@ -270,7 +277,7 @@ public class FrameView extends FrameLayout {
                 // tap
                 if (l < 30.0f) {
                     // check double tap
-                    if (System.currentTimeMillis() - lastTapTime < 500) {
+                    if (System.currentTimeMillis() - lastTapTime < 250) {
                         if (smoothZoom == 1.0f) {
                             smoothZoomTo(maxZoom, x, y);
                         } else {
@@ -281,10 +288,14 @@ public class FrameView extends FrameLayout {
                         ev.setAction(MotionEvent.ACTION_CANCEL);
                         super.dispatchTouchEvent(ev);
                         return;
+                    } else {  // single tap
+                        if (null != positionCallback) {
+                            positionCallback.call(zoomX + (x - 0.5f * getWidth()) / zoom, zoomY
+                                    + (y - 0.5f * getHeight()) / zoom);
+                        }
                     }
 
                     lastTapTime = System.currentTimeMillis();
-
                     performClick();
                 }
                 break;
@@ -322,7 +333,7 @@ public class FrameView extends FrameLayout {
         lastd = d;
         final float ld = Math.abs(d - startd);
 
-        Math.atan2(y2 - y1, x2 - x1);
+//        Math.atan2(y2 - y1, x2 - x1);
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 startd = d;
@@ -407,35 +418,35 @@ public class FrameView extends FrameLayout {
             canvas.restore();
 
         // draw minimap
-//        if (showMinimap) {
-//            if (miniMapHeight < 0) {
-//                miniMapHeight = getHeight() / 4;
-//            }
-//
-//            canvas.translate(10.0f, 10.0f);
-//
-//            p.setColor(0x80000000 | 0x00ffffff & miniMapColor);
-//            final float w = miniMapHeight * (float) getWidth() / getHeight();
-//            final float h = miniMapHeight;
-//            canvas.drawRect(0.0f, 0.0f, w, h, p);
-//
-//            if (miniMapCaption != null && miniMapCaption.length() > 0) {
-//                p.setTextSize(miniMapCaptionSize);
-//                p.setColor(miniMapCaptionColor);
-//                p.setAntiAlias(true);
-//                canvas.drawText(miniMapCaption, 10.0f,
-//                        10.0f + miniMapCaptionSize, p);
-//                p.setAntiAlias(false);
-//            }
-//
-//            p.setColor(0x80000000 | 0x00ffffff & miniMapColor);
-//            final float dx = w * zoomX / getWidth();
-//            final float dy = h * zoomY / getHeight();
-//            canvas.drawRect(dx - 0.5f * w / zoom, dy - 0.5f * h / zoom, dx
-//                    + 0.5f * w / zoom, dy + 0.5f * h / zoom, p);
-//
-//            canvas.translate(-10.0f, -10.0f);
-//        }
+        if (showMinimap) {
+            if (miniMapHeight < 0) {
+                miniMapHeight = getHeight() / 4;
+            }
+
+            canvas.translate(10.0f, 10.0f);
+
+            p.setColor(0x80000000 | 0x00ffffff & miniMapColor);
+            final float w = miniMapHeight * (float) getWidth() / getHeight();
+            final float h = miniMapHeight;
+            canvas.drawRect(0.0f, 0.0f, w, h, p);
+
+            if (miniMapCaption != null && miniMapCaption.length() > 0) {
+                p.setTextSize(miniMapCaptionSize);
+                p.setColor(miniMapCaptionColor);
+                p.setAntiAlias(true);
+                canvas.drawText(miniMapCaption, 10.0f,
+                        10.0f + miniMapCaptionSize, p);
+                p.setAntiAlias(false);
+            }
+
+            p.setColor(0x80000000 | 0x00ffffff & miniMapColor);
+            final float dx = w * zoomX / getWidth();
+            final float dy = h * zoomY / getHeight();
+            canvas.drawRect(dx - 0.5f * w / zoom, dy - 0.5f * h / zoom, dx
+                    + 0.5f * w / zoom, dy + 0.5f * h / zoom, p);
+
+            canvas.translate(-10.0f, -10.0f);
+        }
 
         // redraw
         // if (animating) {

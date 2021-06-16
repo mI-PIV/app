@@ -3,7 +3,6 @@ package com.onrpiv.uploadmedia.Utilities;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.widget.Button;
 
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 
@@ -19,9 +18,10 @@ public class ResultSettings {
     public boolean vecFieldChanged = false;
     public boolean vortMapChanged = false;
     public boolean backgroundChanged = false;
+    public boolean selectionChanged = false;
 
-    private boolean vecDisplay = false;
-    private String vecOption = VEC_SINGLE;
+    private boolean vecDisplay = true;
+    private String vecOption = VEC_REPLACED;
     private int arrowColor = Color.RED;
     private double arrowScale = 1d;
     private boolean vortDisplay = false;
@@ -31,6 +31,7 @@ public class ResultSettings {
 
     private String background = BACKGROUND;
     private int backgroundColor = Color.WHITE;
+    private int selectColor = Color.YELLOW;
 
     public ResultSettings(Context context, Resources res, String packageName) {
         vortColorMap = vortColorMap.getColorMap("jet", context, res, packageName);
@@ -144,9 +145,34 @@ public class ResultSettings {
         backgroundChanged = true;
     }
 
+    public String formatInfoString(int x, int y, float su, float sv, float ru, float rv,
+                                   float mu, float mv, float vort) {
+        // TODO add the physical measurements
+        return "x: " + x + "\t\t\t" + "y: " + y +
+                "\nSingle Pass U: " + su + " px\t\t\t" + "Single Pass V: " + sv + " px" +
+                "\nReplacement U: " + ru + " px\t\t\t" + "Replacement V: " + rv + " px" +
+                "\nMulti-Pass U: " + mu + " px\t\t\t" + "Multi-Pass V: " + mv + " px" +
+                "\nVorticity: " + vort;
+    }
+
+    public String debugString(int pivX, int pivY, float imgX, float imgY) {
+        return "pivX: " + pivX + "\t\t\t" + "pivY: " + pivY + "\n" +
+                "viewX: " + imgX + "\t\t\t" + "viewY: " + imgY;
+    }
+
     public void resetBools() {
         vecFieldChanged = false;
         vortMapChanged = false;
         backgroundChanged = false;
+        selectionChanged = false;
+    }
+
+    public int getSelectColor() {
+        return selectColor;
+    }
+
+    public void setSelectColor(int selectColor) {
+        this.selectColor = selectColor;
+        selectionChanged = true;
     }
 }

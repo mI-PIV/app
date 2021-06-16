@@ -17,20 +17,22 @@
             <ImageView
                 android:id="@+id/baseView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:contentDescription="BackgroundImage" />
+                android:layout_height="wrap_content" />
 
             <ImageView
                 android:id="@+id/vortView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:contentDescription="VorticityImage" />
+                android:layout_height="wrap_content" />
 
             <ImageView
                 android:id="@+id/vectorsView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:contentDescription="VectorFieldImage" />
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/selectionView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </RelativeLayout>
     </com.onrpiv.uploadmedia.Utilities.FrameView>
 
@@ -51,10 +53,10 @@
             android:id="@+id/imageSaveButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:onClick="OnClick_SaveImage"
             android:layout_weight="1"
             android:background="@drawable/buttons"
             android:contentDescription="Save Current Image"
+            android:onClick="OnClick_SaveImage"
             app:srcCompat="@android:drawable/ic_menu_save" />
 
         <Space
@@ -82,258 +84,395 @@
         android:layout_below="@id/apply_layout">
 
         <LinearLayout
-            android:id="@+id/vectorfieldLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Vector Field"
-                android:textAlignment="center"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?android:attr/listDivider" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/vec_display"
-                    android:layout_width="107dp"
-                    android:layout_height="wrap_content"
-                    android:text="Display" />
-
-            </LinearLayout>
-
-            <RadioGroup
-                android:id="@+id/vec_rgroup"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:checkedButton="@id/singlepass">
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <RadioButton
-                    android:id="@+id/singlepass"
-                    android:layout_width="118dp"
-                    android:layout_height="wrap_content"
-                    android:text="Single Pass" />
-
-                <RadioButton
-                    android:id="@+id/multipass"
-                    android:layout_width="111dp"
-                    android:layout_height="wrap_content"
-                    android:text="Multipass" />
-
-                <RadioButton
-                    android:id="@+id/replace"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Replacement" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-            </RadioGroup>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/vecLabel"
+                    android:layout_width="259dp"
                     android:layout_height="wrap_content"
-                    android:text="Arrow Color: " />
+                    android:layout_gravity="center|center_vertical"
+                    android:gravity="center|center_vertical"
+                    android:text="Vector Field"
+                    android:textAlignment="viewEnd"
+                    android:textColor="#4CAF50"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                <android.widget.Button
-                    android:id="@+id/vect_color"
-                    android:layout_width="30dp"
+                <ImageButton
+                    android:id="@+id/vecDropDown"
+                    android:layout_width="43dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:backgroundTint="#4CAF50"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/drop_up" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:id="@+id/vecFieldLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#404CAF50"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/vec_display"
+                        android:layout_width="107dp"
+                        android:layout_height="wrap_content"
+                        android:text="Display" />
+
+                </LinearLayout>
+
+                <RadioGroup
+                    android:id="@+id/vec_rgroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:checkedButton="@id/replace"
+                    android:orientation="horizontal">
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/singlepass"
+                        android:layout_width="118dp"
+                        android:layout_height="wrap_content"
+                        android:text="Single Pass" />
+
+                    <RadioButton
+                        android:id="@+id/multipass"
+                        android:layout_width="111dp"
+                        android:layout_height="wrap_content"
+                        android:text="Multipass" />
+
+                    <RadioButton
+                        android:id="@+id/replace"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Replacement" />
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                </RadioGroup>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Arrow Color: " />
+
+                    <android.widget.Button
+                        android:id="@+id/vect_color"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:onClick="OnClick_ArrowColor" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:onClick="OnClick_ArrowColor" />
+                    android:layout_marginTop="30dp"
+                    android:text="Arrow Scale"
+                    android:textAlignment="center" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <SeekBar
+                        android:id="@+id/arrow_scale"
+                        android:layout_width="239dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="20"
+                        android:min="0"
+                        android:progress="1" />
+                </LinearLayout>
 
             </LinearLayout>
 
-            <TextView
-                android:layout_marginTop="30dp"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Arrow Scale"
-                android:textAlignment="center" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="251dp"
+                    android:layout_height="wrap_content"
+                    android:text="Vorticity"
+                    android:textAlignment="textEnd"
+                    android:textColor="#F44336"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/vortDropDown"
+                    android:layout_width="43dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:backgroundTint="#F44336"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/drop_down" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:id="@+id/vortLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#40F44336"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/vort_display"
+                        android:layout_width="105dp"
+                        android:layout_height="wrap_content"
+                        android:text="Display" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:text="Transparent Values (normalized)"
+                    android:textAlignment="center" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:theme="@style/MaterialTheme">
+
+                    <com.google.android.material.slider.RangeSlider
+                        android:id="@+id/rangeSeekBar"
+                        android:layout_width="374dp"
+                        android:layout_height="37dp"
+                        android:valueFrom="0"
+                        android:valueTo="255" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Color Map: " />
+
+                    <Button
+                        android:id="@+id/vort_color"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:onClick="OnClick_VortColors"
+                        android:scaleType="fitCenter" />
+
+                </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <SeekBar
-                    android:id="@+id/arrow_scale"
-                    android:layout_width="239dp"
+                <TextView
+                    android:layout_width="259dp"
                     android:layout_height="wrap_content"
+                    android:text="Background"
+                    android:textAlignment="textEnd"
+                    android:textColor="#FF9800"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/backgroundDropDown"
+                    android:layout_width="43dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:backgroundTint="#FF9800"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/drop_down" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:id="@+id/backgroundLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#40FF9800"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <RadioGroup
+                    android:id="@+id/background_rgroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:checkedButton="@id/plain"
+                    android:orientation="horizontal">
+
+                    <Space
+                        android:layout_width="24dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/plain"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Solid Color" />
+
+                    <RadioButton
+                        android:id="@+id/base"
+                        android:layout_width="104dp"
+                        android:layout_height="wrap_content"
+                        android:text="Image" />
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                </RadioGroup>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_marginBottom="30dp"
                     android:layout_weight="1"
-                    android:max="20"
-                    android:min="0"
-                    android:progress="1" />
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Solid Color: " />
+
+                    <Button
+                        android:id="@+id/background_color"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:onClick="OnClick_BackgroundColor" />
+
+                </LinearLayout>
             </LinearLayout>
 
-            <TextView
-                android:layout_marginTop="30dp"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Vorticity"
-                android:textAlignment="center"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <View
-                android:id="@+id/divider3"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?android:attr/listDivider" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/vort_display"
-                    android:layout_width="105dp"
-                    android:layout_height="wrap_content"
-                    android:text="Display" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="259dp"
                     android:layout_height="wrap_content"
-                    android:text="Color Map: " />
+                    android:text="Information"
+                    android:textAlignment="textEnd"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                <Button
-                    android:id="@+id/vort_color"
-                    android:layout_width="30dp"
-                    android:layout_height="wrap_content"
-                    android:onClick="OnClick_VortColors"
-                    android:scaleType="fitCenter" />
-
+                <ImageButton
+                    android:id="@+id/infoDropDown"
+                    android:layout_width="43dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:backgroundTint="@color/colorGray"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/drop_down" />
             </LinearLayout>
-
-            <TextView
-                android:layout_marginTop="30dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Transparent Values (normalized)"
-                android:textAlignment="center" />
-
-            <LinearLayout
-                android:theme="@style/MaterialTheme"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <com.google.android.material.slider.RangeSlider
-                    android:id="@+id/rangeSeekBar"
-                    android:layout_width="374dp"
-                    android:layout_height="37dp"
-                    android:valueFrom="0"
-                    android:valueTo="255" />
-
-            </LinearLayout>
-
-            <TextView
-                android:layout_marginTop="30dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Background"
-                android:textAlignment="center"
-                android:textSize="18sp"
-                android:textStyle="bold" />
 
             <View
-                android:id="@+id/divider2"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?android:attr/listDivider" />
-
-            <RadioGroup
-                android:id="@+id/background_rgroup"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:checkedButton="@id/base"
-                android:orientation="horizontal">
-
-                <Space
-                    android:layout_width="24dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <RadioButton
-                    android:id="@+id/plain"
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Solid Color" />
-
-                <RadioButton
-                    android:id="@+id/base"
-                    android:layout_width="104dp"
-                    android:layout_height="wrap_content"
-                    android:text="Image" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-            </RadioGroup>
-
-            <LinearLayout
-                android:layout_marginBottom="30dp"
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
+                android:layout_height="2dp"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:id="@+id/infoSection"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_marginBottom="30dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Selection Highlight:" />
+
+                    <Button
+                        android:id="@+id/select_color"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:onClick="OnClick_SelectionColor" />
+                </LinearLayout>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/infoText"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Solid Color: " />
-
-                <Button
-                    android:id="@+id/background_color"
-                    android:layout_width="30dp"
-                    android:layout_height="wrap_content"
-                    android:onClick="OnClick_BackgroundColor" />
-
+                    android:text="Please tap a point on the image to see information."
+                    android:textAlignment="center" />
             </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
+
 </RelativeLayout>
 

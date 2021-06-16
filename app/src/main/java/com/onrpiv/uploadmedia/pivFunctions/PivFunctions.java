@@ -445,6 +445,38 @@ public class PivFunctions {
         return bmp;
     }
 
+    public static Bitmap createSelectionImage(double imgX, double imgY, int rows, int cols, int stepX,
+                                              int stepY, int color) {
+
+        Mat transparentBackground = new Mat(rows, cols, CV_8UC4, new Scalar(255, 255, 255, 0));
+
+        // origin,end points (assuming x, y are center of the grid)
+        Point origin = new Point(imgX-(Math.round(stepX/2f)),
+                imgY-(Math.round(stepY/2f)));
+        Point end = new Point(imgX+(Math.round(stepX/2f)),
+                imgY+(Math.round(stepY/2f)));
+
+        // highlight color
+        int red = ((color >> 16) & 0xFF) * 255;
+        int green = ((color >> 8) & 0xFF) * 255;
+        int blue = ((color) & 0xFF) * 255;
+
+        // Draw user selection
+        Imgproc.rectangle(transparentBackground, origin, end, new Scalar(red, green, blue, 255), 5);
+
+        // Mat to bitmap
+        Mat resized = resizeMat(transparentBackground);
+        Bitmap bmp = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
+        bmp.setHasAlpha(true);
+        Utils.matToBitmap(resized, bmp, true);
+
+        // cleanup
+        transparentBackground.release();
+        resized.release();
+        System.gc();
+        return bmp;
+    }
+
     public void saveImage(Mat image1, String stepName) {
         File pngFile = new File(outputDirectory, stepName + "_" + imageFileSaveName);
         Mat resized = resizeMat(image1);

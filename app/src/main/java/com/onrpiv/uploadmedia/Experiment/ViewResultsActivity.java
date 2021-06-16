@@ -7,10 +7,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,9 +19,11 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,8 +35,10 @@ import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMapPicker;
+import com.onrpiv.uploadmedia.Utilities.FrameView;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
+import com.onrpiv.uploadmedia.Utilities.PositionCallback;
 import com.onrpiv.uploadmedia.Utilities.ResultSettings;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
@@ -57,11 +62,11 @@ import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
  * Edited by KP on 02/18/2021
  */
 
-public class ViewResultsActivity extends AppCompatActivity {
+public class ViewResultsActivity extends AppCompatActivity implements PositionCallback {
     // Widgets
     private RangeSlider rangeSlider;
     private ImageView baseImage, vectorFieldImage, vorticityImage;
-    private Button arrowColor, vorticityColors, solidColor, applyButton;
+    private Button arrowColor, vorticityColors, solidColor, applyButton, selectColor;
 
     // paths
     private String imgFileToDisplay;
@@ -69,9 +74,16 @@ public class ViewResultsActivity extends AppCompatActivity {
 
     // maps and settings
     private HashMap<String, PivResultData> correlationMaps;
+    private HashMap<View, LinearLayout> dropDownMaps;
     private ArrayList<ColorMap> colorMaps;
     private ResultSettings settings;
     private int imageCounter = 0;
+
+    // info section
+    private ImageView selectionImage;
+    private TextView infoText;
+    private float currentX;
+    private float currentY;
 
     // From Image Activity
     public static PivResultData singlePass;
@@ -79,6 +91,7 @@ public class ViewResultsActivity extends AppCompatActivity {
     public static PivResultData replacedPass;
     private int rows;
     private int cols;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,9 +153,15 @@ public class ViewResultsActivity extends AppCompatActivity {
         });
 
         // image containers
+        FrameView imagesDisplay = findViewById(R.id.img_frame);
+        imagesDisplay.setPositionCallback(this);  // callback sets the current selected x and y
         baseImage = findViewById(R.id.baseView);
         vectorFieldImage = findViewById(R.id.vectorsView);
         vorticityImage = findViewById(R.id.vortView);
+        selectionImage = findViewById(R.id.selectionView);
+
+        // text views
+        infoText = findViewById(R.id.infoText);
 
         // buttons
         applyButton = findViewById(R.id.apply);
@@ -157,8 +176,48 @@ public class ViewResultsActivity extends AppCompatActivity {
         solidColor = findViewById(R.id.background_color);
         solidColor.setBackgroundColor(settings.getBackgroundColor());
 
+        selectColor = findViewById(R.id.select_color);
+        selectColor.setBackgroundColor(settings.getSelectColor());
+
+        // drop-downs
+        ImageButton vectDropDown = findViewById(R.id.vecDropDown);
+        ImageButton vortDropDown = findViewById(R.id.vortDropDown);
+        ImageButton backgroundDropDown = findViewById(R.id.backgroundDropDown);
+        ImageButton infoDropDown = findViewById(R.id.infoDropDown);
+
+        dropDownMaps = new HashMap<>();
+        dropDownMaps.put(vectDropDown, (LinearLayout)findViewById(R.id.vecFieldLayout));
+        dropDownMaps.put(vortDropDown, (LinearLayout)findViewById(R.id.vortLayout));
+        dropDownMaps.put(backgroundDropDown, (LinearLayout)findViewById(R.id.backgroundLayout));
+        dropDownMaps.put(infoDropDown, (LinearLayout)findViewById(R.id.infoSection));
+
+        View.OnClickListener dropDownListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // make section layout visible/gone
+                LinearLayout sectionLayout = dropDownMaps.get(v);
+
+                if (null == sectionLayout)
+                    return;
+
+                boolean visible = sectionLayout.getVisibility() == View.VISIBLE;
+                sectionLayout.setVisibility(visible? View.GONE : View.VISIBLE);
+
+                // change arrow image to down/up
+                ImageButton arrow = (ImageButton) v;
+                arrow.setImageResource(visible?
+                        R.drawable.drop_down : R.drawable.drop_up);
+            }
+        };
+
+        vectDropDown.setOnClickListener(dropDownListener);
+        vortDropDown.setOnClickListener(dropDownListener);
+        backgroundDropDown.setOnClickListener(dropDownListener);
+        infoDropDown.setOnClickListener(dropDownListener);
+
         // switches
         SwitchCompat displayVectors = findViewById(R.id.vec_display);
+        displayVectors.setChecked(settings.getVecDisplay());
         displayVectors.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -225,8 +284,9 @@ public class ViewResultsActivity extends AppCompatActivity {
         imgFileToDisplay = PathUtil.getExperimentImageFileSuffix(currentExpDir);
         outputDirectory = PathUtil.getExperimentNumberedDirectory(this, userName, currentExpDir);
 
-        // Display base image
-        displayBaseImage(BACKGRND_IMG);
+        // Defaults
+        displayBaseImage(BACKGRND_SOLID);
+        displayVectorImage(correlationMaps.get(settings.getVecOption()));
     }
 
     @Override
@@ -257,6 +317,11 @@ public class ViewResultsActivity extends AppCompatActivity {
         // Background
         if (settings.backgroundChanged) {
             displayBaseImage(settings.getBackground());
+        }
+
+        // Selection/Info
+        if (settings.selectionChanged) {
+            call(currentX, currentY);
         }
 
         // reset detected changes
@@ -324,6 +389,24 @@ public class ViewResultsActivity extends AppCompatActivity {
         }).setDefaultColorButton(settings.getBackgroundColor()).show();
     }
 
+    public void OnClick_SelectionColor(View view) {
+        ColorPicker colorPicker = new ColorPicker(this);
+        colorPicker.setColors(ResultSettings.getColors());
+        colorPicker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
+            @Override
+            public void setOnFastChooseColorListener(int position, int color) {
+                settings.setSelectColor(color);
+                selectColor.setBackgroundColor(color);
+                applyButton.setEnabled(true);
+            }
+
+            @Override
+            public void onCancel() {
+                // EMPTY
+            }
+        }).setDefaultColorButton(settings.getSelectColor()).show();
+    }
+
     public void OnClick_SaveImage(View view) {
         ImageButton saveImageButton = findViewById(R.id.imageSaveButton);
         saveImageButton.setEnabled(false);
@@ -366,14 +449,14 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     private void displayBaseImage(String backgroundCode) {
+        Bitmap bmp;
         if (backgroundCode.equals(BACKGRND_IMG)) {
             File pngFile = new File(outputDirectory, "Base_" + imgFileToDisplay);
-            Bitmap bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
-            baseImage.setImageBitmap(bmp);
+            bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
         } else {
-            Bitmap bmp = createSolidBaseImage();
-            baseImage.setImageBitmap(bmp);
+            bmp = createSolidBaseImage();
         }
+        baseImage.setImageBitmap(bmp);
     }
 
     private Bitmap createVorticityBitmap(PivResultData pivResultData) {
@@ -386,19 +469,10 @@ public class ViewResultsActivity extends AppCompatActivity {
     }
 
     private Bitmap createVectorFieldBitmap(PivResultData pivResultData) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return PivFunctions.createVectorFieldBitmap(
-                    pivResultData,
-                    new ArrowDrawOptions(settings.getArrowColor(), settings.getArrowScale()),
-                    rows,
-                    cols);
-        } else {
-            return PivFunctions.createVectorFieldBitmap(
-                    pivResultData,
-                    new ArrowDrawOptions(settings.getArrowColor(), settings.getArrowScale()),
-                    rows,
-                    cols);
-        }
+        return PivFunctions.createVectorFieldBitmap(
+                pivResultData,
+                new ArrowDrawOptions(settings.getArrowColor(), settings.getArrowScale()),
+                rows, cols);
     }
 
     private Bitmap createSolidBaseImage() {
@@ -475,5 +549,70 @@ public class ViewResultsActivity extends AppCompatActivity {
             final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
             alertDialogParameters.show();
         }
+    }
+
+    @Override
+    public void call(float x, float y) {
+        currentX = x;
+        currentY = y;
+
+        // view to piv translation
+        Point pivCoords = viewCoordsToPivCoords(baseImage,
+                singlePass.getInterrY().length, singlePass.getInterrX().length, x, y);
+
+        // Draw the selection on the vector field image
+        // TODO not here, but need to have a color picker for the info selection circle/rect
+        double imgX = singlePass.getInterrX()[pivCoords.x];
+        double imgY = singlePass.getInterrY()[pivCoords.y];
+        Bitmap selectionDrawnBmp = PivFunctions.createSelectionImage(imgX, imgY, rows, cols,
+                singlePass.getStepX(), singlePass.getStepY(), settings.getSelectColor());
+
+        selectionImage.setImageBitmap(selectionDrawnBmp);
+
+        // compile the data
+        float singleU = (float)singlePass.getU()[pivCoords.y][pivCoords.x];
+        float singleV = (float)singlePass.getV()[pivCoords.y][pivCoords.x];
+        float vort = (float)singlePass.getVorticityValues()[pivCoords.y][pivCoords.x];
+        float repU = (float)replacedPass.getU()[pivCoords.y][pivCoords.x];
+        float repV = (float)replacedPass.getV()[pivCoords.y][pivCoords.x];
+        float multU = (float)multiPass.getU()[pivCoords.y][pivCoords.x];
+        float multV = (float)multiPass.getV()[pivCoords.y][pivCoords.x];
+
+        // update the info text
+        String updatedText = settings.formatInfoString(pivCoords.x, pivCoords.y, singleU, singleV,
+                repU, repV, multU, multV, vort);
+        infoText.setText(updatedText);
+    }
+
+    private Point viewCoordsToPivCoords(ImageView view, int pivHeight, int pivWidth, float x, float y) {
+        final int actualHeight, actualWidth;
+        final int viewWidth = view.getWidth();
+        final int viewHeight = view.getHeight();
+        final int bitmapHeight = view.getDrawable().getIntrinsicHeight();
+        final int bitmapWidth = view.getDrawable().getIntrinsicWidth();
+
+        if (viewHeight * bitmapWidth <= viewWidth * bitmapHeight) {
+            actualWidth = bitmapWidth * viewHeight / bitmapHeight;
+            actualHeight = viewHeight;
+        } else {
+            actualHeight = bitmapHeight * viewWidth /bitmapWidth;
+            actualWidth = viewWidth;
+        }
+
+
+        // TODO x-100 is a band-aid, need a real solution why the coordinates need adjusting
+        final float[] coords = new float[] {x-100, y};
+        Matrix m = new Matrix();
+        view.getMatrix().invert(m);
+        m.postScale((float)pivWidth/actualWidth, (float)pivHeight/actualHeight);
+        m.mapPoints(coords);
+
+        int pivX = (int)(coords[0]);
+        int pivY = (int)(coords[1]);
+
+        pivX = Math.max(0, Math.min(pivX, pivWidth - 1));
+        pivY = Math.max(0, Math.min(pivY, pivHeight - 1));
+
+        return new Point(pivX, pivY);
     }
 }
