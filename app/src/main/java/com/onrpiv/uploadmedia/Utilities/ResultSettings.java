@@ -143,9 +143,19 @@ public class ResultSettings {
         backgroundChanged = true;
     }
 
-    public String formatInfoString(int x, int y, float u, float v, float vort) {
-        return "x: " + x + "\t\t\t" + "y: " + y + "\n" + "u: " + u + "\t\t\t" + "v: " + v
-                + "\n" + "vorticity: " + vort;
+    public String formatInfoString(int x, int y, float su, float sv, float ru, float rv,
+                                   float mu, float mv, float vort) {
+        // TODO add the physical measurements
+        return "x: " + x + "\t\t\t" + "y: " + y +
+                "\nSingle Pass U: " + su + " px\t\t\t" + "Single Pass V: " + sv + " px" +
+                "\nReplacement U: " + ru + " px\t\t\t" + "Replacement V: " + rv + " px" +
+                "\nMulti-Pass U: " + mu + " px\t\t\t" + "Multi-Pass V: " + mv + " px" +
+                "\nVorticity: " + vort;
+    }
+
+    public String debugString(int pivX, int pivY, float imgX, float imgY) {
+        return "pivX: " + pivX + "\t\t\t" + "pivY: " + pivY + "\n" +
+                "viewX: " + imgX + "\t\t\t" + "viewY: " + imgY;
     }
 
     public void resetBools() {
