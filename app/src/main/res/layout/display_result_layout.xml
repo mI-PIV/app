@@ -17,20 +17,22 @@
             <ImageView
                 android:id="@+id/baseView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:contentDescription="BackgroundImage" />
+                android:layout_height="wrap_content" />
 
             <ImageView
                 android:id="@+id/vortView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:contentDescription="VorticityImage" />
+                android:layout_height="wrap_content" />
 
             <ImageView
                 android:id="@+id/vectorsView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:contentDescription="VectorFieldImage" />
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/selectionView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </RelativeLayout>
     </com.onrpiv.uploadmedia.Utilities.FrameView>
 
