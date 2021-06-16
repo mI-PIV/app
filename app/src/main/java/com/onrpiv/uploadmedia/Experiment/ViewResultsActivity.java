@@ -66,8 +66,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     // Widgets
     private RangeSlider rangeSlider;
     private ImageView baseImage, vectorFieldImage, vorticityImage;
-    private Button arrowColor, vorticityColors, solidColor, applyButton;
-    private FrameView imagesDisplay;
+    private Button arrowColor, vorticityColors, solidColor, applyButton, selectColor;
 
     // paths
     private String imgFileToDisplay;
@@ -83,6 +82,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     // info section
     private ImageView selectionImage;
     private TextView infoText;
+    private float currentX;
+    private float currentY;
 
     // From Image Activity
     public static PivResultData singlePass;
@@ -152,7 +153,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         });
 
         // image containers
-        imagesDisplay = findViewById(R.id.img_frame);
+        FrameView imagesDisplay = findViewById(R.id.img_frame);
         imagesDisplay.setPositionCallback(this);  // callback sets the current selected x and y
         baseImage = findViewById(R.id.baseView);
         vectorFieldImage = findViewById(R.id.vectorsView);
@@ -174,6 +175,9 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         solidColor = findViewById(R.id.background_color);
         solidColor.setBackgroundColor(settings.getBackgroundColor());
+
+        selectColor = findViewById(R.id.select_color);
+        selectColor.setBackgroundColor(settings.getSelectColor());
 
         // drop-downs
         ImageButton vectDropDown = findViewById(R.id.vecDropDown);
@@ -315,6 +319,11 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             displayBaseImage(settings.getBackground());
         }
 
+        // Selection/Info
+        if (settings.selectionChanged) {
+            call(currentX, currentY);
+        }
+
         // reset detected changes
         settings.resetBools();
         applyButton.setEnabled(false);
@@ -378,6 +387,24 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                 //EMPTY
             }
         }).setDefaultColorButton(settings.getBackgroundColor()).show();
+    }
+
+    public void OnClick_SelectionColor(View view) {
+        ColorPicker colorPicker = new ColorPicker(this);
+        colorPicker.setColors(ResultSettings.getColors());
+        colorPicker.setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
+            @Override
+            public void setOnFastChooseColorListener(int position, int color) {
+                settings.setSelectColor(color);
+                selectColor.setBackgroundColor(color);
+                applyButton.setEnabled(true);
+            }
+
+            @Override
+            public void onCancel() {
+                // EMPTY
+            }
+        }).setDefaultColorButton(settings.getSelectColor()).show();
     }
 
     public void OnClick_SaveImage(View view) {
@@ -526,6 +553,9 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
     @Override
     public void call(float x, float y) {
+        currentX = x;
+        currentY = y;
+
         // view to piv translation
         Point pivCoords = viewCoordsToPivCoords(baseImage,
                 singlePass.getInterrY().length, singlePass.getInterrX().length, x, y);
@@ -535,7 +565,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         double imgX = singlePass.getInterrX()[pivCoords.x];
         double imgY = singlePass.getInterrY()[pivCoords.y];
         Bitmap selectionDrawnBmp = PivFunctions.createSelectionImage(imgX, imgY, rows, cols,
-                singlePass.getStepX(), singlePass.getStepY());
+                singlePass.getStepX(), singlePass.getStepY(), settings.getSelectColor());
 
         selectionImage.setImageBitmap(selectionDrawnBmp);
 

@@ -18,6 +18,7 @@ public class ResultSettings {
     public boolean vecFieldChanged = false;
     public boolean vortMapChanged = false;
     public boolean backgroundChanged = false;
+    public boolean selectionChanged = false;
 
     private boolean vecDisplay = true;
     private String vecOption = VEC_REPLACED;
@@ -30,6 +31,7 @@ public class ResultSettings {
 
     private String background = BACKGROUND;
     private int backgroundColor = Color.WHITE;
+    private int selectColor = Color.YELLOW;
 
     public ResultSettings(Context context, Resources res, String packageName) {
         vortColorMap = vortColorMap.getColorMap("jet", context, res, packageName);
@@ -162,5 +164,15 @@ public class ResultSettings {
         vecFieldChanged = false;
         vortMapChanged = false;
         backgroundChanged = false;
+        selectionChanged = false;
+    }
+
+    public int getSelectColor() {
+        return selectColor;
+    }
+
+    public void setSelectColor(int selectColor) {
+        this.selectColor = selectColor;
+        selectionChanged = true;
     }
 }

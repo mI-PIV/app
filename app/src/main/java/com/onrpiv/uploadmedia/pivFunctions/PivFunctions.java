@@ -446,7 +446,8 @@ public class PivFunctions {
     }
 
     public static Bitmap createSelectionImage(double imgX, double imgY, int rows, int cols, int stepX,
-                                              int stepY) {
+                                              int stepY, int color) {
+
         Mat transparentBackground = new Mat(rows, cols, CV_8UC4, new Scalar(255, 255, 255, 0));
 
         // origin,end points (assuming x, y are center of the grid)
@@ -455,8 +456,13 @@ public class PivFunctions {
         Point end = new Point(imgX+(Math.round(stepX/2f)),
                 imgY+(Math.round(stepY/2f)));
 
+        // highlight color
+        int red = ((color >> 16) & 0xFF) * 255;
+        int green = ((color >> 8) & 0xFF) * 255;
+        int blue = ((color) & 0xFF) * 255;
+
         // Draw user selection
-        Imgproc.rectangle(transparentBackground, origin, end, new Scalar(255, 255, 0, 255), 5);
+        Imgproc.rectangle(transparentBackground, origin, end, new Scalar(red, green, blue, 255), 5);
 
         // Mat to bitmap
         Mat resized = resizeMat(transparentBackground);

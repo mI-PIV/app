@@ -444,6 +444,25 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_marginBottom="30dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Selection Highlight:" />
+
+                    <Button
+                        android:id="@+id/select_color"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:onClick="OnClick_SelectionColor" />
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/infoText"
                     android:layout_width="match_parent"
