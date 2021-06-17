@@ -116,11 +116,11 @@ public class PivOptionsPopup extends AlertDialog {
         // set default texts
         setEditTextPIV.setText("Please Input the parameters to be used in your PIV experiment");
         setEditTextPIV.setTextSize(20);
-        windowSizeText.setText("64");
-        overlapText.setText("32");
-        dtText.setText("1.0");
-        qMinText.setText("1.0");
-        EText.setText("2.0");
+        windowSizeText.setText(Integer.toString(parameters.getWindowSize()));
+        overlapText.setText(Integer.toString(parameters.getOverlap()));
+        dtText.setText(Double.toString(parameters.getDt()));
+        qMinText.setText(Double.toString(parameters.getqMin()));
+        EText.setText(Double.toString(parameters.getE()));
         radioGroup.check(R.id.yesRadio);
         savePIVDataButton.setEnabled(true);
 
