@@ -134,14 +134,144 @@ public class PivFunctions {
         int peak1_j = (int) mmr.maxLoc.y;
         double peak1_value = mmr.maxVal;
 
-        // set first peak to zero
-        corr.put(peak1_j, peak1_i, 0.0d);
+        // remove primary peak from correlation map
+        removePrimaryPeak(corr, peak1_i, peak1_j);
 
         // find second peak value
         Core.MinMaxLocResult mmr2 = Core.minMaxLoc(corr);
         double peak2_value = mmr2.maxVal;
 
         return peak1_value / peak2_value;
+    }
+
+    private static void removePrimaryPeak(Mat correlationMap, int peak_x, int peak_y) {
+        // set the primary peak to 0
+        correlationMap.put(peak_y, peak_x, 0d);
+
+        // initial direction distances
+        int xp_dist = 1, yp_dist = 1, xn_dist = -1, yn_dist = -1;
+
+        // direction flags
+        boolean xp_flag = false, yp_flag = false, xn_flag = false, yn_flag = false;
+
+        // while any flag is false
+        while (xp_flag && yp_flag && xn_flag && yn_flag) {
+            for (int y = yn_dist; y > yp_dist; y++) {
+                for (int x = xn_dist; x > xp_dist; x++) {
+                    int new_y = peak_y + y;
+                    int new_x = peak_x + x;
+
+                    // if the new coord is already zero
+                    if (correlationMap.get(new_y, new_x)[0] == 0d) {
+                        continue;
+                    }
+
+                    int[] compare_distances = getComparisonCoords(y, x);
+                    int old_y = compare_distances[0] + peak_y;
+                    int old_x = compare_distances[1] + peak_x;
+
+                    double compare_value = correlationMap.get(old_y, old_x)[0];
+                    double new_value = correlationMap.get(new_y, new_x)[0];
+
+                    if (compare_value < new_value || new_value == 0d) {
+                        int direction = compare_distances[2];
+                        switch (direction) {
+                            case 0:
+                                yn_flag = true;
+                                xn_flag = true;
+                                break;
+                            case 1:
+                                yn_flag = true;
+                                xp_flag = true;
+                                break;
+                            case 2:
+                                yp_flag = true;
+                                xn_flag = true;
+                                break;
+                            case 3:
+                                yp_flag = true;
+                                xp_flag = true;
+                                break;
+                            case 4:
+                                xp_flag = true;
+                                break;
+                            case 5:
+                                xn_flag = true;
+                                break;
+                            case 6:
+                                yp_flag = true;
+                                break;
+                            case 7:
+                                yn_flag = true;
+                                break;
+                            default:
+                                continue;
+                        }
+                    } else {
+                        correlationMap.put(new_y, new_x, 0d);
+                    }
+
+                    if (!yp_flag)
+                        yp_dist++;
+                    if (!xp_flag)
+                        xp_dist++;
+                    if (!yn_flag)
+                        yn_dist++;
+                    if (!xn_flag)
+                        xn_dist++;
+                }
+            }
+        }
+    }
+
+    private static int[] getComparisonCoords(int y_dist, int x_dist) {
+        // returns [y_distance, x_distance, direction]
+
+        int y_comp_dist = 0, x_comp_dist = 0, direction = 0;
+
+        // corner
+        if (Math.abs(y_dist) == Math.abs(x_dist)) {
+            if (x_dist < 0 && y_dist < 0) {  // top left
+                y_comp_dist = y_dist + 1;
+                x_comp_dist = x_dist + 1;
+                direction = 0;
+            } else if (x_dist > 0 && y_dist < 0) {  // top right
+                y_comp_dist = y_dist + 1;
+                x_comp_dist = x_dist - 1;
+                direction = 1;
+            } else if (x_dist < 0 && y_dist > 0) {  // bottom left
+                y_comp_dist = y_dist - 1;
+                x_comp_dist = x_dist + 1;
+                direction = 2;
+            } else if (x_dist > 0 && y_dist > 0) {  // bottom right
+                y_comp_dist = y_dist - 1;
+                x_comp_dist = x_dist - 1;
+                direction = 3;
+            }
+        } else {  // not a corner
+            if (Math.abs(x_dist) > Math.abs(y_dist)) {  // right and left
+                if (x_dist > 0) {  // right
+                    y_comp_dist = y_dist;
+                    x_comp_dist = x_dist - 1;
+                    direction = 4;
+                } else {  // left
+                    y_comp_dist = y_dist;
+                    x_comp_dist = x_dist + 1;
+                    direction = 5;
+                }
+            } else if (Math.abs(x_dist) < Math.abs(y_dist)) {  // top and bottom
+                if (y_dist > 0) {  // bottom
+                    y_comp_dist = y_dist - 1;
+                    x_comp_dist = x_dist;
+                    direction = 6;
+                } else {  // top
+                    y_comp_dist = y_dist + 1;
+                    x_comp_dist = x_dist;
+                    direction = 7;
+                }
+            }
+        }
+        return new int[]{y_comp_dist, x_comp_dist, direction};
     }
 
 
