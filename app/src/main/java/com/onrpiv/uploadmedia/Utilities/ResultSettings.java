@@ -145,7 +145,7 @@ public class ResultSettings {
         backgroundChanged = true;
     }
 
-    public String formatInfoString(int x, int y, float su, float sv, float ru, float rv,
+    public String formatInfoString(float x, float y, float su, float sv, float ru, float rv,
                                    float mu, float mv, float vort) {
         // TODO add the physical measurements
         return "x: " + x + "\t\t\t" + "y: " + y +

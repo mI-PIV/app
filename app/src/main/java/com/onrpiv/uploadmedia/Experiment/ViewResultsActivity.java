@@ -561,7 +561,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                 singlePass.getInterrY().length, singlePass.getInterrX().length, x, y);
 
         // Draw the selection on the vector field image
-        // TODO not here, but need to have a color picker for the info selection circle/rect
         double imgX = singlePass.getInterrX()[pivCoords.x];
         double imgY = singlePass.getInterrY()[pivCoords.y];
         Bitmap selectionDrawnBmp = PivFunctions.createSelectionImage(imgX, imgY, rows, cols,
@@ -579,7 +578,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         float multV = (float)multiPass.getV()[pivCoords.y][pivCoords.x];
 
         // update the info text
-        String updatedText = settings.formatInfoString(pivCoords.x, pivCoords.y, singleU, singleV,
+        String updatedText = settings.formatInfoString((float)imgX, (float)imgY, singleU, singleV,
                 repU, repV, multU, multV, vort);
         infoText.setText(updatedText);
     }
