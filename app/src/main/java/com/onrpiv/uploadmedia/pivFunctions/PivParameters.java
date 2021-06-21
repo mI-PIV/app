@@ -42,6 +42,8 @@ public class PivParameters {
         for (String key: parameterDictionary.keySet())
         {
             String value = parameterDictionary.get(key);
+            if (null == value) continue;
+
             switch (key)
             {
                 case WINDOW_SIZE_KEY:
