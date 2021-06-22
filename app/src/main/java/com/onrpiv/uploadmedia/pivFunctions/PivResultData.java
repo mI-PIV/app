@@ -24,8 +24,16 @@ public class PivResultData implements Serializable {
             REPLACE2 = "pivReplaceMissing2",
             USERNAME = "username";
 
-    public PivResultData(String name) {
+    public PivResultData(String name, double[][] u, double[][] v, double[][] mag,
+                         double[][] sig2noise, double[][] interrCenters, int cols, int rows) {
         this.name = name;
+        _u = u;
+        _v = v;
+        _mag = mag;
+        _sig2noise = sig2noise;
+        this.rows = rows;
+        this.cols = cols;
+        setInterrCenters(interrCenters);
     }
 
     public String getName() {

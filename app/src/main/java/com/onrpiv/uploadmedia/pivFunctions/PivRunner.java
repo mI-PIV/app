@@ -66,7 +66,6 @@ public class PivRunner {
                 setMessage(imageActivity, "Calculating PIV", pDialog);
                 // single pass
                 PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE);
-                singlePassResult.setInterrCenters(pivFunctions.getCoordinates());
 
                 // Save first frame for output base image
                 pivFunctions.saveBaseImage("Base");
