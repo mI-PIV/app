@@ -6,6 +6,7 @@ import android.content.Context;
 
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraCalibration;
+import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
@@ -134,12 +135,18 @@ public class PivRunner {
 
                 resultData.put(PivResultData.MULTI, pivCorrelationMulti);
 
+                // write our PivResultData object and our PivParameter object to a file for loading later
+                setMessage(imageActivity, "Saving data...", pDialog);
+                FileIO.writePIVData(resultData, parameters, context, userName, newExpTotal);
+
                 if (pDialog.isShowing()) pDialog.dismiss();
             }
         };
         //-------------------------------Thread End-------------------------------------------//
 
         thread.start();
+
+
 
         return resultData;
     }
