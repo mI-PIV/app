@@ -37,6 +37,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
     public File frameSetPath;
     public File frame1Path;
     public File frame2Path;
+    public int frameSet;
     public int frame1Num;
     public int frame2Num;
 
@@ -130,6 +131,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 BoolIntStructure userInput = UserInputUtils.checkUserInputIntClamp(s.toString(), 1, numberOfSets);
                 if (s.length() > 0 && userInput.getBool() && numberOfSets > 0) {
                     setIsReady = true;
+                    frameSet = userInput.getInt();
                     frameSetPath = PathUtil.getFramesNumberedDirectory(getContext(), userName, userInput.getInt());
                     setFrames = Arrays.asList(frameSetPath.listFiles());
 
