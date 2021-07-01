@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         image = (Button) findViewById(R.id.image);
         video = (Button) findViewById(R.id.video);
         Button userSettings = (Button) findViewById(R.id.userSettings);
+        Button loadExpBtn = (Button) findViewById(R.id.main_load_exp_btn);
 
         userNameDialog();
 
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         image.setOnClickListener(this);
         video.setOnClickListener(this);
         userSettings.setOnClickListener(this);
+        loadExpBtn.setOnClickListener(this);
     }
 
     @Override
@@ -144,8 +146,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     userNameDialog();
                 }
                 break;
+            case R.id.main_load_exp_btn:
+                if (userName != null && !userName.isEmpty()) {
+                    LoadExperimentPopup loadExpPopup = new LoadExperimentPopup(this, userName);
+                    loadExpPopup.show();
+                } else {
+                    Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
+                    userNameDialog();
+                }
+                break;
             case R.id.userSettings:
                 userSettingsPopup(MainActivity.this, getWindow());
+                break;
         }
     }
 
