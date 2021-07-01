@@ -16,7 +16,7 @@ public class PivResultData implements Serializable {
     private int stepX;
     private int stepY;
 
-    // intent keys
+    // intent/io keys
     public static final String
             REPLACED_BOOL = "replaced",
             SINGLE = "singlepass",
