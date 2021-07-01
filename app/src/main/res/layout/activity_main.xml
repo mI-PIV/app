@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_root"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,13 +25,22 @@
         android:text="select images for PIV"/>
 
     <Button
-        android:id="@+id/userSettings"
+        android:id="@+id/main_load_exp_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/image"
         android:backgroundTint="#243EDF"
-        android:textColor="#FFFFFF"
-        android:text="User Settings" />
+        android:text="Load Experiment"
+        android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/userSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/main_load_exp_btn"
+        android:backgroundTint="#243EDF"
+        android:text="User Settings"
+        android:textColor="#FFFFFF" />
 
     <ImageView
         android:id="@+id/unicorn"

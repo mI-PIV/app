@@ -26,6 +26,7 @@ import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 
 public class PivOptionsPopup extends AlertDialog {
@@ -45,9 +46,9 @@ public class PivOptionsPopup extends AlertDialog {
     private final ArrayMap<Integer, String> idToKey;
 
 
-    public PivOptionsPopup(final Context context) {
+    public PivOptionsPopup(final Context context, int frameSet, int frameOne, int frameTwo) {
         super(context);
-        parameters = new PivParameters();
+        parameters = new PivParameters(frameSet, frameOne, frameTwo);
         idToKey = new ArrayMap<>();
 
         // build dialog
@@ -212,7 +213,7 @@ public class PivOptionsPopup extends AlertDialog {
                 public void afterTextChanged(Editable s) {
                     BoolIntStructure userInput = UserInputUtils.checkUserInputInt(s.toString());
                     if (s.length() > 0 && userInput.getBool()) {
-                        parameters.parameterDictionary.put(idToKey.get(view.getId()), String.valueOf(userInput.getInt()));
+                        parameters.setValue(Objects.requireNonNull(idToKey.get(view.getId())), String.valueOf(userInput.getInt()));
                         savePIVDataButton.setEnabled(checkTexts());
                     }
                 }

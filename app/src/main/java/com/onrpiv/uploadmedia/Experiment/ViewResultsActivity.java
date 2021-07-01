@@ -43,6 +43,8 @@ import com.onrpiv.uploadmedia.Utilities.ResultSettings;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
+import org.opencv.android.OpenCVLoader;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -98,6 +100,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         super.onCreate(savedInstanceState);
         Intent displayIntent = getIntent();
         setContentView(R.layout.display_result_layout);
+
+        OpenCVLoader.initDebug();
 
         // Bring in variables from ImageActivity
         Bundle extras = displayIntent.getExtras();

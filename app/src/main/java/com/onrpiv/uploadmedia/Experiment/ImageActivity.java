@@ -37,6 +37,7 @@ public class ImageActivity extends AppCompatActivity {
     private PivParameters pivParameters;
     private File frame1File;
     private File frame2File;
+    private int frameSet;
     private int frame1Num;
     private int frame2Num;
     private int fps;
@@ -94,6 +95,7 @@ public class ImageActivity extends AppCompatActivity {
         View.OnClickListener saveListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                frameSet = frameSelectionPopup.frameSet;
                 frame1File = frameSelectionPopup.frame1Path;
                 frame2File = frameSelectionPopup.frame2Path;
                 frame1Num = frameSelectionPopup.frame1Num;
@@ -130,13 +132,14 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     public void inputPivOptions(View view) {
-        final PivOptionsPopup parameterPopup = new PivOptionsPopup(ImageActivity.this);
+        final PivOptionsPopup parameterPopup = new PivOptionsPopup(
+                ImageActivity.this, frameSet, frame1Num, frame2Num);
 
         // create listener for piv parameter save button
         View.OnClickListener saveListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pivParameters = new PivParameters(parameterPopup.parameters.parameterDictionary);
+                pivParameters = parameterPopup.parameters;
                 compute.setEnabled(true);
                 parameters.setBackgroundColor(Color.parseColor("#00CC00"));
                 parameterPopup.dismiss();
