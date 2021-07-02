@@ -84,7 +84,7 @@ public class FrameExtractor {
         // Progress dialog
         final ProgressDialog pDialog = new ProgressDialog(context);
         pDialog.setMessage("Extracting Frames...");
-        pDialog.setCancelable(true);
+        pDialog.setCancelable(false);
         if (!pDialog.isShowing()) pDialog.show();
 
         FFmpeg.executeAsync(command, new ExecuteCallback() {
