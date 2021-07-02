@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,14 +24,15 @@ import com.onrpiv.uploadmedia.Utilities.UserInput.UserInputUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class PivFrameSelectionPopup extends AlertDialog {
 
-    private final EditText imgSetNumText;
-    private final EditText frame1Text;
-    private final EditText frame2Text;
+    private final EditText imgSetNumText, frame1Text, frame2Text;
     private final Button saveButton;
+    private final SeekBar frame1Slider, frame2Slider;
+    private final HashMap<SeekBar, EditText> seekBarToTextDict;
 
     private final String userName;
 
@@ -79,6 +81,38 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 cancel();
             }
         });
+
+        //init sliders
+        frame1Slider = (SeekBar) findViewById(R.id.first_frame_slider);
+        frame2Slider = (SeekBar) findViewById(R.id.second_frame_slider);
+        seekBarToTextDict = new HashMap<>();
+        seekBarToTextDict.put(frame1Slider, frame1Text);
+        seekBarToTextDict.put(frame2Slider, frame2Text);
+
+        SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    EditText text = seekBarToTextDict.get(seekBar);
+                    text.setText(String.valueOf(progress));
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //EMPTY
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //EMPTY
+            }
+        };
+        frame1Slider.setOnSeekBarChangeListener(seekBarListener);
+        frame2Slider.setOnSeekBarChangeListener(seekBarListener);
+        frame1Slider.setMax(1);
+        frame2Slider.setMax(1);
+
 
         //init frame previews
         preview1 = (PhotoView) findViewById(R.id.frame_selection_preview1);
@@ -143,6 +177,9 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     frame2Text.setText("", TextView.BufferType.EDITABLE);
                     frame2Text.setHint("Frame 2 - " + numFramesInSet);
 
+                    frame1Slider.setMax(numFramesInSet);
+                    frame2Slider.setMax(numFramesInSet);
+
                     preview1.setImageResource(android.R.color.transparent);
                     preview2.setImageResource(android.R.color.transparent);
                 }
@@ -169,6 +206,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     frame1IsReady = true;
                     userInput = checkFrameSelections(userInput);
                     int userInt = userInput.getInt();
+                    frame1Slider.setProgress(userInt);
                     frame2Text.setHint("Frame " + userInt + " - " + numFramesInSet);
                     frame1Path = setFrames.get(userInt - 1).getAbsoluteFile();
                     frame1Num = userInt;
@@ -200,6 +238,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     frame2IsReady = true;
                     userInput = checkFrameSelections(userInput);
                     int userInt = userInput.getInt();
+                    frame2Slider.setProgress(userInt);
                     frame2Path = setFrames.get(userInt - 1).getAbsoluteFile();
                     frame2Num = userInt;
 
