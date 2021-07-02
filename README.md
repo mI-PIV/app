@@ -75,13 +75,13 @@ To add the calibration triangle to your PIV experiments:
 
 ##### Selecting a video
 ##### Frame Extraction
-mI-PIV saves all extracted video frames in the user phone's 'Pictures' directory.
-To view the frames of a specific video, the path will look something like ...Pictures/miPIV_{username}/Extracted_Frames/Frames_{number}/.
+mI-PIV saves all extracted video frames in the App's data directory.
+To view the frames of a specific video, the path will look something like ...Android/data/com.onrpiv.uploadmedia/files/miPIV_{username}/Extracted_Frames/Frames_{number}/.
 #### Selecting frames
 #### PIV parameters
 #### Saved experiment data
-mI-PIV saves all experiment data in the user phone's 'Pictures' directory. 
-To get to a specific experiment, the path will look something like ...Pictures/miPIV_{username}/Experiments/Experiment_{number}/.
+mI-PIV saves all experiment data and experiment parameters in the App's data directory. 
+To get to a specific experiment, the path will look something like ...Android/data/com.onrpiv.uploadmedia/files/miPIV_{username}/Experiments/Experiment_{number}/.
 ### Curricular Modules
 
 ## Documentation
