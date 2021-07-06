@@ -11,6 +11,8 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.onrpiv.uploadmedia.Experiment.Popups.PivFrameSelectionPopup;
+import com.onrpiv.uploadmedia.Experiment.Popups.PivOptionsPopup;
 import com.onrpiv.uploadmedia.Learn.PIVBasics3;
 import com.onrpiv.uploadmedia.Learn.PIVBasicsLayout;
 import com.onrpiv.uploadmedia.R;

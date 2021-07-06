@@ -1,4 +1,4 @@
-package com.onrpiv.uploadmedia.Experiment;
+package com.onrpiv.uploadmedia.Experiment.Popups;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
