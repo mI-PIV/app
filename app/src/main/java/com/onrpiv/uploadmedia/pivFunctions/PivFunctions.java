@@ -1,6 +1,7 @@
 package com.onrpiv.uploadmedia.pivFunctions;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
@@ -608,6 +609,20 @@ public class PivFunctions {
         //clean up mats
         resized.release();
         System.gc();
+    }
+
+    public static Bitmap loadAndResizeBitmap(String bmpPath, int width) {
+        Bitmap orig = BitmapFactory.decodeFile(bmpPath);
+        return resizeBitmap(orig, width);
+    }
+
+    public static Bitmap resizeBitmap(Bitmap orig, int width) {
+        float aspectRatio = orig.getWidth() / (float) orig.getHeight();
+        int height = Math.round(width / aspectRatio);
+
+        Bitmap newBmp = Bitmap.createScaledBitmap(orig, width, height, true);
+        orig.recycle();
+        return newBmp;
     }
 
     private static Mat resizeMat(Mat mat) {

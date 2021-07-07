@@ -1,4 +1,4 @@
-package com.onrpiv.uploadmedia.Experiment;
+package com.onrpiv.uploadmedia.Experiment.Popups;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.onrpiv.uploadmedia.Experiment.ViewResultsActivity;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.Popup;
