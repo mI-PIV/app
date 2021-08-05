@@ -1,8 +1,8 @@
 package com.onrpiv.uploadmedia.Utilities;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Bundle;
 
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 
@@ -33,8 +33,11 @@ public class ResultSettings {
     private int backgroundColor = Color.WHITE;
     private int selectColor = Color.YELLOW;
 
-    public ResultSettings(Context context, Resources res, String packageName) {
-        vortColorMap = vortColorMap.getColorMap("jet", context, res, packageName);
+    private final Context context;
+
+    public ResultSettings(Context context) {
+        this.context = context;
+        vortColorMap = vortColorMap.getColorMap("jet", context);
     }
 
     public static int[] getColors() {
@@ -174,5 +177,40 @@ public class ResultSettings {
     public void setSelectColor(int selectColor) {
         this.selectColor = selectColor;
         selectionChanged = true;
+    }
+
+    public Bundle saveInstanceBundle(Bundle outState) {
+        outState.putBoolean("vecDisplay_rs", vecDisplay);
+        outState.putString("vecOption_rs", vecOption);
+        outState.putInt("arrowColor_rs", arrowColor);
+        outState.putBoolean("vortDisplay_rs", vortDisplay);
+        outState.putInt("vortTransVals_min_rs", vortTransVals_min);
+        outState.putInt("vortTransVals_max_rs", vortTransVals_max);
+        outState.putString("background_rs", background);
+        outState.putInt("backgroundColor_rs", backgroundColor);
+        outState.putInt("selectColor_rs", selectColor);
+
+        outState = vortColorMap.saveInstanceBundle(outState);
+
+        return outState;
+    }
+
+    public Bundle saveInstanceBundle() {
+        Bundle outState = new Bundle();
+        return saveInstanceBundle(outState);
+    }
+
+    public ResultSettings loadInstanceBundle(Bundle inState) {
+        vecDisplay = inState.getBoolean("vecDisplay_rs");
+        vecOption = inState.getString("vecOption_rs");
+        arrowColor = inState.getInt("arrowColor_rs");
+        vortDisplay = inState.getBoolean("vortDisplay_rs");
+        vortTransVals_min = inState.getInt("vortTransVals_min_rs");
+        vortTransVals_max = inState.getInt("vortTransVals_max_rs");
+        background = inState.getString("background_rs");
+        backgroundColor = inState.getInt("backgroundColor_rs");
+        selectColor = inState.getInt("selectColor_rs");
+        vortColorMap = new ColorMap().loadInstanceBundle(inState, context);
+        return this;
     }
 }
