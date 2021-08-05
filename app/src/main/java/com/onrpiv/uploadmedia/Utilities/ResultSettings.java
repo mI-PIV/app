@@ -37,14 +37,14 @@ public class ResultSettings {
 
     public ResultSettings(Context context) {
         this.context = context;
-        vortColorMap = vortColorMap.getColorMap("jet", context);
+        vortColorMap = vortColorMap.getColorMap("redblue", context);
     }
 
     public static int[] getColors() {
         String[] colorStrings = new String[]{
                 "red", "blue", "green", "black", "white", "gray", "cyan", "magenta", "yellow",
                 "lightgray", "darkgray", "grey", "lightgrey", "darkgrey", "aqua", "fuchsia",
-                "lime", "maroon", "navy", "olive", "purple", "silver", "teal"
+                "lime", "maroon", "navy", "olive", "purple", "silver", "teal", "redblue"
         };
 
         int[] colors = new int[colorStrings.length];

@@ -16,13 +16,13 @@ import java.util.HashMap;
 public class ColorMap {
     private int id;
     private String name;
-    private int openCV_code;
+    private Integer openCV_code;
     private Drawable drawable;
 
     public ColorMap() {
         id = 0;
         name = "";
-        openCV_code = 3;
+        openCV_code = null;
         drawable = null;
     }
 
@@ -49,7 +49,7 @@ public class ColorMap {
         return this;
     }
 
-    public int getOpenCVCode() {
+    public Integer getOpenCVCode() {
         return openCV_code;
     }
 
@@ -140,6 +140,7 @@ public class ColorMap {
         colormap.put("spring", Imgproc.COLORMAP_SPRING);
         colormap.put("summer", Imgproc.COLORMAP_SUMMER);
         colormap.put("winter", Imgproc.COLORMAP_WINTER);
+        colormap.put("redblue", null);
         return colormap;
     }
 
