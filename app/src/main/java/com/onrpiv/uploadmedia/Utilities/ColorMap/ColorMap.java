@@ -44,7 +44,7 @@ public class ColorMap {
         return name;
     }
 
-    public ColorMap setOpenCV_code(int openCV_code) {
+    public ColorMap setOpenCV_code(Integer openCV_code) {
         this.openCV_code = openCV_code;
         return this;
     }
@@ -101,7 +101,7 @@ public class ColorMap {
 
     private static ArrayList<String> getColorMapNames() {
         String[] cmaps = new String[]{"autumn", "bone", "cool", "hot", "hsv", "jet",
-                "ocean", "parula", "pink", "rainbow", "spring", "summer", "winter"};
+                "ocean", "parula", "pink", "rainbow", "spring", "summer", "winter", "redblue"};
         ArrayList<String> result = new ArrayList<>();
         Collections.addAll(result, cmaps);
         return result;
