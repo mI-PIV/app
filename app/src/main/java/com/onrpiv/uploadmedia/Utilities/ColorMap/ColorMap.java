@@ -1,8 +1,8 @@
 package com.onrpiv.uploadmedia.Utilities.ColorMap;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
@@ -62,16 +62,17 @@ public class ColorMap {
         return drawable;
     }
 
-    public ColorMap getColorMap(String name, Context context, Resources res, String packageName) {
+    public ColorMap getColorMap(String name, Context context) {
         HashMap<String, Integer> openCVCodes = loadColormap_nameToOpenCV();
         this.name = name;
-        this.id = res.getIdentifier("colormap_"+name, "drawable", packageName);
+        this.id = context.getResources().getIdentifier("colormap_"+name, "drawable",
+                context.getPackageName());
         this.drawable = ContextCompat.getDrawable(context, id);
         this.openCV_code = openCVCodes.get(name);
         return this;
     }
 
-    public static ArrayList<ColorMap> loadColorMaps(Context context, Resources res, String packageName) {
+    public static ArrayList<ColorMap> loadColorMaps(Context context) {
         ArrayList<ColorMap> result = new ArrayList<>();
         ArrayList<String> names = getColorMapNames();
         HashMap<String, Integer> openCVCodes = loadColormap_nameToOpenCV();
@@ -80,7 +81,8 @@ public class ColorMap {
             ColorMap colorMap = new ColorMap();
             colorMap.setName(name);
 
-            int id = res.getIdentifier("colormap_"+name, "drawable", packageName);
+            int id = context.getResources().getIdentifier("colormap_"+name, "drawable",
+                    context.getPackageName());
             if (id == 0) {
                 Log.e("KP", name+" has an id of zero.");
                 continue;
@@ -139,5 +141,20 @@ public class ColorMap {
         colormap.put("summer", Imgproc.COLORMAP_SUMMER);
         colormap.put("winter", Imgproc.COLORMAP_WINTER);
         return colormap;
+    }
+
+    public Bundle saveInstanceBundle(Bundle outState) {
+        outState.putString("name_cm", name);
+        return outState;
+    }
+
+    public Bundle saveInstanceBundle() {
+        Bundle outState = new Bundle();
+        return saveInstanceBundle(outState);
+    }
+
+    public ColorMap loadInstanceBundle(Bundle inState, Context context) {
+        name = inState.getString("name_cm");
+        return getColorMap(name, context);
     }
 }

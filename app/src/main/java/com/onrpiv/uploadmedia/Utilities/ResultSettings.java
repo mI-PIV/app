@@ -1,8 +1,8 @@
 package com.onrpiv.uploadmedia.Utilities;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Bundle;
 
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 
@@ -33,8 +33,11 @@ public class ResultSettings {
     private int backgroundColor = Color.WHITE;
     private int selectColor = Color.YELLOW;
 
-    public ResultSettings(Context context, Resources res, String packageName) {
-        vortColorMap = vortColorMap.getColorMap("jet", context, res, packageName);
+    private final Context context;
+
+    public ResultSettings(Context context) {
+        this.context = context;
+        vortColorMap = vortColorMap.getColorMap("jet", context);
     }
 
     public static int[] getColors() {
@@ -148,16 +151,17 @@ public class ResultSettings {
     public String formatInfoString(float x, float y, float su, float sv, float ru, float rv,
                                    float mu, float mv, float vort) {
         // TODO add the physical measurements
-        return "x: " + x + "\t\t\t" + "y: " + y +
+        return "x: " + ((int) x) + "\t\t\t" + "y: " + ((int) y) +
                 "\nSingle Pass U: " + su + " px\t\t\t" + "Single Pass V: " + sv + " px" +
                 "\nReplacement U: " + ru + " px\t\t\t" + "Replacement V: " + rv + " px" +
                 "\nMulti-Pass U: " + mu + " px\t\t\t" + "Multi-Pass V: " + mv + " px" +
                 "\nVorticity: " + vort;
     }
 
-    public String debugString(int pivX, int pivY, float imgX, float imgY) {
+    public String debugString(int pivX, int pivY, double imgX, double imgY, float viewX, float viewY) {
         return "pivX: " + pivX + "\t\t\t" + "pivY: " + pivY + "\n" +
-                "viewX: " + imgX + "\t\t\t" + "viewY: " + imgY;
+                "viewX: " + viewX + "\t\t\t" + "viewY: " + viewY + "\n" +
+                "bmpX: " + imgX + "\t\t\t" + "bmpY: " + imgY;
     }
 
     public void resetBools() {
@@ -174,5 +178,40 @@ public class ResultSettings {
     public void setSelectColor(int selectColor) {
         this.selectColor = selectColor;
         selectionChanged = true;
+    }
+
+    public Bundle saveInstanceBundle(Bundle outState) {
+        outState.putBoolean("vecDisplay_rs", vecDisplay);
+        outState.putString("vecOption_rs", vecOption);
+        outState.putInt("arrowColor_rs", arrowColor);
+        outState.putBoolean("vortDisplay_rs", vortDisplay);
+        outState.putInt("vortTransVals_min_rs", vortTransVals_min);
+        outState.putInt("vortTransVals_max_rs", vortTransVals_max);
+        outState.putString("background_rs", background);
+        outState.putInt("backgroundColor_rs", backgroundColor);
+        outState.putInt("selectColor_rs", selectColor);
+
+        outState = vortColorMap.saveInstanceBundle(outState);
+
+        return outState;
+    }
+
+    public Bundle saveInstanceBundle() {
+        Bundle outState = new Bundle();
+        return saveInstanceBundle(outState);
+    }
+
+    public ResultSettings loadInstanceBundle(Bundle inState) {
+        vecDisplay = inState.getBoolean("vecDisplay_rs");
+        vecOption = inState.getString("vecOption_rs");
+        arrowColor = inState.getInt("arrowColor_rs");
+        vortDisplay = inState.getBoolean("vortDisplay_rs");
+        vortTransVals_min = inState.getInt("vortTransVals_min_rs");
+        vortTransVals_max = inState.getInt("vortTransVals_max_rs");
+        background = inState.getString("background_rs");
+        backgroundColor = inState.getInt("backgroundColor_rs");
+        selectColor = inState.getInt("selectColor_rs");
+        vortColorMap = new ColorMap().loadInstanceBundle(inState, context);
+        return this;
     }
 }

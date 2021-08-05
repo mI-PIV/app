@@ -117,8 +117,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // load our maps and settings
         correlationMaps = loadCorrelationMaps();
-        colorMaps = ColorMap.loadColorMaps(this, getResources(), getPackageName());
-        settings = new ResultSettings(this, getResources(), getPackageName());
+        colorMaps = ColorMap.loadColorMaps(this);
+        settings = new ResultSettings(this);
 
         // sliders
         rangeSlider = findViewById(R.id.rangeSeekBar);
@@ -184,40 +184,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         selectColor.setBackgroundColor(settings.getSelectColor());
 
         // drop-downs
-        ImageButton vectDropDown = findViewById(R.id.vecDropDown);
-        ImageButton vortDropDown = findViewById(R.id.vortDropDown);
-        ImageButton backgroundDropDown = findViewById(R.id.backgroundDropDown);
-        ImageButton infoDropDown = findViewById(R.id.infoDropDown);
-
-        dropDownMaps = new HashMap<>();
-        dropDownMaps.put(vectDropDown, (LinearLayout)findViewById(R.id.vecFieldLayout));
-        dropDownMaps.put(vortDropDown, (LinearLayout)findViewById(R.id.vortLayout));
-        dropDownMaps.put(backgroundDropDown, (LinearLayout)findViewById(R.id.backgroundLayout));
-        dropDownMaps.put(infoDropDown, (LinearLayout)findViewById(R.id.infoSection));
-
-        View.OnClickListener dropDownListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // make section layout visible/gone
-                LinearLayout sectionLayout = dropDownMaps.get(v);
-
-                if (null == sectionLayout)
-                    return;
-
-                boolean visible = sectionLayout.getVisibility() == View.VISIBLE;
-                sectionLayout.setVisibility(visible? View.GONE : View.VISIBLE);
-
-                // change arrow image to down/up
-                ImageButton arrow = (ImageButton) v;
-                arrow.setImageResource(visible?
-                        R.drawable.drop_down : R.drawable.drop_up);
-            }
-        };
-
-        vectDropDown.setOnClickListener(dropDownListener);
-        vortDropDown.setOnClickListener(dropDownListener);
-        backgroundDropDown.setOnClickListener(dropDownListener);
-        infoDropDown.setOnClickListener(dropDownListener);
+        dropDownMaps = loadDropDownMaps();
 
         // switches
         SwitchCompat displayVectors = findViewById(R.id.vec_display);
@@ -294,6 +261,53 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // paths
+        outState.putString("imgFileToDisplay", imgFileToDisplay);
+        outState.putString("outputDirectory", outputDirectory.getAbsolutePath());
+
+        // maps and settings
+        outState = settings.saveInstanceBundle(outState);
+        outState.putInt("imageCounter", imageCounter);
+
+        // info
+        outState.putFloat("currentX", currentX);
+        outState.putFloat("currentY", currentY);
+
+        // from image activity
+        outState.putInt("rows", rows);
+        outState.putInt("cols", cols);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        // paths
+        imgFileToDisplay = savedInstanceState.getString("imgFileToDisplay");
+        outputDirectory = new File(savedInstanceState.getString("outputDirectory"));
+
+        // maps and settings
+        settings = new ResultSettings(this).loadInstanceBundle(savedInstanceState);
+        imageCounter = savedInstanceState.getInt("imageCounter");
+
+        // info
+        currentX = savedInstanceState.getFloat("currentX");
+        currentY = savedInstanceState.getFloat("currentY");
+
+        // from image activity
+        rows = savedInstanceState.getInt("rows");
+        cols = savedInstanceState.getInt("cols");
+
+        // reload the display
+        settings.vecFieldChanged = true;
+        settings.vortMapChanged = true;
+        settings.selectionChanged = true;
+        settings.backgroundChanged = true;
+        applyDisplay(applyButton);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
@@ -325,7 +339,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // Selection/Info
         if (settings.selectionChanged) {
-            call(currentX, currentY);
+            getSelectPosition(currentX, currentY);
         }
 
         // reset detected changes
@@ -506,6 +520,44 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         return result;
     }
 
+    private HashMap<View, LinearLayout> loadDropDownMaps() {
+        HashMap<View, LinearLayout> dropDownMap = new HashMap<>();
+        ImageButton vectDropDown = findViewById(R.id.vecDropDown);
+        ImageButton vortDropDown = findViewById(R.id.vortDropDown);
+        ImageButton backgroundDropDown = findViewById(R.id.backgroundDropDown);
+        ImageButton infoDropDown = findViewById(R.id.infoDropDown);
+
+        View.OnClickListener dropDownListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // make section layout visible/gone
+                LinearLayout sectionLayout = dropDownMaps.get(v);
+
+                if (null == sectionLayout)
+                    return;
+
+                boolean visible = sectionLayout.getVisibility() == View.VISIBLE;
+                sectionLayout.setVisibility(visible? View.GONE : View.VISIBLE);
+
+                // change arrow image to down/up
+                ImageButton arrow = (ImageButton) v;
+                arrow.setImageResource(visible?
+                        R.drawable.drop_down : R.drawable.drop_up);
+            }
+        };
+
+        vectDropDown.setOnClickListener(dropDownListener);
+        vortDropDown.setOnClickListener(dropDownListener);
+        backgroundDropDown.setOnClickListener(dropDownListener);
+        infoDropDown.setOnClickListener(dropDownListener);
+
+        dropDownMap.put((View) findViewById(R.id.vecDropDown), (LinearLayout)findViewById(R.id.vecFieldLayout));
+        dropDownMap.put((View) findViewById(R.id.vortDropDown), (LinearLayout)findViewById(R.id.vortLayout));
+        dropDownMap.put((View) findViewById(R.id.backgroundDropDown), (LinearLayout)findViewById(R.id.backgroundLayout));
+        dropDownMap.put((View) findViewById(R.id.infoDropDown), (LinearLayout)findViewById(R.id.infoSection));
+        return dropDownMap;
+    }
+
     private void popups(double nMaxLower, double maxDisplacement) {
         if (maxDisplacement < nMaxLower) {
             AlertDialog.Builder alertDialogParametersBuilder = new AlertDialog.Builder(ViewResultsActivity.this);
@@ -556,7 +608,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     }
 
     @Override
-    public void call(float x, float y) {
+    public void getSelectPosition(float x, float y) {
         currentX = x;
         currentY = y;
 
@@ -588,26 +640,25 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     }
 
     private Point viewCoordsToPivCoords(ImageView view, int pivHeight, int pivWidth, float x, float y) {
-        final int actualHeight, actualWidth;
-        final int viewWidth = view.getWidth();
-        final int viewHeight = view.getHeight();
-        final int bitmapHeight = view.getDrawable().getIntrinsicHeight();
-        final int bitmapWidth = view.getDrawable().getIntrinsicWidth();
+        int viewWidth = view.getWidth();
+        int viewHeight = view.getHeight();
+        int bitmapHeight = view.getDrawable().getIntrinsicHeight();
+        int bitmapWidth = view.getDrawable().getIntrinsicWidth();
 
-        if (viewHeight * bitmapWidth <= viewWidth * bitmapHeight) {
-            actualWidth = bitmapWidth * viewHeight / bitmapHeight;
-            actualHeight = viewHeight;
-        } else {
-            actualHeight = bitmapHeight * viewWidth /bitmapWidth;
-            actualWidth = viewWidth;
-        }
+        // find the resized bitmap dimensions
+        float resizeFactor = Math.min(viewHeight / (float)bitmapHeight, viewWidth / (float)bitmapWidth);
+        float resizedBmpHeight = bitmapHeight * resizeFactor;
+        float resizedBmpWidth = bitmapWidth * resizeFactor;
 
+        // find the resize padding
+        float xDiff = (viewWidth - resizedBmpWidth)/2;
+        float yDiff = (viewHeight - resizedBmpHeight)/2;
 
-        // TODO x-100 is a band-aid, need a real solution why the coordinates need adjusting
-        final float[] coords = new float[] {x-100, y};
+        // transform the view's coordinates to match the piv coordinates
+        final float[] coords = new float[] {x - xDiff, y - yDiff};
         Matrix m = new Matrix();
         view.getMatrix().invert(m);
-        m.postScale((float)pivWidth/actualWidth, (float)pivHeight/actualHeight);
+        m.postScale(pivWidth/resizedBmpWidth, pivHeight/resizedBmpHeight);
         m.mapPoints(coords);
 
         int pivX = (int)(coords[0]);
