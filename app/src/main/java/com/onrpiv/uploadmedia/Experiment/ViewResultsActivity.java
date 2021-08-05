@@ -609,7 +609,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
     @Override
     public void getSelectPosition(float x, float y) {
-        // FIXME rotation screws this up
         currentX = x;
         currentY = y;
 
@@ -641,25 +640,25 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     }
 
     private Point viewCoordsToPivCoords(ImageView view, int pivHeight, int pivWidth, float x, float y) {
-        final int actualHeight, actualWidth;
-        final int viewWidth = view.getWidth();
-        final int viewHeight = view.getHeight();
-        final int bitmapHeight = view.getDrawable().getIntrinsicHeight();
-        final int bitmapWidth = view.getDrawable().getIntrinsicWidth();
+        int viewWidth = view.getWidth();
+        int viewHeight = view.getHeight();
+        int bitmapHeight = view.getDrawable().getIntrinsicHeight();
+        int bitmapWidth = view.getDrawable().getIntrinsicWidth();
 
-        if (viewHeight * bitmapWidth <= viewWidth * bitmapHeight) {
-            actualWidth = bitmapWidth * viewHeight / bitmapHeight;
-            actualHeight = viewHeight;
-        } else {
-            actualHeight = bitmapHeight * viewWidth /bitmapWidth;
-            actualWidth = viewWidth;
-        }
+        // find the resized bitmap dimensions
+        float resizeFactor = Math.min(viewHeight / (float)bitmapHeight, viewWidth / (float)bitmapWidth);
+        float resizedBmpHeight = bitmapHeight * resizeFactor;
+        float resizedBmpWidth = bitmapWidth * resizeFactor;
 
-        // TODO x-100 is a band-aid, need a real solution why the coordinates need adjusting
-        final float[] coords = new float[] {x-100, y};
+        // find the resize padding
+        float xDiff = (viewWidth - resizedBmpWidth)/2;
+        float yDiff = (viewHeight - resizedBmpHeight)/2;
+
+        // transform the view's coordinates to match the piv coordinates
+        final float[] coords = new float[] {x - xDiff, y - yDiff};
         Matrix m = new Matrix();
         view.getMatrix().invert(m);
-        m.postScale((float)pivWidth/actualWidth, (float)pivHeight/actualHeight);
+        m.postScale(pivWidth/resizedBmpWidth, pivHeight/resizedBmpHeight);
         m.mapPoints(coords);
 
         int pivX = (int)(coords[0]);
