@@ -715,10 +715,10 @@ public class PivFunctions {
 
                 if (value < midpoint) {
                     // blue with normalized value assigned to alpha
-                    colorMapImage.put(row, col, new byte[]{(byte)255, (byte)0, (byte)0, (byte)value});
+                    colorMapImage.put(row, col, new byte[]{(byte)0, (byte)0, (byte)255, (byte)value});
                 } else if (value > midpoint) {
                     // red with normalized value assigned to alpha
-                    colorMapImage.put(row, col, new byte[]{(byte)0, (byte)0, (byte)255, (byte)value});
+                    colorMapImage.put(row, col, new byte[]{(byte)255, (byte)0, (byte)0, (byte)value});
                 } else {  // value == midpoint
                     // completely transparent
                     colorMapImage.put(row, col, new byte[]{(byte)0, (byte)0, (byte)0, (byte)0});
