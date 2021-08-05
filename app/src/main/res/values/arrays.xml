@@ -27,6 +27,7 @@
         <item>@drawable/colormap_spring</item>
         <item>@drawable/colormap_summer</item>
         <item>@drawable/colormap_winter</item>
+        <item>@drawable/colormap_redblue</item>
     </array>
 
 </resources>
