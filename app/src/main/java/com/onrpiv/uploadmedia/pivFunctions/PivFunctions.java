@@ -32,6 +32,7 @@ import static org.opencv.core.CvType.CV_8UC1;
 import static org.opencv.core.CvType.CV_8UC4;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
+import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGRA;
 import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
@@ -634,12 +635,18 @@ public class PivFunctions {
     }
 
     public static Bitmap createColorMapBitmap(double[][] mapValues, int threshMin, int threshMax,
-                                              int openCVColorMapCode) {
+                                              Integer openCVColorMapCode) {
         Mat mapValuesMat = new Mat(mapValues.length, mapValues[0].length, CV_8UC1);
         double[] minMax = findMinMax2D(mapValues);
         List<int[]> transparentCoords = findTransparentCoords(mapValuesMat, mapValues, threshMin,
                 threshMax, minMax[0], minMax[1]);
-        Mat colorMap = createColorMap(mapValuesMat, transparentCoords, openCVColorMapCode);
+
+        Mat colorMap;
+        if (null != openCVColorMapCode) {
+            colorMap = createOpenCVColorMap(mapValuesMat, transparentCoords, openCVColorMapCode);
+        } else {
+            colorMap = createRedBlueColorMap(mapValuesMat, transparentCoords);
+        }
 
         Mat resized = resizeMat(colorMap);
         Bitmap result = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
@@ -676,7 +683,8 @@ public class PivFunctions {
         return transparentCoords;
     }
 
-    private static Mat createColorMap(Mat valuesMat, List<int[]> transparentCoords, int openCVColorMapCode) {
+    private static Mat createOpenCVColorMap(Mat valuesMat, List<int[]> transparentCoords,
+                                            Integer openCVColorMapCode) {
         // Create colormap
         Mat colorMapImage = new Mat(valuesMat.rows(), valuesMat.cols(), valuesMat.type());
         Imgproc.applyColorMap(valuesMat, colorMapImage, openCVColorMapCode);
@@ -686,8 +694,44 @@ public class PivFunctions {
 
         // Set our thresholded coordinates to transparent (255, 255, 255, 0)
         for (int t = 0; t < transparentCoords.size(); t++) {
-            colorMapImage.put(transparentCoords.get(t)[0], transparentCoords.get(t)[1], new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0});
+            colorMapImage.put(transparentCoords.get(t)[0], transparentCoords.get(t)[1],
+                    new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0});
         }
+        return colorMapImage;
+    }
+
+    private static Mat createRedBlueColorMap(Mat normalizedValues, List<int[]> transparentCoords) {
+        // create colormap
+        Mat colorMapImage = new Mat(normalizedValues.rows(), normalizedValues.cols(),
+                normalizedValues.type());
+
+        // convert to four channels
+        cvtColor(colorMapImage, colorMapImage, COLOR_GRAY2BGRA);
+
+        int midpoint = 127;
+        for (int row = 0; row < normalizedValues.rows(); row++) {
+            for (int col = 0; col < normalizedValues.cols(); col++) {
+                double value = normalizedValues.get(row, col)[0];
+
+                if (value < midpoint) {
+                    // blue with normalized value assigned to alpha
+                    colorMapImage.put(row, col, new byte[]{(byte)0, (byte)0, (byte)255, (byte)value});
+                } else if (value > midpoint) {
+                    // red with normalized value assigned to alpha
+                    colorMapImage.put(row, col, new byte[]{(byte)255, (byte)0, (byte)0, (byte)value});
+                } else {  // value == midpoint
+                    // completely transparent
+                    colorMapImage.put(row, col, new byte[]{(byte)0, (byte)0, (byte)0, (byte)0});
+                }
+            }
+        }
+
+        // change our transparent values
+        for (int t = 0; t < transparentCoords.size(); t++) {
+            colorMapImage.put(transparentCoords.get(t)[0], transparentCoords.get(t)[1],
+                    new byte[]{(byte) 0, (byte) 0, (byte) 0, (byte) 0});
+        }
+
         return colorMapImage;
     }
 
