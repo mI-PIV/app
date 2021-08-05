@@ -645,7 +645,7 @@ public class PivFunctions {
         if (null != openCVColorMapCode) {
             colorMap = createOpenCVColorMap(mapValuesMat, transparentCoords, openCVColorMapCode);
         } else {
-            colorMap = createRedBlueColorMap(mapValuesMat);
+            colorMap = createRedBlueColorMap(mapValuesMat, transparentCoords);
         }
 
         Mat resized = resizeMat(colorMap);
@@ -700,7 +700,7 @@ public class PivFunctions {
         return colorMapImage;
     }
 
-    private static Mat createRedBlueColorMap(Mat normalizedValues) {
+    private static Mat createRedBlueColorMap(Mat normalizedValues, List<int[]> transparentCoords) {
         // create colormap
         Mat colorMapImage = new Mat(normalizedValues.rows(), normalizedValues.cols(),
                 normalizedValues.type());
@@ -725,6 +725,13 @@ public class PivFunctions {
                 }
             }
         }
+
+        // change our transparent values
+        for (int t = 0; t < transparentCoords.size(); t++) {
+            colorMapImage.put(transparentCoords.get(t)[0], transparentCoords.get(t)[1],
+                    new byte[]{(byte) 0, (byte) 0, (byte) 0, (byte) 0});
+        }
+
         return colorMapImage;
     }
 
