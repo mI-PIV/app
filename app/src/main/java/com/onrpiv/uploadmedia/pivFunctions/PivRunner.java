@@ -76,6 +76,8 @@ public class PivRunner {
                 double pixelToCmRatio = calibration.calibrate(frame1File.getAbsolutePath(), frame2File.getAbsolutePath());
                 if (calibration.foundTriangle) {
                     pivFunctions.saveVectorCentimeters(singlePassResult, pixelToCmRatio, "CENTIMETERS");
+                } else {
+                    singlePassResult.setCalibrated(false);
                 }
 
                 setMessage(imageActivity, "Calculating single pass vorticity", pDialog);
@@ -143,10 +145,7 @@ public class PivRunner {
             }
         };
         //-------------------------------Thread End-------------------------------------------//
-
         thread.start();
-
-
 
         return resultData;
     }
