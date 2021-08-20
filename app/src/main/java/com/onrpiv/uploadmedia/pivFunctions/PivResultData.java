@@ -15,6 +15,7 @@ public class PivResultData implements Serializable {
     private int cols;
     private int stepX;
     private int stepY;
+    private boolean calibrated = false;
 
     // intent/io keys
     public static final String
@@ -125,5 +126,13 @@ public class PivResultData implements Serializable {
 
     public int getStepY() {
         return stepY;
+    }
+
+    public boolean getCalibrated() {
+        return calibrated;
+    }
+
+    public void setCalibrated(boolean calibrated) {
+        this.calibrated = calibrated;
     }
 }

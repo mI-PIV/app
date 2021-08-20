@@ -1,6 +1,13 @@
 package com.onrpiv.uploadmedia.Experiment;
 
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_IMG;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_SOLID;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_MULTI;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_REPLACED;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
+
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -53,12 +60,6 @@ import java.util.List;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
 
-import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_IMG;
-import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_SOLID;
-import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_MULTI;
-import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_REPLACED;
-import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
-
 /**
  * Created by sarbajit mukherjee on 09/07/2020.
  * Edited by KP on 02/18/2021
@@ -91,6 +92,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     public static PivResultData singlePass;
     public static PivResultData multiPass;
     public static PivResultData replacedPass;
+    public static boolean calibrated;
     private int rows;
     private int cols;
 
@@ -109,10 +111,16 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         rows = singlePass.getRows();
         cols = singlePass.getCols();
 
+        // determine if replaced vectors are an option for the user
         boolean replaced = (boolean) extras.get(PivResultData.REPLACED_BOOL);
         if (!replaced) {
             RadioButton replacedRadioButton = findViewById(R.id.replace);
             replacedRadioButton.setVisibility(View.GONE);
+        }
+
+        // calibration popup
+        if (!calibrated) {
+            calibrationPopup(ViewResultsActivity.this);
         }
 
         // load our maps and settings
@@ -605,6 +613,13 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
             alertDialogParameters.show();
         }
+    }
+
+    private void calibrationPopup(Context context) {
+        new AlertDialog.Builder(context)
+                .setMessage("No calibration pattern was found.")
+                .setPositiveButton("Continue", null)
+                .show();
     }
 
     @Override
