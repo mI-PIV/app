@@ -31,6 +31,7 @@ import androidx.fragment.app.FragmentResultListener;
 import com.google.android.material.slider.RangeSlider;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
+import com.onrpiv.uploadmedia.Utilities.Camera.CameraSizes;
 import com.onrpiv.uploadmedia.Utilities.FrameExtractor;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 
@@ -78,15 +79,23 @@ public class VideoActivity extends AppCompatActivity{
         rangeSlider = findViewById(R.id.vid_rangeSlider);
         ((ViewGroup) rangeSlider.getParent()).setVisibility(View.GONE);
 
+        final Activity activity = this;
+        final Context context = this;
         recordVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Camera supports high speed capture
                 if (hasHighSpeedCapability() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+
+                    // create and show CameraSizes popup
+                    CameraSizes cameraSizes = new CameraSizes(activity).selectionPopup(context);
+                    if (cameraSizes.cancelled) return;
+
                     FragmentManager fragManager = getSupportFragmentManager();
 
                     final String requestKey = "highSpeedKey";
-                    fragManager.setFragmentResultListener(requestKey, VideoActivity.this, new FragmentResultListener() {
+                    fragManager.setFragmentResultListener(requestKey, VideoActivity.this,
+                            new FragmentResultListener() {
                         @Override
                         public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                             videoCaptured(Uri.parse(result.getString("uri")));
@@ -95,7 +104,8 @@ public class VideoActivity extends AppCompatActivity{
                         }
                     });
 
-                    fragManager.beginTransaction().replace(R.id.video_layout_container, CameraFragment.newInstance(requestKey)).commit();
+                    fragManager.beginTransaction().replace(R.id.video_layout_container,
+                            CameraFragment.newInstance(requestKey, cameraSizes)).commit();
 
                 // Camera doesn't support high speed capture
                 } else {
