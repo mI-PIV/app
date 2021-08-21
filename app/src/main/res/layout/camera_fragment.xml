@@ -20,31 +20,14 @@
         android:layout_alignStart="@id/record_texture"
         android:background="@color/black_de">
 
-        <RadioGroup
-            android:id="@+id/fps_group"
+        <TextView
+            android:id="@+id/camera_res_text"
             android:layout_width="wrap_content"
             android:layout_height="100dp"
-            android:layout_gravity="start|bottom"
-            android:checkedButton="@id/fps_120"
-            android:orientation="vertical"
-            android:rotation="90">
-
-            <RadioButton
-                android:id="@+id/fps_120"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/white"
-                android:text="120 fps"
-                android:textColor="@color/white" />
-
-            <RadioButton
-                android:id="@+id/fps_240"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/white"
-                android:text="240 fps"
-                android:textColor="@color/white" />
-        </RadioGroup>
+            android:layout_gravity="top"
+            android:rotation="90"
+            android:text="Resolution"
+            android:textColor="#FFFFFF" />
 
         <ImageButton
             android:id="@+id/recordButton"
@@ -55,6 +38,15 @@
             android:contentDescription="Record Button"
             android:src="@drawable/round_fiber_manual_record_white_48dp"
             android:tint="#FF0000" />
+
+        <TextView
+            android:id="@+id/camera_framerate_text"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_gravity="bottom"
+            android:rotation="90"
+            android:text="Frame Rate"
+            android:textColor="#FFFFFF" />
 
     </FrameLayout>
 
