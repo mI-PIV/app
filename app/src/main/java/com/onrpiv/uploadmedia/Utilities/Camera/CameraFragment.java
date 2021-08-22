@@ -29,7 +29,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,7 +42,6 @@ import com.onrpiv.uploadmedia.R;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -125,6 +124,7 @@ public class CameraFragment extends Fragment
     private String mNextVideoAbsolutePath;
     private CaptureRequest.Builder mPreviewBuilder;
     private static String mRequestKey;
+    private static CameraSizes mCameraSizes;
 
     private Range<Integer> mFrameRate = new Range<>(120, 120);
     /**
@@ -191,57 +191,10 @@ public class CameraFragment extends Fragment
 
     };
 
-    public static CameraFragment newInstance(String requestKey) {
+    public static CameraFragment newInstance(String requestKey, CameraSizes cameraSizes) {
         mRequestKey = requestKey;
+        mCameraSizes = cameraSizes;
         return new CameraFragment();
-    }
-
-    /**
-     * In this sample, we choose a video size with 3x4 aspect ratio. Also, we don't use sizes
-     * larger than 1080p, since MediaRecorder cannot handle such a high-resolution video.
-     *
-     * @param choices The list of available sizes
-     * @return The video size
-     */
-    private static Size chooseVideoSize(Size[] choices) {
-        for (Size size : choices) {
-            if (size.getWidth() == size.getHeight() * 4 / 3) {
-                return size;
-            }
-        }
-        Log.e(TAG, "Couldn't find any suitable video size");
-        return choices[choices.length - 1];
-    }
-
-    /**
-     * Given {@code choices} of {@code Size}s supported by a camera, chooses the smallest one whose
-     * width and height are at least as large as the respective requested values, and whose aspect
-     * ratio matches with the specified value.
-     *
-     * @param choices     The list of sizes that the camera supports for the intended output class
-     * @param aspectRatio The aspect ratio
-     * @return The optimal {@code Size}, or an arbitrary one if none were big enough
-     */
-    private static Size chooseOptimalSize(Size[] choices, Size aspectRatio) {
-        // Collect the supported resolutions that are at least as big as the preview Surface
-        List<Size> bigEnough = new ArrayList<>();
-        int w = aspectRatio.getWidth();
-        int h = aspectRatio.getHeight();
-        double ratio = (double) h / w;
-        for (Size option : choices) {
-            double optionRatio = (double) option.getHeight() / option.getWidth();
-            if (ratio == optionRatio) {
-                bigEnough.add(option);
-            }
-        }
-
-        // Pick the smallest of those, assuming we found any
-        if (bigEnough.size() > 0) {
-            return Collections.min(bigEnough, new CompareSizesByArea());
-        } else {
-            Log.e(TAG, "Couldn't find any suitable preview size");
-            return Collections.min(Arrays.asList(choices), new CompareSizesByHeight());
-        }
     }
 
     @Override
@@ -254,38 +207,11 @@ public class CameraFragment extends Fragment
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.record_texture);
         mButtonVideo = (ImageButton) view.findViewById(R.id.recordButton);
-        final RadioGroup mFrameRateGroup = (RadioGroup) view.findViewById(R.id.fps_group);
+        TextView resText = (TextView) view.findViewById(R.id.camera_res_text);
+        TextView framerateText = (TextView) view.findViewById(R.id.camera_framerate_text);
 
-        mFrameRateGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.fps_120) {
-                    mFrameRate =  new Range<>(120, 120);
-                } else {
-                    mFrameRate = new Range<>(240, 240);
-                }
-
-                final Activity activity = getActivity();
-                if (null == activity || activity.isFinishing()) {
-                    return;
-                }
-
-                CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
-                CameraCharacteristics characteristics = null;
-
-                try {
-                    characteristics = manager.getCameraCharacteristics(manager.getCameraIdList()[0]);
-                } catch (CameraAccessException e) {
-                    e.printStackTrace();
-                }
-
-                StreamConfigurationMap map = characteristics
-                        .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-
-                mVideoSize = chooseVideoSize(map.getHighSpeedVideoSizesFor(mFrameRate));
-                mPreviewSize = chooseOptimalSize(map.getHighSpeedVideoSizesFor(mFrameRate), mVideoSize);
-            }
-        });
+        resText.setText(mCameraSizes.getCameraString());
+        framerateText.setText(mCameraSizes.getFrameRateString());
 
         mButtonVideo.setOnClickListener(this);
     }
@@ -374,8 +300,9 @@ public class CameraFragment extends Fragment
             if (map == null) {
                 throw new RuntimeException("Cannot get available preview/video sizes");
             }
-            mVideoSize = chooseVideoSize(map.getHighSpeedVideoSizesFor(mFrameRate));
-            mPreviewSize = chooseOptimalSize(map.getHighSpeedVideoSizesFor(mFrameRate), mVideoSize);
+
+            mVideoSize = mCameraSizes.getSelectedCameraSize();
+            mPreviewSize = mCameraSizes.getPreviewSurfaceSize();
 
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -606,7 +533,9 @@ public class CameraFragment extends Fragment
                     mPreviewSession = cameraCaptureSession;
 
                     try {
-                        List<CaptureRequest> highSpeedRequests = ((CameraConstrainedHighSpeedCaptureSession) cameraCaptureSession).createHighSpeedRequestList(mPreviewBuilder.build());
+                        List<CaptureRequest> highSpeedRequests =
+                                ((CameraConstrainedHighSpeedCaptureSession) cameraCaptureSession)
+                                        .createHighSpeedRequestList(mPreviewBuilder.build());
                         updateCapture(highSpeedRequests);
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
@@ -617,7 +546,6 @@ public class CameraFragment extends Fragment
                         public void run() {
                             // UI
                             mIsRecordingVideo = true;
-
                             // Start recording
                             mMediaRecorder.start();
                         }
