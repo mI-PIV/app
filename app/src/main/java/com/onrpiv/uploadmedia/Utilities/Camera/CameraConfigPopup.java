@@ -3,23 +3,24 @@ package com.onrpiv.uploadmedia.Utilities.Camera;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
+import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.os.Build;
 import android.util.Log;
 import android.util.Range;
 import android.util.Size;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+
+import com.onrpiv.uploadmedia.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class CameraSizes {
+public class CameraConfigPopup {
 
     public boolean cancelled;
 
@@ -39,11 +40,14 @@ public class CameraSizes {
     private Range<Integer> selectedFrameRate;
 
     private final StreamConfigurationMap camConfigMap;
-    private static final int[] frameRates = new int[]{120, 240};
+    private final Range<Integer>[] frameRates;
+    private final Size[] slowVideoSizes;
 
     private RadioButton selectedFpsButton = null;
     private RadioButton selectedSizeButton = null;
     private final HashMap<String, Size> stringToSizeMap;
+
+    private LinearLayout resLayout;
 
     private static final String TAG = "CameraSizes";
 
@@ -61,8 +65,15 @@ public class CameraSizes {
 
             // get and display sizes for new fps
             String fpsText = ((RadioButton) v).getText().toString();
-            Size[] availableSizes = camConfigMap.getHighSpeedVideoSizesFor(stringToFps(fpsText));
-            fillSizeRow(v, availableSizes);
+            int fps = stringToFps(fpsText).getLower();
+
+            Size[] availableSizes;
+            if (fps > 90) {
+                availableSizes = camConfigMap.getHighSpeedVideoSizesFor(stringToFps(fpsText));
+            } else {
+                availableSizes = slowVideoSizes;
+            }
+            fillResLayout(v, availableSizes);
 
             // turn on new fps button
             selectedFpsButton = (RadioButton) v;
@@ -83,7 +94,7 @@ public class CameraSizes {
     };
 
 
-    public CameraSizes(Activity activity, Context context, HighSpeedCaptureCallback captureCallback) {
+    public CameraConfigPopup(Activity activity, Context context, HighSpeedCaptureCallback captureCallback) {
         this.captureCallback = captureCallback;
 
         CameraManager camManager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
@@ -99,6 +110,8 @@ public class CameraSizes {
 
         assert camChar != null;
         camConfigMap = camChar.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        frameRates = camChar.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
+        slowVideoSizes = camConfigMap.getOutputSizes(SurfaceTexture.class);
 
         popup = createPopup(context);
     }
@@ -117,9 +130,11 @@ public class CameraSizes {
     }
 
     public Size getPreviewSurfaceSize() {
-        return chooseOptimalSize(
-                camConfigMap.getHighSpeedVideoSizesFor(selectedFrameRate),
-                selectedCamera);
+        if (selectedFrameRate.getLower() > 90) {
+            return chooseOptimalSize(camConfigMap.getHighSpeedVideoSizesFor(selectedFrameRate), selectedCamera);
+        } else {
+            return new Size(1920, 1080);
+        }
     }
 
     public String getFrameRateString() {
@@ -128,16 +143,6 @@ public class CameraSizes {
 
     public String getCameraString() {
         return sizeToString(selectedCamera);
-    }
-
-    private static Size chooseVideoSize(Size[] choices) {
-        for (Size size : choices) {
-            if (size.getWidth() == size.getHeight() * 4 / 3) {
-                return size;
-            }
-        }
-        Log.e(TAG, "Couldn't find any suitable video size");
-        return choices[choices.length - 1];
     }
 
     private static Size chooseOptimalSize(Size[] choices, Size aspectRatio) {
@@ -184,27 +189,30 @@ public class CameraSizes {
     }
 
     private AlertDialog createPopup(Context context) {
-        TableLayout tableLayout = new TableLayout(context);
-        tableLayout.setGravity(Gravity.CENTER);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View popup = inflater.inflate(R.layout.popup_camera_config, null);
 
-        // horizontal line
-        tableLayout.addView(createHorizDivider(context));
+        LinearLayout fpsLayout = popup.findViewById(R.id.popup_cam_fps);
+        resLayout = popup.findViewById(R.id.popup_cam_res);
 
-        // textview
-        tableLayout.addView(createTextView(context, "Frame Rate"));
-
-        // create the fps row
-        TableRow fpsRow = new TableRow(context);
-        fpsRow.setGravity(Gravity.CENTER);
-
-        for (int fps : frameRates) {
-            fpsRow.addView(createRadioButton(context, fps + " fps", fpsListener));
+        // Check if the phone is capable before we manually add 120, 240 fps
+        ArrayList<Range<Integer>> allFrameRates = new ArrayList<>(Arrays.asList(frameRates));
+        if (hasHighSpeedCapability(context) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            allFrameRates.add(new Range<>(120, 120));
+            allFrameRates.add(new Range<>(240, 240));
         }
-        tableLayout.addView(fpsRow);
 
+        // create the fps radio buttons
+        for (Range<Integer> fpsRange : allFrameRates) {
+            if (fpsRange.getLower().equals(fpsRange.getUpper())) {
+                int fps = fpsRange.getLower();
+                fpsLayout.addView(createRadioButton(context, fps + " fps", fpsListener));
+            }
+        }
 
+        // build the popup
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context)
-                .setView(tableLayout)
+                .setView(popup)
                 .setMessage("Choose a frame rate and a frame size.")
                 .setCancelable(false)
                 .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
@@ -223,27 +231,16 @@ public class CameraSizes {
         return alertDialog.create();
     }
 
-    private void fillSizeRow(View view, Size[] availableVideoSizes) {
-        TableLayout root = (TableLayout) view.getParent().getParent();
+    private void fillResLayout(View view, Size[] availableVideoSizes) {
         Context context = view.getContext();
 
-        TableRow sizesRow = new TableRow(context);
-        sizesRow.setGravity(Gravity.CENTER);
+        // remove any previous resolution buttons
+        resLayout.removeAllViews();
 
         for (Size vidSize : availableVideoSizes) {
             String sizeText = sizeToString(vidSize);
-            sizesRow.addView(createRadioButton(context, sizeText, sizeListener));
+            resLayout.addView(createRadioButton(context, sizeText, sizeListener));
         }
-
-        // if we're already displaying fps sizes, then we need to replace it with the new sizes.
-        if (root.getChildCount() > 5) {
-            root.removeViewAt(5);
-        } else {
-            root.addView(createHorizDivider(context));
-            root.addView(createTextView(context, "Resolution"));
-        }
-
-        root.addView(sizesRow);
     }
 
     private RadioButton createRadioButton(Context context, String text, View.OnClickListener listener) {
@@ -253,6 +250,7 @@ public class CameraSizes {
         // layout
         button.setGravity(Gravity.CENTER | Gravity.START);
         button.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+        button.setLayoutDirection(View.LAYOUT_DIRECTION_INHERIT);
         button.setPadding(
                 button.getPaddingLeft(),
                 button.getPaddingTop(),
@@ -265,20 +263,21 @@ public class CameraSizes {
         return button;
     }
 
-    private TextView createTextView(Context context, String text) {
-        TextView tv = new TextView(context);
-        tv.setGravity(Gravity.CENTER);
-        tv.setText("Frame Rate");
-        return tv;
-    }
-
-    private View createHorizDivider(Context context) {
-        View v = new View(context);
-        v.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                5
-        ));
-        v.setBackgroundColor(Color.parseColor("#B3B3B3"));
-        return v;
+    private boolean hasHighSpeedCapability(Context context) {
+        final CameraManager camManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+        boolean hasHighFPS = false;
+        try {
+            int[] capabilities = camManager.getCameraCharacteristics(camManager.getCameraIdList()[0]).get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
+            assert capabilities != null;
+            for (int capability : capabilities) {
+                if (capability == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_CONSTRAINED_HIGH_SPEED_VIDEO) {
+                    hasHighFPS = true;
+                    break;
+                }
+            }
+        } catch (IllegalArgumentException | CameraAccessException e) {
+            e.printStackTrace();
+        }
+        return hasHighFPS;
     }
 }
