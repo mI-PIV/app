@@ -213,6 +213,8 @@ public class CameraFragment extends Fragment
         resText.setText(mCameraSizes.getCameraString());
         framerateText.setText(mCameraSizes.getFrameRateString());
 
+        mFrameRate = mCameraSizes.getSelectedFrameRate();
+
         mButtonVideo.setOnClickListener(this);
     }
 

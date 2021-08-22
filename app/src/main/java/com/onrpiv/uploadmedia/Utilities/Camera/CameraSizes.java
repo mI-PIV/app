@@ -112,6 +112,10 @@ public class CameraSizes {
         return selectedCamera;
     }
 
+    public Range<Integer> getSelectedFrameRate() {
+        return selectedFrameRate;
+    }
+
     public Size getPreviewSurfaceSize() {
         return chooseOptimalSize(
                 camConfigMap.getHighSpeedVideoSizesFor(selectedFrameRate),
