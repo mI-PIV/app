@@ -1,7 +1,9 @@
 package com.onrpiv.uploadmedia.Experiment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.camera2.CameraAccessException;
@@ -32,6 +34,7 @@ import com.google.android.material.slider.RangeSlider;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraSizes;
+import com.onrpiv.uploadmedia.Utilities.Camera.HighSpeedCaptureCallback;
 import com.onrpiv.uploadmedia.Utilities.FrameExtractor;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 
@@ -43,7 +46,7 @@ import java.util.concurrent.Callable;
  * Created by sarbajit mukherjee on 09/07/2020.
  */
 
-public class VideoActivity extends AppCompatActivity{
+public class VideoActivity extends AppCompatActivity {
     private Button pickVideo, generateFramesButton, recordVideo;
     private RangeSlider rangeSlider;
     public static final int REQUEST_PICK_VIDEO = 3;
@@ -79,44 +82,77 @@ public class VideoActivity extends AppCompatActivity{
         rangeSlider = findViewById(R.id.vid_rangeSlider);
         ((ViewGroup) rangeSlider.getParent()).setVisibility(View.GONE);
 
-        final Activity activity = this;
-        final Context context = this;
+        Context context = this;
+        Activity activity = this;
+
+        // high speed video capture click
+        DialogInterface.OnClickListener highSpeedButtonListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // check if phone is compatible for high speed capture
+                if (hasHighSpeedCapability() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+
+                    CameraSizes cameraSizes = new CameraSizes(activity, context, new HighSpeedCaptureCallback() {
+                        // start the high speed capture
+                        @Override
+                        public void highSpeedCapture(CameraSizes cameraSizes) {
+                            FragmentManager fragManager = getSupportFragmentManager();
+                            final String requestKey = "highSpeedKey";
+                            fragManager.setFragmentResultListener(requestKey, VideoActivity.this,
+                                    new FragmentResultListener() {
+                                        @Override
+                                        public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                                            videoCaptured(Uri.parse(result.getString("uri")));
+                                            fps = result.getString("fps");
+                                            generateFramesButton.setEnabled(true);
+                                        }
+                                    });
+                            fragManager.beginTransaction().replace(R.id.video_layout_container,
+                                    CameraFragment.newInstance(requestKey, cameraSizes)).commit();
+                        }
+                    });
+                    cameraSizes.showConfigPopup();
+
+                } else {  // phone is not compatible with high-speed capture
+                    new AlertDialog.Builder(context)
+                            .setCancelable(false)
+                            .setMessage("Unfortunately your phone doesn't support high speed video" +
+                                    "capture or has an android version that is incompatible with " +
+                                    "the app's high speed video capturer.\nPlease select 'Normal'" +
+                                    "video recording.")
+                            .setPositiveButton("Okay", null)
+                            .show();
+                }
+            }
+        };
+
+        // 'normal' video capture click
+        DialogInterface.OnClickListener normalCaptureButtonListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                    startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE);
+            }
+        };
+
+        // record button click
         recordVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Camera supports high speed capture
-                if (hasHighSpeedCapability() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 
-                    // create and show CameraSizes popup
-                    CameraSizes cameraSizes = new CameraSizes(activity).selectionPopup(context);
-                    if (cameraSizes.cancelled) return;
-
-                    FragmentManager fragManager = getSupportFragmentManager();
-
-                    final String requestKey = "highSpeedKey";
-                    fragManager.setFragmentResultListener(requestKey, VideoActivity.this,
-                            new FragmentResultListener() {
-                        @Override
-                        public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                            videoCaptured(Uri.parse(result.getString("uri")));
-                            fps = result.getString("fps");
-                            generateFramesButton.setEnabled(true);
-                        }
-                    });
-
-                    fragManager.beginTransaction().replace(R.id.video_layout_container,
-                            CameraFragment.newInstance(requestKey, cameraSizes)).commit();
-
-                // Camera doesn't support high speed capture
-                } else {
-                    Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                    if (videoCaptureIntent.resolveActivity(getPackageManager()) != null) {
-                        startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE);
-                    }
-                }
+                // ask if user wants 'normal' or 'slow motion' recording
+                new AlertDialog.Builder(context)
+                        .setCancelable(false)
+                        .setMessage("Which type of video recording would you like?")
+                        .setPositiveButton("Slow-Motion", highSpeedButtonListener)
+                        .setNegativeButton("Normal", normalCaptureButtonListener)
+                        .setNeutralButton("Cancel", null)
+                        .show();
             }
         });
 
+        // pick video click
         pickVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,6 +162,7 @@ public class VideoActivity extends AppCompatActivity{
             }
         });
 
+        // generate frames click
         generateFramesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
