@@ -29,7 +29,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,7 +42,6 @@ import com.onrpiv.uploadmedia.R;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -125,6 +124,8 @@ public class CameraFragment extends Fragment
     private String mNextVideoAbsolutePath;
     private CaptureRequest.Builder mPreviewBuilder;
     private static String mRequestKey;
+    private static CameraConfigPopup mCameraConfig;
+    private boolean mHighSpeedCapture;
 
     private Range<Integer> mFrameRate = new Range<>(120, 120);
     /**
@@ -191,57 +192,10 @@ public class CameraFragment extends Fragment
 
     };
 
-    public static CameraFragment newInstance(String requestKey) {
+    public static CameraFragment newInstance(String requestKey, CameraConfigPopup cameraConfig) {
         mRequestKey = requestKey;
+        mCameraConfig = cameraConfig;
         return new CameraFragment();
-    }
-
-    /**
-     * In this sample, we choose a video size with 3x4 aspect ratio. Also, we don't use sizes
-     * larger than 1080p, since MediaRecorder cannot handle such a high-resolution video.
-     *
-     * @param choices The list of available sizes
-     * @return The video size
-     */
-    private static Size chooseVideoSize(Size[] choices) {
-        for (Size size : choices) {
-            if (size.getWidth() == size.getHeight() * 4 / 3) {
-                return size;
-            }
-        }
-        Log.e(TAG, "Couldn't find any suitable video size");
-        return choices[choices.length - 1];
-    }
-
-    /**
-     * Given {@code choices} of {@code Size}s supported by a camera, chooses the smallest one whose
-     * width and height are at least as large as the respective requested values, and whose aspect
-     * ratio matches with the specified value.
-     *
-     * @param choices     The list of sizes that the camera supports for the intended output class
-     * @param aspectRatio The aspect ratio
-     * @return The optimal {@code Size}, or an arbitrary one if none were big enough
-     */
-    private static Size chooseOptimalSize(Size[] choices, Size aspectRatio) {
-        // Collect the supported resolutions that are at least as big as the preview Surface
-        List<Size> bigEnough = new ArrayList<>();
-        int w = aspectRatio.getWidth();
-        int h = aspectRatio.getHeight();
-        double ratio = (double) h / w;
-        for (Size option : choices) {
-            double optionRatio = (double) option.getHeight() / option.getWidth();
-            if (ratio == optionRatio) {
-                bigEnough.add(option);
-            }
-        }
-
-        // Pick the smallest of those, assuming we found any
-        if (bigEnough.size() > 0) {
-            return Collections.min(bigEnough, new CompareSizesByArea());
-        } else {
-            Log.e(TAG, "Couldn't find any suitable preview size");
-            return Collections.min(Arrays.asList(choices), new CompareSizesByHeight());
-        }
     }
 
     @Override
@@ -254,38 +208,16 @@ public class CameraFragment extends Fragment
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.record_texture);
         mButtonVideo = (ImageButton) view.findViewById(R.id.recordButton);
-        final RadioGroup mFrameRateGroup = (RadioGroup) view.findViewById(R.id.fps_group);
+        TextView resText = (TextView) view.findViewById(R.id.camera_res_text);
+        TextView framerateText = (TextView) view.findViewById(R.id.camera_framerate_text);
 
-        mFrameRateGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.fps_120) {
-                    mFrameRate =  new Range<>(120, 120);
-                } else {
-                    mFrameRate = new Range<>(240, 240);
-                }
+        resText.setText(mCameraConfig.getCameraString());
+        framerateText.setText(mCameraConfig.getFrameRateString());
 
-                final Activity activity = getActivity();
-                if (null == activity || activity.isFinishing()) {
-                    return;
-                }
+        mFrameRate = mCameraConfig.getSelectedFrameRate();
 
-                CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
-                CameraCharacteristics characteristics = null;
-
-                try {
-                    characteristics = manager.getCameraCharacteristics(manager.getCameraIdList()[0]);
-                } catch (CameraAccessException e) {
-                    e.printStackTrace();
-                }
-
-                StreamConfigurationMap map = characteristics
-                        .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-
-                mVideoSize = chooseVideoSize(map.getHighSpeedVideoSizesFor(mFrameRate));
-                mPreviewSize = chooseOptimalSize(map.getHighSpeedVideoSizesFor(mFrameRate), mVideoSize);
-            }
-        });
+        if (mFrameRate.getLower() > 90)
+            mHighSpeedCapture = true;
 
         mButtonVideo.setOnClickListener(this);
     }
@@ -374,8 +306,9 @@ public class CameraFragment extends Fragment
             if (map == null) {
                 throw new RuntimeException("Cannot get available preview/video sizes");
             }
-            mVideoSize = chooseVideoSize(map.getHighSpeedVideoSizesFor(mFrameRate));
-            mPreviewSize = chooseOptimalSize(map.getHighSpeedVideoSizesFor(mFrameRate), mVideoSize);
+
+            mVideoSize = mCameraConfig.getSelectedCameraSize();
+            mPreviewSize = mCameraConfig.getPreviewSurfaceSize();
 
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -459,15 +392,19 @@ public class CameraFragment extends Fragment
      * Update the camera preview. {@link #startPreview()} needs to be called in advance.
      */
     @RequiresApi(api = Build.VERSION_CODES.P)
-    private void updateCapture(List<CaptureRequest> highSpeedRequests) throws CameraAccessException {
+    private void updateCapture(List<CaptureRequest> captureRequests) throws CameraAccessException {
         if (null == mCameraDevice) {
             return;
         }
-        setUpCaptureRequestBuilder(mPreviewBuilder, true);
+        setUpCaptureRequestBuilder(mPreviewBuilder, mHighSpeedCapture);
         HandlerThread thread = new HandlerThread("CameraCapture");
         thread.start();
         mBackgroundHandler = new Handler(thread.getLooper());
-        mPreviewSession.setRepeatingBurst(highSpeedRequests, null, mBackgroundHandler);
+        if (mHighSpeedCapture) {
+            mPreviewSession.setRepeatingBurst(captureRequests, null, mBackgroundHandler);
+        } else {
+            mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, mBackgroundHandler);
+        }
     }
 
     private void updatePreview() {
@@ -490,12 +427,11 @@ public class CameraFragment extends Fragment
     private void setUpCaptureRequestBuilder(CaptureRequest.Builder builder, boolean isHighSpeed) {
         if (isHighSpeed) {
             builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
-            builder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, mFrameRate);
         }
         else {
             builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
-            builder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, new Range<Integer>(30, 30));
         }
+        builder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, mFrameRate);
     }
 
     /**
@@ -582,7 +518,7 @@ public class CameraFragment extends Fragment
             assert texture != null;
             texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
             mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
-            setUpCaptureRequestBuilder(mPreviewBuilder,true);
+            setUpCaptureRequestBuilder(mPreviewBuilder, mHighSpeedCapture);
 
             List<Surface> surfaces = new ArrayList<>();
 
@@ -598,40 +534,80 @@ public class CameraFragment extends Fragment
 
             // Start a capture session
             // Once the session starts, we can update the UI and start recording
-            mCameraDevice.createConstrainedHighSpeedCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
+            if (mHighSpeedCapture) {
+                mCameraDevice.createConstrainedHighSpeedCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
 
-                @RequiresApi(api = Build.VERSION_CODES.P)
-                @Override
-                public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    mPreviewSession = cameraCaptureSession;
+                    @RequiresApi(api = Build.VERSION_CODES.P)
+                    @Override
+                    public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+                        mPreviewSession = cameraCaptureSession;
 
-                    try {
-                        List<CaptureRequest> highSpeedRequests = ((CameraConstrainedHighSpeedCaptureSession) cameraCaptureSession).createHighSpeedRequestList(mPreviewBuilder.build());
-                        updateCapture(highSpeedRequests);
-                    } catch (CameraAccessException e) {
-                        e.printStackTrace();
-                    }
+                        try {
+                            if (mHighSpeedCapture) {
+                                List<CaptureRequest> highSpeedRequests =
+                                        ((CameraConstrainedHighSpeedCaptureSession) cameraCaptureSession)
+                                                .createHighSpeedRequestList(mPreviewBuilder.build());
+                                updateCapture(highSpeedRequests);
+                            } else {
 
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // UI
-                            mIsRecordingVideo = true;
-
-                            // Start recording
-                            mMediaRecorder.start();
+                            }
+                        } catch (CameraAccessException e) {
+                            e.printStackTrace();
                         }
-                    });
-                }
 
-                @Override
-                public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    Activity activity = getActivity();
-                    if (null != activity) {
-                        Toast.makeText(activity, "Failed Camera Configuration", Toast.LENGTH_SHORT).show();
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // UI
+                                mIsRecordingVideo = true;
+                                // Start recording
+                                mMediaRecorder.start();
+                            }
+                        });
                     }
-                }
-            }, mBackgroundHandler);
+
+                    @Override
+                    public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
+                        Activity activity = getActivity();
+                        if (null != activity) {
+                            Toast.makeText(activity, "Failed Camera Configuration", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, mBackgroundHandler);
+            } else {
+                // normal recording speed
+                mCameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
+                    @RequiresApi(api = Build.VERSION_CODES.P)
+                    @Override
+                    public void onConfigured(@NonNull CameraCaptureSession session) {
+                        mPreviewSession = session;
+
+                        try {
+                            updateCapture(null);
+                        } catch (CameraAccessException e) {
+                            e.printStackTrace();
+                        }
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // UI
+                                mIsRecordingVideo = true;
+                                // Start recording
+                                mMediaRecorder.start();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+                        Activity activity = getActivity();
+                        if (null != activity) {
+                            Toast.makeText(activity, "Failed Camera Configuration", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, mBackgroundHandler);
+            }
         } catch (CameraAccessException | IOException e) {
             e.printStackTrace();
         }

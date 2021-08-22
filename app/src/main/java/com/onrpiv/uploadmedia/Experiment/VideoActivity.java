@@ -4,15 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +25,9 @@ import androidx.fragment.app.FragmentResultListener;
 
 import com.google.android.material.slider.RangeSlider;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.Camera.CameraConfigPopup;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
+import com.onrpiv.uploadmedia.Utilities.Camera.HighSpeedCaptureCallback;
 import com.onrpiv.uploadmedia.Utilities.FrameExtractor;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 
@@ -42,7 +39,7 @@ import java.util.concurrent.Callable;
  * Created by sarbajit mukherjee on 09/07/2020.
  */
 
-public class VideoActivity extends AppCompatActivity{
+public class VideoActivity extends AppCompatActivity {
     private Button pickVideo, generateFramesButton, recordVideo;
     private RangeSlider rangeSlider;
     public static final int REQUEST_PICK_VIDEO = 3;
@@ -78,35 +75,37 @@ public class VideoActivity extends AppCompatActivity{
         rangeSlider = findViewById(R.id.vid_rangeSlider);
         ((ViewGroup) rangeSlider.getParent()).setVisibility(View.GONE);
 
+        Context context = this;
+        Activity activity = this;
+
+        // record button click
         recordVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Camera supports high speed capture
-                if (hasHighSpeedCapability() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    FragmentManager fragManager = getSupportFragmentManager();
-
-                    final String requestKey = "highSpeedKey";
-                    fragManager.setFragmentResultListener(requestKey, VideoActivity.this, new FragmentResultListener() {
-                        @Override
-                        public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                            videoCaptured(Uri.parse(result.getString("uri")));
-                            fps = result.getString("fps");
-                            generateFramesButton.setEnabled(true);
-                        }
-                    });
-
-                    fragManager.beginTransaction().replace(R.id.video_layout_container, CameraFragment.newInstance(requestKey)).commit();
-
-                // Camera doesn't support high speed capture
-                } else {
-                    Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                    if (videoCaptureIntent.resolveActivity(getPackageManager()) != null) {
-                        startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE);
+                CameraConfigPopup cameraConfigPopup = new CameraConfigPopup(activity, context, new HighSpeedCaptureCallback() {
+                    // start the high speed capture
+                    @Override
+                    public void highSpeedCapture(CameraConfigPopup cameraSizes) {
+                        FragmentManager fragManager = getSupportFragmentManager();
+                        final String requestKey = "highSpeedKey";
+                        fragManager.setFragmentResultListener(requestKey, VideoActivity.this,
+                                new FragmentResultListener() {
+                                    @Override
+                                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                                        videoCaptured(Uri.parse(result.getString("uri")));
+                                        fps = result.getString("fps");
+                                        generateFramesButton.setEnabled(true);
+                                    }
+                                });
+                        fragManager.beginTransaction().replace(R.id.video_layout_container,
+                                CameraFragment.newInstance(requestKey, cameraSizes)).commit();
                     }
-                }
+                });
+                cameraConfigPopup.showConfigPopup();
             }
         });
 
+        // pick video click
         pickVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,6 +115,7 @@ public class VideoActivity extends AppCompatActivity{
             }
         });
 
+        // generate frames click
         generateFramesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,17 +147,13 @@ public class VideoActivity extends AppCompatActivity{
                 onBackPressed();
                 return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            mVideoView.pause();
-        }
+        mVideoView.pause();
     }
 
     @Override
@@ -290,24 +286,6 @@ public class VideoActivity extends AppCompatActivity{
         videoPath = PathUtil.getRealPath(VideoActivity.this, video);
         initializePlayer(video);
         pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
-    }
-
-    private boolean hasHighSpeedCapability() {
-        final CameraManager camManager = (CameraManager) this.getSystemService(Context.CAMERA_SERVICE);
-        boolean hasHighFPS = false;
-        try {
-            int[] capabilities = camManager.getCameraCharacteristics(camManager.getCameraIdList()[0]).get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
-            assert capabilities != null;
-            for (int capability : capabilities) {
-                if (capability == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_CONSTRAINED_HIGH_SPEED_VIDEO) {
-                    hasHighFPS = true;
-                    break;
-                }
-            }
-        } catch (IllegalArgumentException | CameraAccessException e) {
-            e.printStackTrace();
-        }
-        return hasHighFPS;
     }
 
     private void setupRangeSlider() {
