@@ -1,5 +1,16 @@
 package com.onrpiv.uploadmedia.pivFunctions;
 
+import static org.opencv.core.Core.mean;
+import static org.opencv.core.Core.subtract;
+import static org.opencv.core.CvType.CV_8U;
+import static org.opencv.core.CvType.CV_8UC1;
+import static org.opencv.core.CvType.CV_8UC4;
+import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
+import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
+import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGRA;
+import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
+import static org.opencv.imgproc.Imgproc.cvtColor;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -25,16 +36,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
-
-import static org.opencv.core.Core.mean;
-import static org.opencv.core.Core.subtract;
-import static org.opencv.core.CvType.CV_8UC1;
-import static org.opencv.core.CvType.CV_8UC4;
-import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
-import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
-import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGRA;
-import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
-import static org.opencv.imgproc.Imgproc.cvtColor;
 
 /**
  * author: sarbajit mukherjee
@@ -147,8 +148,10 @@ public class PivFunctions {
     }
 
     private static void removePrimaryPeak(Mat correlationMap, int peak_x, int peak_y) {
-        // set the primary peak to 0
-        correlationMap.put(peak_y, peak_x, 0d);
+        Mat peakMap = new Mat(correlationMap.rows(), correlationMap.cols(), CV_8U, new Scalar(0));
+
+        // set the primary peak to 1
+        peakMap.put(peak_y, peak_x, 1d);
 
         // initial direction distances
         int xp_dist = 1, yp_dist = 1, xn_dist = -1, yn_dist = -1;
@@ -157,14 +160,14 @@ public class PivFunctions {
         boolean xp_flag = false, yp_flag = false, xn_flag = false, yn_flag = false;
 
         // while any flag is false
-        while (xp_flag && yp_flag && xn_flag && yn_flag) {
-            for (int y = yn_dist; y > yp_dist; y++) {
-                for (int x = xn_dist; x > xp_dist; x++) {
+        while (!xp_flag || !yp_flag || !xn_flag || !yn_flag) {
+            for (int y = yn_dist; y <= yp_dist; y++) {
+                for (int x = xn_dist; x <= xp_dist; x++) {
                     int new_y = peak_y + y;
                     int new_x = peak_x + x;
 
-                    // if the new coord is already zero
-                    if (correlationMap.get(new_y, new_x)[0] == 0d) {
+                    // if the new coord is already marked
+                    if (peakMap.get(new_y, new_x)[0] == 1d) {
                         continue;
                     }
 
@@ -207,23 +210,33 @@ public class PivFunctions {
                                 yn_flag = true;
                                 break;
                             default:
-                                continue;
                         }
                     } else {
-                        correlationMap.put(new_y, new_x, 0d);
+                        peakMap.put(new_y, new_x, 1d);
                     }
+                }
+            }
+            if (!yp_flag)
+                yp_dist++;
+            if (!xp_flag)
+                xp_dist++;
+            if (!yn_flag)
+                yn_dist--;
+            if (!xn_flag)
+                xn_dist--;
+        }
 
-                    if (!yp_flag)
-                        yp_dist++;
-                    if (!xp_flag)
-                        xp_dist++;
-                    if (!yn_flag)
-                        yn_dist++;
-                    if (!xn_flag)
-                        xn_dist++;
+        // Apply peakMap mask
+        for (int y = 0; y < correlationMap.rows(); y++) {
+            for (int x = 0; x < correlationMap.cols(); x++) {
+                if (peakMap.get(y, x)[0] == 1d) {
+                    correlationMap.put(y, x, 0d);
                 }
             }
         }
+
+        // Cleanup mats
+        peakMap.release();
     }
 
     private static int[] getComparisonCoords(int y_dist, int x_dist) {
@@ -234,40 +247,40 @@ public class PivFunctions {
         // corner
         if (Math.abs(y_dist) == Math.abs(x_dist)) {
             if (x_dist < 0 && y_dist < 0) {  // top left
-                y_comp_dist = y_dist + 1;
-                x_comp_dist = x_dist + 1;
+                y_comp_dist = ++y_dist;
+                x_comp_dist = ++x_dist;
                 direction = 0;
             } else if (x_dist > 0 && y_dist < 0) {  // top right
-                y_comp_dist = y_dist + 1;
-                x_comp_dist = x_dist - 1;
+                y_comp_dist = ++y_dist;
+                x_comp_dist = --x_dist;
                 direction = 1;
             } else if (x_dist < 0 && y_dist > 0) {  // bottom left
-                y_comp_dist = y_dist - 1;
-                x_comp_dist = x_dist + 1;
+                y_comp_dist = --y_dist;
+                x_comp_dist = ++x_dist;
                 direction = 2;
             } else if (x_dist > 0 && y_dist > 0) {  // bottom right
-                y_comp_dist = y_dist - 1;
-                x_comp_dist = x_dist - 1;
+                y_comp_dist = --y_dist;
+                x_comp_dist = --x_dist;
                 direction = 3;
             }
         } else {  // not a corner
             if (Math.abs(x_dist) > Math.abs(y_dist)) {  // right and left
                 if (x_dist > 0) {  // right
                     y_comp_dist = y_dist;
-                    x_comp_dist = x_dist - 1;
+                    x_comp_dist = --x_dist;
                     direction = 4;
                 } else {  // left
                     y_comp_dist = y_dist;
-                    x_comp_dist = x_dist + 1;
+                    x_comp_dist = ++x_dist;
                     direction = 5;
                 }
             } else if (Math.abs(x_dist) < Math.abs(y_dist)) {  // top and bottom
                 if (y_dist > 0) {  // bottom
-                    y_comp_dist = y_dist - 1;
+                    y_comp_dist = --y_dist;
                     x_comp_dist = x_dist;
                     direction = 6;
                 } else {  // top
-                    y_comp_dist = y_dist + 1;
+                    y_comp_dist = ++y_dist;
                     x_comp_dist = x_dist;
                     direction = 7;
                 }
@@ -288,26 +301,6 @@ public class PivFunctions {
             for (int j = 0; j < fieldCols; j++) {
                 Mat window_a_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
                 Mat window_b_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
-
-/////////////////////////////////////old code gave errors when overlap was not even  ///////////////////////////////////////////////////////////////////////////////
-//                i1t = 0 + overlap*(i+1) - overlap;
-//
-//                j1l = 0 + overlap*(j+1) - overlap;
-//
-//                Log.d("WINDOWS: ", (i1t)+":"+(i1t+windowSize)+" ,"+(j1l)+":"+(j1l+windowSize));
-//                Rect rectWin_a = new Rect(j1l, i1t, windowSize, windowSize);
-//
-//                Mat window_a = new Mat(image1, rectWin_a);
-//
-//                i2t = 0 + overlap*(i+1) - overlap;
-//
-//                j2l = 0 + overlap*(j+1) - overlap;
-//
-//                Log.d("WINDOWS2: ", (i2t)+":"+(i2t+windowSize)+" ,"+(j2l)+":"+(j2l+windowSize));
-//                Rect rectWin_b = new Rect(j2l, i2t, windowSize, windowSize);
-//
-//                Mat window_b = new Mat(image2, rectWin_b);
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //             Select first the largest window, work like usual from the top left corner the left edge goes as:
 //            # e.g. 0, (search_area_size - overlap), 2*(search_area_size - overlap),....
@@ -1013,5 +1006,15 @@ public class PivFunctions {
             }
         }
         pivCorrelation.setVorticityValues(vortMap);
+    }
+
+    private static double[][] debugMat(Mat toDebug) {
+        double[][] result = new double[toDebug.rows()][toDebug.cols()];
+        for (int row = 0; row < toDebug.rows(); row++) {
+            for (int col = 0; col < toDebug.cols(); col++) {
+                result[row][col] = toDebug.get(row, col)[0];
+            }
+        }
+        return result;
     }
 }
