@@ -6,6 +6,9 @@ import android.os.Bundle;
 
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class ResultSettings {
     public final static String
             VEC_SINGLE="singlepass",
@@ -23,7 +26,7 @@ public class ResultSettings {
     private boolean vecDisplay = true;
     private String vecOption = VEC_REPLACED;
     private int arrowColor = Color.RED;
-    private double arrowScale = 1d;
+    private double arrowScale = 0.1d;
     private boolean vortDisplay = false;
     private ColorMap vortColorMap = new ColorMap();
     private int vortTransVals_min = 120;
@@ -47,11 +50,21 @@ public class ResultSettings {
                 "lime", "maroon", "navy", "olive", "purple", "silver", "teal", "redblue"
         };
 
-        int[] colors = new int[colorStrings.length];
-        for (int i = 0; i < colorStrings.length; i++) {
-            colors[i] = Color.parseColor(colorStrings[i]);
+        ArrayList<Integer> colors = new ArrayList<>();
+        for (String colorString : colorStrings) {
+            Integer newColor = null;
+            try {
+                newColor = Color.parseColor(colorString);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+            if (null != newColor && !colors.contains(newColor))
+                colors.add(newColor);
         }
-        return colors;
+
+        Integer[] colorsArray = new Integer[colors.size()];
+        colorsArray = colors.toArray(colorsArray);
+        return Arrays.stream(colorsArray).mapToInt(Integer::intValue).toArray();
     }
 
     public int getVortTransVals_min() {
@@ -104,7 +117,7 @@ public class ResultSettings {
     }
 
     public void setArrowScale(double arrowScale) {
-        this.arrowScale = arrowScale;
+        this.arrowScale = arrowScale/10.0;
         vecFieldChanged = true;
     }
 
