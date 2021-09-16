@@ -26,7 +26,7 @@ public class ResultSettings {
     private boolean vecDisplay = true;
     private String vecOption = VEC_REPLACED;
     private int arrowColor = Color.RED;
-    private double arrowScale = 1d;
+    private double arrowScale = 0.1d;
     private boolean vortDisplay = false;
     private ColorMap vortColorMap = new ColorMap();
     private int vortTransVals_min = 120;
@@ -117,7 +117,7 @@ public class ResultSettings {
     }
 
     public void setArrowScale(double arrowScale) {
-        this.arrowScale = arrowScale;
+        this.arrowScale = arrowScale/10.0;
         vecFieldChanged = true;
     }
 
