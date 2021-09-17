@@ -2,7 +2,6 @@ package com.onrpiv.uploadmedia.pivFunctions;
 
 import static org.opencv.core.Core.mean;
 import static org.opencv.core.Core.subtract;
-import static org.opencv.core.CvType.CV_8U;
 import static org.opencv.core.CvType.CV_8UC1;
 import static org.opencv.core.CvType.CV_8UC4;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
@@ -148,145 +147,41 @@ public class PivFunctions {
     }
 
     private static void removePrimaryPeak(Mat correlationMap, int peak_x, int peak_y) {
-        Mat peakMap = new Mat(correlationMap.rows(), correlationMap.cols(), CV_8U, new Scalar(0));
+        int xp_stop = correlationMap.cols(), xn_stop = 0, yp_stop = correlationMap.rows(), yn_stop = 0;
 
-        // set the primary peak to 1
-        peakMap.put(peak_y, peak_x, 1d);
-
-        // initial direction distances
-        int xp_dist = 1, yp_dist = 1, xn_dist = -1, yn_dist = -1;
-
-        // direction flags
-        boolean xp_flag = false, yp_flag = false, xn_flag = false, yn_flag = false;
-
-        // while any flag is false
-        while (!xp_flag || !yp_flag || !xn_flag || !yn_flag) {
-            for (int y = yn_dist; y <= yp_dist; y++) {
-                for (int x = xn_dist; x <= xp_dist; x++) {
-                    int new_y = peak_y + y;
-                    int new_x = peak_x + x;
-
-                    // if the new coord is already marked
-                    if (peakMap.get(new_y, new_x)[0] == 1d) {
-                        continue;
-                    }
-
-                    int[] compare_distances = getComparisonCoords(y, x);
-                    int old_y = compare_distances[0] + peak_y;
-                    int old_x = compare_distances[1] + peak_x;
-
-                    double compare_value = correlationMap.get(old_y, old_x)[0];
-                    double new_value = correlationMap.get(new_y, new_x)[0];
-
-                    if (compare_value < new_value || new_value == 0d) {
-                        int direction = compare_distances[2];
-                        switch (direction) {
-                            case 0:
-                                yn_flag = true;
-                                xn_flag = true;
-                                break;
-                            case 1:
-                                yn_flag = true;
-                                xp_flag = true;
-                                break;
-                            case 2:
-                                yp_flag = true;
-                                xn_flag = true;
-                                break;
-                            case 3:
-                                yp_flag = true;
-                                xp_flag = true;
-                                break;
-                            case 4:
-                                xp_flag = true;
-                                break;
-                            case 5:
-                                xn_flag = true;
-                                break;
-                            case 6:
-                                yp_flag = true;
-                                break;
-                            case 7:
-                                yn_flag = true;
-                                break;
-                            default:
-                        }
-                    } else {
-                        peakMap.put(new_y, new_x, 1d);
-                    }
-                }
-            }
-            if (!yp_flag)
-                yp_dist++;
-            if (!xp_flag)
-                xp_dist++;
-            if (!yn_flag)
-                yn_dist--;
-            if (!xn_flag)
-                xn_dist--;
-        }
-
-        // Apply peakMap mask
-        for (int y = 0; y < correlationMap.rows(); y++) {
-            for (int x = 0; x < correlationMap.cols(); x++) {
-                if (peakMap.get(y, x)[0] == 1d) {
-                    correlationMap.put(y, x, 0d);
-                }
+        for (int xp = peak_x; xp < correlationMap.cols()-1; xp++) {
+            if (correlationMap.get(peak_y, xp+1)[0] > correlationMap.get(peak_y, xp)[0]) {
+                xp_stop = xp;
+                break;
             }
         }
 
-        // Cleanup mats
-        peakMap.release();
-    }
-
-    private static int[] getComparisonCoords(int y_dist, int x_dist) {
-        // returns [y_distance, x_distance, direction]
-
-        int y_comp_dist = 0, x_comp_dist = 0, direction = 0;
-
-        // corner
-        if (Math.abs(y_dist) == Math.abs(x_dist)) {
-            if (x_dist < 0 && y_dist < 0) {  // top left
-                y_comp_dist = ++y_dist;
-                x_comp_dist = ++x_dist;
-                direction = 0;
-            } else if (x_dist > 0 && y_dist < 0) {  // top right
-                y_comp_dist = ++y_dist;
-                x_comp_dist = --x_dist;
-                direction = 1;
-            } else if (x_dist < 0 && y_dist > 0) {  // bottom left
-                y_comp_dist = --y_dist;
-                x_comp_dist = ++x_dist;
-                direction = 2;
-            } else if (x_dist > 0 && y_dist > 0) {  // bottom right
-                y_comp_dist = --y_dist;
-                x_comp_dist = --x_dist;
-                direction = 3;
-            }
-        } else {  // not a corner
-            if (Math.abs(x_dist) > Math.abs(y_dist)) {  // right and left
-                if (x_dist > 0) {  // right
-                    y_comp_dist = y_dist;
-                    x_comp_dist = --x_dist;
-                    direction = 4;
-                } else {  // left
-                    y_comp_dist = y_dist;
-                    x_comp_dist = ++x_dist;
-                    direction = 5;
-                }
-            } else if (Math.abs(x_dist) < Math.abs(y_dist)) {  // top and bottom
-                if (y_dist > 0) {  // bottom
-                    y_comp_dist = --y_dist;
-                    x_comp_dist = x_dist;
-                    direction = 6;
-                } else {  // top
-                    y_comp_dist = ++y_dist;
-                    x_comp_dist = x_dist;
-                    direction = 7;
-                }
+        for (int xn = peak_x; xn > 1; xn--) {
+            if (correlationMap.get(peak_y, xn-1)[0] > correlationMap.get(peak_y, xn)[0]) {
+                xn_stop = xn;
+                break;
             }
         }
-        return new int[]{y_comp_dist, x_comp_dist, direction};
+
+        for (int yp = peak_y; yp < correlationMap.rows()-1; yp++) {
+            if (correlationMap.get(yp+1, peak_x)[0] > correlationMap.get(yp, peak_x)[0]) {
+                yp_stop = yp;
+                break;
+            }
+        }
+
+        for (int yn = peak_y; yn > 1; yn--) {
+            if (correlationMap.get(yn-1, peak_x)[0] > correlationMap.get(yn, peak_x)[0]) {
+                yn_stop = yn;
+                break;
+            }
+        }
+
+        for (int y = yn_stop; y <= yp_stop; y++) {
+            for (int x = xn_stop; x <= xp_stop; x++) {
+                correlationMap.put(y, x, 0d);
+            }
+        }
     }
 
 
