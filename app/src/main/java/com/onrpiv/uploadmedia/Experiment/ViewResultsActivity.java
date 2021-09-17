@@ -146,6 +146,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         });
 
         SeekBar arrowScale = findViewById(R.id.arrow_scale);
+        settings.setArrowScale(arrowScale.getProgress());
         arrowScale.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {

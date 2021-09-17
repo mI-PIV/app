@@ -10,9 +10,9 @@ public class ArrowDrawOptions
     public int thickness = 2;
     public double tipLength = 0.2d;
     public double scale;
-    public int color = Color.WHITE;
+    public int color = Color.RED;
 
-    private final double lengthRatio = 0.05;
+    private final double lengthRatio = 0.0025;
 
     public ArrowDrawOptions()
     {
