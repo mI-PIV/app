@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button saveUserDataButton = null;
     // Click this button to cancel edit user data.
     private Button cancelUserDataButton = null;
-    public String userName;
+    public static String userName = null;
 
 
     @Override
@@ -60,7 +60,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button userSettings = (Button) findViewById(R.id.userSettings);
         Button loadExpBtn = (Button) findViewById(R.id.main_load_exp_btn);
 
-        userNameDialog();
+        if (null == userName || userName.isEmpty())
+            userNameDialog();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             image.setEnabled(false);

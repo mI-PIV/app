@@ -255,6 +255,7 @@ public class VideoActivity extends AppCompatActivity {
                 // If we retrieved the video from google drive, then delete the temp file we created
                 PathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
                 // return to experiment menu
+                MainActivity.userName = userName;
                 finish();
                 return null;
             }
