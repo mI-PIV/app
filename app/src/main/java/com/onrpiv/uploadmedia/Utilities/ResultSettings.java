@@ -26,8 +26,6 @@ public class ResultSettings {
     private boolean vecDisplay = true;
     private String vecOption = VEC_REPLACED;
 
-//    private int arrowColor = Color.RED;
-//    private double arrowScale = 0.1d;
     private ArrowDrawOptions arrowDrawOptions;
 
     private boolean vortDisplay = false;
@@ -109,22 +107,18 @@ public class ResultSettings {
 
     public int getArrowColor() {
         return arrowDrawOptions.color;
-//        return arrowColor;
     }
 
     public void setArrowColor(int arrowColor) {
         arrowDrawOptions.color = arrowColor;
-//        this.arrowColor = arrowColor;
         vecFieldChanged = true;
     }
 
     public double getArrowScale() {
         return arrowDrawOptions.scale;
-//        return arrowScale;
     }
 
     public void setArrowScale(double arrowScale) {
-//        this.arrowScale = arrowScale/10.0;
         arrowDrawOptions.scale = arrowScale;
         vecFieldChanged = true;
     }
