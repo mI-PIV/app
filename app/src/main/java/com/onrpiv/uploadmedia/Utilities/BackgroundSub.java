@@ -56,6 +56,10 @@ public class BackgroundSub {
         return new Mat[] {frame1New, frame2NewPos};
     }
 
+    public static void subtractBackground(File framesDir) {
+        subtract(framesDir);
+    }
+
     public static void subtractBackground(Context context, String username) {
         // using this method will use the last created frames directory
         int framesDirNum = PersistedData.getTotalFrameDirectories(context, username);
@@ -63,16 +67,15 @@ public class BackgroundSub {
     }
 
     public static void subtractBackground(Context context, String username, int framesDirNum) {
-        File framesOrigDir = PathUtil.getFramesNumberedDirectoryOriginal(context, username, framesDirNum);
-        File framesSubDir = PathUtil.getFramesNumberedDirectorySubtracted(context, username, framesDirNum);
-        subtract(framesOrigDir, framesSubDir);
+        File framesDir = PathUtil.getFramesNumberedDirectory(context, username, framesDirNum);
+        subtract(framesDir);
     }
 
-    private static void subtract(File framesOrigDir, File framesSubDir) {
+    private static void subtract(File framesDir) {
         OpenCVLoader.initDebug();
         BackgroundSubtractor backSub = Video.createBackgroundSubtractorMOG2();
 
-        File[] frames = framesOrigDir.listFiles();
+        File[] frames = framesDir.listFiles();
         Arrays.sort(frames);
 
         for (File frame : frames) {
@@ -100,8 +103,8 @@ public class BackgroundSub {
             Mat diffMat = new Mat();
             Core.subtract(frameMat, background, diffMat);
 
-            // write the image to the 'sub' frame dir
-            Imgcodecs.imwrite(new File(framesSubDir, frame.getName()).getAbsolutePath(), diffMat);
+            // write the image over the original extracted frame
+            Imgcodecs.imwrite(frame.getAbsolutePath(), diffMat);
 
             // release our mats
             frameMat.release();
@@ -109,7 +112,7 @@ public class BackgroundSub {
         }
 
         // save our background model to the frames video set dir
-        Imgcodecs.imwrite(new File(framesOrigDir.getParent(), "BACKGROUND.jpg").getAbsolutePath(), background);
+        Imgcodecs.imwrite(new File(framesDir, "BACKGROUND.jpg").getAbsolutePath(), background);
         background.release();
     }
 }

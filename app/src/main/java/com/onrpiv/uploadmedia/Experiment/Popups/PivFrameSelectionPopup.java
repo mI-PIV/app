@@ -23,7 +23,6 @@ import com.onrpiv.uploadmedia.Utilities.UserInput.UserInputUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -167,7 +166,13 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     setIsReady = true;
                     frameSet = userInput.getInt();
                     frameSetPath = PathUtil.getFramesNumberedDirectory(getContext(), userName, userInput.getInt());
-                    setFrames = Arrays.asList(frameSetPath.listFiles());
+
+                    // remove the background frame if we're in a background subtracted frame dir
+                    File[] frames = frameSetPath.listFiles();
+                    for (File frame : frames) {
+                        if (!frame.getName().equals("BACKGROUND.jpg"))
+                            setFrames.add(frame);
+                    }
 
                     setFrames.sort(null);
                     numFramesInSet = setFrames.size();
