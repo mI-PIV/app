@@ -53,6 +53,10 @@ public class FrameExtractor {
                 PersistedData.setFrameDirPath(context, userName, framesNumDir.getAbsolutePath(),
                         totalFrameDirs);
 
+                // background subtraction
+                BackgroundSub backgroundSub = new BackgroundSub();
+                backgroundSub.subtractBackground(framesNumDir);
+
                 // call the activity's callback
                 successCallback.call();
                 return null;
