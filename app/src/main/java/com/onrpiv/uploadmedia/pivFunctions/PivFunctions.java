@@ -143,18 +143,30 @@ public class PivFunctions {
     }
 
     private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr) {
+        Mat correlation = corr.clone();
         // find first peak location and value
-        int peak1_i = (int) mmr.maxLoc.x;
-        int peak1_j = (int) mmr.maxLoc.y;
+        int peak1_x = (int) mmr.maxLoc.x;
+        int peak1_y = (int) mmr.maxLoc.y;
         double peak1_value = mmr.maxVal;
 
         // remove primary peak from correlation map
-        removePrimaryPeak(corr, peak1_i, peak1_j);
+        removePrimaryPeak(correlation, peak1_x, peak1_y);
 
         // find second peak value
-        Core.MinMaxLocResult mmr2 = Core.minMaxLoc(corr);
+        Core.MinMaxLocResult mmr2 = Core.minMaxLoc(correlation);
         double peak2_value = mmr2.maxVal;
 
+        // if we can't find a secondary peak then
+        // our remove primary peak algo might've removed the secondary signal
+        // so we'll backup to removing just the primary signal pixel
+        if (peak2_value == 0d) {
+            corr.put(peak1_y, peak1_x, 0d);
+
+            mmr2 = Core.minMaxLoc(corr);
+            peak2_value = mmr2.maxVal;
+        }
+
+        correlation.release();
         return peak1_value / peak2_value;
     }
 
