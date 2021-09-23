@@ -64,7 +64,7 @@ public class PivRunner {
             @Override
             public void run() {
                 pDialog.setMessage("Calculating PIV");
-                setMessage(imageActivity, "Calculating PIV", pDialog);
+                setMessage(imageActivity, "Calculating single pass PIV", pDialog);
                 // single pass
                 PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE);
 
@@ -90,7 +90,7 @@ public class PivRunner {
                 String step = "SinglePass";
                 pivFunctions.saveVectorsValues(singlePassResult, step);
 
-                setMessage(imageActivity, "Processing Single Pass PIV", pDialog);
+                setMessage(imageActivity, "Post-Processing Single Pass PIV", pDialog);
                 PivResultData pivCorrelationProcessed =
                         pivFunctions.vectorPostProcessing(singlePassResult, "PostProcessing");
 
