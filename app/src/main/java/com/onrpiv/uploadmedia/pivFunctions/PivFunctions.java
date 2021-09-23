@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
+import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -43,8 +44,8 @@ import java.util.StringJoiner;
 
 public class PivFunctions {
     private final Mat frame1;
-    private final Mat grayFrame1;
-    private final Mat grayFrame2;
+    private Mat grayFrame1;
+    private Mat grayFrame2;
     private final int rows;
     private final int cols;
     private final int windowSize;
@@ -107,6 +108,17 @@ public class PivFunctions {
         int nRows = ((imgRows - areaSize) / (areaSize - overlap) + 1);
         int nCols = ((imgCols - areaSize) / (areaSize - overlap) + 1);
         return new int[]{nCols, nRows};
+    }
+
+    public void framesSubtraction() {
+        Mat[] subtractedFrames = BackgroundSub.doubleFrameSubtraction(grayFrame1, grayFrame2);
+        grayFrame1.release();
+        grayFrame2.release();
+        grayFrame1 = null;
+        grayFrame2 = null;
+
+        grayFrame1 = subtractedFrames[0];
+        grayFrame2 = subtractedFrames[1];
     }
 
     private static Mat openCvPIV(Mat image, Mat template) {
