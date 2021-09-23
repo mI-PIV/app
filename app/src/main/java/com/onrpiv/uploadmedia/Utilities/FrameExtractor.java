@@ -22,7 +22,7 @@ public class FrameExtractor {
      */
     public static void generateFrames(final Context context, final String userName, String videoPath,
                                       final String fps, float videoStart, float videoEnd,
-                                      final Callable<Void> successCallback){
+                                      final Callable<Void> successCallback, final boolean backSub){
         String fileExtn = ".jpg";
 
         String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
@@ -55,8 +55,8 @@ public class FrameExtractor {
                         totalFrameDirs);
 
                 // background subtraction
-                // TODO add menu check to see if the user wants it
-                BackgroundSub.subtractBackground(framesNumDir);
+                if (backSub)
+                    BackgroundSub.subtractBackground(framesNumDir);
 
                 // call the activity's callback
                 successCallback.call();

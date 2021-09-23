@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +47,7 @@ public class VideoActivity extends AppCompatActivity {
     private static final int REQUEST_VIDEO_CAPTURE = 300;
     private VideoView mVideoView;
     private TextView mBufferingTextView;
+    private CheckBox backSubCheckbox;
     private String videoPath;
     private String userName;
     private String fps = "20";
@@ -74,6 +76,7 @@ public class VideoActivity extends AppCompatActivity {
         generateFramesButton = (Button) findViewById(R.id.generateFrames);
         rangeSlider = findViewById(R.id.vid_rangeSlider);
         ((ViewGroup) rangeSlider.getParent()).setVisibility(View.GONE);
+        backSubCheckbox = findViewById(R.id.backsub_video_checkbox);
 
         Context context = this;
         Activity activity = this;
@@ -262,7 +265,7 @@ public class VideoActivity extends AppCompatActivity {
         };
 
         FrameExtractor.generateFrames(view.getContext(), userName, videoPath, fps, vidStart, vidEnd,
-                successCallBack);
+                successCallBack, backSubCheckbox.isChecked());
     }
 
     private void releasePlayer() {
