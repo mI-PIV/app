@@ -97,6 +97,7 @@ public class FrameExtractor {
                 if (returnCode == Config.RETURN_CODE_SUCCESS) {
                     Toast.makeText(context, "Frames Generation Completed", Toast.LENGTH_SHORT).show();
                     try {
+                        pDialog.setMessage("Subtracting Background...");
                         successCallback.call();
                     } catch (Exception e) {
                         Log.e("FFMPEG", "Unable to call success callback!");
