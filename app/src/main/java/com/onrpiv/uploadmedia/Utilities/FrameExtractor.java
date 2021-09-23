@@ -30,9 +30,10 @@ public class FrameExtractor {
 
         // create and retrieve the new frames directory
         final int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName) + 1);
-        final File framesNumDir = PathUtil.getFramesNumberedDirectory(context, userName, totalFrameDirs);
+        final File framesNumDirOriginal = PathUtil.getFramesNumberedDirectoryOriginal(context,
+                userName, totalFrameDirs);
 
-        File jpegFile = new File(framesNumDir, filePrefix + "%03d" + fileExtn);
+        File jpegFile = new File(framesNumDirOriginal, filePrefix + "%03d" + fileExtn);
 
         // Callback on frame extraction completion that checks if the directory is empty.
         final Callable<Void> thisCallback = new Callable<Void>() {
@@ -41,7 +42,7 @@ public class FrameExtractor {
                 // If the frame dir is empty after extraction (something bad happened),
                 // then we don't update the persisted data
                 // and we don't call the activity's callback
-                if (Objects.requireNonNull(framesNumDir.listFiles()).length < 1) return null;
+                if (Objects.requireNonNull(framesNumDirOriginal.listFiles()).length < 1) return null;
 
                 // persist number of frame dirs
                 PersistedData.setTotalFrameDirectories(context, userName, totalFrameDirs);
@@ -50,12 +51,11 @@ public class FrameExtractor {
                 PersistedData.setFrameDirFPS(context, userName, totalFrameDirs, Integer.parseInt(fps));
 
                 // persist path for this frame dir
-                PersistedData.setFrameDirPath(context, userName, framesNumDir.getAbsolutePath(),
+                PersistedData.setFrameDirPath(context, userName, framesNumDirOriginal.getAbsolutePath(),
                         totalFrameDirs);
 
                 // background subtraction
-                BackgroundSub backgroundSub = new BackgroundSub();
-                backgroundSub.subtractBackground(framesNumDir);
+                BackgroundSub.subtractBackground(context, userName, totalFrameDirs);
 
                 // call the activity's callback
                 successCallback.call();

@@ -235,6 +235,16 @@ public class PathUtil {
         return checkDir(result);
     }
 
+    public static File getFramesNumberedDirectoryOriginal(Context context, String username, int framesDirNum) {
+        File result = new File(getFramesNumberedDirectory(context, username, framesDirNum), "Original");
+        return checkDir(result);
+    }
+
+    public static File getFramesNumberedDirectorySubtracted(Context context, String username, int framesDirNum) {
+        File result = new File(getFramesNumberedDirectory(context, username, framesDirNum), "Subtracted");
+        return checkDir(result);
+    }
+
     public static File getExperimentsDirectory(Context context, String userName) {
         File result = new File(getUserDirectory(context, userName), "Experiments");
         return checkDir(result);

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -16,25 +17,6 @@ import java.util.Arrays;
 
 
 public class BackgroundSub {
-    private final BackgroundSubtractor backSub;
-
-    public BackgroundSub() {
-        OpenCVLoader.initDebug();
-        backSub = Video.createBackgroundSubtractorMOG2();
-    }
-
-    public void applyFrame(Mat frame) {
-        Mat fg = new Mat();
-        backSub.apply(frame, fg);
-        fg.release();
-    }
-
-    public Mat getBackground() {
-        Mat background = new Mat();
-        backSub.getBackgroundImage(background);
-        return background;
-    }
-
     public static Mat[] doubleFrameSubtraction(Mat frame1, Mat frame2) {
         // M. Honkanen, H. Nobach; "Background extraction from double-frame PIV images"; 2005
 
@@ -48,7 +30,8 @@ public class BackgroundSub {
         Core.subtract(frame1Gray, frame2Gray, diffMat);
 
         // all positive values go to frame1 and all negative go to frame2
-        Mat frame1New = new Mat(), frame2New = new Mat();
+        Mat frame1New = Mat.zeros(diffMat.size(), CvType.CV_8S);
+        Mat frame2New = Mat.zeros(diffMat.size(), CvType.CV_8S);
         for (int row = 0; row < diffMat.rows(); row++) {
             for (int col = 0; col < diffMat.cols(); col++) {
                 double intensity = diffMat.get(row, col)[0];
@@ -73,43 +56,60 @@ public class BackgroundSub {
         return new Mat[] {frame1New, frame2NewPos};
     }
 
-    public void subtractBackground(File framesDir) {
-        subtract(framesDir);
-    }
-
-    public void subtractBackground(Context context, String username) {
+    public static void subtractBackground(Context context, String username) {
+        // using this method will use the last created frames directory
         int framesDirNum = PersistedData.getTotalFrameDirectories(context, username);
         subtractBackground(context, username, framesDirNum);
     }
 
-    public void subtractBackground(Context context, String username, int framesDirNum) {
-        File framesDir = PathUtil.getFramesNumberedDirectory(context, username, framesDirNum);
-        subtract(framesDir);
+    public static void subtractBackground(Context context, String username, int framesDirNum) {
+        File framesOrigDir = PathUtil.getFramesNumberedDirectoryOriginal(context, username, framesDirNum);
+        File framesSubDir = PathUtil.getFramesNumberedDirectorySubtracted(context, username, framesDirNum);
+        subtract(framesOrigDir, framesSubDir);
     }
 
-    private void subtract(File framesDir) {
-        File[] frames = framesDir.listFiles();
+    private static void subtract(File framesOrigDir, File framesSubDir) {
+        OpenCVLoader.initDebug();
+        BackgroundSubtractor backSub = Video.createBackgroundSubtractorMOG2();
+
+        File[] frames = framesOrigDir.listFiles();
         Arrays.sort(frames);
 
         for (File frame : frames) {
+            // read frame
             Mat frameMat = Imgcodecs.imread(frame.getAbsolutePath());
-            applyFrame(frameMat);
+
+            // apply the frame to the background subtractor
+            Mat fg = new Mat();
+            backSub.apply(frameMat, fg);
+
+            // release the mats
+            fg.release();
             frameMat.release();
         }
 
-        Mat background = getBackground();
+        // get the background model
+        Mat background = new Mat();
+        backSub.getBackgroundImage(background);
 
         for (File frame : frames) {
+            // read frame
             Mat frameMat = Imgcodecs.imread(frame.getAbsolutePath());
+
+            // subtract the background model from the frame
             Mat diffMat = new Mat();
             Core.subtract(frameMat, background, diffMat);
-            Imgcodecs.imwrite(frame.getAbsolutePath(), diffMat);
 
+            // write the image to the 'sub' frame dir
+            Imgcodecs.imwrite(new File(framesSubDir, frame.getName()).getAbsolutePath(), diffMat);
+
+            // release our mats
             frameMat.release();
             diffMat.release();
         }
 
-        Imgcodecs.imwrite(new File(framesDir, "BACKGROUND.jpg").getAbsolutePath(), background);
+        // save our background model to the frames video set dir
+        Imgcodecs.imwrite(new File(framesOrigDir.getParent(), "BACKGROUND.jpg").getAbsolutePath(), background);
         background.release();
     }
 }
