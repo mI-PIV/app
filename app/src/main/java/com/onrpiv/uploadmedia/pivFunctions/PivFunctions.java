@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
+import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -43,8 +44,8 @@ import java.util.StringJoiner;
 
 public class PivFunctions {
     private final Mat frame1;
-    private final Mat grayFrame1;
-    private final Mat grayFrame2;
+    private Mat grayFrame1;
+    private Mat grayFrame2;
     private final int rows;
     private final int cols;
     private final int windowSize;
@@ -109,6 +110,17 @@ public class PivFunctions {
         return new int[]{nCols, nRows};
     }
 
+    public void framesSubtraction() {
+        Mat[] subtractedFrames = BackgroundSub.doubleFrameSubtraction(grayFrame1, grayFrame2);
+        grayFrame1.release();
+        grayFrame2.release();
+        grayFrame1 = null;
+        grayFrame2 = null;
+
+        grayFrame1 = subtractedFrames[0];
+        grayFrame2 = subtractedFrames[1];
+    }
+
     private static Mat openCvPIV(Mat image, Mat template) {
         int P = template.rows();
         int Q = template.cols();
@@ -131,18 +143,30 @@ public class PivFunctions {
     }
 
     private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr) {
+        Mat correlation = corr.clone();
         // find first peak location and value
-        int peak1_i = (int) mmr.maxLoc.x;
-        int peak1_j = (int) mmr.maxLoc.y;
+        int peak1_x = (int) mmr.maxLoc.x;
+        int peak1_y = (int) mmr.maxLoc.y;
         double peak1_value = mmr.maxVal;
 
         // remove primary peak from correlation map
-        removePrimaryPeak(corr, peak1_i, peak1_j);
+        removePrimaryPeak(correlation, peak1_x, peak1_y);
 
         // find second peak value
-        Core.MinMaxLocResult mmr2 = Core.minMaxLoc(corr);
+        Core.MinMaxLocResult mmr2 = Core.minMaxLoc(correlation);
         double peak2_value = mmr2.maxVal;
 
+        // if we can't find a secondary peak then
+        // our remove primary peak algo might've removed the secondary signal
+        // so we'll backup to removing just the primary signal pixel
+        if (peak2_value == 0d) {
+            corr.put(peak1_y, peak1_x, 0d);
+
+            mmr2 = Core.minMaxLoc(corr);
+            peak2_value = mmr2.maxVal;
+        }
+
+        correlation.release();
         return peak1_value / peak2_value;
     }
 

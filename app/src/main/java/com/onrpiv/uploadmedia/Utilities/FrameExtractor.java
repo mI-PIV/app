@@ -22,7 +22,7 @@ public class FrameExtractor {
      */
     public static void generateFrames(final Context context, final String userName, String videoPath,
                                       final String fps, float videoStart, float videoEnd,
-                                      final Callable<Void> successCallback){
+                                      final Callable<Void> successCallback, final boolean backSub){
         String fileExtn = ".jpg";
 
         String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
@@ -30,7 +30,8 @@ public class FrameExtractor {
 
         // create and retrieve the new frames directory
         final int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName) + 1);
-        final File framesNumDir = PathUtil.getFramesNumberedDirectory(context, userName, totalFrameDirs);
+        final File framesNumDir = PathUtil.getFramesNumberedDirectory(context,
+                userName, totalFrameDirs);
 
         File jpegFile = new File(framesNumDir, filePrefix + "%03d" + fileExtn);
 
@@ -52,6 +53,10 @@ public class FrameExtractor {
                 // persist path for this frame dir
                 PersistedData.setFrameDirPath(context, userName, framesNumDir.getAbsolutePath(),
                         totalFrameDirs);
+
+                // background subtraction
+                if (backSub)
+                    BackgroundSub.subtractBackground(framesNumDir);
 
                 // call the activity's callback
                 successCallback.call();
@@ -93,6 +98,7 @@ public class FrameExtractor {
                 if (returnCode == Config.RETURN_CODE_SUCCESS) {
                     Toast.makeText(context, "Frames Generation Completed", Toast.LENGTH_SHORT).show();
                     try {
+                        pDialog.setMessage("Subtracting Background...");
                         successCallback.call();
                     } catch (Exception e) {
                         Log.e("FFMPEG", "Unable to call success callback!");

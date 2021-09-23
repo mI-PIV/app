@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     android:orientation="vertical">
 
     <FrameLayout
@@ -41,10 +42,10 @@
         android:textColor="#FFFFFF" />
 
     <LinearLayout
-        android:theme="@style/MaterialTheme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:theme="@style/MaterialTheme">
 
         <TextView
             android:layout_width="match_parent"
@@ -54,9 +55,15 @@
 
         <com.google.android.material.slider.RangeSlider
             android:id="@+id/vid_rangeSlider"
-            android:layout_gravity="center"
             android:layout_width="374dp"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+
+        <CheckBox
+            android:id="@+id/backsub_video_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Background Subtraction" />
 
     </LinearLayout>
 
