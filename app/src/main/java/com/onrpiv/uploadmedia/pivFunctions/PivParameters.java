@@ -8,6 +8,7 @@ public class PivParameters implements Serializable {
     private int windowSize = 64, overlap = 32, frameSet, frameOne, frameTwo;
     private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.3, dt = 1.0, E = 2.0;
     private boolean replace = true;
+    private boolean backgroundSubtract = true;
 
     public final static String WINDOW_SIZE_KEY = "windowSize",
             OVERLAP_KEY = "overlap",
@@ -152,6 +153,14 @@ public class PivParameters implements Serializable {
 
     public void setReplace(boolean replace) {
         this.replace = replace;
+    }
+
+    public boolean useBackgroundSubtraction() {
+        return backgroundSubtract;
+    }
+
+    public void setBackgroundSubtract(boolean backSub) {
+        backgroundSubtract = backSub;
     }
 
     public String prettyPrintData() {

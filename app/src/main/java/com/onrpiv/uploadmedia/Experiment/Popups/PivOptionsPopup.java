@@ -39,6 +39,7 @@ public class PivOptionsPopup extends AlertDialog {
     private final Button savePIVDataButton;
     private final Button cancelPIVDataButton;
     private final CheckBox advancedCheckbox;
+    private final CheckBox backgroundSubtractionCheckBox;
 
     public PivParameters parameters;
     private final ArrayList<View> hiddenViewList;
@@ -77,6 +78,8 @@ public class PivOptionsPopup extends AlertDialog {
         cancelPIVDataButton = findViewById(R.id.button_cancel_piv_data);
         advancedCheckbox = findViewById(R.id.advancedCheckbox);
         advancedCheckbox.setChecked(false);
+        backgroundSubtractionCheckBox = findViewById(R.id.backsub_checkbox);
+        backgroundSubtractionCheckBox.setChecked(true);
 
         // lightbulbs
         final String linkText = "Learn More";
@@ -103,7 +106,7 @@ public class PivOptionsPopup extends AlertDialog {
         hiddenViewList = new ArrayList<View>(
                 Arrays.asList(
                         dtText, dt_text, e_text, radioGroup_text, radioGroup, qMinText, qMin_text,
-                        EText, dtLB, qMinLB, eTextLB, radioGroupLB
+                        EText, dtLB, qMinLB, eTextLB, radioGroupLB, backgroundSubtractionCheckBox
                 )
         );
 
@@ -187,6 +190,15 @@ public class PivOptionsPopup extends AlertDialog {
                         savePIVDataButton.setEnabled(checkTexts());
                     }
                 });
+
+        // Add listener for background subtract
+        backgroundSubtractionCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                parameters.setBackgroundSubtract(isChecked);
+                savePIVDataButton.setEnabled(checkTexts());
+            }
+        });
 
         // cancel button
         cancelPIVDataButton.setOnClickListener(new View.OnClickListener() {

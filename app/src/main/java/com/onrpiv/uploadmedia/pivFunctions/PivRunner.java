@@ -66,8 +66,7 @@ public class PivRunner {
         Thread thread = new Thread() {
             @Override
             public void run() {
-                // TODO add a user selected bool
-                if (true) {
+                if (parameters.useBackgroundSubtraction()) {
                     setMessage("Subtracting frames");
                     pivFunctions.framesSubtraction();
                 }

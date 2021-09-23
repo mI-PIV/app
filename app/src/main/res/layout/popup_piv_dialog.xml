@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<ScrollView xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -21,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingTop="10dp">
@@ -83,15 +82,17 @@
 
                     <TextView
                         android:id="@+id/dt_text"
-                        android:visibility="gone"
                         android:gravity="end"
-                        android:text="dt: " />
+                        android:text="dt: "
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                     <EditText
                         android:id="@+id/dt"
-                        android:visibility="gone"
                         android:hint=""
-                        android:inputType="numberDecimal" />
+                        android:inputType="numberDecimal"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                 </TableRow>
 
@@ -103,15 +104,17 @@
 
                     <TextView
                         android:id="@+id/nMaxUpper_text"
-                        android:visibility="gone"
                         android:gravity="end"
-                        android:text="Magnitude Threshold (upper): " />
+                        android:text="Magnitude Threshold (upper): "
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                     <EditText
                         android:id="@+id/nMaxUpper"
-                        android:visibility="gone"
                         android:hint=""
-                        android:inputType="numberDecimal" />
+                        android:inputType="numberDecimal"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                 </TableRow>
 
@@ -123,15 +126,17 @@
 
                     <TextView
                         android:id="@+id/nMaxLower_text"
-                        android:visibility="gone"
                         android:gravity="end"
-                        android:text="Magnitude Threshold (lower): " />
+                        android:text="Magnitude Threshold (lower): "
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                     <EditText
                         android:id="@+id/nMaxLower"
-                        android:visibility="gone"
                         android:hint=""
-                        android:inputType="numberDecimal" />
+                        android:inputType="numberDecimal"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                 </TableRow>
 
@@ -144,15 +149,17 @@
 
                     <TextView
                         android:id="@+id/qMin_text"
-                        android:visibility="gone"
                         android:gravity="end"
-                        android:text="Minimum Q Threshold: " />
+                        android:text="Minimum Q Threshold: "
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                     <EditText
                         android:id="@+id/qMin"
-                        android:visibility="gone"
                         android:hint=""
-                        android:inputType="numberDecimal" />
+                        android:inputType="numberDecimal"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                 </TableRow>
 
@@ -164,15 +171,17 @@
 
                     <TextView
                         android:id="@+id/E_text"
-                        android:visibility="gone"
                         android:gravity="end"
-                        android:text="Median Threshold: " />
+                        android:text="Median Threshold: "
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                     <EditText
                         android:id="@+id/E"
-                        android:visibility="gone"
                         android:hint=""
-                        android:inputType="numberDecimal" />
+                        android:inputType="numberDecimal"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
                 </TableRow>
 
                 <TableRow
@@ -183,39 +192,55 @@
 
                     <TextView
                         android:id="@+id/groupradio_text"
-                        android:visibility="gone"
                         android:gravity="end"
-                        android:text="Replace Missing Vectors: " />
+                        android:text="Replace Missing Vectors: "
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
 
                     <RadioGroup
                         android:id="@+id/groupradio"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginEnd="20dp"
-                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <RadioButton
                             android:id="@+id/yesRadio"
-                            android:gravity="center"
-                            android:text="YES"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="true"
-                            />
+                            android:gravity="center"
+                            android:text="YES" />
 
                         <RadioButton
                             android:id="@+id/noRadio"
-                            android:gravity="center"
-                            android:text="NO"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            />
+                            android:gravity="center"
+                            android:text="NO" />
                     </RadioGroup>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    >
+
+                    <CheckBox
+                        android:id="@+id/backsub_checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Background Subtraction"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
                 </TableRow>
 
 
@@ -249,5 +274,6 @@
                 </TableRow>
             </TableLayout>
         </RelativeLayout>
+
     </LinearLayout>
 </ScrollView>
