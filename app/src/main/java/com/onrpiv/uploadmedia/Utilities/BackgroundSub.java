@@ -1,6 +1,12 @@
 package com.onrpiv.uploadmedia.Utilities;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.github.chrisbanes.photoview.PhotoView;
+import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
@@ -48,22 +54,40 @@ public class BackgroundSub {
         return new Mat[] {frame1New, frame2New};
     }
 
-    public static void subtractBackground(File framesDir) {
-        subtract(framesDir);
+    public static void subtractBackground(File framesDir, boolean saveFrames) {
+        subtract(framesDir, saveFrames);
     }
 
-    public static void subtractBackground(Context context, String username) {
+    public static void subtractBackground(Context context, String username, boolean saveFrames) {
         // using this method will use the last created frames directory
         int framesDirNum = PersistedData.getTotalFrameDirectories(context, username);
-        subtractBackground(context, username, framesDirNum);
+        subtractBackground(context, username, framesDirNum, saveFrames);
     }
 
-    public static void subtractBackground(Context context, String username, int framesDirNum) {
+    public static void subtractBackground(Context context, String username, int framesDirNum,
+                                          boolean saveFrames) {
         File framesDir = PathUtil.getFramesNumberedDirectory(context, username, framesDirNum);
-        subtract(framesDir);
+        subtract(framesDir, saveFrames);
     }
 
-    private static void subtract(File framesDir) {
+    public static void showLatestBackground(Context context, String userName) {
+        int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName));
+        File framesNumDir = PathUtil.getFramesNumberedDirectory(context,
+                userName, totalFrameDirs);
+        Bitmap background = BitmapFactory.decodeFile(
+                new File(framesNumDir, "BACKGROUND.jpg").getAbsolutePath());
+        Bitmap resizedBackground = PivFunctions.resizeBitmap(background, 600);
+        PhotoView backgroundImage = new PhotoView(context);
+        backgroundImage.setImageBitmap(resizedBackground);
+        AlertDialog popup = new AlertDialog.Builder(context)
+                .setView(backgroundImage)
+                .setCancelable(false)
+                .setTitle("Video Background")
+                .setPositiveButton("Okay", null)
+                .show();
+    }
+
+    private static void subtract(File framesDir, boolean saveFrames) {
         OpenCVLoader.initDebug();
         BackgroundSubtractor backSub = Video.createBackgroundSubtractorMOG2();
 
@@ -87,20 +111,22 @@ public class BackgroundSub {
         Mat background = new Mat();
         backSub.getBackgroundImage(background);
 
-        for (File frame : frames) {
-            // read frame
-            Mat frameMat = Imgcodecs.imread(frame.getAbsolutePath());
+        if (saveFrames) {
+            for (File frame : frames) {
+                // read frame
+                Mat frameMat = Imgcodecs.imread(frame.getAbsolutePath());
 
-            // subtract the background model from the frame
-            Mat diffMat = new Mat();
-            Core.subtract(frameMat, background, diffMat);
+                // subtract the background model from the frame
+                Mat diffMat = new Mat();
+                Core.subtract(frameMat, background, diffMat);
 
-            // write the image over the original extracted frame
-            Imgcodecs.imwrite(frame.getAbsolutePath(), diffMat);
+                // write the image over the original extracted frame
+                Imgcodecs.imwrite(frame.getAbsolutePath(), diffMat);
 
-            // release our mats
-            frameMat.release();
-            diffMat.release();
+                // release our mats
+                frameMat.release();
+                diffMat.release();
+            }
         }
 
         // save our background model to the frames video set dir

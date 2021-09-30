@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat;
 
 import com.onrpiv.uploadmedia.Experiment.Popups.LoadExperimentPopup;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Click this button to cancel edit user data.
     private Button cancelUserDataButton = null;
     public static String userName = null;
+    public static boolean showBackground = false;
 
 
     @Override
@@ -62,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (null == userName || userName.isEmpty())
             userNameDialog();
+
+        if (showBackground)
+            BackgroundSub.showLatestBackground(MainActivity.this, userName);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             image.setEnabled(false);

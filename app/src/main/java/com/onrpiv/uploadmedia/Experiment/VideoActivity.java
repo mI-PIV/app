@@ -47,7 +47,7 @@ public class VideoActivity extends AppCompatActivity {
     private static final int REQUEST_VIDEO_CAPTURE = 300;
     private VideoView mVideoView;
     private TextView mBufferingTextView;
-    private CheckBox backSubCheckbox;
+    private CheckBox viewBackgroundCheckbox;
     private String videoPath;
     private String userName;
     private String fps = "20";
@@ -76,7 +76,7 @@ public class VideoActivity extends AppCompatActivity {
         generateFramesButton = (Button) findViewById(R.id.generateFrames);
         rangeSlider = findViewById(R.id.vid_rangeSlider);
         ((ViewGroup) rangeSlider.getParent()).setVisibility(View.GONE);
-        backSubCheckbox = findViewById(R.id.backsub_video_checkbox);
+        viewBackgroundCheckbox = findViewById(R.id.backsub_video_checkbox);
 
         Context context = this;
         Activity activity = this;
@@ -254,18 +254,18 @@ public class VideoActivity extends AppCompatActivity {
             public Void call() throws Exception {
                 // Change generate Frames button to green
                 generateFramesButton.setBackgroundColor(Color.parseColor("#00CC00"));
-
                 // If we retrieved the video from google drive, then delete the temp file we created
                 PathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
                 // return to experiment menu
                 MainActivity.userName = userName;
+                MainActivity.showBackground = viewBackgroundCheckbox.isChecked();
                 finish();
                 return null;
             }
         };
 
         FrameExtractor.generateFrames(view.getContext(), userName, videoPath, fps, vidStart, vidEnd,
-                successCallBack, backSubCheckbox.isChecked());
+                successCallBack, viewBackgroundCheckbox.isChecked());
     }
 
     private void releasePlayer() {
