@@ -133,6 +133,10 @@ public class PivFunctions {
 
         grayFrame1 = subtractedFrames[0];
         grayFrame2 = subtractedFrames[1];
+
+        // save frames for results page
+        saveImage(grayFrame1, BackgroundSub.SUB1_FILENAME);
+        saveImage(grayFrame2, BackgroundSub.SUB2_FILENAME);
     }
 
     private static Mat openCvPIV(Mat image, Mat template) {

@@ -22,6 +22,10 @@ import java.util.Arrays;
 
 
 public class BackgroundSub {
+    public final static String BCKGRND_FILENAME = "BACKGROUND",
+    SUB1_FILENAME = "BACKSUB1", SUB2_FILENAME = "BACKSUB2",
+    FILE_EXTENSION = ".jpg";
+
     public static Mat[] doubleFrameSubtraction(Mat grayFrame1, Mat grayFrame2) {
         // M. Honkanen, H. Nobach; "Background extraction from double-frame PIV images"; 2005
 
@@ -64,7 +68,7 @@ public class BackgroundSub {
     public static void saveBackground(File framesDir) {
         File[] frames = getFramesPaths(framesDir);
         Mat background = calculateBackground(frames);
-        Imgcodecs.imwrite(new File(framesDir, "BACKGROUND.jpg").getAbsolutePath(), background);
+        Imgcodecs.imwrite(new File(framesDir, BCKGRND_FILENAME+FILE_EXTENSION).getAbsolutePath(), background);
         background.release();
     }
 
@@ -73,14 +77,14 @@ public class BackgroundSub {
         File framesNumDir = PathUtil.getFramesNumberedDirectory(context,
                 userName, totalFrameDirs);
         Bitmap background = BitmapFactory.decodeFile(
-                new File(framesNumDir, "BACKGROUND.jpg").getAbsolutePath());
+                new File(framesNumDir, BCKGRND_FILENAME+FILE_EXTENSION).getAbsolutePath());
         Bitmap resizedBackground = PivFunctions.resizeBitmap(background, 600);
         PhotoView backgroundImage = new PhotoView(context);
         backgroundImage.setImageBitmap(resizedBackground);
-        AlertDialog popup = new AlertDialog.Builder(context)
+        new AlertDialog.Builder(context)
                 .setView(backgroundImage)
                 .setCancelable(false)
-                .setTitle("Video Background")
+                .setTitle("Video Extracted Background")
                 .setPositiveButton("Okay", null)
                 .show();
     }
