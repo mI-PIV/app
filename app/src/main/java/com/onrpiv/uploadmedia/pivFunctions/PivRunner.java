@@ -53,6 +53,9 @@ public class PivRunner {
                 imgFileSaveName,
                 txtFileSaveName);
 
+        // background sub
+        final int backgroundSelection = parameters.getBackgroundSelection();
+
         // progress dialog
         pDialog = new ProgressDialog(context);
         pDialog.setMessage(context.getString(R.string.msg_loading));
@@ -66,9 +69,11 @@ public class PivRunner {
         Thread thread = new Thread() {
             @Override
             public void run() {
-                if (parameters.useBackgroundSubtraction()) {
+                if (backgroundSelection >= 0) {
                     setMessage("Subtracting frames");
-                    pivFunctions.framesSubtraction();
+
+                    pivFunctions.framesSubtraction(backgroundSelection, frame1File.getParentFile(),
+                            parameters.getFrame1Index(), parameters.getFrame2Index());
                 }
                 setMessage("Calculating PIV");
                 setMessage("Calculating single pass PIV");
