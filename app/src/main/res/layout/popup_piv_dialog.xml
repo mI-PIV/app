@@ -199,7 +199,7 @@
 
 
                     <RadioGroup
-                        android:id="@+id/groupradio"
+                        android:id="@+id/replace_radiogroup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
@@ -234,13 +234,42 @@
                     android:orientation="horizontal"
                     >
 
-                    <CheckBox
-                        android:id="@+id/backsub_checkbox"
+                    <TextView
+                        android:id="@+id/bs_radioText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Background Subtraction"
+                        android:gravity="end"
+                        android:text="Background Subtraction:"
                         android:visibility="gone"
                         tools:visibility="visible" />
+
+                    <RadioGroup
+                        android:id="@+id/bs_radiogroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <RadioButton
+                            android:id="@+id/bs_none"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="None" />
+
+                        <RadioButton
+                            android:id="@+id/bs_twoframe"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Two-Frame Sub" />
+
+                        <RadioButton
+                            android:id="@+id/bs_frameset"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Frame Set Sub" />
+                    </RadioGroup>
+
                 </TableRow>
 
 
