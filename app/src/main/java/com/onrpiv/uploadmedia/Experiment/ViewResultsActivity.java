@@ -2,6 +2,9 @@ package com.onrpiv.uploadmedia.Experiment;
 
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_IMG;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_SOLID;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_SUB;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BCKGRND_FRAME_PRETTY;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BCKGRND_SUB_PRETTY;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_MULTI;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_REPLACED;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
@@ -22,6 +25,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -30,6 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +46,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.google.android.material.slider.RangeSlider;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
+import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMapPicker;
 import com.onrpiv.uploadmedia.Utilities.FrameView;
@@ -77,7 +84,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
     // maps and settings
     private HashMap<String, PivResultData> correlationMaps;
-    private HashMap<View, LinearLayout> dropDownMaps;
+    private HashMap<View, LinearLayout> sectionMaps;
     private ArrayList<ColorMap> colorMaps;
     private ResultSettings settings;
     private int imageCounter = 0;
@@ -93,6 +100,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     public static PivResultData multiPass;
     public static PivResultData replacedPass;
     public static boolean calibrated;
+    public static boolean backgroundSubtracted;
     private int rows;
     private int cols;
 
@@ -192,8 +200,66 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         selectColor = findViewById(R.id.select_color);
         selectColor.setBackgroundColor(settings.getSelectColor());
 
+        LinearLayout backgroundColorPicker = findViewById(R.id.bg_color_picker);
+
+        // spinners
+        Spinner backgroundSpinner = findViewById(R.id.bg_spinner);
+        List<String> bgOptionsList = new ArrayList<String>();
+        bgOptionsList.add(ResultSettings.BCKGRND_SOLID_PRETTY);
+        bgOptionsList.add(ResultSettings.BCKGRND_FRAME_PRETTY);
+        if (backgroundSubtracted) {
+            bgOptionsList.add(ResultSettings.BCKGRND_SUB_PRETTY);
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                R.layout.support_simple_spinner_dropdown_item, bgOptionsList);
+        backgroundSpinner.setAdapter(adapter);
+        backgroundSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = (String) parent.getItemAtPosition(position);
+                switch (selected) {
+                    case BCKGRND_FRAME_PRETTY:
+                        settings.setBackground(BACKGRND_IMG);
+                        if (backgroundColorPicker.getVisibility() == View.VISIBLE)
+                            backgroundColorPicker.setVisibility(View.GONE);
+                        break;
+                    case BCKGRND_SUB_PRETTY:
+                        settings.setBackground(BACKGRND_SUB);
+                        if (backgroundColorPicker.getVisibility() == View.VISIBLE)
+                            backgroundSpinner.setVisibility(View.GONE);
+                        break;
+                    default:
+                        settings.setBackground(BACKGRND_SOLID);
+                        backgroundColorPicker.setVisibility(View.VISIBLE);
+                }
+                applyButton.setEnabled(true);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // EMPTY
+            }
+        });
+//        backgroundSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                String selected = (String) parent.getItemAtPosition(position);
+//                switch (selected) {
+//                    case BCKGRND_FRAME_PRETTY:
+//                        settings.setBackground(BACKGRND_IMG);
+//                        break;
+//                    case BCKGRND_SUB_PRETTY:
+//                        settings.setBackground(BACKGRND_SUB);
+//                        break;
+//                    default:
+//                        settings.setBackground(BACKGRND_SOLID);
+//                }
+//                applyButton.setEnabled(true);
+//            }
+//        });
+
         // drop-downs
-        dropDownMaps = loadDropDownMaps();
+        sectionMaps = loadDropDownMaps();
 
         // switches
         SwitchCompat displayVectors = findViewById(R.id.vec_display);
@@ -236,20 +302,20 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             }
         });
 
-        RadioGroup backgroundRadioGroup = findViewById(R.id.background_rgroup);
-        backgroundRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                String value;
-                if (checkedId == R.id.plain) {
-                    value = BACKGRND_SOLID;
-                } else {
-                    value = BACKGRND_IMG;
-                }
-                settings.setBackground(value);
-                applyButton.setEnabled(true);
-            }
-        });
+//        RadioGroup backgroundRadioGroup = findViewById(R.id.background_rgroup);
+//        backgroundRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(RadioGroup group, int checkedId) {
+//                String value;
+//                if (checkedId == R.id.plain) {
+//                    value = BACKGRND_SOLID;
+//                } else {
+//                    value = BACKGRND_IMG;
+//                }
+//                settings.setBackground(value);
+//                applyButton.setEnabled(true);
+//            }
+//        });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -477,11 +543,19 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
     private void displayBaseImage(String backgroundCode) {
         Bitmap bmp;
-        if (backgroundCode.equals(BACKGRND_IMG)) {
-            File pngFile = new File(outputDirectory, "Base_" + imgFileToDisplay);
-            bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
-        } else {
-            bmp = createSolidBaseImage();
+        switch (backgroundCode) {
+            case BACKGRND_IMG:
+                File pngFile = new File(outputDirectory, "Base_" + imgFileToDisplay);
+                bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
+                break;
+            case BACKGRND_SUB:
+                File backsubFile = new File(outputDirectory,
+                        BackgroundSub.SUB1_FILENAME + "_" + imgFileToDisplay);
+                bmp = BitmapFactory.decodeFile(backsubFile.getAbsolutePath());
+                break;
+            default:
+                bmp = createSolidBaseImage();
+                break;
         }
         baseImage.setImageBitmap(bmp);
     }
@@ -540,7 +614,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             @Override
             public void onClick(View v) {
                 // make section layout visible/gone
-                LinearLayout sectionLayout = dropDownMaps.get(v);
+                LinearLayout sectionLayout = sectionMaps.get(v);
 
                 if (null == sectionLayout)
                     return;
