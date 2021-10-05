@@ -240,23 +240,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                 // EMPTY
             }
         });
-//        backgroundSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                String selected = (String) parent.getItemAtPosition(position);
-//                switch (selected) {
-//                    case BCKGRND_FRAME_PRETTY:
-//                        settings.setBackground(BACKGRND_IMG);
-//                        break;
-//                    case BCKGRND_SUB_PRETTY:
-//                        settings.setBackground(BACKGRND_SUB);
-//                        break;
-//                    default:
-//                        settings.setBackground(BACKGRND_SOLID);
-//                }
-//                applyButton.setEnabled(true);
-//            }
-//        });
 
         // drop-downs
         sectionMaps = loadDropDownMaps();
@@ -301,21 +284,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                 applyButton.setEnabled(true);
             }
         });
-
-//        RadioGroup backgroundRadioGroup = findViewById(R.id.background_rgroup);
-//        backgroundRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                String value;
-//                if (checkedId == R.id.plain) {
-//                    value = BACKGRND_SOLID;
-//                } else {
-//                    value = BACKGRND_IMG;
-//                }
-//                settings.setBackground(value);
-//                applyButton.setEnabled(true);
-//            }
-//        });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
