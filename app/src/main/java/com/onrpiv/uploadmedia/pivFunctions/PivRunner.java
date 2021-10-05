@@ -69,9 +69,10 @@ public class PivRunner {
         Thread thread = new Thread() {
             @Override
             public void run() {
+                boolean backgroundSub = false;
                 if (backgroundSelection >= 0) {
                     setMessage("Subtracting frames");
-
+                    backgroundSub = true;
                     pivFunctions.framesSubtraction(backgroundSelection, frame1File.getParentFile(),
                             parameters.getFrame1Index(), parameters.getFrame2Index());
                 }
@@ -79,6 +80,7 @@ public class PivRunner {
                 setMessage("Calculating single pass PIV");
                 // single pass
                 PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE);
+                singlePassResult.setBackgroundSubtracted(backgroundSub);
 
                 // Save first frame for output base image
                 pivFunctions.saveBaseImage("Base");

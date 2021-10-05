@@ -202,7 +202,8 @@ public class ImageActivity extends AppCompatActivity {
         if (pivParameters.isReplace()) {
             ViewResultsActivity.replacedPass = resultData.get(PivResultData.REPLACE2);
         }
-        ViewResultsActivity.calibrated = singlePassResult.getCalibrated();
+        ViewResultsActivity.calibrated = singlePassResult.isCalibrated();
+        ViewResultsActivity.backgroundSubtracted = singlePassResult.isBackgroundSubtracted();
 
         Intent displayIntent = new Intent(ImageActivity.this, ViewResultsActivity.class);
         displayIntent.putExtra(PivResultData.USERNAME, userName);
