@@ -1,12 +1,19 @@
 package com.onrpiv.uploadmedia.Utilities;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.github.chrisbanes.photoview.PhotoView;
+import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 import org.opencv.video.BackgroundSubtractor;
 import org.opencv.video.Video;
 
@@ -15,6 +22,10 @@ import java.util.Arrays;
 
 
 public class BackgroundSub {
+    public final static String BCKGRND_FILENAME = "BACKGROUND",
+    SUB1_FILENAME = "BACKSUB1", SUB2_FILENAME = "BACKSUB2",
+    FILE_EXTENSION = ".jpg";
+
     public static Mat[] doubleFrameSubtraction(Mat grayFrame1, Mat grayFrame2) {
         // M. Honkanen, H. Nobach; "Background extraction from double-frame PIV images"; 2005
 
@@ -48,28 +59,45 @@ public class BackgroundSub {
         return new Mat[] {frame1New, frame2New};
     }
 
-    public static void subtractBackground(File framesDir) {
-        subtract(framesDir);
+    public static Mat[] allFrameSubtraction(File framesDir, int frame1Index, int frame2Index) {
+        File[] frames = getFramesPaths(framesDir);
+        Mat background = calculateBackground(frames);
+        return subtract(frames, background, frame1Index, frame2Index);
     }
 
-    public static void subtractBackground(Context context, String username) {
-        // using this method will use the last created frames directory
-        int framesDirNum = PersistedData.getTotalFrameDirectories(context, username);
-        subtractBackground(context, username, framesDirNum);
+    public static void saveBackground(File framesDir) {
+        File[] frames = getFramesPaths(framesDir);
+        Mat background = calculateBackground(frames);
+        Imgcodecs.imwrite(new File(framesDir, BCKGRND_FILENAME+FILE_EXTENSION).getAbsolutePath(), background);
+        background.release();
     }
 
-    public static void subtractBackground(Context context, String username, int framesDirNum) {
-        File framesDir = PathUtil.getFramesNumberedDirectory(context, username, framesDirNum);
-        subtract(framesDir);
+    public static void showLatestBackground(Context context, String userName) {
+        int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName));
+        File framesNumDir = PathUtil.getFramesNumberedDirectory(context,
+                userName, totalFrameDirs);
+        Bitmap background = BitmapFactory.decodeFile(
+                new File(framesNumDir, BCKGRND_FILENAME+FILE_EXTENSION).getAbsolutePath());
+        Bitmap resizedBackground = PivFunctions.resizeBitmap(background, 600);
+        PhotoView backgroundImage = new PhotoView(context);
+        backgroundImage.setImageBitmap(resizedBackground);
+        new AlertDialog.Builder(context)
+                .setView(backgroundImage)
+                .setCancelable(false)
+                .setTitle("Video Extracted Background")
+                .setPositiveButton("Okay", null)
+                .show();
     }
 
-    private static void subtract(File framesDir) {
-        OpenCVLoader.initDebug();
-        BackgroundSubtractor backSub = Video.createBackgroundSubtractorMOG2();
-
+    private static File[] getFramesPaths(File framesDir) {
         File[] frames = framesDir.listFiles();
         Arrays.sort(frames);
+        return frames;
+    }
 
+    private static Mat calculateBackground(File[] frames) {
+        OpenCVLoader.initDebug();
+        BackgroundSubtractor backSub = Video.createBackgroundSubtractorMOG2();
         for (File frame : frames) {
             // read frame
             Mat frameMat = Imgcodecs.imread(frame.getAbsolutePath());
@@ -82,29 +110,41 @@ public class BackgroundSub {
             fg.release();
             frameMat.release();
         }
-
         // get the background model
         Mat background = new Mat();
         backSub.getBackgroundImage(background);
+        return background;
+    }
 
-        for (File frame : frames) {
-            // read frame
-            Mat frameMat = Imgcodecs.imread(frame.getAbsolutePath());
+    private static Mat[] subtract(File[] frames, Mat background, int frame1Index, int frame2Index) {
+        // zero index fix
+        frame1Index--;
+        frame2Index--;
 
-            // subtract the background model from the frame
-            Mat diffMat = new Mat();
-            Core.subtract(frameMat, background, diffMat);
+        // read in frames
+        Mat frame1Mat = Imgcodecs.imread(frames[frame1Index].getAbsolutePath());
+        Mat frame2Mat = Imgcodecs.imread(frames[frame2Index].getAbsolutePath());
 
-            // write the image over the original extracted frame
-            Imgcodecs.imwrite(frame.getAbsolutePath(), diffMat);
+        // subtract frames from background
+        Mat diff1 = new Mat();
+        Mat diff2 = new Mat();
+        Core.subtract(frame1Mat, background, diff1);
+        Core.subtract(frame2Mat, background, diff2);
 
-            // release our mats
-            frameMat.release();
-            diffMat.release();
-        }
+        // convert to grayscale
+        Mat grayDiff1 = new Mat(), grayDiff2 = new Mat();
+        Imgproc.cvtColor(diff1, grayDiff1, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.cvtColor(diff2, grayDiff2, Imgproc.COLOR_BGR2GRAY);
 
-        // save our background model to the frames video set dir
-        Imgcodecs.imwrite(new File(framesDir, "BACKGROUND.jpg").getAbsolutePath(), background);
-        background.release();
+        // store result
+        Mat[] backgroundSubtractedFrames = new Mat[]{grayDiff1, grayDiff2};
+
+        // release mats
+        frame1Mat.release();
+        frame2Mat.release();
+        diff1.release();
+        diff2.release();
+
+        return backgroundSubtractedFrames;
     }
 }

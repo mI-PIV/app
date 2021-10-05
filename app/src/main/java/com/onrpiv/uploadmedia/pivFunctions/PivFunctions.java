@@ -59,6 +59,8 @@ public class PivFunctions {
     private final File outputDirectory;
     private final String imageFileSaveName;
     private final String textFileSaveName;
+    private final String frame1Path;
+    private final String frame2Path;
 
     public PivFunctions(String imagePath1,
                         String imagePath2,
@@ -84,6 +86,8 @@ public class PivFunctions {
         this.outputDirectory = outputDirectory;
         this.imageFileSaveName = imageFileSaveName;
         this.textFileSaveName = textFileSaveName;
+        this.frame1Path = imagePath1;
+        this.frame2Path = imagePath2;
 
         windowSize = parameters.getWindowSize();
         overlap = parameters.getOverlap();
@@ -110,8 +114,18 @@ public class PivFunctions {
         return new int[]{nCols, nRows};
     }
 
-    public void framesSubtraction() {
-        Mat[] subtractedFrames = BackgroundSub.doubleFrameSubtraction(grayFrame1, grayFrame2);
+    public void framesSubtraction(int backgroundSubType, File frameDir, int frame1Idx, int frame2Idx) {
+        Mat[] subtractedFrames;
+
+        if (backgroundSubType == PivParameters.BACKGROUNDSUB_ALLFRAME) {
+            subtractedFrames = BackgroundSub.allFrameSubtraction(frameDir, frame1Idx, frame2Idx);
+        } else if (backgroundSubType == PivParameters.BACKGROUNDSUB_TWOFRAME) {
+            subtractedFrames = BackgroundSub.doubleFrameSubtraction(grayFrame1, grayFrame2);
+        } else {
+            // if we reach this then something bad happened, keep original gray frames
+            return;
+        }
+
         grayFrame1.release();
         grayFrame2.release();
         grayFrame1 = null;
@@ -119,6 +133,10 @@ public class PivFunctions {
 
         grayFrame1 = subtractedFrames[0];
         grayFrame2 = subtractedFrames[1];
+
+        // save frames for results page
+        saveImage(grayFrame1, BackgroundSub.SUB1_FILENAME);
+        saveImage(grayFrame2, BackgroundSub.SUB2_FILENAME);
     }
 
     private static Mat openCvPIV(Mat image, Mat template) {

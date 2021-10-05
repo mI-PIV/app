@@ -35,11 +35,11 @@ public class PivOptionsPopup extends AlertDialog {
     private final EditText dtText;
     private final EditText qMinText;
     private final EditText EText;
-    private final RadioGroup radioGroup;
+    private final RadioGroup replaceRadioGroup;
+    private final RadioGroup backSubRadioGroup;
     private final Button savePIVDataButton;
     private final Button cancelPIVDataButton;
     private final CheckBox advancedCheckbox;
-    private final CheckBox backgroundSubtractionCheckBox;
 
     public PivParameters parameters;
     private final ArrayList<View> hiddenViewList;
@@ -72,14 +72,14 @@ public class PivOptionsPopup extends AlertDialog {
         TextView e_text = (TextView) findViewById(R.id.E_text);
 
         TextView radioGroup_text = (TextView) findViewById(R.id.groupradio_text);
-        radioGroup = (RadioGroup) findViewById(R.id.groupradio);
+        replaceRadioGroup = (RadioGroup) findViewById(R.id.replace_radiogroup);
+        TextView bsRadioGroup_text = (TextView) findViewById(R.id.bs_radioText);
+        backSubRadioGroup = (RadioGroup) findViewById(R.id.bs_radiogroup);
 
         savePIVDataButton = findViewById(R.id.button_save_piv_data);
         cancelPIVDataButton = findViewById(R.id.button_cancel_piv_data);
         advancedCheckbox = findViewById(R.id.advancedCheckbox);
         advancedCheckbox.setChecked(false);
-        backgroundSubtractionCheckBox = findViewById(R.id.backsub_checkbox);
-        backgroundSubtractionCheckBox.setChecked(true);
 
         // lightbulbs
         final String linkText = "Learn More";
@@ -98,15 +98,15 @@ public class PivOptionsPopup extends AlertDialog {
         LightBulb eTextLB = new LightBulb(context, EText).setLightBulbOnClick("Median",
                 "Set a median threshold value of two. Increasing the median threshold value will result in a less stringent comparison and decreasing the median parameter will result in a more stringent comparison.",
                 new PIVBasics4(), linkText, getWindow());
-        LightBulb radioGroupLB = new LightBulb(context, radioGroup).setLightBulbOnClick("Replace Missing Vectors",
+        LightBulb radioGroupLB = new LightBulb(context, replaceRadioGroup).setLightBulbOnClick("Replace Missing Vectors",
                 "When would you choose yes vs no? \n\nYes: qualitative image analysis.\nNo: if you're using the vector data for further analysis.",
                 getWindow());
 
         // keep advanced views in list for easy iteration
         hiddenViewList = new ArrayList<View>(
                 Arrays.asList(
-                        dtText, dt_text, e_text, radioGroup_text, radioGroup, qMinText, qMin_text,
-                        EText, dtLB, qMinLB, eTextLB, radioGroupLB, backgroundSubtractionCheckBox
+                        dtText, dt_text, e_text, radioGroup_text, replaceRadioGroup, qMinText, qMin_text,
+                        EText, dtLB, qMinLB, eTextLB, radioGroupLB, backSubRadioGroup, bsRadioGroup_text
                 )
         );
 
@@ -125,7 +125,7 @@ public class PivOptionsPopup extends AlertDialog {
         dtText.setText(Double.toString(parameters.getDt()));
         qMinText.setText(Double.toString(parameters.getqMin()));
         EText.setText(Double.toString(parameters.getE()));
-        radioGroup.check(R.id.yesRadio);
+        replaceRadioGroup.check(R.id.yesRadio);
         savePIVDataButton.setEnabled(true);
 
         // load our ids to keys translation dictionary
@@ -177,8 +177,8 @@ public class PivOptionsPopup extends AlertDialog {
             }
         });
 
-        // Add the Listener to the RadioGroup
-        radioGroup.setOnCheckedChangeListener(
+        // Add the Listener to the replace RadioGroup
+        replaceRadioGroup.setOnCheckedChangeListener(
                 new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     // Check which radio button has been clicked
@@ -192,10 +192,20 @@ public class PivOptionsPopup extends AlertDialog {
                 });
 
         // Add listener for background subtract
-        backgroundSubtractionCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        backSubRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                parameters.setBackgroundSubtract(isChecked);
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.bs_frameset:
+                        parameters.setBackgroundSelection(PivParameters.BACKGROUNDSUB_ALLFRAME);
+                        break;
+                    case R.id.bs_twoframe:
+                        parameters.setBackgroundSelection(PivParameters.BACKGROUNDSUB_TWOFRAME);
+                        break;
+                    default:
+                        parameters.setBackgroundSelection(PivParameters.BACKGROUNDSUB_NONE);
+                        break;
+                }
                 savePIVDataButton.setEnabled(checkTexts());
             }
         });

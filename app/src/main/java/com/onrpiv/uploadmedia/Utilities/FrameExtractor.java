@@ -56,7 +56,7 @@ public class FrameExtractor {
 
                 // background subtraction
                 if (backSub)
-                    BackgroundSub.subtractBackground(framesNumDir);
+                    BackgroundSub.saveBackground(framesNumDir);
 
                 // call the activity's callback
                 successCallback.call();

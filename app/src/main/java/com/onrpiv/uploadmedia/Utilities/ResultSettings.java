@@ -16,7 +16,13 @@ public class ResultSettings {
             VEC_REPLACED="replaced",
             BACKGROUND="background",
             BACKGRND_SOLID="solid",
-            BACKGRND_IMG="image";
+            BACKGRND_IMG="image",
+            BACKGRND_SUB="bgsub";
+
+    public final static String
+            BCKGRND_SOLID_PRETTY="Solid Color",
+            BCKGRND_FRAME_PRETTY="Frame",
+            BCKGRND_SUB_PRETTY="Background Subtracted";
 
     public boolean vecFieldChanged = false;
     public boolean vortMapChanged = false;
