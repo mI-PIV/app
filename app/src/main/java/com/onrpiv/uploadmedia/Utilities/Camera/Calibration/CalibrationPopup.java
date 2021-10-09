@@ -23,10 +23,13 @@ import java.io.ObjectOutputStream;
 
 
 public class CalibrationPopup {
+    private final Context context;
+    private final ActivityResultLauncher<String> cameraLauncher;
     private boolean tryAgain = false;
 
     public CalibrationPopup(Context context, String userName, ActivityResultRegistry resultRegistry) {
-        ActivityResultLauncher<String> getCalibrationImage = resultRegistry.register("calibrationImage",
+        this.context = context;
+        cameraLauncher = resultRegistry.register("calibrationImage",
                 new ActivityResultContracts.GetContent(),
                 new ActivityResultCallback<Uri>() {
                     @Override
@@ -80,11 +83,9 @@ public class CalibrationPopup {
                         PersistedData.setTotalCalibrations(context, userName, newCalibrationNumber);
                     }
                 });
-
-        popup(context, getCalibrationImage);
     }
 
-    private void popup(Context context, ActivityResultLauncher<String> cameraLauncher) {
+    public void show() {
         new AlertDialog.Builder(context)
             .setMessage("Camera Calibration")
             .setNeutralButton("Take Calibration Picture", new DialogInterface.OnClickListener() {
