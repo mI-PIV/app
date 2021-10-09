@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.onrpiv.uploadmedia.R;
-import com.onrpiv.uploadmedia.Utilities.Camera.CameraCalibration;
 import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
@@ -84,15 +83,6 @@ public class PivRunner {
 
                 // Save first frame for output base image
                 pivFunctions.saveBaseImage("Base");
-
-                setMessage("Calculating Pixels per Metric");
-                CameraCalibration calibration = new CameraCalibration(context);
-                double pixelToCmRatio = calibration.calibrate(frame1File.getAbsolutePath(), frame2File.getAbsolutePath());
-                if (calibration.foundTriangle) {
-                    pivFunctions.saveVectorCentimeters(singlePassResult, pixelToCmRatio, "CENTIMETERS");
-                } else {
-                    singlePassResult.setCalibrated(false);
-                }
 
                 setMessage("Calculating single pass vorticity");
                 String vortStep = "Vorticity";
