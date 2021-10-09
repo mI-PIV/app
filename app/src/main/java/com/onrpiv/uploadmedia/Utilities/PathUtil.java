@@ -245,6 +245,11 @@ public class PathUtil {
         return checkDir(result);
     }
 
+    public static File getCameraCalibrationDirectory(Context context, String userName) {
+        File result = new File(getUserDirectory(context, userName), "CameraCalibrations");
+        return checkDir(result);
+    }
+
     public static String getExperimentImageFileSuffix(int currentExperiment) {
         return "_Experiment_" + currentExperiment + ".png";
     }
