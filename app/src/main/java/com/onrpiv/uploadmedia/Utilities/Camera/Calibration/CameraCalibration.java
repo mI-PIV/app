@@ -1,4 +1,4 @@
-package com.onrpiv.uploadmedia.Utilities.Camera;
+package com.onrpiv.uploadmedia.Utilities.Camera.Calibration;
 
 import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
@@ -7,10 +7,7 @@ import android.hardware.camera2.CameraManager;
 import android.os.Build;
 
 import org.opencv.android.OpenCVLoader;
-import org.opencv.calib3d.Calib3d;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
@@ -26,78 +23,37 @@ import java.util.List;
 //https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
 //https://docs.opencv.org/3.4/javadoc/org/opencv/calib3d/Calib3d.html
 public final class CameraCalibration {
-    private final static int patternRows = 21;
-    private final static int patternCols = 27;
     private final static int physicalLineLength = 300;  // The triangle's lines are 300 pixels long on a 8x11 paper
 
-    //https://docs.opencv.org/master/d9/d0c/group__calib3d.html#ga687a1ab946686f0d85ae0363b5af1d7b
-    private Mat cameraMatrix = new Mat();                 // Calibration input/output of 3x3 camera intrinsic matrix
-    private MatOfDouble distCoeffs = new MatOfDouble();   // Calibration output of distortion coefficients
-    private Mat frame1;
-    private Mat frame2;
-
-    public boolean foundTriangle = false;
-
-
-    public CameraCalibration(Context context) {
+    public static double calculatePixelToPhysicalRatio(String calibrationImagePath) {
         OpenCVLoader.initDebug();
 
-        Mat.eye(3, 3, CvType.CV_64FC1).copyTo(cameraMatrix);
-        Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distCoeffs);
-
-        getCameraProperties(context);
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        cameraMatrix.release();
-        distCoeffs.release();
-        frame1.release();
-        frame2.release();
-    }
-
-    /**
-     * Tries to find a triangle calibration pattern, calculates and returns the pixels per centimeter.
-     * Will return 1.0 if no triangle calibration pattern found.
-     * @param calibrationImagePath1: Path to first image that might have a circle grid pattern.
-     * @param calibrationImagePath2: Path to second image that might have a circle grid pattern.
-     * @return pixel to centimeter ratio for both frames
-     */
-    public double calibrate(String calibrationImagePath1, String calibrationImagePath2) {
-        OpenCVLoader.initDebug();
-
-        frame1 = Imgcodecs.imread(calibrationImagePath1);
-        frame2 = Imgcodecs.imread(calibrationImagePath2);
+        Mat frame1 = Imgcodecs.imread(calibrationImagePath);
         Imgproc.cvtColor(frame1, frame1, Imgproc.COLOR_BGR2GRAY);
-        Imgproc.cvtColor(frame2, frame2, Imgproc.COLOR_BGR2GRAY);
 
         Mat frame1Quad = getTopRightQuadrant(frame1);
-        Mat frame2Quad = getTopRightQuadrant(frame2);
+        double pixelCMRatio = findTriangle(frame1Quad);
 
-        double pixelCMRatio1 = findTriangle(frame1Quad);
-        double pixelCMRatio2 = findTriangle(frame2Quad);
-
-        //clean up mats
+        //cleanup mats
+        frame1.release();
         frame1Quad.release();
-        frame2Quad.release();
 
-        return (pixelCMRatio1 + pixelCMRatio2) / 2;
+        return pixelCMRatio;
     }
 
     /**
      * Undistort a single image using stored member variables found with calibrate() function.
      */
-    public Mat undistortImage() {
-        // TODO try with a 0 alpha parameter
-        // TODO also try without this
-        cameraMatrix = Calib3d.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, frame1.size(), 1);
-        Mat result = new Mat();
-        Imgproc.undistort(frame1, result, cameraMatrix, distCoeffs);
-        return result;
-    }
+//    public Mat undistortImage() {
+//        // TODO try with a 0 alpha parameter
+//        // TODO also try without this
+//        cameraMatrix = Calib3d.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, frame1.size(), 1);
+//        Mat result = new Mat();
+//        Imgproc.undistort(frame1, result, cameraMatrix, distCoeffs);
+//        return result;
+//    }
 
-    private Mat getTopRightQuadrant(Mat img) {
+    private static Mat getTopRightQuadrant(Mat img) {
         Size origSize = img.size();
         double midY = origSize.height/2;
         double midX = origSize.width/2;
@@ -108,7 +64,7 @@ public final class CameraCalibration {
         return img.submat(topRightQuad);
     }
 
-    private void getCameraProperties(Context context) {
+    public static void saveCameraProperties(Context context, Mat cameraMatrix, Mat distCoeffs) {
         CameraManager cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
         float[] intrinsicValues;
         float[] distortionValues;
@@ -158,11 +114,11 @@ public final class CameraCalibration {
         }
     }
 
-    private double findTriangle(Mat calibrationImage) {
+    private static double findTriangle(Mat calibrationImage) {
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Mat edges = new Mat();
-        double result = 1d;
+        double result = -1d;
 
         // blur before edge detection to filter out smaller particles
         Imgproc.blur(calibrationImage, calibrationImage, new Size(3, 3));
@@ -182,7 +138,6 @@ public final class CameraCalibration {
                 double d3 = euclidean(points.get(2), points.get(0));
                 if (compareDistances(d1, d2, d3)) {
                     // Our triangle was found, now we just need to calculate pixels per metric
-                    foundTriangle = true;
                     result = calcPixelsPerCentimeter(d1, d2, d3);
 
                     //cleanup mats
@@ -206,28 +161,9 @@ public final class CameraCalibration {
         return result;
     }
 
-    private double calcPixelsPerCentimeter(double d1, double d2, double d3) {
+    private static double calcPixelsPerCentimeter(double d1, double d2, double d3) {
         double averageLength = (d1 + d2 + d3)/3;
         return averageLength/physicalLineLength;
-    }
-
-    private Mat createPatternImagePoints3D() {
-        Mat result = new Mat(patternRows*patternCols, 1, CvType.CV_32FC3);
-
-        for (int row = 0; row < patternRows; row++) {
-            for (int col = 0; col < patternCols; col++) {
-
-                // 2D to 1D indexing
-                int index = row * patternCols + col;
-
-                // When our calibration pattern is printed on an 8.5 x 11 paper,
-                // then the center of the circles will be exactly 1 cm apart from each other,
-                // both in terms of width and height
-                result.put(index, 0, new float[] {(float)(row), (float)(col), 0f});
-                // This means our output from solvePnP will be in terms of centimeters.
-            }
-        }
-        return result;
     }
 
     private static double euclidean(Point a, Point b) {
@@ -248,12 +184,5 @@ public final class CameraCalibration {
             result = true;
         }
         return result;
-    }
-
-    public Mat getCameraMatrix() {
-        return cameraMatrix;
-    }
-    public Mat getDistortionCoeffs() {
-        return distCoeffs;
     }
 }
