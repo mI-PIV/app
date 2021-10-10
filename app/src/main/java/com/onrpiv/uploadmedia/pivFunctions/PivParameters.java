@@ -2,6 +2,8 @@ package com.onrpiv.uploadmedia.pivFunctions;
 
 import androidx.collection.ArrayMap;
 
+import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibrationResult;
+
 import java.io.Serializable;
 
 public class PivParameters implements Serializable {
@@ -9,6 +11,7 @@ public class PivParameters implements Serializable {
     private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.3, dt = 1.0, E = 2.0;
     private boolean replace = true;
     private int backgroundSelection = -1;
+    private CameraCalibrationResult cameraCalibrationResult;
 
     public final static int BACKGROUNDSUB_NONE = -1,
             BACKGROUNDSUB_TWOFRAME = 0, BACKGROUNDSUB_ALLFRAME = 1;
@@ -172,6 +175,14 @@ public class PivParameters implements Serializable {
 
     public int getFrame2Index(){
         return frameTwo;
+    }
+
+    public CameraCalibrationResult getCameraCalibrationResult() {
+        return cameraCalibrationResult;
+    }
+
+    public void setCameraCalibration(CameraCalibrationResult cameraCalibration) {
+        cameraCalibrationResult = cameraCalibration;
     }
 
     public String prettyPrintData() {

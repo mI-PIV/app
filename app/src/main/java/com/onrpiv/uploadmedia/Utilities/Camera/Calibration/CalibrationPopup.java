@@ -78,9 +78,12 @@ public class CalibrationPopup {
                         SimpleDateFormat df = new SimpleDateFormat("ddMMMyyyy", Locale.getDefault());
 
                         try {
-                            FileOutputStream fout = new FileOutputStream(new File(calibrationDir, "Calibration" + newCalibrationNumber + "." + df.format(date) + ".obj"));
+                            FileOutputStream fout = new FileOutputStream(new File(calibrationDir,
+                                    "Calibration." + newCalibrationNumber + "." + df.format(date) + ".obj"));
                             ObjectOutputStream oos = new ObjectOutputStream(fout);
                             oos.writeObject(ccResult);
+                            fout.close();
+                            oos.close();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
