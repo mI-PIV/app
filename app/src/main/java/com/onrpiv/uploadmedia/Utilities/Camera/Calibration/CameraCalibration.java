@@ -31,12 +31,10 @@ public final class CameraCalibration {
         Mat frame1 = Imgcodecs.imread(calibrationImagePath);
         Imgproc.cvtColor(frame1, frame1, Imgproc.COLOR_BGR2GRAY);
 
-        Mat frame1Quad = getTopRightQuadrant(frame1);
-        double pixelCMRatio = findTriangle(frame1Quad);
+        double pixelCMRatio = findTriangle(frame1);
 
         //cleanup mats
         frame1.release();
-        frame1Quad.release();
 
         return pixelCMRatio;
     }
@@ -172,7 +170,7 @@ public final class CameraCalibration {
 
     private static boolean compareDistances(double d1, double d2, double d3) {
         boolean result = false;
-        double tolerance = 0.05;
+        double tolerance = 0.5;
 
         // Because we don't know how close/far our triangle is, we have to compare based on
         // ratios and not on a static number.
