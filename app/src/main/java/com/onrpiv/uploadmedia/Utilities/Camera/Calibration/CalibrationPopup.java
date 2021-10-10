@@ -20,6 +20,10 @@ import org.opencv.core.MatOfDouble;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class CalibrationPopup {
@@ -70,9 +74,11 @@ public class CalibrationPopup {
                         // save calibration
                         int newCalibrationNumber = PersistedData.getTotalCalibrations(context, userName) + 1;
                         File calibrationDir = PathUtil.getCameraCalibrationDirectory(context, userName);
+                        Date date = Calendar.getInstance().getTime();
+                        SimpleDateFormat df = new SimpleDateFormat("ddMMMyyyy", Locale.getDefault());
 
                         try {
-                            FileOutputStream fout = new FileOutputStream(new File(calibrationDir, "Calibration" + newCalibrationNumber + ".obj"));
+                            FileOutputStream fout = new FileOutputStream(new File(calibrationDir, "Calibration" + newCalibrationNumber + "." + df.format(date) + ".obj"));
                             ObjectOutputStream oos = new ObjectOutputStream(fout);
                             oos.writeObject(ccResult);
                         } catch (Exception e) {
