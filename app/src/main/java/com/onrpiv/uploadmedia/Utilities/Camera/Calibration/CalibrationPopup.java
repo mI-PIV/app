@@ -56,11 +56,14 @@ public class CalibrationPopup {
                             .setPositiveButton("Okay", null)
                             .create().show();
                 } else {
-                    ccResult.cameraMatrix = new Mat();
-                    ccResult.distanceCoefficients = new MatOfDouble();
-                    Mat.eye(3, 3, CvType.CV_64FC1).copyTo(ccResult.cameraMatrix);
-                    Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(ccResult.distanceCoefficients);
-                    CameraCalibration.saveCameraProperties(context, ccResult.cameraMatrix, ccResult.distanceCoefficients);
+                    Mat cameraMatrix = new Mat();
+                    Mat distanceCoefficients = new MatOfDouble();
+                    Mat.eye(3, 3, CvType.CV_64FC1).copyTo(cameraMatrix);
+                    Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distanceCoefficients);
+                    CameraCalibration.saveCameraProperties(context, cameraMatrix, distanceCoefficients);
+
+                    ccResult.saveCameraMatrix(cameraMatrix);
+                    ccResult.saveDistanceCoeffs(distanceCoefficients);
 
                     // save calibration
                     int newCalibrationNumber = PersistedData.getTotalCalibrations(context, userName) + 1;
