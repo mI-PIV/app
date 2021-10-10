@@ -1,5 +1,7 @@
 package com.onrpiv.uploadmedia.Utilities.Camera.Calibration;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -42,45 +44,74 @@ public class CalibrationPopup {
             public void onActivityResult(Boolean result) {
                 String imagePath = PathUtil.getTempFilePath(context);
 
-                // calculate calibration
-                CameraCalibrationResult ccResult = new CameraCalibrationResult();
+                ProgressDialog pDialog = new ProgressDialog(context);
+                pDialog.setMessage("Searching for calibration pattern...");
+                pDialog.setCancelable(false);
+                if (!pDialog.isShowing())
+                    pDialog.show();
 
-                ccResult.ratio = CameraCalibration.calculatePixelToPhysicalRatio(imagePath);
+                Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+                        // calculate calibration
+                        CameraCalibrationResult ccResult = new CameraCalibrationResult();
 
-                // check to see if calibration pattern was found
-                if (ccResult.ratio == -1d) {
-                    new AlertDialog.Builder(context)
-                            .setMessage("Couldn't find a calibration pattern. Please make sure " +
-                                    "the calibration pattern is completely visible in " +
-                                    "the photo and try again.")
-                            .setPositiveButton("Okay", null)
-                            .create().show();
-                } else {
-                    Mat cameraMatrix = new Mat();
-                    Mat distanceCoefficients = new MatOfDouble();
-                    Mat.eye(3, 3, CvType.CV_64FC1).copyTo(cameraMatrix);
-                    Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distanceCoefficients);
-                    CameraCalibration.saveCameraProperties(context, cameraMatrix, distanceCoefficients);
+                        ccResult.ratio = CameraCalibration.calculatePixelToPhysicalRatio(imagePath);
 
-                    ccResult.saveCameraMatrix(cameraMatrix);
-                    ccResult.saveDistanceCoeffs(distanceCoefficients);
+                        // check to see if calibration pattern was found
+                        if (ccResult.ratio == -1d) {
+                            new AlertDialog.Builder(context)
+                                    .setMessage("Couldn't find a calibration pattern. Please make sure " +
+                                            "the calibration pattern is completely visible in " +
+                                            "the photo and try again.")
+                                    .setPositiveButton("Okay", null)
+                                    .create().show();
+                        } else {
+                            CalibrationPopup.setMessage("Calibration pattern found. Calculating camera matrices...",
+                                    context, pDialog);
+                            Mat cameraMatrix = new Mat();
+                            Mat distanceCoefficients = new MatOfDouble();
+                            Mat.eye(3, 3, CvType.CV_64FC1).copyTo(cameraMatrix);
+                            Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distanceCoefficients);
+                            CameraCalibration.saveCameraProperties(context, cameraMatrix, distanceCoefficients);
 
-                    // save calibration
-                    int newCalibrationNumber = PersistedData.getTotalCalibrations(context, userName) + 1;
-                    File calibrationDir = PathUtil.getCameraCalibrationDirectory(context, userName);
-                    Date date = Calendar.getInstance().getTime();
-                    SimpleDateFormat df = new SimpleDateFormat("ddMMMyyyy", Locale.getDefault());
+                            CalibrationPopup.setMessage("Saving camera calibration...",
+                                    context, pDialog);
+                            ccResult.saveCameraMatrix(cameraMatrix);
+                            ccResult.saveDistanceCoeffs(distanceCoefficients);
 
-                    FileIO.write(ccResult, new File(calibrationDir,
-                            "Calibration." + newCalibrationNumber + "." + df.format(date) + ".obj"));
+                            // save calibration
+                            int newCalibrationNumber = PersistedData.getTotalCalibrations(context, userName) + 1;
+                            File calibrationDir = PathUtil.getCameraCalibrationDirectory(context, userName);
+                            Date date = Calendar.getInstance().getTime();
+                            SimpleDateFormat df = new SimpleDateFormat("ddMMMyyyy", Locale.getDefault());
 
-                    // save the new calibration number
-                    PersistedData.setTotalCalibrations(context, userName, newCalibrationNumber);
-                }
+                            FileIO.write(ccResult, new File(calibrationDir,
+                                    "Calibration." + newCalibrationNumber + "." + df.format(date) + ".obj"));
 
-                // delete temp calibration image
-                PathUtil.deleteIfTempFile(context, imagePath);
+                            // save the new calibration number
+                            PersistedData.setTotalCalibrations(context, userName, newCalibrationNumber);
+                        }
+
+                        // delete temp calibration image
+                        PathUtil.deleteIfTempFile(context, imagePath);
+
+                        if (pDialog.isShowing())
+                            pDialog.dismiss();
+                    }
+                };
+                thread.start();
             }
         };
+    }
+
+    public static void setMessage(String msg, Context context, ProgressDialog pDialog) {
+        Activity activity = (Activity) context;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                pDialog.setMessage(msg);
+            }
+        });
     }
 }
