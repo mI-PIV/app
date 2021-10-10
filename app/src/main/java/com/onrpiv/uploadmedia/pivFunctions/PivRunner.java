@@ -84,6 +84,13 @@ public class PivRunner {
                 // Save first frame for output base image
                 pivFunctions.saveBaseImage("Base");
 
+                if (parameters.getCameraCalibrationResult() != null) {
+                    setMessage("Applying Camera Calibration");
+                    pivFunctions.saveVectorCentimeters(singlePassResult,
+                            parameters.getCameraCalibrationResult().ratio, "CENTIMETERS");
+                    singlePassResult.setCalibrated(true);
+                }
+
                 setMessage("Calculating single pass vorticity");
                 String vortStep = "Vorticity";
                 PivFunctions.calculateVorticityMap(singlePassResult);
