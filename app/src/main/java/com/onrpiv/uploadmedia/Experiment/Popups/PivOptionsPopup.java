@@ -240,14 +240,17 @@ public class PivOptionsPopup extends AlertDialog {
 
                     // reload the spinner list (with newly created calibration)
                     calibrationSpinner.setAdapter(createCalibrationSpinnerAdapter(context, calibrationNamesMap));
-                    return;
-                }
 
-                // set the camera calibration in the parameters
-                CameraCalibrationResult calibrationResult =
-                        CameraCalibrationResult.loadCalibrationByName(
-                                context, userName, calibrationNamesMap.get(selected));
-                parameters.setCameraCalibration(calibrationResult);
+                } else if (selected.equals("None")) {
+                    parameters.setCameraCalibration(null);
+
+                } else {
+                    // set the camera calibration in the parameters
+                    CameraCalibrationResult calibrationResult =
+                            CameraCalibrationResult.loadCalibrationByName(
+                                    context, userName, calibrationNamesMap.get(selected));
+                    parameters.setCameraCalibration(calibrationResult);
+                }
             }
 
             @Override
@@ -293,6 +296,7 @@ public class PivOptionsPopup extends AlertDialog {
                                                                  ArrayMap<String, String> calibrationNamesMap) {
 
         List<String> calibrationSpinnerOptions = new ArrayList<>(calibrationNamesMap.keySet());
+        calibrationSpinnerOptions.add("None");
         calibrationSpinnerOptions.add("Create New Calibration");
 
         return new ArrayAdapter<>(context,
