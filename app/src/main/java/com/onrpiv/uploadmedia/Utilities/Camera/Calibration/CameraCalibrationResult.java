@@ -16,6 +16,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class CameraCalibrationResult implements Serializable {
+    private static final long serialVersionUID = 5257095847490394137L;
+
     public double ratio;
     private double[][] cameraMatrix;
     private double[][] distanceCoefficients;
