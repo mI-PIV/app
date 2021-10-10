@@ -34,10 +34,19 @@
         android:textColor="#FFFFFF" />
 
     <Button
+        android:id="@+id/main_create_calibration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_load_exp_btn"
+        android:backgroundTint="#243EDF"
+        android:text="Create Camera Calibration"
+        android:textColor="#FFFFFF" />
+
+    <Button
         android:id="@+id/userSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/main_load_exp_btn"
+        android:layout_below="@id/main_create_calibration"
         android:backgroundTint="#243EDF"
         android:text="User Settings"
         android:textColor="#FFFFFF" />

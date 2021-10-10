@@ -7,7 +7,8 @@ public class PersistedData {
     final static private String
             FRAME_DIRECTORY_NUMBER = "framesDirNum",
             FPS = "fps",
-            EXPERIMENT_NUMBER = "experimentNumber";
+            EXPERIMENT_NUMBER = "experimentNumber",
+            CALIBRATION_NUMBER = "calibrationNumber";
 
     public static String getSharedPreferencesName(String userName) {
         return "miPIV_" + userName;
@@ -35,6 +36,14 @@ public class PersistedData {
 
     public static void setTotalExperiments(Context context, String userName, int totalExpDirs) {
         getPersistedData(context, userName).edit().putInt(EXPERIMENT_NUMBER, totalExpDirs).apply();
+    }
+
+    public static int getTotalCalibrations(Context context, String userName) {
+        return getPersistedData(context, userName).getInt(CALIBRATION_NUMBER, 0);
+    }
+
+    public static void setTotalCalibrations(Context context, String userName, int totalCalibrations) {
+        getPersistedData(context, userName).edit().putInt(CALIBRATION_NUMBER, totalCalibrations).apply();
     }
 
     public static void setFrameDirFPS(Context context, String userName, int frameDir, int fps) {

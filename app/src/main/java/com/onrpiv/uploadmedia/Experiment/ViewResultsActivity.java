@@ -10,7 +10,6 @@ import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_REPLACED;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -124,11 +123,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         if (!replaced) {
             RadioButton replacedRadioButton = findViewById(R.id.replace);
             replacedRadioButton.setVisibility(View.GONE);
-        }
-
-        // calibration popup
-        if (!calibrated) {
-            calibrationPopup(ViewResultsActivity.this);
         }
 
         // load our maps and settings
@@ -656,13 +650,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
             alertDialogParameters.show();
         }
-    }
-
-    private void calibrationPopup(Context context) {
-        new AlertDialog.Builder(context)
-                .setMessage("No calibration pattern was found.")
-                .setPositiveButton("Continue", null)
-                .show();
     }
 
     @Override

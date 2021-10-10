@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -22,6 +23,9 @@ import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -29,6 +33,7 @@ import androidx.core.content.ContextCompat;
 import com.onrpiv.uploadmedia.Experiment.Popups.LoadExperimentPopup;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
+import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CalibrationPopup;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
@@ -47,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button saveUserDataButton = null;
     // Click this button to cancel edit user data.
     private Button cancelUserDataButton = null;
+    private ActivityResultLauncher<Uri> takePhotoLauncher;
+
     public static String userName = null;
     public static boolean showBackground = false;
 
@@ -61,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         video = (Button) findViewById(R.id.video);
         Button userSettings = (Button) findViewById(R.id.userSettings);
         Button loadExpBtn = (Button) findViewById(R.id.main_load_exp_btn);
+        Button cameraCalibBtn = (Button) findViewById(R.id.main_create_calibration);
 
         if (null == userName || userName.isEmpty())
             userNameDialog();
@@ -80,6 +88,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         video.setOnClickListener(this);
         userSettings.setOnClickListener(this);
         loadExpBtn.setOnClickListener(this);
+        cameraCalibBtn.setOnClickListener(this);
+
+        // camera calibration popup
+        ActivityResultCallback<Boolean> takePhotoResultCallback = CalibrationPopup.getResultCallback(MainActivity.this, userName);
+        takePhotoLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), takePhotoResultCallback);
     }
 
     @Override
@@ -157,6 +170,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (userName != null && !userName.isEmpty()) {
                     LoadExperimentPopup loadExpPopup = new LoadExperimentPopup(this, userName);
                     loadExpPopup.show();
+                } else {
+                    Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
+                    userNameDialog();
+                }
+                break;
+            case R.id.main_create_calibration:
+                if (userName != null && !userName.isEmpty()) {
+                    CalibrationPopup.show(MainActivity.this, takePhotoLauncher);
                 } else {
                     Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
                     userNameDialog();
