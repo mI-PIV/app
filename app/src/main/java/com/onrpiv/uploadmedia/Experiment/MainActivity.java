@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -22,6 +23,9 @@ import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -48,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button saveUserDataButton = null;
     // Click this button to cancel edit user data.
     private Button cancelUserDataButton = null;
+    private ActivityResultLauncher<Uri> takePhotoLauncher;
+
     public static String userName = null;
     public static boolean showBackground = false;
 
@@ -83,6 +89,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userSettings.setOnClickListener(this);
         loadExpBtn.setOnClickListener(this);
         cameraCalibBtn.setOnClickListener(this);
+
+        // camera calibration popup
+        ActivityResultCallback<Boolean> takePhotoResultCallback = CalibrationPopup.getResultCallback(MainActivity.this, userName);
+        takePhotoLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), takePhotoResultCallback);
     }
 
     @Override
@@ -167,8 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.main_create_calibration:
                 if (userName != null && !userName.isEmpty()) {
-                    CalibrationPopup calibPopup = new CalibrationPopup(this, userName, getActivityResultRegistry());
-                    calibPopup.show();
+                    CalibrationPopup.show(MainActivity.this, takePhotoLauncher);
                 } else {
                     Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
                     userNameDialog();
