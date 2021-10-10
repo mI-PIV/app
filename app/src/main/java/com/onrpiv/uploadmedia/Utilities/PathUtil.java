@@ -17,6 +17,10 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import androidx.core.content.FileProvider;
+
+import com.onrpiv.uploadmedia.BuildConfig;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -316,7 +320,7 @@ public class PathUtil {
      * @return True if temp file and deleted successfully, otherwise False.
      */
     public static boolean deleteIfTempFile(Context context, String path) {
-        File tempFile = new File(context.getApplicationInfo().dataDir, "tempFile");
+        File tempFile = new File(context.getExternalFilesDir(null), "tempFile");
         boolean result = false;
 
         if (tempFile.getAbsolutePath().equals(path)) {
@@ -324,6 +328,16 @@ public class PathUtil {
         }
 
         return result;
+    }
+
+    public static Uri getTempFileUri(Context context) {
+        return FileProvider.getUriForFile(context,
+                BuildConfig.APPLICATION_ID + ".provider",
+                new File(context.getExternalFilesDir(null), "tempFile"));
+    }
+
+    public static String getTempFilePath(Context context) {
+        return new File(context.getExternalFilesDir(null), "tempFile").getAbsolutePath();
     }
 
     /**
