@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat;
 import com.onrpiv.uploadmedia.Experiment.Popups.LoadExperimentPopup;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
+import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CalibrationPopup;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         video = (Button) findViewById(R.id.video);
         Button userSettings = (Button) findViewById(R.id.userSettings);
         Button loadExpBtn = (Button) findViewById(R.id.main_load_exp_btn);
+        Button cameraCalibBtn = (Button) findViewById(R.id.main_create_calibration);
 
         if (null == userName || userName.isEmpty())
             userNameDialog();
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         video.setOnClickListener(this);
         userSettings.setOnClickListener(this);
         loadExpBtn.setOnClickListener(this);
+        cameraCalibBtn.setOnClickListener(this);
     }
 
     @Override
@@ -157,6 +160,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (userName != null && !userName.isEmpty()) {
                     LoadExperimentPopup loadExpPopup = new LoadExperimentPopup(this, userName);
                     loadExpPopup.show();
+                } else {
+                    Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
+                    userNameDialog();
+                }
+                break;
+            case R.id.main_create_calibration:
+                if (userName != null && !userName.isEmpty()) {
+                    CalibrationPopup calibPopup = new CalibrationPopup(this, userName, getActivityResultRegistry());
+                    calibPopup.show();
                 } else {
                     Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
                     userNameDialog();
