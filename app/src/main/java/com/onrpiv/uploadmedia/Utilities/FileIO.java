@@ -52,8 +52,11 @@ public class FileIO {
 
     public static Object read(Context context, String userName, int experimentNumber, String fileName) {
         File inputFile = getFile(context, userName, experimentNumber, fileName);
-        Object object = null;
+        return read(inputFile);
+    }
 
+    public static Object read(File inputFile) {
+        Object object = null;
         try {
             FileInputStream f = new FileInputStream(inputFile);
             ObjectInputStream o = new ObjectInputStream(f);
@@ -67,9 +70,12 @@ public class FileIO {
         return object;
     }
 
-    private static void write(Object object, Context context, String userName, int experimentNumber, String fileName) {
+    public static void write(Object object, Context context, String userName, int experimentNumber, String fileName) {
         File outputFile = getFile(context, userName, experimentNumber, fileName);
+        write(object, outputFile);
+    }
 
+    public static void write(Object object, File outputFile) {
         try {
             FileOutputStream f = new FileOutputStream(outputFile);
             ObjectOutputStream o = new ObjectOutputStream(f);

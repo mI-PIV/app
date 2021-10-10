@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
 
+import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
@@ -16,8 +17,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,7 +51,7 @@ public class CalibrationPopup {
                 if (ccResult.ratio == -1d) {
                     new AlertDialog.Builder(context)
                             .setMessage("Couldn't find a calibration pattern. Please make sure " +
-                                    "the calibration pattern is in the top-right quadrant of " +
+                                    "the calibration pattern is completely visible in " +
                                     "the photo and try again.")
                             .setPositiveButton("Okay", null)
                             .create().show();
@@ -69,16 +68,8 @@ public class CalibrationPopup {
                     Date date = Calendar.getInstance().getTime();
                     SimpleDateFormat df = new SimpleDateFormat("ddMMMyyyy", Locale.getDefault());
 
-                    try {
-                        FileOutputStream fout = new FileOutputStream(new File(calibrationDir,
-                                "Calibration." + newCalibrationNumber + "." + df.format(date) + ".obj"));
-                        ObjectOutputStream oos = new ObjectOutputStream(fout);
-                        oos.writeObject(ccResult);
-                        fout.close();
-                        oos.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    FileIO.write(ccResult, new File(calibrationDir,
+                            "Calibration." + newCalibrationNumber + "." + df.format(date) + ".obj"));
 
                     // save the new calibration number
                     PersistedData.setTotalCalibrations(context, userName, newCalibrationNumber);
