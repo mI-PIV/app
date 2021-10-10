@@ -23,7 +23,6 @@ import com.onrpiv.uploadmedia.Learn.PIVBasics3;
 import com.onrpiv.uploadmedia.Learn.PIVBasics4;
 import com.onrpiv.uploadmedia.Learn.PIVBasics5;
 import com.onrpiv.uploadmedia.R;
-import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CalibrationPopup;
 import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibrationResult;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.Utilities.UserInput.BoolIntStructure;
@@ -232,18 +231,8 @@ public class PivOptionsPopup extends AlertDialog {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selected = (String) parent.getItemAtPosition(position);
-                if (selected.equals("Create New Calibration")) {
-                    // show the camera calibration popup
-                    CalibrationPopup calibrationPopup =
-                            new CalibrationPopup(context, userName, resultRegistry);
-                    calibrationPopup.show();
-
-                    // reload the spinner list (with newly created calibration)
-                    calibrationSpinner.setAdapter(createCalibrationSpinnerAdapter(context, calibrationNamesMap));
-
-                } else if (selected.equals("None")) {
+                if (selected.equals("None")) {
                     parameters.setCameraCalibration(null);
-
                 } else {
                     // set the camera calibration in the parameters
                     CameraCalibrationResult calibrationResult =
@@ -297,8 +286,6 @@ public class PivOptionsPopup extends AlertDialog {
 
         List<String> calibrationSpinnerOptions = new ArrayList<>(calibrationNamesMap.keySet());
         calibrationSpinnerOptions.add("None");
-        calibrationSpinnerOptions.add("Create New Calibration");
-
         return new ArrayAdapter<>(context,
                 R.layout.support_simple_spinner_dropdown_item, calibrationSpinnerOptions);
     }
