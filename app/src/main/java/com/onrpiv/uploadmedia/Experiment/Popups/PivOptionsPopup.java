@@ -86,6 +86,7 @@ public class PivOptionsPopup extends AlertDialog {
 
         TextView calibrationText = (TextView) findViewById(R.id.calibration_Text);
         calibrationSpinner = findViewById(R.id.calibration_spinner);
+        calibrationSpinner.setVisibility(View.GONE);
 
         savePIVDataButton = findViewById(R.id.button_save_piv_data);
         cancelPIVDataButton = findViewById(R.id.button_cancel_piv_data);
