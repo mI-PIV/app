@@ -5,13 +5,17 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultRegistry;
 import androidx.collection.ArrayMap;
 
 import com.onrpiv.uploadmedia.Learn.PIVBasics2;
@@ -19,6 +23,8 @@ import com.onrpiv.uploadmedia.Learn.PIVBasics3;
 import com.onrpiv.uploadmedia.Learn.PIVBasics4;
 import com.onrpiv.uploadmedia.Learn.PIVBasics5;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CalibrationPopup;
+import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibrationResult;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.Utilities.UserInput.BoolIntStructure;
 import com.onrpiv.uploadmedia.Utilities.UserInput.UserInputUtils;
@@ -26,6 +32,7 @@ import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -37,6 +44,7 @@ public class PivOptionsPopup extends AlertDialog {
     private final EditText EText;
     private final RadioGroup replaceRadioGroup;
     private final RadioGroup backSubRadioGroup;
+    private final Spinner calibrationSpinner;
     private final Button savePIVDataButton;
     private final Button cancelPIVDataButton;
     private final CheckBox advancedCheckbox;
@@ -47,7 +55,8 @@ public class PivOptionsPopup extends AlertDialog {
     private final ArrayMap<Integer, String> idToKey;
 
 
-    public PivOptionsPopup(final Context context, int frameSet, int frameOne, int frameTwo) {
+    public PivOptionsPopup(final Context context, String userName, int frameSet, int frameOne, int frameTwo,
+                           ActivityResultRegistry resultRegistry) {
         super(context);
         parameters = new PivParameters(frameSet, frameOne, frameTwo);
         idToKey = new ArrayMap<>();
@@ -75,6 +84,9 @@ public class PivOptionsPopup extends AlertDialog {
         replaceRadioGroup = (RadioGroup) findViewById(R.id.replace_radiogroup);
         TextView bsRadioGroup_text = (TextView) findViewById(R.id.bs_radioText);
         backSubRadioGroup = (RadioGroup) findViewById(R.id.bs_radiogroup);
+
+        TextView calibrationText = (TextView) findViewById(R.id.calibration_Text);
+        calibrationSpinner = findViewById(R.id.calibration_spinner);
 
         savePIVDataButton = findViewById(R.id.button_save_piv_data);
         cancelPIVDataButton = findViewById(R.id.button_cancel_piv_data);
@@ -106,7 +118,8 @@ public class PivOptionsPopup extends AlertDialog {
         hiddenViewList = new ArrayList<View>(
                 Arrays.asList(
                         dtText, dt_text, e_text, radioGroup_text, replaceRadioGroup, qMinText, qMin_text,
-                        EText, dtLB, qMinLB, eTextLB, radioGroupLB, backSubRadioGroup, bsRadioGroup_text
+                        EText, dtLB, qMinLB, eTextLB, radioGroupLB, backSubRadioGroup, bsRadioGroup_text,
+                        calibrationText, calibrationSpinner
                 )
         );
 
@@ -132,7 +145,7 @@ public class PivOptionsPopup extends AlertDialog {
         loadIdToKey();
 
         // set all listeners except save
-        setListeners();
+        setListeners(context, userName, resultRegistry);
     }
 
     public void setSaveListener(View.OnClickListener saveListener) {
@@ -145,7 +158,7 @@ public class PivOptionsPopup extends AlertDialog {
         dtText.setText(String.valueOf(dt));
     }
 
-    private void setListeners() {
+    private void setListeners(Context context, String userName, ActivityResultRegistry resultRegistry) {
         // Hide/Show advanced options
         advancedCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -210,6 +223,39 @@ public class PivOptionsPopup extends AlertDialog {
             }
         });
 
+        // Add listener and list adapter for camera calibration spinner
+        ArrayMap<String, String> calibrationNamesMap =
+                CameraCalibrationResult.getSavedCalibrationNamesMapping(context, userName);
+
+        calibrationSpinner.setAdapter(createCalibrationSpinnerAdapter(context, calibrationNamesMap));
+        calibrationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = (String) parent.getItemAtPosition(position);
+                if (selected.equals("Create New Calibration")) {
+                    // show the camera calibration popup
+                    CalibrationPopup calibrationPopup =
+                            new CalibrationPopup(context, userName, resultRegistry);
+                    calibrationPopup.show();
+
+                    // reload the spinner list (with newly created calibration)
+                    calibrationSpinner.setAdapter(createCalibrationSpinnerAdapter(context, calibrationNamesMap));
+                    return;
+                }
+
+                // set the camera calibration in the parameters
+                CameraCalibrationResult calibrationResult =
+                        CameraCalibrationResult.loadCalibrationByName(
+                                context, userName, calibrationNamesMap.get(selected));
+                parameters.setCameraCalibration(calibrationResult);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // EMPTY
+            }
+        });
+
         // cancel button
         cancelPIVDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -241,6 +287,16 @@ public class PivOptionsPopup extends AlertDialog {
                 }
             });
         }
+    }
+
+    private ArrayAdapter<String> createCalibrationSpinnerAdapter(Context context,
+                                                                 ArrayMap<String, String> calibrationNamesMap) {
+
+        List<String> calibrationSpinnerOptions = new ArrayList<>(calibrationNamesMap.keySet());
+        calibrationSpinnerOptions.add("Create New Calibration");
+
+        return new ArrayAdapter<>(context,
+                R.layout.support_simple_spinner_dropdown_item, calibrationSpinnerOptions);
     }
 
     private boolean checkTexts() {
