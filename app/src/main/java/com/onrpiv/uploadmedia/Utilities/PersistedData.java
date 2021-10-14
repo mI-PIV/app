@@ -38,14 +38,6 @@ public class PersistedData {
         getPersistedData(context, userName).edit().putInt(EXPERIMENT_NUMBER, totalExpDirs).apply();
     }
 
-//    public static int getTotalCalibrations(Context context, String userName) {
-//        return getPersistedData(context, userName).getInt(CALIBRATION_NUMBER, 0);
-//    }
-//
-//    public static void setTotalCalibrations(Context context, String userName, int totalCalibrations) {
-//        getPersistedData(context, userName).edit().putInt(CALIBRATION_NUMBER, totalCalibrations).apply();
-//    }
-
     public static void setFrameDirFPS(Context context, String userName, int frameDir, int fps) {
         getPersistedData(context, userName).edit().putInt(FPS+frameDir, fps).apply();
     }

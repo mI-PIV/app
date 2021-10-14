@@ -76,17 +76,8 @@ public class CalibrationPopup {
                             ccResult.saveDistanceCoeffs(distanceCoefficients);
 
                             // save calibration
-//                            int newCalibrationNumber = PersistedData.getTotalCalibrations(context, userName) + 1;
                             File calibrationSaveFile = new File(PathUtil.getUserDirectory(context, userName), "calibration.obj");
                             FileIO.write(ccResult, calibrationSaveFile);
-//                            Date date = Calendar.getInstance().getTime();
-//                            SimpleDateFormat df = new SimpleDateFormat("ddMMMyyyy", Locale.getDefault());
-
-//                            FileIO.write(ccResult, new File(calibrationDir,
-//                                    "Calibration." + newCalibrationNumber + "." + df.format(date) + ".obj"));
-
-                            // save the new calibration number
-//                            PersistedData.setTotalCalibrations(context, userName, newCalibrationNumber);
                         }
 
                         // delete temp calibration image

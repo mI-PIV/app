@@ -21,18 +21,7 @@ public class CameraCalibrationResult implements Serializable {
     private double[][] cameraMatrix;
     private double[][] distanceCoefficients;
 
-    public static String getSavedCalibrationPrettyPrint(Context context,
-                                                                           String userName) {
-//        ArrayMap<String, String> filenamesToPrettyPrint = new ArrayMap<>();
-//        File calibrationDir = PathUtil.getCameraCalibrationDirectory(context, userName);
-//        for (File calibrationFile : Objects.requireNonNull(calibrationDir.listFiles())) {
-//            String filename = calibrationFile.getName();
-//            String[] filenameArray = filename.split("\\.");
-//
-//            filenamesToPrettyPrint.put("#" + filenameArray[1] + ": " + filenameArray[2], filename);
-//        }
-//        return filenamesToPrettyPrint;
-
+    public static String getSavedCalibrationPrettyPrint(Context context, String userName) {
         File calibrationFile = new File(PathUtil.getUserDirectory(context, userName), "calibration.obj");
 
         String prettyName = null;
@@ -45,9 +34,6 @@ public class CameraCalibrationResult implements Serializable {
     }
 
     public static CameraCalibrationResult loadCalibration(Context context, String userName) {
-//        File calibrationDir = PathUtil.getCameraCalibrationDirectory(context, userName);
-//        File calibrationObjFile = new File(calibrationDir, calibrationFilename);
-//        return (CameraCalibrationResult) FileIO.read(calibrationObjFile);
         File calibrationFile = new File(PathUtil.getUserDirectory(context, userName), "calibration.obj");
         return (CameraCalibrationResult) FileIO.read(calibrationFile);
     }

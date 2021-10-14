@@ -40,9 +40,7 @@ public class PivOptionsPopup extends AlertDialog {
     private final EditText EText;
     private final RadioGroup replaceRadioGroup;
     private final RadioGroup backSubRadioGroup;
-//    private final Spinner calibrationSpinner;
     private final RadioGroup calibrationRadioGroup;
-    private final RadioButton calibrationRadioBtn;
     private final Button savePIVDataButton;
     private final Button cancelPIVDataButton;
     private final CheckBox advancedCheckbox;
@@ -86,16 +84,13 @@ public class PivOptionsPopup extends AlertDialog {
 
         TextView calibrationText = (TextView) findViewById(R.id.calibration_Text);
         calibrationRadioGroup = (RadioGroup) findViewById(R.id.calib_radio_group);
-        calibrationRadioBtn = (RadioButton) findViewById(R.id.calib_radio_calib);
+        RadioButton calibrationRadioBtn = (RadioButton) findViewById(R.id.calib_radio_calib);
         String calibString = CameraCalibrationResult.getSavedCalibrationPrettyPrint(context, userName);
         if (null == calibString) {
             calibrationRadioBtn.setVisibility(View.GONE);
         } else {
             calibrationRadioBtn.setText(calibString);
         }
-
-//        calibrationSpinner = findViewById(R.id.calibration_spinner);
-//        calibrationSpinner.setVisibility(View.GONE);
 
         savePIVDataButton = findViewById(R.id.button_save_piv_data);
         cancelPIVDataButton = findViewById(R.id.button_cancel_piv_data);
@@ -249,31 +244,6 @@ public class PivOptionsPopup extends AlertDialog {
             }
         });
 
-//        ArrayMap<String, String> calibrationNamesMap =
-//                CameraCalibrationResult.getSavedCalibrationNamesMapping(context, userName);
-//
-//        calibrationSpinner.setAdapter(createCalibrationSpinnerAdapter(context, calibrationNamesMap));
-//        calibrationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                String selected = (String) parent.getItemAtPosition(position);
-//                if (selected.equals("None")) {
-//                    parameters.setCameraCalibration(null);
-//                } else {
-//                    // set the camera calibration in the parameters
-//                    CameraCalibrationResult calibrationResult =
-//                            CameraCalibrationResult.loadCalibrationByName(
-//                                    context, userName, calibrationNamesMap.get(selected));
-//                    parameters.setCameraCalibration(calibrationResult);
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//                // EMPTY
-//            }
-//        });
-
         // cancel button
         cancelPIVDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -306,15 +276,6 @@ public class PivOptionsPopup extends AlertDialog {
             });
         }
     }
-
-//    private ArrayAdapter<String> createCalibrationSpinnerAdapter(Context context,
-//                                                                 ArrayMap<String, String> calibrationNamesMap) {
-//
-//        List<String> calibrationSpinnerOptions = new ArrayList<>(calibrationNamesMap.keySet());
-//        calibrationSpinnerOptions.add("None");
-//        return new ArrayAdapter<>(context,
-//                R.layout.support_simple_spinner_dropdown_item, calibrationSpinnerOptions);
-//    }
 
     private boolean checkTexts() {
         boolean basic = windowSizeText.getText().length() > 0
