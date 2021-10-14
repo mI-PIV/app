@@ -179,20 +179,16 @@ public class ResultSettings {
         calibrated = bool;
     }
 
-    public String formatInfoString_pixel(float x, float y, float su, float sv, float ru, float rv,
-                                   float mu, float mv, float vort) {
-        // TODO add the physical measurements
+    public String formatInfoString_pixel(float x, float y, float u, float v, float vort) {
         return "x: " + ((int) x) + "\t\t\t" + "y: " + ((int) y) +
-                "\nSingle Pass U: " + su + " px\t\t\t" + "Single Pass V: " + sv + " px" +
-                "\nReplacement U: " + ru + " px\t\t\t" + "Replacement V: " + rv + " px" +
-                "\nMulti-Pass U: " + mu + " px\t\t\t" + "Multi-Pass V: " + mv + " px" +
+                "\nU: " + u + " px\t\t\t" + "V: " + v + " px" +
                 "\nVorticity: " + vort;
     }
 
-    public String formatInfoString_physical(float x, float y, float su, float sv, float ru, float rv,
-                                            float mu, float mv, float vort) {
-        // TODO finish this
-        return "Work in progress.";
+    public String formatInfoString_physical(float x, float y, float u, float v, float vort) {
+        return "x: " + ((int) x) + "\t\t\t" + "y: " + ((int) y) +
+                "\nU: " + u + " cm\t\t\t" + "V: " + v + " cm" +
+                "\nVorticity: " + vort;
     }
 
     public String debugString(int pivX, int pivY, double imgX, double imgY, float viewX, float viewY) {
