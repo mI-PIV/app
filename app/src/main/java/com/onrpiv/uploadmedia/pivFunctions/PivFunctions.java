@@ -942,7 +942,15 @@ public class PivFunctions {
                 vortMap[r][c] = (((v[r][c + 1] - v[r][c - 1]) - (u[r + 1][c] - u[r - 1][c]))) / gap;
             }
         }
-        pivCorrelation.setVorticityValues(vortMap);
+        pivCorrelation.setVorticity(vortMap);
+    }
+
+    public int getFieldRows() {
+        return fieldRows;
+    }
+
+    public int getFieldCols() {
+        return fieldCols;
     }
 
     private static double[][] debugMat(Mat toDebug) {
