@@ -13,7 +13,8 @@ public class PivResultData implements Serializable {
     private double[][] _sig2noise;
     private double[] _interrX;
     private double[] _interrY;
-    private double[][] vorticityValues;
+    private double[][] _vort;
+    private double[][] _vort_calib;
     private final double _dt;
     private int rows;
     private int cols;
@@ -37,13 +38,13 @@ public class PivResultData implements Serializable {
                          double dt) {
         this.name = name;
         _dt = dt;
-        setU(u);
-        setV(v);
-        setMag(mag);
         _sig2noise = sig2noise;
         this.rows = rows;
         this.cols = cols;
         setInterrCenters(interrCenters);
+        setU(u);
+        setV(v);
+        setMag(mag);
     }
 
     public String getName() {
@@ -55,7 +56,6 @@ public class PivResultData implements Serializable {
     }
 
     public void setMag(double[][] magnitude) {
-        applyTimeDelta(magnitude);
         _mag = magnitude;
     }
 
@@ -72,7 +72,6 @@ public class PivResultData implements Serializable {
     }
 
     public void setU(double[][] u) {
-        applyTimeDelta(u);
         _u = u;
     }
 
@@ -81,7 +80,6 @@ public class PivResultData implements Serializable {
     }
 
     public void setV(double[][] v) {
-        applyTimeDelta(v);
         _v = v;
     }
 
@@ -113,9 +111,9 @@ public class PivResultData implements Serializable {
         return pixelToPhysicalRatio;
     }
 
-    public void setPixelToPhysicalRatio(double ratio) {
+    public void setPixelToPhysicalRatio(double ratio, int fieldRows, int fieldCols) {
         pixelToPhysicalRatio = ratio;
-        calculatePhysicalVectors();
+        calculatePhysicalVectors(fieldRows, fieldCols);
     }
 
     public String getPhysicalMetric() {
@@ -146,11 +144,15 @@ public class PivResultData implements Serializable {
     }
 
     public double[][] getVorticityValues() {
-        return vorticityValues;
+        return _vort;
     }
 
-    public void setVorticityValues(double[][] vorticityValues) {
-        this.vorticityValues = vorticityValues;
+    public void setVorticity(double[][] vort) {
+        _vort = vort;
+    }
+
+    public double[][] getCalibratedVorticity() {
+        return _vort_calib;
     }
 
     public int getRows() {
@@ -193,28 +195,27 @@ public class PivResultData implements Serializable {
         backgroundSubtracted = bool;
     }
 
-    private void calculatePhysicalVectors() {
-        int interrRows = _interrX.length;
-        int interrCols = _interrY.length;
+    private void calculatePhysicalVectors(int fieldRows, int fieldCols) {
+        _u_calib = new double[fieldRows][fieldCols];
+        _v_calib = new double[fieldRows][fieldCols];
+        _mag_calib = new double[fieldRows][fieldCols];
+        _vort_calib = new double[fieldRows][fieldCols];
 
-        _u_calib = new double[interrRows][interrCols];
-        _v_calib = new double[interrRows][interrCols];
-        _mag_calib = new double[interrRows][interrCols];
-
-        for (int i = 0; i < interrRows; i++) {
-            for (int j = 0; j < interrCols; j++) {
+        for (int i = 0; i < fieldRows; i++) {
+            for (int j = 0; j < fieldCols; j++) {
                 _u_calib[i][j] = _u[i][j] * pixelToPhysicalRatio;
                 _v_calib[i][j] = _v[i][j] * pixelToPhysicalRatio;
                 _mag_calib[i][j] = _mag[i][j] * pixelToPhysicalRatio;
+                _vort_calib[i][j] = _vort[i][j] * pixelToPhysicalRatio;
             }
         }
     }
 
-    private void applyTimeDelta(double[][] vectorComponent) {
-        for (int i = 0; i < _interrY.length; i++) {
-            for (int j = 0; j < _interrX.length; j++) {
-                vectorComponent[i][j] *= _dt;
-            }
-        }
-    }
+//    private void applyTimeDelta(double[][] vectorComponent) {
+//        for (int i = 0; i < _interrY.length; i++) {
+//            for (int j = 0; j < _interrX.length; j++) {
+//                vectorComponent[i][j] *= _dt;
+//            }
+//        }
+//    }
 }
