@@ -302,7 +302,7 @@ public class PivFunctions {
             }
         }
 
-        return new PivResultData(resultName, dc1, dr1, mag, sig2noise, getCoordinates(), cols, rows);
+        return new PivResultData(resultName, dc1, dr1, mag, sig2noise, getCoordinates(), cols, rows, dt);
     }
 
     public double[][] getCoordinates() {
@@ -744,7 +744,7 @@ public class PivFunctions {
         }
 
         return new PivResultData(resultName, dc1_p, dr1_p, mag_p,
-                singlePassResult.getSig2Noise(), getCoordinates(), cols, rows);
+                singlePassResult.getSig2Noise(), getCoordinates(), cols, rows, dt);
     }
 
     public PivResultData calculateMultipass(PivResultData pivResultData, String resultName) {
@@ -844,7 +844,7 @@ public class PivFunctions {
         }
 
         return new PivResultData(resultName, dc2, dr2, mag, sig2noise,
-                getCoordinates(), cols, rows);
+                getCoordinates(), cols, rows, dt);
     }
 
     public PivResultData replaceMissingVectors(PivResultData pivResultData, String resultName) {
@@ -888,7 +888,7 @@ public class PivFunctions {
         }
 
         return new PivResultData(resultName, dc2, dr2, mag, sig2noise,
-                getCoordinates(), cols, rows);
+                getCoordinates(), cols, rows, dt);
     }
 
     public static double cubicInterpolator(double[] values) {
