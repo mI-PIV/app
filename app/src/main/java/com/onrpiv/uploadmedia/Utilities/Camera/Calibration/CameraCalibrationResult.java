@@ -2,8 +2,6 @@ package com.onrpiv.uploadmedia.Utilities.Camera.Calibration;
 
 import android.content.Context;
 
-import androidx.collection.ArrayMap;
-
 import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 
@@ -13,7 +11,8 @@ import org.opencv.core.MatOfDouble;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Objects;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CameraCalibrationResult implements Serializable {
     private static final long serialVersionUID = 5257095847490394137L;
@@ -22,24 +21,35 @@ public class CameraCalibrationResult implements Serializable {
     private double[][] cameraMatrix;
     private double[][] distanceCoefficients;
 
-    public static ArrayMap<String, String> getSavedCalibrationNamesMapping(Context context,
+    public static String getSavedCalibrationPrettyPrint(Context context,
                                                                            String userName) {
-        ArrayMap<String, String> filenamesToPrettyPrint = new ArrayMap<>();
-        File calibrationDir = PathUtil.getCameraCalibrationDirectory(context, userName);
-        for (File calibrationFile : Objects.requireNonNull(calibrationDir.listFiles())) {
-            String filename = calibrationFile.getName();
-            String[] filenameArray = filename.split("\\.");
+//        ArrayMap<String, String> filenamesToPrettyPrint = new ArrayMap<>();
+//        File calibrationDir = PathUtil.getCameraCalibrationDirectory(context, userName);
+//        for (File calibrationFile : Objects.requireNonNull(calibrationDir.listFiles())) {
+//            String filename = calibrationFile.getName();
+//            String[] filenameArray = filename.split("\\.");
+//
+//            filenamesToPrettyPrint.put("#" + filenameArray[1] + ": " + filenameArray[2], filename);
+//        }
+//        return filenamesToPrettyPrint;
 
-            filenamesToPrettyPrint.put("#" + filenameArray[1] + ": " + filenameArray[2], filename);
+        File calibrationFile = new File(PathUtil.getUserDirectory(context, userName), "calibration.obj");
+
+        String prettyName = null;
+        if (calibrationFile.exists()) {
+            Date lastModified = new Date(calibrationFile.lastModified());
+            prettyName = new SimpleDateFormat("ddMMMyyyy").format(lastModified);
         }
-        return filenamesToPrettyPrint;
+
+        return prettyName;
     }
 
-    public static CameraCalibrationResult loadCalibrationByName(Context context, String userName,
-                                                                String calibrationFilename) {
-        File calibrationDir = PathUtil.getCameraCalibrationDirectory(context, userName);
-        File calibrationObjFile = new File(calibrationDir, calibrationFilename);
-        return (CameraCalibrationResult) FileIO.read(calibrationObjFile);
+    public static CameraCalibrationResult loadCalibration(Context context, String userName) {
+//        File calibrationDir = PathUtil.getCameraCalibrationDirectory(context, userName);
+//        File calibrationObjFile = new File(calibrationDir, calibrationFilename);
+//        return (CameraCalibrationResult) FileIO.read(calibrationObjFile);
+        File calibrationFile = new File(PathUtil.getUserDirectory(context, userName), "calibration.obj");
+        return (CameraCalibrationResult) FileIO.read(calibrationFile);
     }
 
     public void saveCameraMatrix(Mat cameraMatrix) {
