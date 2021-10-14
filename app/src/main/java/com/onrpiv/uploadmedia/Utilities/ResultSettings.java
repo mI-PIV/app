@@ -34,6 +34,8 @@ public class ResultSettings {
 
     private ArrowDrawOptions arrowDrawOptions;
 
+    private boolean calibrated = false;
+
     private boolean vortDisplay = false;
     private ColorMap vortColorMap = new ColorMap();
     private int vortTransVals_min = 120;
@@ -169,7 +171,15 @@ public class ResultSettings {
         backgroundChanged = true;
     }
 
-    public String formatInfoString(float x, float y, float su, float sv, float ru, float rv,
+    public boolean getCalibrated() {
+        return calibrated;
+    }
+
+    public void setCalibrated(boolean bool) {
+        calibrated = bool;
+    }
+
+    public String formatInfoString_pixel(float x, float y, float su, float sv, float ru, float rv,
                                    float mu, float mv, float vort) {
         // TODO add the physical measurements
         return "x: " + ((int) x) + "\t\t\t" + "y: " + ((int) y) +
@@ -177,6 +187,12 @@ public class ResultSettings {
                 "\nReplacement U: " + ru + " px\t\t\t" + "Replacement V: " + rv + " px" +
                 "\nMulti-Pass U: " + mu + " px\t\t\t" + "Multi-Pass V: " + mv + " px" +
                 "\nVorticity: " + vort;
+    }
+
+    public String formatInfoString_physical(float x, float y, float su, float sv, float ru, float rv,
+                                            float mu, float mv, float vort) {
+        // TODO finish this
+        return "Work in progress.";
     }
 
     public String debugString(int pivX, int pivY, double imgX, double imgY, float viewX, float viewY) {

@@ -258,6 +258,15 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             }
         });
 
+        SwitchCompat calibrationSwitch = (SwitchCompat) findViewById(R.id.results_calib_switch);
+        calibrationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                settings.setCalibrated(isChecked);
+                applyButton.setEnabled(true);
+            }
+        });
+
         // radio groups
         RadioGroup vectorRadioGroup = findViewById(R.id.vec_rgroup);
         vectorRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -679,8 +688,15 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         float multV = (float)multiPass.getV()[pivCoords.y][pivCoords.x];
 
         // update the info text
-        String updatedText = settings.formatInfoString((float)imgX, (float)imgY, singleU, singleV,
-                repU, repV, multU, multV, vort);
+        String updatedText;
+        if (settings.getCalibrated()) {
+            // TODO get the physical measurements
+            //     (will need to either write a calculate method or read from the saved file)
+            updatedText = settings.formatInfoString_physical(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        } else {
+            updatedText = settings.formatInfoString_pixel((float)imgX, (float)imgY, singleU, singleV,
+                    repU, repV, multU, multV, vort);
+        }
         infoText.setText(updatedText);
     }
 
