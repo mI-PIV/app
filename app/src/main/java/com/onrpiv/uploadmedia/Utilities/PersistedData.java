@@ -7,8 +7,7 @@ public class PersistedData {
     final static private String
             FRAME_DIRECTORY_NUMBER = "framesDirNum",
             FPS = "fps",
-            EXPERIMENT_NUMBER = "experimentNumber",
-            CALIBRATION_NUMBER = "calibrationNumber";
+            EXPERIMENT_NUMBER = "experimentNumber";
 
     public static String getSharedPreferencesName(String userName) {
         return "miPIV_" + userName;
