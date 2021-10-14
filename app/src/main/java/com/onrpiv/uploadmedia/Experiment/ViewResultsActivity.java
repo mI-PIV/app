@@ -220,7 +220,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                     case BCKGRND_SUB_PRETTY:
                         settings.setBackground(BACKGRND_SUB);
                         if (backgroundColorPicker.getVisibility() == View.VISIBLE)
-                            backgroundSpinner.setVisibility(View.GONE);
+                            backgroundColorPicker.setVisibility(View.GONE);
                         break;
                     default:
                         settings.setBackground(BACKGRND_SOLID);
