@@ -288,11 +288,25 @@
                         android:visibility="gone"
                         tools:visibility="visible" />
 
-                    <Spinner
-                        android:id="@+id/calibration_spinner"
-                        android:layout_width="match_parent"
+                    <RadioGroup
+                        android:id="@+id/calib_radio_group"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:spinnerMode="dropdown" />
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <RadioButton
+                            android:id="@+id/calib_radio_none"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="None" />
+
+                        <RadioButton
+                            android:id="@+id/calib_radio_calib"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </RadioGroup>
 
                 </TableRow>
 

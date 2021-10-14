@@ -302,7 +302,7 @@ public class PivFunctions {
             }
         }
 
-        return new PivResultData(resultName, dc1, dr1, mag, sig2noise, getCoordinates(), cols, rows);
+        return new PivResultData(resultName, dc1, dr1, mag, sig2noise, getCoordinates(), cols, rows, dt);
     }
 
     public double[][] getCoordinates() {
@@ -744,7 +744,7 @@ public class PivFunctions {
         }
 
         return new PivResultData(resultName, dc1_p, dr1_p, mag_p,
-                singlePassResult.getSig2Noise(), getCoordinates(), cols, rows);
+                singlePassResult.getSig2Noise(), getCoordinates(), cols, rows, dt);
     }
 
     public PivResultData calculateMultipass(PivResultData pivResultData, String resultName) {
@@ -844,7 +844,7 @@ public class PivFunctions {
         }
 
         return new PivResultData(resultName, dc2, dr2, mag, sig2noise,
-                getCoordinates(), cols, rows);
+                getCoordinates(), cols, rows, dt);
     }
 
     public PivResultData replaceMissingVectors(PivResultData pivResultData, String resultName) {
@@ -888,7 +888,7 @@ public class PivFunctions {
         }
 
         return new PivResultData(resultName, dc2, dr2, mag, sig2noise,
-                getCoordinates(), cols, rows);
+                getCoordinates(), cols, rows, dt);
     }
 
     public static double cubicInterpolator(double[] values) {
@@ -942,7 +942,15 @@ public class PivFunctions {
                 vortMap[r][c] = (((v[r][c + 1] - v[r][c - 1]) - (u[r + 1][c] - u[r - 1][c]))) / gap;
             }
         }
-        pivCorrelation.setVorticityValues(vortMap);
+        pivCorrelation.setVorticity(vortMap);
+    }
+
+    public int getFieldRows() {
+        return fieldRows;
+    }
+
+    public int getFieldCols() {
+        return fieldCols;
     }
 
     private static double[][] debugMat(Mat toDebug) {

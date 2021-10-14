@@ -7,16 +7,23 @@ public class PivResultData implements Serializable {
     private double[][] _u;
     private double[][] _v;
     private double[][] _mag;
+    private double[][] _u_calib;
+    private double[][] _v_calib;
+    private double[][] _mag_calib;
     private double[][] _sig2noise;
     private double[] _interrX;
     private double[] _interrY;
-    private double[][] vorticityValues;
+    private double[][] _vort;
+    private double[][] _vort_calib;
+    private final double _dt;
     private int rows;
     private int cols;
     private int stepX;
     private int stepY;
     private boolean calibrated = false;
     private boolean backgroundSubtracted = false;
+    private double pixelToPhysicalRatio = 1d;
+    private String physicalMetric = "cm";
 
     // intent/io keys
     public static final String
@@ -27,15 +34,17 @@ public class PivResultData implements Serializable {
             USERNAME = "username";
 
     public PivResultData(String name, double[][] u, double[][] v, double[][] mag,
-                         double[][] sig2noise, double[][] interrCenters, int cols, int rows) {
+                         double[][] sig2noise, double[][] interrCenters, int cols, int rows,
+                         double dt) {
         this.name = name;
-        _u = u;
-        _v = v;
-        _mag = mag;
+        _dt = dt;
         _sig2noise = sig2noise;
         this.rows = rows;
         this.cols = cols;
         setInterrCenters(interrCenters);
+        setU(u);
+        setV(v);
+        setMag(mag);
     }
 
     public String getName() {
@@ -74,6 +83,43 @@ public class PivResultData implements Serializable {
         _v = v;
     }
 
+    public double[][] getCalibratedU() {
+        return _u_calib;
+    }
+
+    public void setCalibratedU(double[][] u_calibrated) {
+        _u_calib = u_calibrated;
+    }
+
+    public double[][] getCalibratedV() {
+        return _v_calib;
+    }
+
+    public void setCalibratedV(double[][] v_calibrated) {
+        _v_calib = v_calibrated;
+    }
+
+    public double[][] getCalibratedMag() {
+        return _mag_calib;
+    }
+
+    public void setCalibratedMag(double[][] mag_calibrated) {
+        _mag_calib = mag_calibrated;
+    }
+
+    public double getPixelToPhysicalRatio() {
+        return pixelToPhysicalRatio;
+    }
+
+    public void setPixelToPhysicalRatio(double ratio, int fieldRows, int fieldCols) {
+        pixelToPhysicalRatio = ratio;
+        calculatePhysicalVectors(fieldRows, fieldCols);
+    }
+
+    public String getPhysicalMetric() {
+        return physicalMetric;
+    }
+
     public double[] getInterrX() {
         return _interrX;
     }
@@ -98,11 +144,15 @@ public class PivResultData implements Serializable {
     }
 
     public double[][] getVorticityValues() {
-        return vorticityValues;
+        return _vort;
     }
 
-    public void setVorticityValues(double[][] vorticityValues) {
-        this.vorticityValues = vorticityValues;
+    public void setVorticity(double[][] vort) {
+        _vort = vort;
+    }
+
+    public double[][] getCalibratedVorticity() {
+        return _vort_calib;
     }
 
     public int getRows() {
@@ -144,4 +194,28 @@ public class PivResultData implements Serializable {
     public void setBackgroundSubtracted(boolean bool) {
         backgroundSubtracted = bool;
     }
+
+    private void calculatePhysicalVectors(int fieldRows, int fieldCols) {
+        _u_calib = new double[fieldRows][fieldCols];
+        _v_calib = new double[fieldRows][fieldCols];
+        _mag_calib = new double[fieldRows][fieldCols];
+        _vort_calib = new double[fieldRows][fieldCols];
+
+        for (int i = 0; i < fieldRows; i++) {
+            for (int j = 0; j < fieldCols; j++) {
+                _u_calib[i][j] = _u[i][j] * pixelToPhysicalRatio;
+                _v_calib[i][j] = _v[i][j] * pixelToPhysicalRatio;
+                _mag_calib[i][j] = _mag[i][j] * pixelToPhysicalRatio;
+                _vort_calib[i][j] = _vort[i][j] * pixelToPhysicalRatio;
+            }
+        }
+    }
+
+//    private void applyTimeDelta(double[][] vectorComponent) {
+//        for (int i = 0; i < _interrY.length; i++) {
+//            for (int j = 0; j < _interrX.length; j++) {
+//                vectorComponent[i][j] *= _dt;
+//            }
+//        }
+//    }
 }

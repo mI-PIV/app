@@ -259,7 +259,8 @@
                 android:layout_height="match_parent"
                 android:background="#40F44336"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -434,12 +435,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
-                    android:layout_marginBottom="30dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -453,6 +454,21 @@
                         android:layout_width="30dp"
                         android:layout_height="wrap_content"
                         android:onClick="OnClick_SelectionColor" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/results_calib_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Camera Calibration" />
+
                 </LinearLayout>
 
                 <TextView

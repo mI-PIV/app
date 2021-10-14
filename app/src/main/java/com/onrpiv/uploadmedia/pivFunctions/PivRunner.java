@@ -84,20 +84,23 @@ public class PivRunner {
                 // Save first frame for output base image
                 pivFunctions.saveBaseImage("Base");
 
-                if (parameters.getCameraCalibrationResult() != null) {
-                    setMessage("Applying Camera Calibration");
-                    pivFunctions.saveVectorCentimeters(singlePassResult,
-                            parameters.getCameraCalibrationResult().ratio, "CENTIMETERS");
-                    singlePassResult.setCalibrated(true);
-                }
-
                 setMessage("Calculating single pass vorticity");
                 String vortStep = "Vorticity";
                 PivFunctions.calculateVorticityMap(singlePassResult);
                 pivFunctions.saveVorticityValues(singlePassResult.getVorticityValues(), vortStep);
 
-                setMessage("Saving single pass data");
+                if (parameters.getCameraCalibrationResult() != null) {
+                    setMessage("Applying Camera Calibration to single pass");
+                    singlePassResult.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
+                            pivFunctions.getFieldRows(), pivFunctions.getFieldCols());
 
+                    pivFunctions.saveVectorCentimeters(singlePassResult,
+                            parameters.getCameraCalibrationResult().ratio, "CENTIMETERS_SINGLEPASS");
+
+                    singlePassResult.setCalibrated(true);
+                }
+
+                setMessage("Saving single pass data");
                 String step = "SinglePass";
                 pivFunctions.saveVectorsValues(singlePassResult, step);
 
@@ -126,6 +129,18 @@ public class PivRunner {
                     PivFunctions.calculateVorticityMap(pivReplaceMissing2);
                     pivFunctions.saveVorticityValues(pivReplaceMissing2.getVorticityValues(), "Replace_Vorticity");
 
+                    if (parameters.getCameraCalibrationResult() != null) {
+                        setMessage("Applying Camera Calibration to replaced vectors");
+
+                        pivReplaceMissing2.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
+                                pivFunctions.getFieldRows(), pivFunctions.getFieldCols());
+
+                        pivFunctions.saveVectorCentimeters(pivReplaceMissing2,
+                                parameters.getCameraCalibrationResult().ratio, "CENTIMETERS_REPLACED");
+
+                        pivReplaceMissing2.setCalibrated(true);
+                    }
+
                     resultData.put(PivResultData.REPLACE2, pivReplaceMissing2);
 
                     String stepReplace2 = "Replaced2";
@@ -145,6 +160,17 @@ public class PivRunner {
                 setMessage("Calculating multi-pass vorticity");
                 PivFunctions.calculateVorticityMap(pivCorrelationMulti);
                 pivFunctions.saveVorticityValues(pivCorrelationMulti.getVorticityValues(), "Multi_Vorticity");
+
+                if (parameters.getCameraCalibrationResult() != null) {
+                    setMessage("Applying Camera Calibration to replaced vectors");
+                    pivCorrelationMulti.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
+                            pivFunctions.getFieldRows(), pivFunctions.getFieldCols());
+
+                    pivFunctions.saveVectorCentimeters(pivCorrelationMulti,
+                            parameters.getCameraCalibrationResult().ratio, "CENTIMETERS_MULTIPASS");
+
+                    pivCorrelationMulti.setCalibrated(true);
+                }
 
                 resultData.put(PivResultData.MULTI, pivCorrelationMulti);
 

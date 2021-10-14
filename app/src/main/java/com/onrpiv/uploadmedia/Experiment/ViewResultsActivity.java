@@ -220,7 +220,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                     case BCKGRND_SUB_PRETTY:
                         settings.setBackground(BACKGRND_SUB);
                         if (backgroundColorPicker.getVisibility() == View.VISIBLE)
-                            backgroundSpinner.setVisibility(View.GONE);
+                            backgroundColorPicker.setVisibility(View.GONE);
                         break;
                     default:
                         settings.setBackground(BACKGRND_SOLID);
@@ -257,6 +257,17 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                 applyButton.setEnabled(true);
             }
         });
+
+        SwitchCompat calibrationSwitch = findViewById(R.id.results_calib_switch);
+        calibrationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                settings.setCalibrated(isChecked);
+                applyButton.setEnabled(true);
+                settings.selectionChanged = true;
+            }
+        });
+        calibrationSwitch.setVisibility(calibrated? View.VISIBLE : View.GONE);
 
         // radio groups
         RadioGroup vectorRadioGroup = findViewById(R.id.vec_rgroup);
@@ -657,30 +668,45 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         currentX = x;
         currentY = y;
 
+        PivResultData pivCorr;
+        switch (settings.getVecOption()) {
+            case VEC_SINGLE:
+                pivCorr = singlePass;
+                break;
+            case VEC_MULTI:
+                pivCorr = multiPass;
+                break;
+            default:
+                pivCorr = replacedPass;
+        }
+
         // view to piv translation
         Point pivCoords = viewCoordsToPivCoords(baseImage,
-                singlePass.getInterrY().length, singlePass.getInterrX().length, x, y);
+                pivCorr.getInterrY().length, pivCorr.getInterrX().length, x, y);
 
         // Draw the selection on the vector field image
-        double imgX = singlePass.getInterrX()[pivCoords.x];
-        double imgY = singlePass.getInterrY()[pivCoords.y];
+        double imgX = pivCorr.getInterrX()[pivCoords.x];
+        double imgY = pivCorr.getInterrY()[pivCoords.y];
         Bitmap selectionDrawnBmp = PivFunctions.createSelectionImage(imgX, imgY, rows, cols,
-                singlePass.getStepX(), singlePass.getStepY(), settings.getSelectColor());
+                pivCorr.getStepX(), pivCorr.getStepY(), settings.getSelectColor());
 
         selectionImage.setImageBitmap(selectionDrawnBmp);
 
-        // compile the data
-        float singleU = (float)singlePass.getU()[pivCoords.y][pivCoords.x];
-        float singleV = (float)singlePass.getV()[pivCoords.y][pivCoords.x];
-        float vort = (float)singlePass.getVorticityValues()[pivCoords.y][pivCoords.x];
-        float repU = (float)replacedPass.getU()[pivCoords.y][pivCoords.x];
-        float repV = (float)replacedPass.getV()[pivCoords.y][pivCoords.x];
-        float multU = (float)multiPass.getU()[pivCoords.y][pivCoords.x];
-        float multV = (float)multiPass.getV()[pivCoords.y][pivCoords.x];
-
         // update the info text
-        String updatedText = settings.formatInfoString((float)imgX, (float)imgY, singleU, singleV,
-                repU, repV, multU, multV, vort);
+        String updatedText;
+        if (settings.getCalibrated()) {
+            // compile the data
+            float u = (float) pivCorr.getCalibratedU()[pivCoords.y][pivCoords.x];
+            float v = (float) pivCorr.getCalibratedV()[pivCoords.y][pivCoords.x];
+            float vort = (float) pivCorr.getCalibratedVorticity()[pivCoords.y][pivCoords.x];
+            updatedText = settings.formatInfoString_physical((float) imgX, (float) imgY, u, v, vort);
+        } else {
+            // compile the data
+            float u = (float)pivCorr.getU()[pivCoords.y][pivCoords.x];
+            float v = (float)pivCorr.getV()[pivCoords.y][pivCoords.x];
+            float vort = (float)pivCorr.getVorticityValues()[pivCoords.y][pivCoords.x];
+            updatedText = settings.formatInfoString_pixel((float)imgX, (float)imgY, u, v, vort);
+        }
         infoText.setText(updatedText);
     }
 
