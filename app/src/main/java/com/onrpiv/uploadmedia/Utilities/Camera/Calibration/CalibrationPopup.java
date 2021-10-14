@@ -12,17 +12,12 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
-import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 
 public class CalibrationPopup {
@@ -81,16 +76,17 @@ public class CalibrationPopup {
                             ccResult.saveDistanceCoeffs(distanceCoefficients);
 
                             // save calibration
-                            int newCalibrationNumber = PersistedData.getTotalCalibrations(context, userName) + 1;
-                            File calibrationDir = PathUtil.getCameraCalibrationDirectory(context, userName);
-                            Date date = Calendar.getInstance().getTime();
-                            SimpleDateFormat df = new SimpleDateFormat("ddMMMyyyy", Locale.getDefault());
+//                            int newCalibrationNumber = PersistedData.getTotalCalibrations(context, userName) + 1;
+                            File calibrationSaveFile = new File(PathUtil.getUserDirectory(context, userName), "calibration.obj");
+                            FileIO.write(ccResult, calibrationSaveFile);
+//                            Date date = Calendar.getInstance().getTime();
+//                            SimpleDateFormat df = new SimpleDateFormat("ddMMMyyyy", Locale.getDefault());
 
-                            FileIO.write(ccResult, new File(calibrationDir,
-                                    "Calibration." + newCalibrationNumber + "." + df.format(date) + ".obj"));
+//                            FileIO.write(ccResult, new File(calibrationDir,
+//                                    "Calibration." + newCalibrationNumber + "." + df.format(date) + ".obj"));
 
                             // save the new calibration number
-                            PersistedData.setTotalCalibrations(context, userName, newCalibrationNumber);
+//                            PersistedData.setTotalCalibrations(context, userName, newCalibrationNumber);
                         }
 
                         // delete temp calibration image
