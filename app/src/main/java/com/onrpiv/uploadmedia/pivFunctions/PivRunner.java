@@ -86,6 +86,7 @@ public class PivRunner {
 
                 if (parameters.getCameraCalibrationResult() != null) {
                     setMessage("Applying Camera Calibration");
+                    singlePassResult.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio);
                     pivFunctions.saveVectorCentimeters(singlePassResult,
                             parameters.getCameraCalibrationResult().ratio, "CENTIMETERS");
                     singlePassResult.setCalibrated(true);
