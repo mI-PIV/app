@@ -89,6 +89,29 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Arrow Scale"
+                android:textAlignment="center" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <SeekBar
+                    android:id="@+id/arrow_scale"
+                    android:layout_width="239dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="10"
+                    android:min="0"
+                    android:progress="1" />
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -197,29 +220,6 @@
                         android:layout_height="wrap_content"
                         android:onClick="OnClick_ArrowColor" />
 
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:text="Arrow Scale"
-                    android:textAlignment="center" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <SeekBar
-                        android:id="@+id/arrow_scale"
-                        android:layout_width="239dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:max="10"
-                        android:min="0"
-                        android:progress="1" />
                 </LinearLayout>
 
             </LinearLayout>
