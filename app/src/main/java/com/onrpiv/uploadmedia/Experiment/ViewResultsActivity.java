@@ -270,7 +270,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         calibrationSwitch.setVisibility(calibrated? View.VISIBLE : View.GONE);
 
         // radio groups
-        RadioGroup vectorRadioGroup = findViewById(R.id.vec_rgroup);
+        RadioGroup vectorRadioGroup = findViewById(R.id.postp_rgroup);
         vectorRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -579,6 +579,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private HashMap<View, LinearLayout> loadDropDownMaps() {
         HashMap<View, LinearLayout> dropDownMap = new HashMap<>();
         ImageButton vectDropDown = findViewById(R.id.vecDropDown);
+        ImageButton postpDropDown = findViewById(R.id.postpDropDown);
         ImageButton vortDropDown = findViewById(R.id.vortDropDown);
         ImageButton backgroundDropDown = findViewById(R.id.backgroundDropDown);
         ImageButton infoDropDown = findViewById(R.id.infoDropDown);
@@ -603,11 +604,13 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         };
 
         vectDropDown.setOnClickListener(dropDownListener);
+        postpDropDown.setOnClickListener(dropDownListener);
         vortDropDown.setOnClickListener(dropDownListener);
         backgroundDropDown.setOnClickListener(dropDownListener);
         infoDropDown.setOnClickListener(dropDownListener);
 
         dropDownMap.put((View) findViewById(R.id.vecDropDown), (LinearLayout)findViewById(R.id.vecFieldLayout));
+        dropDownMap.put((View) findViewById(R.id.postpDropDown), (LinearLayout)findViewById(R.id.postpLayout));
         dropDownMap.put((View) findViewById(R.id.vortDropDown), (LinearLayout)findViewById(R.id.vortLayout));
         dropDownMap.put((View) findViewById(R.id.backgroundDropDown), (LinearLayout)findViewById(R.id.backgroundLayout));
         dropDownMap.put((View) findViewById(R.id.infoDropDown), (LinearLayout)findViewById(R.id.infoSection));
