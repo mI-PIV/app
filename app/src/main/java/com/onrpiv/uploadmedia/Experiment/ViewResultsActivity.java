@@ -120,13 +120,9 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // determine if replaced vectors are an option for the user
         boolean replaced = (boolean) extras.get(PivResultData.REPLACED_BOOL);
-        if (!replaced) {
-            RadioButton replacedRadioButton = findViewById(R.id.replace);
-            replacedRadioButton.setVisibility(View.GONE);
-        }
 
         // load our maps and settings
-        correlationMaps = loadCorrelationMaps();
+        correlationMaps = loadCorrelationMaps(replaced);
         colorMaps = ColorMap.loadColorMaps(this);
         settings = new ResultSettings(this);
 
@@ -290,6 +286,13 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             }
         });
 
+        if (!replaced) {
+            RadioButton replacedRadioButton = findViewById(R.id.replace);
+            replacedRadioButton.setVisibility(View.GONE);
+            settings.setVecOption(VEC_MULTI);
+            vectorRadioGroup.check(R.id.multipass);
+        }
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // popups
@@ -306,6 +309,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         // Defaults
         displayBaseImage(BACKGRND_SOLID);
         displayVectorImage(correlationMaps.get(settings.getVecOption()));
+        applyDisplay(applyButton);
     }
 
     @Override
@@ -568,11 +572,12 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         return result;
     }
 
-    private HashMap<String, PivResultData> loadCorrelationMaps() {
+    private HashMap<String, PivResultData> loadCorrelationMaps(boolean replaced) {
         HashMap<String, PivResultData> result = new HashMap<>();
         result.put(VEC_SINGLE, singlePass);
-        result.put(VEC_REPLACED, replacedPass);
         result.put(VEC_MULTI, multiPass);
+        if (replaced)
+            result.put(VEC_REPLACED, replacedPass);
         return result;
     }
 
