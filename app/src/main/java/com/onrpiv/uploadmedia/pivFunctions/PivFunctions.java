@@ -342,7 +342,9 @@ public class PivFunctions {
 
         double ux, vy, q, x, y;
         ArrayList<String> toPrint = new ArrayList<>();
-        for (int i = 0; i < pivResultData.getInterrY().length; i++) {
+
+        // flip the vertical positions so the origin is on the bottom left instead of top left
+        for (int i = pivResultData.getInterrY().length-1; i >= 0; i--) {
             for (int j = 0; j < pivResultData.getInterrX().length; j++) {
                 x = pivResultData.getInterrX()[j];
                 y = pivResultData.getInterrY()[i];
