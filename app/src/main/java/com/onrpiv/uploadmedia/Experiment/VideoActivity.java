@@ -49,6 +49,7 @@ public class VideoActivity extends AppCompatActivity {
     private TextView mBufferingTextView;
     private CheckBox viewBackgroundCheckbox;
     private String videoPath;
+    private Uri videoUri;
     private String userName;
     private String fps = "20";
     private float vidStart = 0f;
@@ -56,6 +57,7 @@ public class VideoActivity extends AppCompatActivity {
 
     // Current playback position (in milliseconds).
     private int mCurrentPosition = 0;
+    private boolean video_selected = false;
 
     // Tag for the instance state bundle.
     private static final String PLAYBACK_TIME = "play_time";
@@ -172,15 +174,6 @@ public class VideoActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        // Save the current playback position (in milliseconds) to the
-        // instance state bundle.
-        outState.putInt(PLAYBACK_TIME, mVideoView.getCurrentPosition());
-    }
-
     private void initializePlayer(Uri uri) {
         // Show the "Buffering..." message while the video loads.
         mBufferingTextView.setVisibility(VideoView.VISIBLE);
@@ -239,6 +232,7 @@ public class VideoActivity extends AppCompatActivity {
                     videoSelected(data.getData());
                 }
             }
+            video_selected = true;
             generateFramesButton.setEnabled(true);
             setupRangeSlider();
         }
@@ -277,6 +271,7 @@ public class VideoActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
 
         videoPath = PathUtil.getRealPath(VideoActivity.this, video);
+        videoUri = video;
         initializePlayer(video);
         setupRangeSlider();
         recordVideo.setBackgroundColor(Color.parseColor("#00CC00"));
@@ -288,6 +283,7 @@ public class VideoActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
 
         videoPath = PathUtil.getRealPath(VideoActivity.this, video);
+        videoUri = video;
         initializePlayer(video);
         pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
     }
@@ -321,6 +317,42 @@ public class VideoActivity extends AppCompatActivity {
             }
         });
         ((ViewGroup) rangeSlider.getParent()).setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString("username", userName);
+        outState.putBoolean("selected", video_selected);
+
+        if (video_selected) {
+            outState.putString("fps", fps);
+            outState.putString("vidpath", videoPath);
+            outState.putBoolean("background_check", viewBackgroundCheckbox.isChecked());
+            outState.putString("viduri", videoUri.toString());
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        userName = savedInstanceState.getString("username");
+        video_selected = savedInstanceState.getBoolean("selected");
+
+        if (video_selected) {
+            fps = savedInstanceState.getString("fps");
+            videoPath = savedInstanceState.getString("vidpath");
+            viewBackgroundCheckbox.setChecked(savedInstanceState.getBoolean("background_check"));
+            videoUri = Uri.parse(savedInstanceState.getString("viduri"));
+
+            initializePlayer(videoUri);
+            setupRangeSlider();
+            generateFramesButton.setEnabled(true);
+            recordVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+            pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+        }
     }
 }
 
