@@ -51,6 +51,10 @@ public class ImageActivity extends AppCompatActivity {
     private int fps;
     private static HashMap<String, PivResultData> resultData;
 
+    private int step = 0;
+    private static final String greenString = "#00CC00";
+    private static final String blueString = "#243EDF";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,7 +151,8 @@ public class ImageActivity extends AppCompatActivity {
 
                                 review.setEnabled(true);
                                 parameters.setEnabled(true);
-                                pickImageMultiple.setBackgroundColor(Color.parseColor("#00CC00"));
+                                pickImageMultiple.setBackgroundColor(Color.parseColor(greenString));
+                                step = 1;
                                 frameSelectionPopup.dismiss();
                             }
                         }).create().show();
@@ -160,7 +165,8 @@ public class ImageActivity extends AppCompatActivity {
 
     public void reviewFile(View view) {
         reviewImageFromUrl();
-        review.setBackgroundColor(Color.parseColor("#00CC00"));
+        review.setBackgroundColor(Color.parseColor(greenString));
+        step = 2;
     }
 
     private void reviewImageFromUrl() {
@@ -182,7 +188,8 @@ public class ImageActivity extends AppCompatActivity {
             public void onClick(View v) {
                 pivParameters = parameterPopup.parameters;
                 compute.setEnabled(true);
-                parameters.setBackgroundColor(Color.parseColor("#00CC00"));
+                parameters.setBackgroundColor(Color.parseColor(greenString));
+                step = 3;
                 parameterPopup.dismiss();
             }
         };
@@ -210,10 +217,10 @@ public class ImageActivity extends AppCompatActivity {
         displayIntent.putExtra(PivResultData.REPLACED_BOOL, pivParameters.isReplace());
 
         startActivity(displayIntent);
-        pickImageMultiple.setBackgroundColor(Color.parseColor("#243EDF"));
-        compute.setBackgroundColor(Color.parseColor("#243EDF"));
-        review.setBackgroundColor(Color.parseColor("#243EDF"));
-        parameters.setBackgroundColor(Color.parseColor("#243EDF"));
+        pickImageMultiple.setBackgroundColor(Color.parseColor(blueString));
+        compute.setBackgroundColor(Color.parseColor(blueString));
+        review.setBackgroundColor(Color.parseColor(blueString));
+        parameters.setBackgroundColor(Color.parseColor(blueString));
     }
 
     // Process Images
@@ -222,23 +229,64 @@ public class ImageActivity extends AppCompatActivity {
                 frame1File, frame2File);
         resultData = pivRunner.Run();
         display.setEnabled(true);
-        compute.setBackgroundColor(Color.parseColor("#00CC00"));
+        step = 4;
+        compute.setBackgroundColor(Color.parseColor(greenString));
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        // save file url in bundle as it will be null on screen orientation
-        // changes
+        outState.putInt("step", step);
         outState.putParcelable("file_uri", fileUri);
+        outState.putString("username", userName);
+
+        if (step >= 1) {
+            outState.putString("frame1file_str", frame1File.getAbsolutePath());
+            outState.putString("frame2file_str", frame2File.getAbsolutePath());
+            outState.putInt("frameset", frameSet);
+            outState.putInt("frame1num", frame1Num);
+            outState.putInt("frame2num", frame2Num);
+            outState.putInt("fps", fps);
+        }
+
+        if (step >= 3) {
+            outState.putSerializable("pivparams", pivParameters);
+        }
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        // get the file url
+        step = savedInstanceState.getInt("step");
         fileUri = savedInstanceState.getParcelable("file_uri");
+        userName = savedInstanceState.getString("username");
+
+        if (step >= 1) {
+            frame1File = new File(savedInstanceState.getString("frame1file_str"));
+            frame2File = new File(savedInstanceState.getString("frame2file_str"));
+            frameSet = savedInstanceState.getInt("frameset");
+            frame1Num = savedInstanceState.getInt("frame1num");
+            frame2Num = savedInstanceState.getInt("frame2num");
+            fps = savedInstanceState.getInt("fps");
+
+            // change buttons to reflect step
+            setButton(pickImageMultiple, greenString, true);
+            setButton(review, greenString,true);
+        }
+
+        if (step >= 3) {
+            pivParameters = (PivParameters) savedInstanceState.getSerializable("pivparams");
+
+            // change buttons to reflect step
+            setButton(parameters, greenString,true);
+            setButton(compute, blueString, true);
+        }
+    }
+
+    private static void setButton(Button btn, String color, boolean enabled) {
+        btn.setEnabled(enabled);
+        btn.setBackgroundColor(Color.parseColor(color));
     }
 }
