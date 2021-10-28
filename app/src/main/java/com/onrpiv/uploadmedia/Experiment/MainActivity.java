@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // warning dialog
                 new androidx.appcompat.app.AlertDialog.Builder(context)
                         .setTitle("Delete User Settings")
-                        .setMessage("All extracted frames and experiments will be deleted." +
+                        .setMessage("All extracted frames, calibrations, and saved experiments will be deleted." +
                                 " Are you sure you wish to continue?")
 
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -253,6 +253,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         // delete all persisted data
                                         pDialog.setMessage("Deleting persisted data...");
                                         PersistedData.clearUserPersistedData(context, userName);
+
+                                        // delete any camera calibrations
+                                        pDialog.setMessage("Deleting camera calibration...");
+                                        PathUtil.deleteRecursive(PathUtil.getUserDirectory(context, userName));
+
                                         if (pDialog.isShowing()) pDialog.dismiss();
                                     }
                                 };
