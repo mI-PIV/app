@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -117,40 +118,128 @@ public class ImageActivity extends AppCompatActivity {
                 particleDensityPreview.setImageBitmap(resizedCropped);
 
                 // popup asking user about particle density
-                new android.app.AlertDialog.Builder(ImageActivity.this)
-                        .setView(particleDensityPreview)
-                        .setCancelable(false)
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                new AlertDialog.Builder(ImageActivity.this)
-                                        .setMessage("Please select frames with more particle density.")
-                                        .setPositiveButton("Okay", null)
-                                        .show();
-                            }
-                        })
-                        .setMessage("Do you see at least 5 particles in the image?")
-                        .setTitle("Particle Density")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                frameSet = frameSelectionPopup.frameSet;
-                                frame1File = frameSelectionPopup.frame1Path;
-                                frame2File = frameSelectionPopup.frame2Path;
-                                frame1Num = frameSelectionPopup.frame1Num;
-                                frame2Num = frameSelectionPopup.frame2Num;
+                // Create reviewDensity builder
+                AlertDialog.Builder reviewDensityDialog = new AlertDialog.Builder(ImageActivity.this);
 
-                                int framesDirNum = PersistedData.getFrameDirPath(ImageActivity.this, userName,
-                                        frameSelectionPopup.frameSetPath.getAbsolutePath());
-                                fps = PersistedData.getFrameDirFPS(ImageActivity.this, userName,
-                                        framesDirNum);
+                // set the custom layout
+                View densityReviewLayout = getLayoutInflater().inflate(R.layout.popup_review_dialog, null);
 
-                                review.setEnabled(true);
-                                parameters.setEnabled(true);
-                                pickImageMultiple.setBackgroundColor(Color.parseColor("#00CC00"));
-                                frameSelectionPopup.dismiss();
-                            }
-                        }).create().show();
+
+                reviewDensityDialog.setTitle("Particle Density");
+                reviewDensityDialog.setView(densityReviewLayout);
+                //reviewDensityDialog.setView(particleDensityPreview);
+                reviewDensityDialog.setMessage("Do you see at least 5 particles in the image?");
+
+
+
+//                String[] windowSizes = {"32x32","64x64","128x128"};
+//                int defaultWindowSize = 0;
+//                reviewDensityDialog.setSingleChoiceItems(windowSizes, defaultWindowSize, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        switch (which) {
+//                            case 0:
+//                                Toast.makeText(ImageActivity.this, "Window size of 32x32", Toast.LENGTH_LONG).show();
+//                                break;
+//                            case 1:
+//                                Toast.makeText(ImageActivity.this, "You chose a window size of 64x64", Toast.LENGTH_LONG).show();
+//                                break;
+//                            case 2:
+//                                Toast.makeText(ImageActivity.this, "This window size is 128x128", Toast.LENGTH_LONG).show();
+//                                break;
+//                        }
+//                    }
+//                });
+
+                // "No" button
+                reviewDensityDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new AlertDialog.Builder(ImageActivity.this)
+                                .setMessage("Please select frames with more particle density.")
+                                .setPositiveButton("Okay", null)
+                                .show();
+                    }
+                });
+
+                // "Yes" button
+                reviewDensityDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        frameSet = frameSelectionPopup.frameSet;
+                        frame1File = frameSelectionPopup.frame1Path;
+                        frame2File = frameSelectionPopup.frame2Path;
+                        frame1Num = frameSelectionPopup.frame1Num;
+                        frame2Num = frameSelectionPopup.frame2Num;
+
+                        int framesDirNum = PersistedData.getFrameDirPath(ImageActivity.this, userName,
+                                frameSelectionPopup.frameSetPath.getAbsolutePath());
+                        fps = PersistedData.getFrameDirFPS(ImageActivity.this, userName,
+                                framesDirNum);
+
+                        review.setEnabled(true);
+                        parameters.setEnabled(true);
+                        pickImageMultiple.setBackgroundColor(Color.parseColor("#00CC00"));
+                        frameSelectionPopup.dismiss();
+                    }
+                }).create().show();
+
+
+                // ######################################################
+                // Option that doesn't use custom popup_review_dialog.xml
+                // ######################################################
+//                String[] windowSizes = {"32x32","64x64","128x128"};
+//                int defaultWindowSize = 0;
+//                new android.app.AlertDialog.Builder(ImageActivity.this)
+//                        .setView(particleDensityPreview)
+//                        .setCancelable(false)
+////                        .setMessage("Do you see at least 5 particles in the image?")
+//                        .setTitle("Particle Density")
+//                        .setSingleChoiceItems(windowSizes, defaultWindowSize, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                switch (which) {
+//                                    case 0:
+//                                        Toast.makeText(ImageActivity.this, "Window size of 32x32", Toast.LENGTH_LONG).show();
+//                                        break;
+//                                    case 1:
+//                                        Toast.makeText(ImageActivity.this, "You chose a window size of 64x64", Toast.LENGTH_LONG).show();
+//                                        break;
+//                                    case 2:
+//                                        Toast.makeText(ImageActivity.this, "This window size is 128x128", Toast.LENGTH_LONG).show();
+//                                        break;
+//                                }
+//                            }
+//                        })
+//                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                new AlertDialog.Builder(ImageActivity.this)
+//                                        .setMessage("Please select frames with more particle density.")
+//                                        .setPositiveButton("Okay", null)
+//                                        .show();
+//                            }
+//                        })
+//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                frameSet = frameSelectionPopup.frameSet;
+//                                frame1File = frameSelectionPopup.frame1Path;
+//                                frame2File = frameSelectionPopup.frame2Path;
+//                                frame1Num = frameSelectionPopup.frame1Num;
+//                                frame2Num = frameSelectionPopup.frame2Num;
+//
+//                                int framesDirNum = PersistedData.getFrameDirPath(ImageActivity.this, userName,
+//                                        frameSelectionPopup.frameSetPath.getAbsolutePath());
+//                                fps = PersistedData.getFrameDirFPS(ImageActivity.this, userName,
+//                                        framesDirNum);
+//
+//                                review.setEnabled(true);
+//                                parameters.setEnabled(true);
+//                                pickImageMultiple.setBackgroundColor(Color.parseColor("#00CC00"));
+//                                frameSelectionPopup.dismiss();
+//                            }
+//                        }).create().show();
             }
         };
 
