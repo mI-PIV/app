@@ -1,5 +1,6 @@
 package com.onrpiv.uploadmedia.Experiment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import com.onrpiv.uploadmedia.Learn.PIVBasics3;
 import com.onrpiv.uploadmedia.Learn.PIVBasicsLayout;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
+import com.onrpiv.uploadmedia.Utilities.ParticleDensityPopup;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
@@ -117,6 +119,10 @@ public class ImageActivity extends AppCompatActivity {
                 PhotoView particleDensityPreview = new PhotoView(ImageActivity.this);
                 particleDensityPreview.setImageBitmap(resizedCropped);
 
+
+//                ParticleDensityPopup particleDensityPopup = new ParticleDensityPopup(ImageActivity.this, getApplicationContext());
+//                particleDensityPopup.showConfigPopup();
+
                 // popup asking user about particle density
                 // Create reviewDensity builder
                 AlertDialog.Builder reviewDensityDialog = new AlertDialog.Builder(ImageActivity.this);
@@ -130,26 +136,6 @@ public class ImageActivity extends AppCompatActivity {
                 //reviewDensityDialog.setView(particleDensityPreview);
                 reviewDensityDialog.setMessage("Do you see at least 5 particles in the image?");
 
-
-
-//                String[] windowSizes = {"32x32","64x64","128x128"};
-//                int defaultWindowSize = 0;
-//                reviewDensityDialog.setSingleChoiceItems(windowSizes, defaultWindowSize, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        switch (which) {
-//                            case 0:
-//                                Toast.makeText(ImageActivity.this, "Window size of 32x32", Toast.LENGTH_LONG).show();
-//                                break;
-//                            case 1:
-//                                Toast.makeText(ImageActivity.this, "You chose a window size of 64x64", Toast.LENGTH_LONG).show();
-//                                break;
-//                            case 2:
-//                                Toast.makeText(ImageActivity.this, "This window size is 128x128", Toast.LENGTH_LONG).show();
-//                                break;
-//                        }
-//                    }
-//                });
 
                 // "No" button
                 reviewDensityDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
