@@ -21,13 +21,13 @@
     </com.github.chrisbanes.photoview.PhotoView>
 
     <RadioGroup
-        android:id="@+id/radio_group"
+        android:id="@+id/review_density_rgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@+id/textMessage" >
         <RadioButton
-            android:id="@+id/button1"
+            android:id="@+id/size32x32"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -35,14 +35,14 @@
             android:text="32x32" />
 
         <RadioButton
-            android:id="@+id/button2"
+            android:id="@+id/size64x64"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="64x64" />
 
         <RadioButton
-            android:id="@+id/button3"
+            android:id="@+id/size128x128"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"

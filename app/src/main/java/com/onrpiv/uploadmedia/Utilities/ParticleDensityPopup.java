@@ -9,11 +9,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import androidx.appcompat.app.AlertDialog;
 
 import com.onrpiv.uploadmedia.Experiment.ImageActivity;
 import com.onrpiv.uploadmedia.R;
+
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_MULTI;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_REPLACED;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
 
 
 public class ParticleDensityPopup {
@@ -52,6 +57,26 @@ public class ParticleDensityPopup {
         densityLayout.addView(createRadioButton(context, "32x32", reviewDensityListener));
         densityLayout.addView(createRadioButton(context, "64x64", reviewDensityListener));
         densityLayout.addView(createRadioButton(context, "128x128", reviewDensityListener));
+
+//        RadioGroup densityRadioGroup = findViewById(R.id.review_density_rgroup);
+//        densityRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(RadioGroup group, int checkedId) {
+//                String value;
+//                switch (checkedId) {
+//                    case R.id.size32x32:
+//                        // image for 32x32
+//                        break;
+//                    case R.id.size64x64:
+//                        // image for 64x64
+//                        break;
+//                    default:
+//                        // image for 128x128
+//                }
+////                settings.setVecOption(value);
+////                applyButton.setEnabled(true);
+//            }
+//        });
 
         // build the popup
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context)
