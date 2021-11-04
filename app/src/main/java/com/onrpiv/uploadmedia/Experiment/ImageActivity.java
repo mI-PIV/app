@@ -115,26 +115,25 @@ public class ImageActivity extends AppCompatActivity {
                         64, 64);
                 Bitmap resizedCropped = PivFunctions.resizeBitmap(cropped, 600);
 
-                // create the view holding our bitmap
-                PhotoView particleDensityPreview = new PhotoView(ImageActivity.this);
-                particleDensityPreview.setImageBitmap(resizedCropped);
-
+                // set the custom layout
+                View densityReviewLayout = getLayoutInflater().inflate(R.layout.popup_review_dialog, null);
 
 //                ParticleDensityPopup particleDensityPopup = new ParticleDensityPopup(ImageActivity.this, getApplicationContext());
 //                particleDensityPopup.showConfigPopup();
+
+                // create the view holding our bitmap
+                PhotoView particleDensityPreview = densityReviewLayout.findViewById(R.id.densityImage);
+                particleDensityPreview.setImageBitmap(resizedCropped);
 
                 // popup asking user about particle density
                 // Create reviewDensity builder
                 AlertDialog.Builder reviewDensityDialog = new AlertDialog.Builder(ImageActivity.this);
 
-                // set the custom layout
-                View densityReviewLayout = getLayoutInflater().inflate(R.layout.popup_review_dialog, null);
-
 
                 reviewDensityDialog.setTitle("Particle Density");
                 reviewDensityDialog.setView(densityReviewLayout);
                 //reviewDensityDialog.setView(particleDensityPreview);
-                reviewDensityDialog.setMessage("Do you see at least 5 particles in the image?");
+                reviewDensityDialog.setMessage("Do you see 5 particles for both frames?");
 
 
                 // "No" button
