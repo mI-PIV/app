@@ -182,7 +182,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|center_vertical"
                     android:gravity="center|center_vertical"
-                    android:text="Postprocessing"
+                    android:text="Processing"
                     android:textAlignment="viewEnd"
                     android:textColor="#A020F0"
                     android:textSize="18sp"
