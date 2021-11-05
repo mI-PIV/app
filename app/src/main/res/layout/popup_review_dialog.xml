@@ -20,12 +20,16 @@
         android:layout_below="@id/textMessage">
     </com.github.chrisbanes.photoview.PhotoView>
 
+    <Space
+        android:layout_width="1dp"
+        android:layout_height="40dp"/>
+
     <RadioGroup
         android:id="@+id/review_density_rgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/textMessage" >
+        android:layout_below="@+id/textMessage">
         <RadioButton
             android:id="@+id/size32x32"
             android:layout_width="0dp"

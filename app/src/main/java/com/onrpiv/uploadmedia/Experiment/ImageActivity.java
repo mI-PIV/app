@@ -1,6 +1,5 @@
 package com.onrpiv.uploadmedia.Experiment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +22,6 @@ import com.onrpiv.uploadmedia.Learn.PIVBasics3;
 import com.onrpiv.uploadmedia.Learn.PIVBasicsLayout;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
-import com.onrpiv.uploadmedia.Utilities.ParticleDensityPopup;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
@@ -115,26 +112,20 @@ public class ImageActivity extends AppCompatActivity {
                         64, 64);
                 Bitmap resizedCropped = PivFunctions.resizeBitmap(cropped, 600);
 
+                // popup asking user about particle density
                 // set the custom layout
                 View densityReviewLayout = getLayoutInflater().inflate(R.layout.popup_review_dialog, null);
-
-//                ParticleDensityPopup particleDensityPopup = new ParticleDensityPopup(ImageActivity.this, getApplicationContext());
-//                particleDensityPopup.showConfigPopup();
 
                 // create the view holding our bitmap
                 PhotoView particleDensityPreview = densityReviewLayout.findViewById(R.id.densityImage);
                 particleDensityPreview.setImageBitmap(resizedCropped);
 
-                // popup asking user about particle density
                 // Create reviewDensity builder
                 AlertDialog.Builder reviewDensityDialog = new AlertDialog.Builder(ImageActivity.this);
 
-
                 reviewDensityDialog.setTitle("Particle Density");
-                reviewDensityDialog.setView(densityReviewLayout);
-                //reviewDensityDialog.setView(particleDensityPreview);
                 reviewDensityDialog.setMessage("Do you see 5 particles for both frames?");
-
+                reviewDensityDialog.setView(densityReviewLayout);
 
                 // "No" button
                 reviewDensityDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -168,63 +159,6 @@ public class ImageActivity extends AppCompatActivity {
                         frameSelectionPopup.dismiss();
                     }
                 }).create().show();
-
-
-                // ######################################################
-                // Option that doesn't use custom popup_review_dialog.xml
-                // ######################################################
-//                String[] windowSizes = {"32x32","64x64","128x128"};
-//                int defaultWindowSize = 0;
-//                new android.app.AlertDialog.Builder(ImageActivity.this)
-//                        .setView(particleDensityPreview)
-//                        .setCancelable(false)
-////                        .setMessage("Do you see at least 5 particles in the image?")
-//                        .setTitle("Particle Density")
-//                        .setSingleChoiceItems(windowSizes, defaultWindowSize, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                switch (which) {
-//                                    case 0:
-//                                        Toast.makeText(ImageActivity.this, "Window size of 32x32", Toast.LENGTH_LONG).show();
-//                                        break;
-//                                    case 1:
-//                                        Toast.makeText(ImageActivity.this, "You chose a window size of 64x64", Toast.LENGTH_LONG).show();
-//                                        break;
-//                                    case 2:
-//                                        Toast.makeText(ImageActivity.this, "This window size is 128x128", Toast.LENGTH_LONG).show();
-//                                        break;
-//                                }
-//                            }
-//                        })
-//                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                new AlertDialog.Builder(ImageActivity.this)
-//                                        .setMessage("Please select frames with more particle density.")
-//                                        .setPositiveButton("Okay", null)
-//                                        .show();
-//                            }
-//                        })
-//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                frameSet = frameSelectionPopup.frameSet;
-//                                frame1File = frameSelectionPopup.frame1Path;
-//                                frame2File = frameSelectionPopup.frame2Path;
-//                                frame1Num = frameSelectionPopup.frame1Num;
-//                                frame2Num = frameSelectionPopup.frame2Num;
-//
-//                                int framesDirNum = PersistedData.getFrameDirPath(ImageActivity.this, userName,
-//                                        frameSelectionPopup.frameSetPath.getAbsolutePath());
-//                                fps = PersistedData.getFrameDirFPS(ImageActivity.this, userName,
-//                                        framesDirNum);
-//
-//                                review.setEnabled(true);
-//                                parameters.setEnabled(true);
-//                                pickImageMultiple.setBackgroundColor(Color.parseColor("#00CC00"));
-//                                frameSelectionPopup.dismiss();
-//                            }
-//                        }).create().show();
             }
         };
 
