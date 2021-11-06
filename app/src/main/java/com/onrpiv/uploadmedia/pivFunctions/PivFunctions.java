@@ -836,8 +836,8 @@ public class PivFunctions {
                         e.printStackTrace();
                     }
                     //Add new pixel displacement to pixel displacements from 1st pass
-                    dr2[ii][jj] = v[ii][jj] + dr_new[ii][jj];
-                    dc2[ii][jj] = u[ii][jj] + dc_new[ii][jj];
+                    dr2[ii][jj] = v[ii][jj] + dr_new[ii][jj] + 1;
+                    dc2[ii][jj] = u[ii][jj] + dc_new[ii][jj] + 1;
                     sig2noise[ii][jj] = sig2Noise_update(corr, mmr);
 
                     //cleanup mats
