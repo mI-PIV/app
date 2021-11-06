@@ -788,15 +788,15 @@ public class PivFunctions {
                     double IA2_y_int = y[ii] + (v[ii][jj] / 2);
 
                     //Interrogation window for Image 1
-                    int IA1_x_s = (int) Math.round((IA1_x_int - (windowSize / 2) + 1));
-                    int IA1_y_s = (int) Math.round((IA1_y_int - (windowSize / 2) + 1));
+                    int IA1_x_s = (int) Math.round((IA1_x_int - (windowSize / 2f) + 1));
+                    int IA1_y_s = (int) Math.round((IA1_y_int - (windowSize / 2f) + 1));
 
                     Rect rectWin_a = new Rect((IA1_x_s - 1), (IA1_y_s - 1), windowSize, windowSize);
                     Mat IA1_new_t = new Mat(grayFrame1, rectWin_a);
 
                     //Interrogation window for Image 2
-                    int IA2_x_s = (int) Math.round((IA2_x_int - (windowSize / 2) + 1));
-                    int IA2_y_s = (int) Math.round((IA2_y_int - (windowSize / 2) + 1));
+                    int IA2_x_s = (int) Math.round((IA2_x_int - (windowSize / 2f) + 1));
+                    int IA2_y_s = (int) Math.round((IA2_y_int - (windowSize / 2f) + 1));
 
                     Rect rectWin_b = new Rect((IA2_x_s - 1), (IA2_y_s - 1), windowSize, windowSize);
                     Mat IA2_new_t = new Mat(grayFrame2, rectWin_b);
@@ -815,8 +815,17 @@ public class PivFunctions {
                     int r = (int) mmr.maxLoc.y;
 
                     try {
-                        double epsr_new = (Math.log(corr.get(r - 1, c)[0]) - Math.log(corr.get(r + 1, c)[0])) / (2 * (Math.log(corr.get(r - 1, c)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r + 1, c)[0])));
-                        double epsc_new = (Math.log(corr.get(r, c - 1)[0]) - Math.log(corr.get(r, c + 1)[0])) / (2 * (Math.log(corr.get(r, c - 1)[0]) - 2 * Math.log(corr.get(r, c)[0]) + Math.log(corr.get(r, c + 1)[0])));
+                        double epsr_new = (Math.log(corr.get(r - 1, c)[0])
+                                - Math.log(corr.get(r + 1, c)[0]))
+                                / (2 * (Math.log(corr.get(r - 1, c)[0])
+                                - 2 * Math.log(corr.get(r, c)[0])
+                                + Math.log(corr.get(r + 1, c)[0])));
+
+                        double epsc_new = (Math.log(corr.get(r, c - 1)[0])
+                                - Math.log(corr.get(r, c + 1)[0]))
+                                / (2 * (Math.log(corr.get(r, c - 1)[0])
+                                - 2 * Math.log(corr.get(r, c)[0])
+                                + Math.log(corr.get(r, c + 1)[0])));
 
                         eps_r_new[ii][jj] = Double.isNaN(epsr_new)? 0.0 : epsr_new;
                         eps_c_new[ii][jj] = Double.isNaN(epsc_new)? 0.0 : epsc_new;
