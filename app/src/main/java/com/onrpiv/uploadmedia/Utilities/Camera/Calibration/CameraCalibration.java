@@ -125,27 +125,35 @@ public final class CameraCalibration {
         // contour detection
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
 
-        for (MatOfPoint contour: contours) {
+        int stop = Math.min(contours.size(), 150);
+        for (int i = 0; i < stop; i++) {
+            MatOfPoint contour = contours.get(i);
             MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
             MatOfPoint2f approx = new MatOfPoint2f();
             Imgproc.approxPolyDP(contour2f, approx, 0.01*Imgproc.arcLength(contour2f, true), true);
             List<Point> points = approx.toList();
-            if(points.size() == 3) {
-                double d1 = euclidean(points.get(0), points.get(1));
-                double d2 = euclidean(points.get(1), points.get(2));
-                double d3 = euclidean(points.get(2), points.get(0));
-                if (compareDistances(d1, d2, d3)) {
-                    // Our triangle was found, now we just need to calculate pixels per metric
-                    result = calcPixelsPerCentimeter(d1, d2, d3);
+            if (points.size() >= 3) {
+                boolean found = false;
+                for (int j = 0; j < points.size() - 2; j++) {
+                    double d1 = euclidean(points.get(j), points.get(j+1));
+                    double d2 = euclidean(points.get(j+1), points.get(j+2));
+                    double d3 = euclidean(points.get(j+2), points.get(j));
+                    if (compareDistances(d1, d2, d3)) {
+                        // Our triangle was found, now we just need to calculate pixels per metric
+                        result = calcPixelsPerCentimeter(d1, d2, d3);
 
-                    //cleanup mats
-                    contour2f.release();
-                    approx.release();
-                    break;
+                        //cleanup mats
+                        contour2f.release();
+                        approx.release();
+                        found = true;
+                        break;
+                    }
                 }
                 //cleanup mats
                 contour2f.release();
                 approx.release();
+
+                if (found) { break;}
             }
         }
         // cleanup mats
