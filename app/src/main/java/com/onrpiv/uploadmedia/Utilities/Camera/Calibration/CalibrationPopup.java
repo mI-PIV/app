@@ -38,6 +38,8 @@ public class CalibrationPopup {
             @Override
             public void onActivityResult(Boolean result) {
                 String imagePath = PathUtil.getTempFilePath(context);
+                if (!new File(imagePath).exists())
+                    return;
 
                 ProgressDialog pDialog = new ProgressDialog(context);
                 pDialog.setMessage("Searching for calibration pattern...");
