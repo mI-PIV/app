@@ -182,7 +182,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|center_vertical"
                     android:gravity="center|center_vertical"
-                    android:text="Postprocessing"
+                    android:text="Processing"
                     android:textAlignment="viewEnd"
                     android:textColor="#A020F0"
                     android:textSize="18sp"
@@ -209,13 +209,15 @@
                 android:layout_height="match_parent"
                 android:background="#40A020F0"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:orientation="horizontal">
+
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/vec_display"
                         android:layout_width="107dp"
@@ -229,25 +231,30 @@
                     android:layout_height="match_parent"
                     android:checkedButton="@id/replace"
                     android:orientation="horizontal">
+
                     <Space
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
+
                     <RadioButton
                         android:id="@+id/singlepass"
                         android:layout_width="118dp"
                         android:layout_height="wrap_content"
                         android:text="Single Pass" />
+
                     <RadioButton
                         android:id="@+id/multipass"
                         android:layout_width="111dp"
                         android:layout_height="wrap_content"
                         android:text="Multipass" />
+
                     <RadioButton
                         android:id="@+id/replace"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Replacement" />
+
                     <Space
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

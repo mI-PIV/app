@@ -1,7 +1,9 @@
 package com.onrpiv.uploadmedia.Experiment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
@@ -26,6 +28,7 @@ import androidx.fragment.app.FragmentResultListener;
 
 import com.google.android.material.slider.RangeSlider;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraConfigPopup;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
 import com.onrpiv.uploadmedia.Utilities.Camera.HighSpeedCaptureCallback;
@@ -49,6 +52,7 @@ public class VideoActivity extends AppCompatActivity {
     private TextView mBufferingTextView;
     private CheckBox viewBackgroundCheckbox;
     private String videoPath;
+    private Uri videoUri;
     private String userName;
     private String fps = "20";
     private float vidStart = 0f;
@@ -56,6 +60,7 @@ public class VideoActivity extends AppCompatActivity {
 
     // Current playback position (in milliseconds).
     private int mCurrentPosition = 0;
+    private boolean video_selected = false;
 
     // Tag for the instance state bundle.
     private static final String PLAYBACK_TIME = "play_time";
@@ -172,21 +177,14 @@ public class VideoActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        // Save the current playback position (in milliseconds) to the
-        // instance state bundle.
-        outState.putInt(PLAYBACK_TIME, mVideoView.getCurrentPosition());
-    }
-
     private void initializePlayer(Uri uri) {
         // Show the "Buffering..." message while the video loads.
         mBufferingTextView.setVisibility(VideoView.VISIBLE);
-        if (uri != null){
-            mVideoView.setVideoURI(uri);
-        }
+
+        if (uri == null)
+            return;
+
+        mVideoView.setVideoURI(uri);
         // Listener for onPrepared() event (runs after the media is prepared).
         mVideoView.setOnPreparedListener(
                 new MediaPlayer.OnPreparedListener() {
@@ -239,6 +237,7 @@ public class VideoActivity extends AppCompatActivity {
                     videoSelected(data.getData());
                 }
             }
+            video_selected = true;
             generateFramesButton.setEnabled(true);
             setupRangeSlider();
         }
@@ -258,8 +257,19 @@ public class VideoActivity extends AppCompatActivity {
                 PathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
                 // return to experiment menu
                 MainActivity.userName = userName;
-                MainActivity.showBackground = viewBackgroundCheckbox.isChecked();
-                finish();
+
+                // show the background popup if desired and exit video activity
+                if (viewBackgroundCheckbox.isChecked()) {
+                    AlertDialog.Builder backsubBuilder = BackgroundSub.showLatestBackground(VideoActivity.this, userName);
+                    backsubBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            finish();
+                        }
+                    }).create().show();
+                } else {
+                    finish();
+                }
                 return null;
             }
         };
@@ -277,6 +287,7 @@ public class VideoActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
 
         videoPath = PathUtil.getRealPath(VideoActivity.this, video);
+        videoUri = video;
         initializePlayer(video);
         setupRangeSlider();
         recordVideo.setBackgroundColor(Color.parseColor("#00CC00"));
@@ -288,6 +299,7 @@ public class VideoActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
 
         videoPath = PathUtil.getRealPath(VideoActivity.this, video);
+        videoUri = video;
         initializePlayer(video);
         pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
     }
@@ -321,6 +333,42 @@ public class VideoActivity extends AppCompatActivity {
             }
         });
         ((ViewGroup) rangeSlider.getParent()).setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString("username", userName);
+        outState.putBoolean("selected", video_selected);
+
+        if (video_selected) {
+            outState.putString("fps", fps);
+            outState.putString("vidpath", videoPath);
+            outState.putBoolean("background_check", viewBackgroundCheckbox.isChecked());
+            outState.putString("viduri", videoUri.toString());
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        userName = savedInstanceState.getString("username");
+        video_selected = savedInstanceState.getBoolean("selected");
+
+        if (video_selected) {
+            fps = savedInstanceState.getString("fps");
+            videoPath = savedInstanceState.getString("vidpath");
+            viewBackgroundCheckbox.setChecked(savedInstanceState.getBoolean("background_check"));
+            videoUri = Uri.parse(savedInstanceState.getString("viduri"));
+
+            initializePlayer(videoUri);
+            setupRangeSlider();
+            generateFramesButton.setEnabled(true);
+            recordVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+            pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+        }
     }
 }
 

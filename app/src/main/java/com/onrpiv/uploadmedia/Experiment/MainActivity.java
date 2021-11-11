@@ -26,13 +26,13 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.onrpiv.uploadmedia.Experiment.Popups.LoadExperimentPopup;
 import com.onrpiv.uploadmedia.R;
-import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CalibrationPopup;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ActivityResultLauncher<Uri> takePhotoLauncher;
 
     public static String userName = null;
-    public static boolean showBackground = false;
 
 
     @Override
@@ -72,9 +71,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (null == userName || userName.isEmpty())
             userNameDialog();
-
-        if (showBackground)
-            BackgroundSub.showLatestBackground(MainActivity.this, userName);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             image.setEnabled(false);
@@ -96,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 0) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -229,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // warning dialog
                 new androidx.appcompat.app.AlertDialog.Builder(context)
                         .setTitle("Delete User Settings")
-                        .setMessage("All extracted frames and experiments will be deleted." +
+                        .setMessage("All extracted frames, calibrations, and saved experiments will be deleted." +
                                 " Are you sure you wish to continue?")
 
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -253,6 +249,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         // delete all persisted data
                                         pDialog.setMessage("Deleting persisted data...");
                                         PersistedData.clearUserPersistedData(context, userName);
+
+                                        // delete any camera calibrations
+                                        pDialog.setMessage("Deleting camera calibration...");
+                                        PathUtil.deleteRecursive(PathUtil.getUserDirectory(context, userName));
+
                                         if (pDialog.isShowing()) pDialog.dismiss();
                                     }
                                 };
@@ -293,5 +294,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("username", userName);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        userName = savedInstanceState.getString("username");
     }
 }

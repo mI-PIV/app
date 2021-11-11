@@ -72,7 +72,7 @@ public class BackgroundSub {
         background.release();
     }
 
-    public static void showLatestBackground(Context context, String userName) {
+    public static AlertDialog.Builder showLatestBackground(Context context, String userName) {
         int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName));
         File framesNumDir = PathUtil.getFramesNumberedDirectory(context,
                 userName, totalFrameDirs);
@@ -81,12 +81,11 @@ public class BackgroundSub {
         Bitmap resizedBackground = PivFunctions.resizeBitmap(background, 600);
         PhotoView backgroundImage = new PhotoView(context);
         backgroundImage.setImageBitmap(resizedBackground);
-        new AlertDialog.Builder(context)
+        return new AlertDialog.Builder(context)
                 .setView(backgroundImage)
                 .setCancelable(false)
                 .setTitle("Video Extracted Background")
-                .setPositiveButton("Okay", null)
-                .show();
+                .setPositiveButton("Okay", null);
     }
 
     private static File[] getFramesPaths(File framesDir) {
