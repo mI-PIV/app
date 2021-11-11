@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/densityRootLayout"
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/densityImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textMessage">
+    </com.github.chrisbanes.photoview.PhotoView>
+
+    <Space
+        android:layout_width="1dp"
+        android:layout_height="40dp"/>
+
+    <RadioGroup
+        android:id="@+id/review_density_rgroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textMessage"
+        android:checkedButton="@id/size32x32"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/size32x32"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="32x32" />
+
+        <RadioButton
+            android:id="@+id/size64x64"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="64x64" />
+
+        <RadioButton
+            android:id="@+id/size128x128"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="128x128" />
+
+    </RadioGroup>
+</LinearLayout>

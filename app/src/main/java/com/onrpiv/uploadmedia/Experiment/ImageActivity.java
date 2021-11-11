@@ -3,8 +3,6 @@ package com.onrpiv.uploadmedia.Experiment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,10 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.chrisbanes.photoview.PhotoView;
+import com.onrpiv.uploadmedia.Experiment.Popups.DensityPreviewPopup;
 import com.onrpiv.uploadmedia.Experiment.Popups.PivFrameSelectionPopup;
 import com.onrpiv.uploadmedia.Experiment.Popups.PivOptionsPopup;
 import com.onrpiv.uploadmedia.Learn.PIVBasics3;
@@ -23,7 +20,6 @@ import com.onrpiv.uploadmedia.Learn.PIVBasicsLayout;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
-import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 import com.onrpiv.uploadmedia.pivFunctions.PivRunner;
@@ -107,55 +103,32 @@ public class ImageActivity extends AppCompatActivity {
         View.OnClickListener saveListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // "Yes" button
+                DialogInterface.OnClickListener densityPreviewListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        frameSet = frameSelectionPopup.frameSet;
+                        frame1File = frameSelectionPopup.frame1Path;
+                        frame2File = frameSelectionPopup.frame2Path;
+                        frame1Num = frameSelectionPopup.frame1Num;
+                        frame2Num = frameSelectionPopup.frame2Num;
 
-                // create our particle density preview bitmap
-                Bitmap bmp = BitmapFactory.decodeFile(frameSelectionPopup.frame1Path.getAbsolutePath());
-                Bitmap cropped = Bitmap.createBitmap(
-                        bmp,
-                        Math.round(bmp.getWidth()/2f), Math.round(bmp.getHeight()/2f),
-                        64, 64);
-                Bitmap resizedCropped = PivFunctions.resizeBitmap(cropped, 600);
+                        int framesDirNum = PersistedData.getFrameDirPath(ImageActivity.this, userName,
+                                frameSelectionPopup.frameSetPath.getAbsolutePath());
+                        fps = PersistedData.getFrameDirFPS(ImageActivity.this, userName,
+                                framesDirNum);
 
-                // create the view holding our bitmap
-                PhotoView particleDensityPreview = new PhotoView(ImageActivity.this);
-                particleDensityPreview.setImageBitmap(resizedCropped);
-
-                // popup asking user about particle density
-                new android.app.AlertDialog.Builder(ImageActivity.this)
-                        .setView(particleDensityPreview)
-                        .setCancelable(false)
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                new AlertDialog.Builder(ImageActivity.this)
-                                        .setMessage("Please select frames with more particle density.")
-                                        .setPositiveButton("Okay", null)
-                                        .show();
-                            }
-                        })
-                        .setMessage("Do you see at least 5 particles in the image?")
-                        .setTitle("Particle Density")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                frameSet = frameSelectionPopup.frameSet;
-                                frame1File = frameSelectionPopup.frame1Path;
-                                frame2File = frameSelectionPopup.frame2Path;
-                                frame1Num = frameSelectionPopup.frame1Num;
-                                frame2Num = frameSelectionPopup.frame2Num;
-
-                                int framesDirNum = PersistedData.getFrameDirPath(ImageActivity.this, userName,
-                                        frameSelectionPopup.frameSetPath.getAbsolutePath());
-                                fps = PersistedData.getFrameDirFPS(ImageActivity.this, userName,
-                                        framesDirNum);
-
-                                review.setEnabled(true);
-                                parameters.setEnabled(true);
-                                pickImageMultiple.setBackgroundColor(Color.parseColor(greenString));
-                                step = 1;
-                                frameSelectionPopup.dismiss();
-                            }
-                        }).create().show();
+                        review.setEnabled(true);
+                        parameters.setEnabled(true);
+                        pickImageMultiple.setBackgroundColor(Color.parseColor("#00CC00"));
+                        frameSelectionPopup.dismiss();
+                    }
+                };
+                // create and display our density preview popup
+                DensityPreviewPopup densityPreviewPopup = new DensityPreviewPopup(
+                        ImageActivity.this, frameSelectionPopup.frame1Path.getAbsolutePath(),
+                        frameSelectionPopup.frame2Path.getAbsolutePath(), densityPreviewListener);
+                densityPreviewPopup.show();
             }
         };
 
