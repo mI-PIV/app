@@ -38,6 +38,8 @@ public class CalibrationPopup {
             @Override
             public void onActivityResult(Boolean result) {
                 String imagePath = PathUtil.getTempFilePath(context);
+                if (!new File(imagePath).exists())
+                    return;
 
                 ProgressDialog pDialog = new ProgressDialog(context);
                 pDialog.setMessage("Searching for calibration pattern...");
@@ -50,28 +52,30 @@ public class CalibrationPopup {
                     public void run() {
                         // calculate calibration
                         CameraCalibrationResult ccResult = new CameraCalibrationResult();
-
                         ccResult.ratio = CameraCalibration.calculatePixelToPhysicalRatio(imagePath);
 
                         // check to see if calibration pattern was found
                         if (ccResult.ratio == -1d) {
-                            new AlertDialog.Builder(context)
+                            AlertDialog.Builder failedDialog = new AlertDialog.Builder(context)
                                     .setMessage("Couldn't find a calibration pattern. Please make sure " +
                                             "the calibration pattern is completely visible in " +
                                             "the photo and try again.")
-                                    .setPositiveButton("Okay", null)
-                                    .create().show();
+                                    .setPositiveButton("Okay", null);
+                            threadedPopup(context, failedDialog);
                         } else {
-                            CalibrationPopup.setMessage("Calibration pattern found. Calculating camera matrices...",
-                                    context, pDialog);
+                            AlertDialog.Builder successDialog = new AlertDialog.Builder(context)
+                                    .setMessage("Calibration pattern found!")
+                                    .setPositiveButton("Save Calibration", null);
+                            threadedPopup(context, successDialog);
+                            setMessage("Calculating camera matrices...", context, pDialog);
+
                             Mat cameraMatrix = new Mat();
                             Mat distanceCoefficients = new MatOfDouble();
                             Mat.eye(3, 3, CvType.CV_64FC1).copyTo(cameraMatrix);
                             Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distanceCoefficients);
                             CameraCalibration.saveCameraProperties(context, cameraMatrix, distanceCoefficients);
 
-                            CalibrationPopup.setMessage("Saving camera calibration...",
-                                    context, pDialog);
+                            setMessage("Saving camera calibration...", context, pDialog);
                             ccResult.saveCameraMatrix(cameraMatrix);
                             ccResult.saveDistanceCoeffs(distanceCoefficients);
 
@@ -98,6 +102,16 @@ public class CalibrationPopup {
             @Override
             public void run() {
                 pDialog.setMessage(msg);
+            }
+        });
+    }
+
+    private static void threadedPopup(Context context, AlertDialog.Builder dialogBuilder) {
+        Activity activity = (Activity) context;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dialogBuilder.create().show();
             }
         });
     }

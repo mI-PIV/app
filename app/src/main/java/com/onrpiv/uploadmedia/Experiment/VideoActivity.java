@@ -1,7 +1,9 @@
 package com.onrpiv.uploadmedia.Experiment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
@@ -26,6 +28,7 @@ import androidx.fragment.app.FragmentResultListener;
 
 import com.google.android.material.slider.RangeSlider;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraConfigPopup;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
 import com.onrpiv.uploadmedia.Utilities.Camera.HighSpeedCaptureCallback;
@@ -177,9 +180,11 @@ public class VideoActivity extends AppCompatActivity {
     private void initializePlayer(Uri uri) {
         // Show the "Buffering..." message while the video loads.
         mBufferingTextView.setVisibility(VideoView.VISIBLE);
-        if (uri != null){
-            mVideoView.setVideoURI(uri);
-        }
+
+        if (uri == null)
+            return;
+
+        mVideoView.setVideoURI(uri);
         // Listener for onPrepared() event (runs after the media is prepared).
         mVideoView.setOnPreparedListener(
                 new MediaPlayer.OnPreparedListener() {
@@ -252,8 +257,19 @@ public class VideoActivity extends AppCompatActivity {
                 PathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
                 // return to experiment menu
                 MainActivity.userName = userName;
-                MainActivity.showBackground = viewBackgroundCheckbox.isChecked();
-                finish();
+
+                // show the background popup if desired and exit video activity
+                if (viewBackgroundCheckbox.isChecked()) {
+                    AlertDialog.Builder backsubBuilder = BackgroundSub.showLatestBackground(VideoActivity.this, userName);
+                    backsubBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            finish();
+                        }
+                    }).create().show();
+                } else {
+                    finish();
+                }
                 return null;
             }
         };

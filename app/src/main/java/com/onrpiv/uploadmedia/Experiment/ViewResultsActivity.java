@@ -710,13 +710,15 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             float u = (float) pivCorr.getCalibratedU()[pivCoords.y][pivCoords.x];
             float v = (float) pivCorr.getCalibratedV()[pivCoords.y][pivCoords.x];
             float vort = (float) pivCorr.getCalibratedVorticity()[pivCoords.y][pivCoords.x];
-            updatedText = settings.formatInfoString_physical((float) imgX, (float) dispY, u, v, vort);
+            // because we're inverting the y axis, we also invert the v values
+            updatedText = settings.formatInfoString_physical((float) imgX, (float) dispY, u, -v, vort);
         } else {
             // compile the data
             float u = (float)pivCorr.getU()[pivCoords.y][pivCoords.x];
             float v = (float)pivCorr.getV()[pivCoords.y][pivCoords.x];
             float vort = (float)pivCorr.getVorticityValues()[pivCoords.y][pivCoords.x];
-            updatedText = settings.formatInfoString_pixel((float)imgX, (float)dispY, u, v, vort);
+            // because we're inverting the y axis, we also invert the v values
+            updatedText = settings.formatInfoString_pixel((float)imgX, (float)dispY, u, -v, vort);
         }
         infoText.setText(updatedText);
     }
