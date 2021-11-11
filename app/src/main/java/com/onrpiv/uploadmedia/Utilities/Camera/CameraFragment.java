@@ -2,6 +2,7 @@ package com.onrpiv.uploadmedia.Utilities.Camera;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -201,6 +202,7 @@ public class CameraFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         return inflater.inflate(R.layout.camera_fragment, container, false);
     }
 
@@ -225,6 +227,7 @@ public class CameraFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         startBackgroundThread();
         if (mTextureView.isAvailable()) {
             openCamera(mTextureView.getWidth(), mTextureView.getHeight());
@@ -235,6 +238,7 @@ public class CameraFragment extends Fragment
 
     @Override
     public void onPause() {
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         closeCamera();
         stopBackgroundThread();
         super.onPause();
