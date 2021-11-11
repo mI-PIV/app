@@ -7,76 +7,64 @@
     android:scrollbarStyle="outsideInset"
     tools:context=".Experiment.HomeActivity">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#0F2439"
-        android:gravity="center"
-        android:text="@string/app_name"
-        android:textColor="#FFFFFF"
-        android:textSize="40sp" />
-
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="7.5dp"
-        tools:ignore="MissingConstraints">
-
-        <RelativeLayout
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#0F2439"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="#FFFFFF"
+            android:textSize="40sp" />
+        <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_alignParentBottom="true"
-                android:layout_marginTop="225dp"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/startExperimentButton"
-                    android:layout_width="245dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:background="@drawable/mybuttons"
-                    android:text="@string/start_an_experiment"
-                    android:textColor="#FFFFFF"
-                    android:textSize="20sp" />
-
-                <Button
-                    android:id="@+id/learnFluidsButton"
-                    android:layout_width="245dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:background="@drawable/mybuttons"
-                    android:text="@string/learn_about_fluids"
-                    android:textSize="20sp"
-                    android:textColor="#FFFFFF" />
-
-                <Button
-                    android:id="@+id/learnPIVButton"
-                    android:layout_width="245dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:background="@drawable/mybuttons"
-                    android:text="Learn About PIV"
-                    android:textSize="20sp"
-                    android:textColor="#FFFFFF"/>
-
-
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/usu_logo"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/startExperimentButton"
+                android:layout_width="245dp"
                 android:layout_height="wrap_content"
-                android:scaleType="fitEnd"
-                android:src="@drawable/usuonr"
-                android:layout_alignParentBottom="true"
-                tools:ignore="MissingConstraints" />
+                android:layout_margin="15dp"
+                android:background="@drawable/mybuttons"
+                android:text="@string/start_an_experiment"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
 
-        </RelativeLayout>
-    </ScrollView>
+            <Button
+                android:id="@+id/learnFluidsButton"
+                android:layout_width="245dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="@drawable/mybuttons"
+                android:text="@string/learn_about_fluids"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/learnPIVButton"
+                android:layout_width="245dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="@drawable/mybuttons"
+                android:text="Learn About PIV"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/usu_logo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitEnd"
+            android:src="@drawable/usuonr"
+            android:layout_alignParentBottom="true"
+            tools:ignore="MissingConstraints" />
+
+    </RelativeLayout>
 </RelativeLayout>
