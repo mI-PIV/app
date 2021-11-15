@@ -16,6 +16,7 @@ import android.util.Log;
 
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
+import com.onrpiv.uploadmedia.Utilities.ProgressUpdateInterface;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -227,17 +228,22 @@ public class PivFunctions {
     }
 
 
-    public PivResultData extendedSearchAreaPiv_update(String resultName) {
+    public PivResultData extendedSearchAreaPiv_update(String resultName, ProgressUpdateInterface progressUpdate) {
         double[][] dr1 = new double[fieldRows][fieldCols];
         double[][] dc1 = new double[fieldRows][fieldCols];
 
         double[][] mag = new double[fieldRows][fieldCols];
         double[][] sig2noise = new double[fieldRows][fieldCols];
 
+        progressUpdate.setProgressMax(fieldCols * fieldRows);
+        int progressCounter = 0;
+
         for (int i = 0; i < fieldRows; i++) {
             for (int j = 0; j < fieldCols; j++) {
                 Mat window_a_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
                 Mat window_b_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
+
+                progressUpdate.updateProgressIteration(progressCounter++);
 
 //             Select first the largest window, work like usual from the top left corner the left edge goes as:
 //            # e.g. 0, (search_area_size - overlap), 2*(search_area_size - overlap),....
@@ -749,7 +755,7 @@ public class PivFunctions {
                 singlePassResult.getSig2Noise(), getCoordinates(), cols, rows, dt);
     }
 
-    public PivResultData calculateMultipass(PivResultData pivResultData, String resultName) {
+    public PivResultData calculateMultipass(PivResultData pivResultData, String resultName, ProgressUpdateInterface progressUpdate) {
         double[][] dr_new = new double[fieldRows][fieldCols];
         double[][] dc_new = new double[fieldRows][fieldCols];
 
@@ -767,10 +773,15 @@ public class PivFunctions {
         double[] x = pivResultData.getInterrX();
         double[] y = pivResultData.getInterrY();
 
+//        progressUpdate.setProgressMax((fieldCols-2) * (fieldCols-2));
+        int progressCounter = 0;
+
         for (int ii = 1; ii < fieldRows - 1; ii++) {
             for (int jj = 1; jj < fieldCols - 1; jj++) {
                 Mat window_a_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
                 Mat window_b_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
+
+                progressUpdate.updateProgressIteration(progressCounter++);
 
                 //if pixel displacements from 1st pass are zero keep them as zero in 2nd phase
                 if (v[ii][jj] == 0 && u[ii][jj] == 0) {
