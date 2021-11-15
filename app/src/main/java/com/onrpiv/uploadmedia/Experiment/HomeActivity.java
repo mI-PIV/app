@@ -1,12 +1,9 @@
 package com.onrpiv.uploadmedia.Experiment;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,10 +19,7 @@ public class HomeActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        // Comment out the line below to be able to rotate the screen and see the picture cut off the
-        // buttons.
-        super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); // locking the screen
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Button startExperimentButton = (Button) findViewById(R.id.startExperimentButton);
         startExperimentButton.setOnClickListener(new View.OnClickListener() {
@@ -54,4 +48,5 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
+
 }
