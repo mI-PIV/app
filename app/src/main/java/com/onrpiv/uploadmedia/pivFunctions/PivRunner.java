@@ -8,12 +8,13 @@ import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
+import com.onrpiv.uploadmedia.Utilities.ProgressUpdateInterface;
 
 import java.io.File;
 import java.util.HashMap;
 
 
-public class PivRunner {
+public class PivRunner implements ProgressUpdateInterface {
     private final PivParameters parameters;
     private final Context context;
     private final File frame1File;
@@ -59,6 +60,7 @@ public class PivRunner {
         pDialog = new ProgressDialog(context);
         pDialog.setMessage(context.getString(R.string.msg_loading));
         pDialog.setCancelable(false);
+        pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         if (!pDialog.isShowing()) pDialog.show();
 
         final HashMap<String, PivResultData> resultData = new HashMap<>();
@@ -78,7 +80,7 @@ public class PivRunner {
                 setMessage("Calculating PIV");
                 setMessage("Calculating single pass PIV");
                 // single pass
-                PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE);
+                PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE, PivRunner.this);
                 singlePassResult.setBackgroundSubtracted(backgroundSub);
 
                 // Save first frame for output base image
@@ -118,7 +120,7 @@ public class PivRunner {
                 if (parameters.isReplace()) {
                     setMessage("Calculating multi-pass PIV");
                     PivResultData pivReplaceMissing = pivFunctions.replaceMissingVectors(pivCorrelationProcessed, null);
-                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivReplaceMissing, PivResultData.MULTI);
+                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivReplaceMissing, PivResultData.MULTI, PivRunner.this);
 
                     String stepMulti = "Multipass";
                     pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);
@@ -149,7 +151,7 @@ public class PivRunner {
                     parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivReplaceMissing2.getMag()));
                 } else {
                     setMessage("Calculating multi-pass PIV");
-                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivCorrelationProcessed, PivResultData.MULTI);
+                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivCorrelationProcessed, PivResultData.MULTI, PivRunner.this);
 
                     String stepMulti = "Multipass";
                     pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);
@@ -192,6 +194,26 @@ public class PivRunner {
             @Override
             public void run() {
                 pDialog.setMessage(msg);
+            }
+        });
+    }
+
+    @Override
+    public void updateProgressIteration(int iteration) {
+        imageActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                pDialog.setProgress(iteration);
+            }
+        });
+    }
+
+    @Override
+    public void setProgressMax(int max) {
+        imageActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                pDialog.setMax(max);
             }
         });
     }
