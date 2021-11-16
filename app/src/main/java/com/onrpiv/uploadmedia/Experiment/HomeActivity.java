@@ -49,4 +49,16 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    // ensuring the screen is locked to vertical position
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
 }
