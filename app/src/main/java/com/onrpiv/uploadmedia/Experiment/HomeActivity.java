@@ -1,6 +1,7 @@
 package com.onrpiv.uploadmedia.Experiment;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +19,7 @@ public class HomeActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Button startExperimentButton = (Button) findViewById(R.id.startExperimentButton);
         startExperimentButton.setOnClickListener(new View.OnClickListener() {
@@ -45,5 +47,18 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(learnPIV);
             }
         });
+    }
+
+    // ensuring the screen is locked to vertical position
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 }

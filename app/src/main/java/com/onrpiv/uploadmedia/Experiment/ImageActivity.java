@@ -3,6 +3,7 @@ package com.onrpiv.uploadmedia.Experiment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -55,6 +56,7 @@ public class ImageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_layout);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // init buttons
@@ -261,5 +263,18 @@ public class ImageActivity extends AppCompatActivity {
     private static void setButton(Button btn, String color, boolean enabled) {
         btn.setEnabled(enabled);
         btn.setBackgroundColor(Color.parseColor(color));
+    }
+
+    // ensuring the screen is locked to vertical position
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 }
