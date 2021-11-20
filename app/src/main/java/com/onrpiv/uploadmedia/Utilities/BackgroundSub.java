@@ -116,10 +116,6 @@ public class BackgroundSub {
     }
 
     private static Mat[] subtract(File[] frames, Mat background, int frame1Index, int frame2Index) {
-        // zero index fix
-        frame1Index--;
-        frame2Index--;
-
         // read in frames
         Mat frame1Mat = Imgcodecs.imread(frames[frame1Index].getAbsolutePath());
         Mat frame2Mat = Imgcodecs.imread(frames[frame2Index].getAbsolutePath());
