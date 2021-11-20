@@ -168,63 +168,17 @@ public class PivFunctions {
         int peak1_y = (int) mmr.maxLoc.y;
         double peak1_value = mmr.maxVal;
 
-        // remove primary peak from correlation map
-        removePrimaryPeak(correlation, peak1_x, peak1_y);
+        // remove primary peak
+        for (int x = peak1_x - 1; x <= peak1_x + 1; x++)
+            for (int y = peak1_y - 1; y <= peak1_y + 1; y++)
+                correlation.put(y, x, 0d);
 
         // find second peak value
         Core.MinMaxLocResult mmr2 = Core.minMaxLoc(correlation);
         double peak2_value = mmr2.maxVal;
 
-        // if we can't find a secondary peak then
-        // our remove primary peak algo might've removed the secondary signal
-        // so we'll backup to removing just the primary signal pixel
-        if (peak2_value == 0d) {
-            corr.put(peak1_y, peak1_x, 0d);
-
-            mmr2 = Core.minMaxLoc(corr);
-            peak2_value = mmr2.maxVal;
-        }
-
         correlation.release();
         return peak1_value / peak2_value;
-    }
-
-    private static void removePrimaryPeak(Mat correlationMap, int peak_x, int peak_y) {
-        int xp_stop = correlationMap.cols(), xn_stop = 0, yp_stop = correlationMap.rows(), yn_stop = 0;
-
-        for (int xp = peak_x; xp < correlationMap.cols()-1; xp++) {
-            if (correlationMap.get(peak_y, xp+1)[0] > correlationMap.get(peak_y, xp)[0]) {
-                xp_stop = xp;
-                break;
-            }
-        }
-
-        for (int xn = peak_x; xn > 1; xn--) {
-            if (correlationMap.get(peak_y, xn-1)[0] > correlationMap.get(peak_y, xn)[0]) {
-                xn_stop = xn;
-                break;
-            }
-        }
-
-        for (int yp = peak_y; yp < correlationMap.rows()-1; yp++) {
-            if (correlationMap.get(yp+1, peak_x)[0] > correlationMap.get(yp, peak_x)[0]) {
-                yp_stop = yp;
-                break;
-            }
-        }
-
-        for (int yn = peak_y; yn > 1; yn--) {
-            if (correlationMap.get(yn-1, peak_x)[0] > correlationMap.get(yn, peak_x)[0]) {
-                yn_stop = yn;
-                break;
-            }
-        }
-
-        for (int y = yn_stop; y <= yp_stop; y++) {
-            for (int x = xn_stop; x <= xp_stop; x++) {
-                correlationMap.put(y, x, 0d);
-            }
-        }
     }
 
 
