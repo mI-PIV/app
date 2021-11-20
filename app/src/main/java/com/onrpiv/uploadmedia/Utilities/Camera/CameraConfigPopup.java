@@ -15,6 +15,8 @@ import android.util.Size;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 
@@ -48,8 +50,17 @@ public class CameraConfigPopup {
     private final HashMap<String, Size> stringToSizeMap;
 
     private LinearLayout resLayout;
+    private LinearLayout fpsLayout;
+    private CheckBox defaultCheckBox;
 
     private static final String TAG = "CameraSizes";
+    private static final List<String> defaultFPS = new ArrayList<>(Arrays.asList("90", "60", "30", "24", "15"));
+    private static final List<String> defaultRes = new ArrayList<>(Arrays.asList(
+            "1080 x 1920",
+            "960 x 1280",
+            "720 x 1280",
+            "600 x 800",
+            "360 x 640"));
 
 
     private final View.OnClickListener fpsListener = new View.OnClickListener() {
@@ -78,6 +89,54 @@ public class CameraConfigPopup {
             // turn on new fps button
             selectedFpsButton = (RadioButton) v;
             selectedFpsButton.setChecked(true);
+        }
+    };
+
+    private final CompoundButton.OnCheckedChangeListener checkboxListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked && fpsLayout.getChildCount() > 0) {
+                boolean fpsSet = false;
+                boolean resSet = false;
+
+                // get fps buttons
+                List<RadioButton> fpsButtons = new ArrayList<>();
+                for (int i = 0; i < fpsLayout.getChildCount(); i++)
+                    fpsButtons.add((RadioButton) fpsLayout.getChildAt(i));
+
+                // search fps buttons for our default
+                for (String fps : defaultFPS) {
+                    for (RadioButton fpsButton : fpsButtons) {
+                        if (fpsButton.getText().toString().equals(fps + " fps")) {
+                            fpsButton.performClick();
+                            fpsSet = true;
+                            break;
+                        }
+                    }
+                    if (fpsSet) break;
+                }
+
+                // now search for camera res default button
+                List<RadioButton> resButtons = new ArrayList<>();
+                for (int j = 0; j < resLayout.getChildCount(); j++)
+                    resButtons.add((RadioButton) resLayout.getChildAt(j));
+
+                for (String res : defaultRes) {
+                    for (RadioButton resButton : resButtons) {
+                        if (resButton.getText().toString().equals(res)) {
+                            resButton.performClick();
+                            resSet = true;
+                            break;
+                        }
+                    }
+                    if (resSet) break;
+                }
+
+                // Remove the default checkbox if we can't set defaults
+                if (!fpsSet || !resSet) {
+                    defaultCheckBox.setVisibility(View.GONE);
+                }
+            }
         }
     };
 
@@ -192,14 +251,24 @@ public class CameraConfigPopup {
         LayoutInflater inflater = LayoutInflater.from(context);
         View popup = inflater.inflate(R.layout.popup_camera_config, null);
 
-        LinearLayout fpsLayout = popup.findViewById(R.id.popup_cam_fps);
+        defaultCheckBox = popup.findViewById(R.id.camera_config_default_cb);
+        defaultCheckBox.setOnCheckedChangeListener(checkboxListener);
+        fpsLayout = popup.findViewById(R.id.popup_cam_fps);
         resLayout = popup.findViewById(R.id.popup_cam_res);
 
         // Check if the phone is capable before we manually add 120, 240 fps
         ArrayList<Range<Integer>> allFrameRates = new ArrayList<>(Arrays.asList(frameRates));
         if (hasHighSpeedCapability(context) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            allFrameRates.add(new Range<>(120, 120));
-            allFrameRates.add(new Range<>(240, 240));
+            // Try to add 120 and 240 to the frame rate options
+            try {
+                camConfigMap.getHighSpeedVideoSizesFor(stringToFps("120"));
+                allFrameRates.add(new Range<>(120, 120));
+            } catch (IllegalArgumentException ignored) {}
+
+            try {
+                camConfigMap.getHighSpeedVideoSizesFor(stringToFps("240"));
+                allFrameRates.add(new Range<>(240, 240));
+            } catch (IllegalArgumentException ignored) {}
         }
 
         // create the fps radio buttons
