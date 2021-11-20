@@ -198,8 +198,16 @@ public class CameraConfigPopup {
         // Check if the phone is capable before we manually add 120, 240 fps
         ArrayList<Range<Integer>> allFrameRates = new ArrayList<>(Arrays.asList(frameRates));
         if (hasHighSpeedCapability(context) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            allFrameRates.add(new Range<>(120, 120));
-            allFrameRates.add(new Range<>(240, 240));
+            // Try to add 120 and 240 to the frame rate options
+            try {
+                camConfigMap.getHighSpeedVideoSizesFor(stringToFps("120"));
+                allFrameRates.add(new Range<>(120, 120));
+            } catch (IllegalArgumentException ignored) {}
+
+            try {
+                camConfigMap.getHighSpeedVideoSizesFor(stringToFps("240"));
+                allFrameRates.add(new Range<>(240, 240));
+            } catch (IllegalArgumentException ignored) {}
         }
 
         // create the fps radio buttons
