@@ -98,15 +98,16 @@ public class CameraConfigPopup {
             if (isChecked && fpsLayout.getChildCount() > 0) {
                 boolean fpsSet = false;
                 boolean resSet = false;
+
                 // get fps buttons
                 List<RadioButton> fpsButtons = new ArrayList<>();
                 for (int i = 0; i < fpsLayout.getChildCount(); i++)
                     fpsButtons.add((RadioButton) fpsLayout.getChildAt(i));
 
                 // search fps buttons for our default
-                for (RadioButton fpsButton : fpsButtons) {
-                    for (String fps : defaultFPS) {
-                        if (fpsButton.getText() == fps) {
+                for (String fps : defaultFPS) {
+                    for (RadioButton fpsButton : fpsButtons) {
+                        if (fpsButton.getText().toString().equals(fps + " fps")) {
                             fpsButton.performClick();
                             fpsSet = true;
                             break;
@@ -120,9 +121,9 @@ public class CameraConfigPopup {
                 for (int j = 0; j < resLayout.getChildCount(); j++)
                     resButtons.add((RadioButton) resLayout.getChildAt(j));
 
-                for (RadioButton resButton : resButtons) {
-                    for (String res : defaultRes) {
-                        if (resButton.getText() == res) {
+                for (String res : defaultRes) {
+                    for (RadioButton resButton : resButtons) {
+                        if (resButton.getText().toString().equals(res)) {
                             resButton.performClick();
                             resSet = true;
                             break;
