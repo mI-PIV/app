@@ -46,7 +46,7 @@ public class BackgroundSub {
                 if (intensity > 0) {
                     frame1New.put(row, col, intensity);
                 } else if (intensity < 0) {
-                    frame2New.put(row, col, intensity * -1d);
+                    frame2New.put(row, col, -intensity);
                 }
             }
         }
@@ -134,6 +134,10 @@ public class BackgroundSub {
         Mat grayDiff1 = new Mat(), grayDiff2 = new Mat();
         Imgproc.cvtColor(diff1, grayDiff1, Imgproc.COLOR_BGR2GRAY);
         Imgproc.cvtColor(diff2, grayDiff2, Imgproc.COLOR_BGR2GRAY);
+
+        // normalize grayscale frames
+        Core.normalize(grayDiff1, grayDiff1, 0d, 255d, Core.NORM_MINMAX);
+        Core.normalize(grayDiff2, grayDiff2, 0d, 255d, Core.NORM_MINMAX);
 
         // store result
         Mat[] backgroundSubtractedFrames = new Mat[]{grayDiff1, grayDiff2};
