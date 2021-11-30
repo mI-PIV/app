@@ -67,7 +67,11 @@ public class Pos4_Activity extends FluidGlossary {
         t9.setText("While mI-PIV does not currently support vorticity, qualitatively observing the velocity field allows users to identify the presence of vorticity such as in the photo below:");
         t9.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
 
-        TextView[] textViews = {t1, t2, t3, t4, t5, t6, t7, t8, t9};
+        TextView t10 = (TextView) findViewById(R.id.pos4TextView10);
+        t10.setText("The final results page allows the user to visualize and quantify the vorticity in their flow field by selecting Vorticity: Display. The sliders change what minimum/maximum value is displayed in the results. An example of a vortex ring mI-PIV result, marked by regions of high vorticity in the mI-PIV result, is shown here:");
+        t10.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
+
+        TextView[] textViews = {t1, t2, t3, t4, t5, t6, t7, t8, t9, t10};
         for (int i = 0; i < textViews.length; i++) {
             textViews[i].setTextSize(paraTextSize);
         }
