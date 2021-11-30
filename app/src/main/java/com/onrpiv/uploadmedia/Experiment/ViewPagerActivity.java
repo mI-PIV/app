@@ -3,8 +3,10 @@ package com.onrpiv.uploadmedia.Experiment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -61,11 +63,18 @@ public class ViewPagerActivity extends AppCompatActivity {
         animation = new AnimationDrawable();
         Drawable d1 = Drawable.createFromPath(urls[0]);
         Drawable d2 = Drawable.createFromPath(urls[1]);
+
+        Bitmap bitmap1 = ((BitmapDrawable) d1).getBitmap();
+        Drawable newDrawable1 = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap1, 3000, 2750, true));
+
+        Bitmap bitmap2 = ((BitmapDrawable) d2).getBitmap();
+        Drawable newDrawable2 = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap2, 3000, 2750, true));
+
         Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
-        animation.addFrame(d1,500);
-        animation.addFrame(d2,500);
+        animation.addFrame(newDrawable1,500);
+        animation.addFrame(newDrawable2,500);
         animation.addFrame(transparentDrawable, 1);
-        animation.addFrame(d1,1);
+        animation.addFrame(newDrawable1,1);
         animation.setOneShot(false);
         if (animation.isRunning()) {
             imageAnim.clearAnimation();
