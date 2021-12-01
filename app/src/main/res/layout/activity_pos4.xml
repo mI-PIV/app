@@ -147,11 +147,13 @@
                 android:layout_below="@id/pos4TextView8" />
 
             <com.github.chrisbanes.photoview.PhotoView
-                android:id="@+id/pos4ImageView4"
+                android:id="@+id/pos4ImageView5"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="281dp"
                 android:layout_below="@id/pos4TextView9"
-                android:src="@drawable/vorticity_image"
+                android:src="@drawable/vorticity_ring"
                 tools:ignore="MissingConstraints" />
 
         </RelativeLayout>
