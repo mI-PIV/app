@@ -27,6 +27,17 @@ public class PivParameters implements Serializable {
             REPLACE_KEY = "replace",
             IO_FILENAME = "PIVParameters";
 
+    public PivParameters() {
+        setWindowSize(windowSize);
+        setOverlap(overlap);
+        setnMaxUpper(nMaxUpper);
+        setnMaxLower(nMaxLower);
+        setMaxDisplacement(maxDisplacement);
+        setqMin(qMin);
+        setDt(dt);
+        setE(E);
+    }
+
 
     public PivParameters(int frameSet, int frameOne, int frameTwo)
     {
