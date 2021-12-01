@@ -42,7 +42,7 @@ dependencies {
     implementation group: 'net.imglib2', name: 'imglib2', version: '5.11.1'
     implementation 'org.jetbrains:annotations-java5:15.0'
     implementation 'org.jetbrains:annotations-java5:15.0'
-    implementation 'androidx.fragment:fragment:1.4.0'
+    implementation 'androidx.fragment:fragment:1.3.0'
     implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
 
     // testing libraries
