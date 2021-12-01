@@ -60,6 +60,8 @@ public class PivFunctions {
     private final File outputDirectory;
     private final String imageFileSaveName;
     private final String textFileSaveName;
+
+    private boolean pivGuiUpdates = false;
     private final String frame1Path;
     private final String frame2Path;
 
@@ -189,15 +191,20 @@ public class PivFunctions {
         double[][] mag = new double[fieldRows][fieldCols];
         double[][] sig2noise = new double[fieldRows][fieldCols];
 
-        progressUpdate.setProgressMax(fieldCols * fieldRows);
+        // Update progress bar in PIV runner
         int progressCounter = 0;
+        if (null != progressUpdate) {
+            progressUpdate.setProgressMax(fieldCols * fieldRows);
+            pivGuiUpdates = true;
+        }
 
         for (int i = 0; i < fieldRows; i++) {
             for (int j = 0; j < fieldCols; j++) {
                 Mat window_a_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
                 Mat window_b_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
 
-                progressUpdate.updateProgressIteration(progressCounter++);
+                if (pivGuiUpdates)
+                    progressUpdate.updateProgressIteration(progressCounter++);
 
 //             Select first the largest window, work like usual from the top left corner the left edge goes as:
 //            # e.g. 0, (search_area_size - overlap), 2*(search_area_size - overlap),....
@@ -727,7 +734,6 @@ public class PivFunctions {
         double[] x = pivResultData.getInterrX();
         double[] y = pivResultData.getInterrY();
 
-//        progressUpdate.setProgressMax((fieldCols-2) * (fieldCols-2));
         int progressCounter = 0;
 
         for (int ii = 1; ii < fieldRows - 1; ii++) {
@@ -735,7 +741,8 @@ public class PivFunctions {
                 Mat window_a_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
                 Mat window_b_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
 
-                progressUpdate.updateProgressIteration(progressCounter++);
+                if (pivGuiUpdates)
+                    progressUpdate.updateProgressIteration(progressCounter++);
 
                 //if pixel displacements from 1st pass are zero keep them as zero in 2nd phase
                 if (v[ii][jj] == 0 && u[ii][jj] == 0) {
