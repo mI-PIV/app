@@ -1,20 +1,27 @@
 package unitTests;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.List;
+
+import testUtils.ReadCsvFile;
 
 public class PIVTests {
-    private static final String res = "Images_Duct_";
     private final ClassLoader classLoader = getClass().getClassLoader();
 
     @Test
     public void PIV_shear_dx5_ReturnsTrue() {
-        File frame1 = new File(classLoader.getResource(res + "dx5_dz0/imageA.png").getFile());
-        File frame2 = new File(classLoader.getResource(res + "dx5_dz0/imageB.png").getFile());
-        File data = new File(classLoader.getResource(res + "dx5_dz0/real_data.txt").getFile());
+        assert classLoader != null;
+        File frame1 = new File(classLoader.getResource("Images_Duct_dx5_dz0/imageA.png").getFile());
+        File frame2 = new File(classLoader.getResource("Images_Duct_dx5_dz0/imageB.png").getFile());
+        File data = new File(classLoader.getResource("Images_Duct_dx5_dz0/real_data.txt").getFile());
+        List<String[]> dataList = ReadCsvFile.readCsv(data);
 
+//        Assert.assertArrayEquals();
 
+        Assert.assertEquals(0, 0);
     }
 
     @Test
