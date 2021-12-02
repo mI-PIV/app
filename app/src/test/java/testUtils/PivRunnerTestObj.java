@@ -1,6 +1,5 @@
 package testUtils;
 
-import android.test.mock.MockContext;
 
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
@@ -9,14 +8,12 @@ import com.onrpiv.uploadmedia.pivFunctions.PivRunner;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 
 public class PivRunnerTestObj {
     private final PivParameters _params;
     private final PivFunctions _piv;
     private final File _frame1;
     private final File _frame2;
-    private final MockContext _context = new MockContext();
 
 
     public PivRunnerTestObj(PivParameters params, File frame1, File frame2) {
@@ -35,7 +32,7 @@ public class PivRunnerTestObj {
     }
 
     public HashMap<String, PivResultData> runFullPIV() {
-        PivRunner runner = new PivRunner(_context, null, _params, _frame1, _frame2);
+        PivRunner runner = new PivRunner(null, null, _params, _frame1, _frame2);
         return runner.Run();
     }
 
