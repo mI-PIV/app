@@ -196,7 +196,7 @@ public class PivFunctions {
         return image;
     }
 
-    private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr) {
+    private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr, String which) {
         Mat correlation = corr.clone();
         // find first peak location and value
         int peak1_x = (int) mmr.maxLoc.x;
@@ -213,7 +213,9 @@ public class PivFunctions {
         double peak2_value = mmr2.maxVal;
 
         correlation.release();
-        return peak1_value / peak2_value;
+        double sig2noise = peak1_value / peak2_value;
+        Log.d("SIG2NOISE", which + "sig2noise: " + sig2noise);
+        return sig2noise;
     }
 
 
@@ -290,7 +292,7 @@ public class PivFunctions {
                     dc1[i][j] = 0.0;
                 }
                 mag[i][j] = Math.sqrt(Math.pow(dr1[i][j], 2) + Math.pow(dc1[i][j], 2));
-                sig2noise[i][j] = sig2Noise_update(corr, mmr);
+                sig2noise[i][j] = sig2Noise_update(corr, mmr, "singlepass");
 
                 // cleanup mats
                 window_a_1.release();
@@ -688,7 +690,17 @@ public class PivFunctions {
     private static double findMedian(double a1, double a2, double a3, double a4, double a5, double a6, double a7, double a8) {
         double[] a = new double[]{ a1, a2, a3, a4, a5, a6, a7, a8 };
         Arrays.sort(a);
-        return (a[(8 - 1) / 2] + a[8 / 2]) / 2.0;
+//        double m = a[3];
+//
+//        double[] r = new double[a.length];
+//        for(int i = 0; i < a.length; i++) {
+//            r[i] = a[i] - m;
+//        }
+//
+//        Arrays.sort(r);
+//
+//        return r[]
+        return a[3];
     }
 
     public PivResultData vectorPostProcessing(PivResultData singlePassResult, String resultName) {
@@ -735,12 +747,14 @@ public class PivFunctions {
                 // DONT ERASE COMMENTED LINE BELOW IN CASE WE NEED TO USE A SIMILAR LOGIC LATER
                 //if (pivCorrelation.get("magnitude")[k][l] * dt < nMaxUpper && pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
                 if (singlePassResult.getSig2Noise()[k][l] > qMin && r_r < _e && r_c < _e) {
-                    dr1_p[k][l] = singlePassResult.getV()[k][l];
+//                    if (r_r < _e && r_c < _e) {
+
+                        dr1_p[k][l] = singlePassResult.getV()[k][l];
                     dc1_p[k][l] = singlePassResult.getU()[k][l];
                     mag_p[k][l] = singlePassResult.getMag()[k][l];
                 } else {
-                    dr1_p[k][l] = 0.0;
-                    dc1_p[k][l] = 0.0;
+                    dr1_p[k][l] = 0.0d;
+                    dc1_p[k][l] = 0.0d;
                 }
             }
         }
@@ -786,11 +800,15 @@ public class PivFunctions {
                     //subtract/add half the pixel displacement from interrogation region center
                     //to  find the center of the new interrogation region based on the direction
                     //of the pixel displacement
-                    double IA1_x_int = x[jj] - (u[ii][jj] / 2);
-                    double IA1_y_int = y[ii] - (v[ii][jj] / 2);
 
-                    double IA2_x_int = x[jj] + (u[ii][jj] / 2);
-                    double IA2_y_int = y[ii] + (v[ii][jj] / 2);
+                    int ushift = (int) Math.round(u[ii][jj]/2);
+                    int vshift = (int) Math.round(v[ii][jj]/2);
+
+                    double IA1_x_int = x[jj] - (ushift);
+                    double IA1_y_int = y[ii] - (vshift);
+
+                    double IA2_x_int = x[jj] + (ushift);
+                    double IA2_y_int = y[ii] + (vshift);
 
                     //Interrogation window for Image 1
                     int IA1_x_s = (int) Math.round((IA1_x_int - (windowSize / 2f) + 1));
@@ -841,9 +859,10 @@ public class PivFunctions {
                         e.printStackTrace();
                     }
                     //Add new pixel displacement to pixel displacements from 1st pass
-                    dr2[ii][jj] = v[ii][jj] + dr_new[ii][jj] + 1;
-                    dc2[ii][jj] = u[ii][jj] + dc_new[ii][jj] + 1;
-                    sig2noise[ii][jj] = sig2Noise_update(corr, mmr);
+                    dc2[ii][jj] = ushift*2 + dc_new[ii][jj];
+                    dr2[ii][jj] = vshift*2 + dr_new[ii][jj];
+
+                    sig2noise[ii][jj] = sig2Noise_update(corr, mmr, "multipass");
 
                     //cleanup mats
                     IA1_new_t.release();
