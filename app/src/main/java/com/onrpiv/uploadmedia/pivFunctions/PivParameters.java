@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public class PivParameters implements Serializable {
     private int windowSize = 64, overlap = 32, frameSet, frameOne, frameTwo;
-    private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.3, dt = 1.0, E = 2.0;
+    private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.1, dt = 1.0, E = 2.0;
     private boolean replace = true;
     private int backgroundSelection = -1;
     private CameraCalibrationResult cameraCalibrationResult;
