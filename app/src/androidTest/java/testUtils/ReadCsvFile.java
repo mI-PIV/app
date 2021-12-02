@@ -2,18 +2,17 @@ package testUtils;
 
 import com.opencsv.CSVReader;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 public class ReadCsvFile {
-
-    public static List<String[]> readCsv(File csvFile) {
+    public static List<String[]> readCsv(InputStream csvStream) {
         CSVReader reader;
         List<String[]> results;
 
         try {
-            reader = new CSVReader(new FileReader(csvFile));
+            reader = new CSVReader(new InputStreamReader(csvStream));
             results = reader.readAll();
         } catch (Exception e) {
             results = null;
