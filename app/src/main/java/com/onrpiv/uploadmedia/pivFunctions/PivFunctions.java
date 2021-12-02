@@ -62,8 +62,6 @@ public class PivFunctions {
     private final String textFileSaveName;
 
     private boolean pivGuiUpdates = false;
-    private final String frame1Path;
-    private final String frame2Path;
 
     public PivFunctions(String imagePath1,
                         String imagePath2,
@@ -89,8 +87,43 @@ public class PivFunctions {
         this.outputDirectory = outputDirectory;
         this.imageFileSaveName = imageFileSaveName;
         this.textFileSaveName = textFileSaveName;
-        this.frame1Path = imagePath1;
-        this.frame2Path = imagePath2;
+
+        windowSize = parameters.getWindowSize();
+        overlap = parameters.getOverlap();
+        _e = parameters.getE();
+        qMin = parameters.getqMin();
+        dt = parameters.getDt();
+
+        int[] fieldShape = getFieldShape(cols, rows, windowSize, overlap);
+        fieldCols = fieldShape[0];
+        fieldRows = fieldShape[1];
+    }
+
+    public PivFunctions(Mat image1,
+                        Mat image2,
+                        String mSig2noise_method,
+                        PivParameters parameters,
+                        File outputDirectory,
+                        String imageFileSaveName,
+                        String textFileSaveName) {
+
+        frame1 = image1;
+        grayFrame1 = image1;
+        grayFrame2 = image2;
+
+        rows = grayFrame1.rows();
+        cols = grayFrame1.cols();
+
+//        grayFrame1 = new Mat(frame1.rows(), frame1.cols(), frame1.type());
+//        cvtColor(frame1, grayFrame1, COLOR_BGR2GRAY);
+
+//        grayFrame2 = new Mat(frame2.rows(), frame2.cols(), frame2.type());
+//        cvtColor(frame2, grayFrame2, COLOR_BGR2GRAY);
+//        frame2.release();
+
+        this.outputDirectory = outputDirectory;
+        this.imageFileSaveName = imageFileSaveName;
+        this.textFileSaveName = textFileSaveName;
 
         windowSize = parameters.getWindowSize();
         overlap = parameters.getOverlap();
