@@ -19,8 +19,8 @@ import java.io.IOException;
 import testUtils.PivRunnerTestObj;
 
 public class PIVTests {
-    private final ClassLoader classLoader = getClass().getClassLoader();
     private final PivParameters defaultParameters = new PivParameters();
+    private final Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
     @Before
     public void before() {
@@ -31,19 +31,6 @@ public class PIVTests {
     @Test
     public void PIV_shear_dx5() {
         // load frames and data
-//        File test = new File(ClassLoader.getSystemClassLoader().getResource("Images_Duct_dx5_dz0/imageA.png").getFile());
-//        File frame1 = new File(this.getClass().getClassLoader().getResource("Images_Duct_dx5_dz0/imageA.png").getFile());
-//        File frame2 = new File(this.getClass().getClassLoader().getResource("Images_Duct_dx5_dz0/imageB.png").getFile());
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-
-//        File resDir = context.getDir("resources", Context.MODE_PRIVATE);
-//        File frame1 = new File(resDir, "Images_Duct_dx5_dz0/imageA.png");
-//        File frame2 = new File(resDir, "Images_Duct_dx5_dz0/imageB.png");
-
-
-//        File frame1 = new File(context.getClassLoader().getResource("imagea_dx5.png").getFile());
-//        File frame2 = new File(context.getClassLoader().getResource("imageb_dx5.png").getFile());
-
         Mat frame1 = null;
         Mat frame2 = null;
         try {
@@ -52,19 +39,6 @@ public class PIVTests {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-//
-//        Uri f1Uri = Uri.parse(f1.getAbsolutePath());
-//        Uri f2Uri = Uri.parse(f2.getAbsolutePath());
-//
-//        File frame1 = new File(f1Uri.getPath());
-//        File frame2 = new File(f2Uri.getPath());
-
-//        File frame1 = new File(classLoader.getResource("imageA.png").getFile());
-//        File frame2 = new File(classLoader.getResource("imageB.png").getFile());
-//        File data = new File(classLoader.getResource("Images_Duct_dx5_dz0/real_data.txt").getFile());
-//        List<String[]> dataList = ReadCsvFile.readCsv(data);
 
         // init piv
         PivRunnerTestObj piv = new PivRunnerTestObj(defaultParameters, frame1, frame2);
