@@ -91,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:layout_below="@id/pos7TextView4"
-                android:src="@drawable/shear_eq"
+                android:src="@drawable/shear_image"
                 tools:ignore="MissingConstraints" />
 
             <TextView
