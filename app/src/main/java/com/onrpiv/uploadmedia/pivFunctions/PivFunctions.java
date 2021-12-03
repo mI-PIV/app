@@ -45,6 +45,7 @@ import java.util.StringJoiner;
 
 public class PivFunctions {
     private final Mat frame1;
+    private final Mat frame2;
     private Mat grayFrame1;
     private Mat grayFrame2;
     private final int rows;
@@ -72,7 +73,7 @@ public class PivFunctions {
                         String textFileSaveName) {
 
         frame1 = Imgcodecs.imread(imagePath1);
-        Mat frame2 = Imgcodecs.imread(imagePath2);
+        frame2 = Imgcodecs.imread(imagePath2);
 
         rows = frame1.rows();
         cols = frame1.cols();
@@ -82,7 +83,6 @@ public class PivFunctions {
 
         grayFrame2 = new Mat(frame2.rows(), frame2.cols(), frame2.type());
         cvtColor(frame2, grayFrame2, COLOR_BGR2GRAY);
-        frame2.release();
 
         this.outputDirectory = outputDirectory;
         this.imageFileSaveName = imageFileSaveName;
@@ -99,27 +99,21 @@ public class PivFunctions {
         fieldRows = fieldShape[1];
     }
 
-    public PivFunctions(Mat image1,
-                        Mat image2,
+    public PivFunctions(Mat grayscaleFrame1,
+                        Mat grayscaleFrame2,
                         String mSig2noise_method,
                         PivParameters parameters,
                         File outputDirectory,
                         String imageFileSaveName,
                         String textFileSaveName) {
 
-        frame1 = image1;
-        grayFrame1 = image1;
-        grayFrame2 = image2;
+        frame1 = grayscaleFrame1;
+        frame2 = grayscaleFrame2;
+        grayFrame1 = grayscaleFrame1;
+        grayFrame2 = grayscaleFrame2;
 
         rows = grayFrame1.rows();
         cols = grayFrame1.cols();
-
-//        grayFrame1 = new Mat(frame1.rows(), frame1.cols(), frame1.type());
-//        cvtColor(frame1, grayFrame1, COLOR_BGR2GRAY);
-
-//        grayFrame2 = new Mat(frame2.rows(), frame2.cols(), frame2.type());
-//        cvtColor(frame2, grayFrame2, COLOR_BGR2GRAY);
-//        frame2.release();
 
         this.outputDirectory = outputDirectory;
         this.imageFileSaveName = imageFileSaveName;
@@ -142,6 +136,7 @@ public class PivFunctions {
         grayFrame1.release();
         grayFrame2.release();
         frame1.release();
+        frame2.release();
     }
 
     private int[] getFieldShape(int imgCols, int imgRows, int areaSize, int overlap) {
@@ -196,8 +191,10 @@ public class PivFunctions {
         return image;
     }
 
-    private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr, String which) {
-        Mat correlation = corr.clone();
+    private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr) {
+        Mat correlation = new Mat();
+        corr.copyTo(correlation);
+
         // find first peak location and value
         int peak1_x = (int) mmr.maxLoc.x;
         int peak1_y = (int) mmr.maxLoc.y;
@@ -213,9 +210,7 @@ public class PivFunctions {
         double peak2_value = mmr2.maxVal;
 
         correlation.release();
-        double sig2noise = peak1_value / peak2_value;
-        Log.d("SIG2NOISE", which + "sig2noise: " + sig2noise);
-        return sig2noise;
+        return peak1_value / peak2_value;
     }
 
 
@@ -292,7 +287,7 @@ public class PivFunctions {
                     dc1[i][j] = 0.0;
                 }
                 mag[i][j] = Math.sqrt(Math.pow(dr1[i][j], 2) + Math.pow(dc1[i][j], 2));
-                sig2noise[i][j] = sig2Noise_update(corr, mmr, "singlepass");
+                sig2noise[i][j] = sig2Noise_update(corr, mmr);
 
                 // cleanup mats
                 window_a_1.release();
@@ -860,7 +855,7 @@ public class PivFunctions {
                     dc2[ii][jj] = ushift*2 + dc_new[ii][jj];
                     dr2[ii][jj] = vshift*2 + dr_new[ii][jj];
 
-                    sig2noise[ii][jj] = sig2Noise_update(corr, mmr, "multipass");
+                    sig2noise[ii][jj] = sig2Noise_update(corr, mmr);
 
                     //cleanup mats
                     IA1_new_t.release();

@@ -15,11 +15,8 @@ import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 
 import testUtils.PivRunnerTestObj;
-import testUtils.ReadCsvFile;
 
 public class PIVTests {
     private final PivParameters defaultParameters = new PivParameters();
@@ -45,8 +42,8 @@ public class PIVTests {
         }
 
         //load data
-        InputStream dataStream = context.getResources().openRawResource(R.raw.real_data_dx5);
-        List<String[]> data = ReadCsvFile.readCsv(dataStream);
+//        InputStream dataStream = context.getResources().openRawResource(R.raw.real_data_dx5);
+//        List<String[]> data = ReadCsvFile.readCsv(dataStream);
 
         // init piv
         PivRunnerTestObj piv = new PivRunnerTestObj(defaultParameters, frame1, frame2);
