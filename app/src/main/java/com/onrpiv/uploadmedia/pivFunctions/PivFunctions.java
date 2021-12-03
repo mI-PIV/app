@@ -195,6 +195,9 @@ public class PivFunctions {
         Mat correlation = new Mat();
         corr.copyTo(correlation);
 
+        int cols = corr.cols();
+        int rows = corr.rows();
+
         // find first peak location and value
         int peak1_x = (int) mmr.maxLoc.x;
         int peak1_y = (int) mmr.maxLoc.y;
@@ -202,8 +205,11 @@ public class PivFunctions {
 
         // remove primary peak
         for (int x = peak1_x - 1; x <= peak1_x + 1; x++)
-            for (int y = peak1_y - 1; y <= peak1_y + 1; y++)
+            for (int y = peak1_y - 1; y <= peak1_y + 1; y++) {
+                x = Math.max(0, Math.min(cols, x));
+                y = Math.max(0, Math.min(rows, y));
                 correlation.put(y, x, 0d);
+            }
 
         // find second peak value
         Core.MinMaxLocResult mmr2 = Core.minMaxLoc(correlation);
