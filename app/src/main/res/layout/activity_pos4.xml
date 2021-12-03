@@ -156,23 +156,6 @@
                 android:src="@drawable/vorticity_ring"
                 tools:ignore="MissingConstraints" />
 
-            <TextView
-                android:id="@+id/pos4TextView10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="7.5dp"
-                android:layout_below="@id/pos4ImageView4" />
-
-            <com.github.chrisbanes.photoview.PhotoView
-                android:id="@+id/pos4ImageView5"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="281dp"
-                android:layout_below="@id/pos4TextView10"
-                android:src="@drawable/vorticity_ring"
-                tools:ignore="MissingConstraints" />
-
         </RelativeLayout>
 
     </androidx.core.widget.NestedScrollView>
