@@ -73,7 +73,7 @@ public class DensityPreviewPopup {
         buildView();
         return new AlertDialog.Builder(context)
                 .setTitle("Particle Density")
-                .setMessage(Html.fromHtml("Do you see movement of at least 5 particles between both frames?" + "<br>" + "<b>" + "If no: " + "</b>" + "Try a larger window size." + "<b>" + "<br>" + "If yes, but there are more than 15 particles: " + "</b>" + "Try a smaller window size." + "<br>" + "<b>" + "Yes, and I can see how much they moved between the two frames: " + "</b>" + "Choose this window size in the next step!"))
+                .setMessage(Html.fromHtml("Do you see movement of at least 5 particles between both frames?" + "<br>" + "<br>" + "<b>" + "If no: " + "</b>" + "Try a larger window size." + "<b>" + "<br>" + "If yes, but there are more than 15 particles: " + "</b>" + "Try a smaller window size." + "<br>" + "<b>" + "Yes, and I can see how much they moved between the two frames: " + "</b>" + "Choose this window size in the next step!"))
                 .setView(popupLayout)
 //                .setNegativeButton("No", new DialogInterface.OnClickListener() {
 //                    @Override
