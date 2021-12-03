@@ -45,6 +45,7 @@ import java.util.StringJoiner;
 
 public class PivFunctions {
     private final Mat frame1;
+    private final Mat frame2;
     private Mat grayFrame1;
     private Mat grayFrame2;
     private final int rows;
@@ -60,8 +61,8 @@ public class PivFunctions {
     private final File outputDirectory;
     private final String imageFileSaveName;
     private final String textFileSaveName;
-    private final String frame1Path;
-    private final String frame2Path;
+
+    private boolean pivGuiUpdates = false;
 
     public PivFunctions(String imagePath1,
                         String imagePath2,
@@ -72,7 +73,7 @@ public class PivFunctions {
                         String textFileSaveName) {
 
         frame1 = Imgcodecs.imread(imagePath1);
-        Mat frame2 = Imgcodecs.imread(imagePath2);
+        frame2 = Imgcodecs.imread(imagePath2);
 
         rows = frame1.rows();
         cols = frame1.cols();
@@ -82,13 +83,41 @@ public class PivFunctions {
 
         grayFrame2 = new Mat(frame2.rows(), frame2.cols(), frame2.type());
         cvtColor(frame2, grayFrame2, COLOR_BGR2GRAY);
-        frame2.release();
 
         this.outputDirectory = outputDirectory;
         this.imageFileSaveName = imageFileSaveName;
         this.textFileSaveName = textFileSaveName;
-        this.frame1Path = imagePath1;
-        this.frame2Path = imagePath2;
+
+        windowSize = parameters.getWindowSize();
+        overlap = parameters.getOverlap();
+        _e = parameters.getE();
+        qMin = parameters.getqMin();
+        dt = parameters.getDt();
+
+        int[] fieldShape = getFieldShape(cols, rows, windowSize, overlap);
+        fieldCols = fieldShape[0];
+        fieldRows = fieldShape[1];
+    }
+
+    public PivFunctions(Mat grayscaleFrame1,
+                        Mat grayscaleFrame2,
+                        String mSig2noise_method,
+                        PivParameters parameters,
+                        File outputDirectory,
+                        String imageFileSaveName,
+                        String textFileSaveName) {
+
+        frame1 = grayscaleFrame1;
+        frame2 = grayscaleFrame2;
+        grayFrame1 = grayscaleFrame1;
+        grayFrame2 = grayscaleFrame2;
+
+        rows = grayFrame1.rows();
+        cols = grayFrame1.cols();
+
+        this.outputDirectory = outputDirectory;
+        this.imageFileSaveName = imageFileSaveName;
+        this.textFileSaveName = textFileSaveName;
 
         windowSize = parameters.getWindowSize();
         overlap = parameters.getOverlap();
@@ -107,6 +136,7 @@ public class PivFunctions {
         grayFrame1.release();
         grayFrame2.release();
         frame1.release();
+        frame2.release();
     }
 
     private int[] getFieldShape(int imgCols, int imgRows, int areaSize, int overlap) {
@@ -162,7 +192,12 @@ public class PivFunctions {
     }
 
     private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr) {
-        Mat correlation = corr.clone();
+        Mat correlation = new Mat();
+        corr.copyTo(correlation);
+
+        int cols = corr.cols();
+        int rows = corr.rows();
+
         // find first peak location and value
         int peak1_x = (int) mmr.maxLoc.x;
         int peak1_y = (int) mmr.maxLoc.y;
@@ -170,8 +205,11 @@ public class PivFunctions {
 
         // remove primary peak
         for (int x = peak1_x - 1; x <= peak1_x + 1; x++)
-            for (int y = peak1_y - 1; y <= peak1_y + 1; y++)
+            for (int y = peak1_y - 1; y <= peak1_y + 1; y++) {
+                x = Math.max(0, Math.min(cols, x));
+                y = Math.max(0, Math.min(rows, y));
                 correlation.put(y, x, 0d);
+            }
 
         // find second peak value
         Core.MinMaxLocResult mmr2 = Core.minMaxLoc(correlation);
@@ -189,15 +227,20 @@ public class PivFunctions {
         double[][] mag = new double[fieldRows][fieldCols];
         double[][] sig2noise = new double[fieldRows][fieldCols];
 
-        progressUpdate.setProgressMax(fieldCols * fieldRows);
+        // Update progress bar in PIV runner
         int progressCounter = 0;
+        if (null != progressUpdate) {
+            progressUpdate.setProgressMax(fieldCols * fieldRows);
+            pivGuiUpdates = true;
+        }
 
         for (int i = 0; i < fieldRows; i++) {
             for (int j = 0; j < fieldCols; j++) {
                 Mat window_a_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
                 Mat window_b_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
 
-                progressUpdate.updateProgressIteration(progressCounter++);
+                if (pivGuiUpdates)
+                    progressUpdate.updateProgressIteration(progressCounter++);
 
 //             Select first the largest window, work like usual from the top left corner the left edge goes as:
 //            # e.g. 0, (search_area_size - overlap), 2*(search_area_size - overlap),....
@@ -648,7 +691,17 @@ public class PivFunctions {
     private static double findMedian(double a1, double a2, double a3, double a4, double a5, double a6, double a7, double a8) {
         double[] a = new double[]{ a1, a2, a3, a4, a5, a6, a7, a8 };
         Arrays.sort(a);
-        return (a[(8 - 1) / 2] + a[8 / 2]) / 2.0;
+//        double m = a[3];
+//
+//        double[] r = new double[a.length];
+//        for(int i = 0; i < a.length; i++) {
+//            r[i] = a[i] - m;
+//        }
+//
+//        Arrays.sort(r);
+//
+//        return r[]
+        return a[3];
     }
 
     public PivResultData vectorPostProcessing(PivResultData singlePassResult, String resultName) {
@@ -694,13 +747,13 @@ public class PivFunctions {
 
                 // DONT ERASE COMMENTED LINE BELOW IN CASE WE NEED TO USE A SIMILAR LOGIC LATER
                 //if (pivCorrelation.get("magnitude")[k][l] * dt < nMaxUpper && pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
-                if (singlePassResult.getSig2Noise()[k][l] > qMin && r_r < _e && r_c < _e) {
+                if (singlePassResult.getSig2Noise()[k][l] > qMin && r_r < _e && r_c < _e && singlePassResult.getMag()[k][l] < windowSize*0.75) {
                     dr1_p[k][l] = singlePassResult.getV()[k][l];
                     dc1_p[k][l] = singlePassResult.getU()[k][l];
                     mag_p[k][l] = singlePassResult.getMag()[k][l];
                 } else {
-                    dr1_p[k][l] = 0.0;
-                    dc1_p[k][l] = 0.0;
+                    dr1_p[k][l] = 0.0d;
+                    dc1_p[k][l] = 0.0d;
                 }
             }
         }
@@ -727,7 +780,6 @@ public class PivFunctions {
         double[] x = pivResultData.getInterrX();
         double[] y = pivResultData.getInterrY();
 
-//        progressUpdate.setProgressMax((fieldCols-2) * (fieldCols-2));
         int progressCounter = 0;
 
         for (int ii = 1; ii < fieldRows - 1; ii++) {
@@ -735,7 +787,8 @@ public class PivFunctions {
                 Mat window_a_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
                 Mat window_b_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
 
-                progressUpdate.updateProgressIteration(progressCounter++);
+                if (pivGuiUpdates)
+                    progressUpdate.updateProgressIteration(progressCounter++);
 
                 //if pixel displacements from 1st pass are zero keep them as zero in 2nd phase
                 if (v[ii][jj] == 0 && u[ii][jj] == 0) {
@@ -746,11 +799,15 @@ public class PivFunctions {
                     //subtract/add half the pixel displacement from interrogation region center
                     //to  find the center of the new interrogation region based on the direction
                     //of the pixel displacement
-                    double IA1_x_int = x[jj] - (u[ii][jj] / 2);
-                    double IA1_y_int = y[ii] - (v[ii][jj] / 2);
 
-                    double IA2_x_int = x[jj] + (u[ii][jj] / 2);
-                    double IA2_y_int = y[ii] + (v[ii][jj] / 2);
+                    int ushift = (int) Math.round(u[ii][jj]/2);
+                    int vshift = (int) Math.round(v[ii][jj]/2);
+
+                    double IA1_x_int = x[jj] - (ushift);
+                    double IA1_y_int = y[ii] - (vshift);
+
+                    double IA2_x_int = x[jj] + (ushift);
+                    double IA2_y_int = y[ii] + (vshift);
 
                     //Interrogation window for Image 1
                     int IA1_x_s = (int) Math.round((IA1_x_int - (windowSize / 2f) + 1));
@@ -801,8 +858,9 @@ public class PivFunctions {
                         e.printStackTrace();
                     }
                     //Add new pixel displacement to pixel displacements from 1st pass
-                    dr2[ii][jj] = v[ii][jj] + dr_new[ii][jj] + 1;
-                    dc2[ii][jj] = u[ii][jj] + dc_new[ii][jj] + 1;
+                    dc2[ii][jj] = ushift*2 + dc_new[ii][jj];
+                    dr2[ii][jj] = vshift*2 + dr_new[ii][jj];
+
                     sig2noise[ii][jj] = sig2Noise_update(corr, mmr);
 
                     //cleanup mats
