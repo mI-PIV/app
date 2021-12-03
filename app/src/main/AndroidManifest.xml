@@ -28,6 +28,11 @@
         android:theme="@style/AppTheme"
         android:requestLegacyExternalStorage="true"
         android:largeHeap="true">
+
+        <uses-library android:name="android.test.runner" />
+        <uses-library android:name="android.test.base" />
+        <uses-library android:name="android.test.mock" />
+
         <activity android:name=".Experiment.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
