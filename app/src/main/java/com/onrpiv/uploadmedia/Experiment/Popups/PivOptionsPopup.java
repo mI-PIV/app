@@ -23,6 +23,7 @@ import com.onrpiv.uploadmedia.Learn.PIVBasics5;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibrationResult;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
+import com.onrpiv.uploadmedia.Utilities.UserInput.BoolDoubleStruct;
 import com.onrpiv.uploadmedia.Utilities.UserInput.BoolIntStructure;
 import com.onrpiv.uploadmedia.Utilities.UserInput.UserInputUtils;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
@@ -47,7 +48,8 @@ public class PivOptionsPopup extends AlertDialog {
 
     public PivParameters parameters;
     private final ArrayList<View> hiddenViewList;
-    private final ArrayList<TextView> allTextViewList;
+    private final ArrayList<TextView> doubleTextViewList;
+    private final ArrayList<TextView> intTextViewList;
     private final ArrayMap<Integer, String> idToKey;
 
 
@@ -128,9 +130,15 @@ public class PivOptionsPopup extends AlertDialog {
         );
 
         // keep all textviews in list for easy iteration
-        allTextViewList = new ArrayList<TextView>(
+        doubleTextViewList = new ArrayList<TextView>(
                 Arrays.asList(
-                        windowSizeText, overlapText, dtText, EText, qMinText
+                        dtText, EText, qMinText
+                )
+        );
+
+        intTextViewList = new ArrayList<TextView>(
+                Arrays.asList(
+                        windowSizeText, overlapText
                 )
         );
 
@@ -252,8 +260,32 @@ public class PivOptionsPopup extends AlertDialog {
             }
         });
 
-        // add the text listener to all edittexts
-        for (final TextView view : allTextViewList) {
+        // add the text listener to all double edittexts
+        for (final TextView view : doubleTextViewList) {
+            view.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    //EMPTY
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    //EMPTY
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    BoolDoubleStruct userInput = UserInputUtils.checkUserInputDouble(s.toString());
+                    if (s.length() > 0 && userInput.getBool()) {
+                        parameters.setValue(Objects.requireNonNull(idToKey.get(view.getId())), String.valueOf(userInput.getDouble()));
+                        savePIVDataButton.setEnabled(checkTexts());
+                    }
+                }
+            });
+        }
+
+        // add the text listener to all int edittexts
+        for (final TextView view : intTextViewList) {
             view.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -282,7 +314,12 @@ public class PivOptionsPopup extends AlertDialog {
                 && overlapText.getText().length() > 0;
         boolean advanced = true;
         if (advancedCheckbox.isChecked()) {
-            for (TextView view : allTextViewList) {
+            for (TextView view : doubleTextViewList) {
+                boolean hasText = view.getText().length() > 0;
+                advanced = advanced && hasText;
+            }
+
+            for (TextView view : intTextViewList) {
                 boolean hasText = view.getText().length() > 0;
                 advanced = advanced && hasText;
             }
