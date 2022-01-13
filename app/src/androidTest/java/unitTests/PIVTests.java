@@ -38,8 +38,8 @@ public class PIVTests {
         double[] comparison = PIV_test(R.drawable.test_dx5_a, R.drawable.test_dx5_b, R.raw.test_data_dx5);
 
         assert comparison != null;
-        Assert.assertTrue(comparison[0] < 5.0d);
-        Assert.assertTrue(comparison[1] < 5.0d);
+        Assert.assertTrue(comparison[0] < 1.0d);
+        Assert.assertTrue(comparison[1] < 1.0d);
     }
 
     @Test
@@ -47,8 +47,8 @@ public class PIVTests {
         double[] comparison = PIV_test(R.drawable.test_dx10_a, R.drawable.test_dx10_b, R.raw.test_data_dx10);
 
         assert comparison != null;
-        Assert.assertTrue(comparison[0] < 5.0d);
-        Assert.assertTrue(comparison[1] < 5.0d);
+        Assert.assertTrue(comparison[0] < 1.0d);
+        Assert.assertTrue(comparison[1] < 1.0d);
     }
 
     @Test
@@ -56,8 +56,8 @@ public class PIVTests {
         double[] comparison = PIV_test(R.drawable.test_dx20_a, R.drawable.test_dx20_b, R.raw.test_data_dx20);
 
         assert comparison != null;
-        Assert.assertTrue(comparison[0] < 5.0d);
-        Assert.assertTrue(comparison[1] < 5.0d);
+        Assert.assertTrue(comparison[0] < 1.0d);
+        Assert.assertTrue(comparison[1] < 1.0d);
     }
 
     @Test
@@ -65,8 +65,8 @@ public class PIVTests {
         double[] comparison = PIV_test(R.drawable.test_dx25_a, R.drawable.test_dx25_b, R.raw.test_data_dx25);
 
         assert comparison != null;
-        Assert.assertTrue(comparison[0] < 5.0d);
-        Assert.assertTrue(comparison[1] < 5.0d);
+        Assert.assertTrue(comparison[0] < 1.0d);
+        Assert.assertTrue(comparison[1] < 1.0d);
     }
 
     private double[] PIV_test(int frame1ID, int frame2ID, int realDataID) {
@@ -105,6 +105,7 @@ public class PIVTests {
         realData.remove(0);  // remove header
         for (int x = 0; x < resultData.getU().length; x++) {
             for (int y = 0; y < resultData.getU()[x].length; y++) {
+                // TODO index issue
 
                 //result data
                 double u = resultData.getU()[x][y];
@@ -126,6 +127,9 @@ public class PIVTests {
         }
         // calc u error
         double eU = 0d;
+        // TODO median instead of mean
+        // TODO plot histogram of the errors
+
         for (double e : errorU)
             eU += e;
         eU = eU / errorU.size();
