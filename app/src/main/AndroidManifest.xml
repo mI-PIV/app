@@ -93,6 +93,7 @@
         <activity android:name=".Experiment.ViewResultsActivity"/>
         <activity android:name=".Experiment.ViewPagerActivity"/>
         <activity android:name=".Experiment.MainActivity"/>
+        <activity android:name=".Experiment.CalibrationActivity"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
