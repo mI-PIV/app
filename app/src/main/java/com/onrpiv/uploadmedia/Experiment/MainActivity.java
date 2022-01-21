@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -81,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             cameraCalibBtn.setOnClickListener(this);
 
             // camera calibration popup
-            ActivityResultCallback<Boolean> takePhotoResultCallback = CalibrationPopup.getResultCallback(MainActivity.this, userName);
-            takePhotoLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), takePhotoResultCallback);
+            ActivityResultCallback<Bitmap> takePhotoResultCallback = CalibrationPopup.getResultCallback(MainActivity.this, userName);
+            takePhotoLauncher = registerForActivityResult(new ActivityResultContracts.TakeVideo(), takePhotoResultCallback);
         }
     }
 
@@ -172,7 +173,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.main_create_calibration:
                 if (userName != null && !userName.isEmpty()) {
-                    CalibrationPopup.show(MainActivity.this, takePhotoLauncher);
+                    Intent calibrationIntent = new Intent(this, CalibrationActivity.class);
+                    calibrationIntent.putExtra("UserName", userName);
+                    startActivity(calibrationIntent);
                 } else {
                     Toast.makeText(this, "Please input User Name", Toast.LENGTH_SHORT).show();
                     userNameDialog();
