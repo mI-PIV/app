@@ -81,6 +81,13 @@ public class FrameExtractor {
     }
 
 
+    public static void extractSingleFrame(Context context, String videoPath, String outPath, float videoStartTime,
+                                            Callable<Void> successCallback) {
+        String[] command = {"-y", "-ss", "" + videoStartTime, "-i", videoPath, "-frames:v", "1", outPath};
+        execFFmpegBinary(command, context, successCallback);
+    }
+
+
     /**
      * Executing ffmpeg binary
      */
@@ -88,17 +95,17 @@ public class FrameExtractor {
 
         // Progress dialog
         final ProgressDialog pDialog = new ProgressDialog(context);
-        pDialog.setMessage("Extracting Frames...");
+        pDialog.setMessage("Extracting Frame(s)...");
         pDialog.setCancelable(false);
-        if (!pDialog.isShowing()) pDialog.show();
+        pDialog.show();
 
         FFmpeg.executeAsync(command, new ExecuteCallback() {
             @Override
             public void apply(long executionId, int returnCode) {
                 if (returnCode == Config.RETURN_CODE_SUCCESS) {
-                    Toast.makeText(context, "Frames Generation Completed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Frame Extraction Completed", Toast.LENGTH_SHORT).show();
                     try {
-                        pDialog.setMessage("Subtracting Background...");
+                        if (pDialog.isShowing()) { pDialog.dismiss(); }
                         successCallback.call();
                     } catch (Exception e) {
                         Log.e("FFMPEG", "Unable to call success callback!");
@@ -107,7 +114,7 @@ public class FrameExtractor {
                 } else if (returnCode == Config.RETURN_CODE_CANCEL) {
                     Log.d("FFMPEG", "Frame extraction cancelled!");
                 } else {
-                    Toast.makeText(context, "Frames Generation FAILED", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Frame Extraction FAILED", Toast.LENGTH_SHORT).show();
                     Log.e("FFMPEG", "Async frame extraction failed with return code = " + returnCode);
                 }
                 if (pDialog.isShowing()) pDialog.dismiss();
