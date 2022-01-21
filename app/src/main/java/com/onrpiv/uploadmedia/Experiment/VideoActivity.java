@@ -45,16 +45,16 @@ import java.util.concurrent.Callable;
  */
 
 public class VideoActivity extends AppCompatActivity {
-    private Button pickVideo, generateFramesButton, recordVideo;
-    private RangeSlider rangeSlider;
-    public static final int REQUEST_PICK_VIDEO = 3;
+    protected Button pickVideo, generateFramesButton, recordVideo;
+    protected RangeSlider rangeSlider;
+    private static final int REQUEST_PICK_VIDEO = 3;
     private static final int REQUEST_VIDEO_CAPTURE = 300;
-    private VideoView mVideoView;
+    protected VideoView mVideoView;
     private TextView mBufferingTextView;
-    private CheckBox viewBackgroundCheckbox;
-    private String videoPath;
-    private Uri videoUri;
-    private String userName;
+    protected CheckBox viewBackgroundCheckbox;
+    protected String videoPath;
+    protected Uri videoUri;
+    protected String userName;
     private String fps = "20";
     private float vidStart = 0f;
     private float vidEnd = 1f;
@@ -314,7 +314,7 @@ public class VideoActivity extends AppCompatActivity {
         pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
     }
 
-    private void setupRangeSlider() {
+    protected void setupRangeSlider() {
         MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
         float videoDuration = 0;
         try {
