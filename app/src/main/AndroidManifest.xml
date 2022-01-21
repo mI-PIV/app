@@ -33,7 +33,8 @@
         <uses-library android:name="android.test.base" />
         <uses-library android:name="android.test.mock" />
 
-        <activity android:name=".Experiment.HomeActivity">
+        <activity android:name=".Experiment.HomeActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -8,8 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -25,9 +23,6 @@ import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -35,7 +30,6 @@ import androidx.core.content.ContextCompat;
 
 import com.onrpiv.uploadmedia.Experiment.Popups.LoadExperimentPopup;
 import com.onrpiv.uploadmedia.R;
-import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CalibrationPopup;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
@@ -46,7 +40,6 @@ import com.onrpiv.uploadmedia.Utilities.PersistedData;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button image;
     private Button video;
-    private ActivityResultLauncher<Uri> takePhotoLauncher;
 
     public static String userName = null;
 
@@ -80,10 +73,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             userSettings.setOnClickListener(this);
             loadExpBtn.setOnClickListener(this);
             cameraCalibBtn.setOnClickListener(this);
-
-            // camera calibration popup
-            ActivityResultCallback<Bitmap> takePhotoResultCallback = CalibrationPopup.getResultCallback(MainActivity.this, userName);
-            takePhotoLauncher = registerForActivityResult(new ActivityResultContracts.TakeVideo(), takePhotoResultCallback);
         }
     }
 
