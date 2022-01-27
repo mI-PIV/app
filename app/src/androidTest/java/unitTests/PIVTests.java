@@ -18,6 +18,7 @@ import org.opencv.core.Mat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import testUtils.PivRunnerTestObj;
@@ -105,8 +106,6 @@ public class PIVTests {
         realData.remove(0);  // remove header
         for (int x = 0; x < resultData.getU().length; x++) {
             for (int y = 0; y < resultData.getU()[x].length; y++) {
-                // TODO index issue
-
                 //result data
                 double u = resultData.getU()[x][y];
                 double v = resultData.getV()[x][y];
@@ -116,8 +115,8 @@ public class PIVTests {
                 int ys = (y+1) * resultData.getStepY();
                 int oneDIndex = (xs-1) * resultData.getCols() + (ys-1);
                 String[] realLine = realData.get(oneDIndex);
-                int rx = Integer.parseInt(realLine[0]);
-                int ry = Integer.parseInt(realLine[1]);
+//                int rx = Integer.parseInt(realLine[0]);
+//                int ry = Integer.parseInt(realLine[1]);
                 double ru = Double.parseDouble(realLine[2]);
                 double rv = Double.parseDouble(realLine[3]);
 
@@ -125,21 +124,13 @@ public class PIVTests {
                 errorV.add(Math.abs(v - rv));
             }
         }
-        // calc u error
-        double eU = 0d;
-        // TODO median instead of mean
-        // TODO plot histogram of the errors
+        return new double[]{findMedian(errorU), findMedian(errorV)};
+    }
 
-        for (double e : errorU)
-            eU += e;
-        eU = eU / errorU.size();
-
-        // calc v error
-        double eV = 0d;
-        for (double e : errorV)
-            eV += e;
-        eV = eV / errorV.size();
-
-        return new double[]{eU, eV};
+    private double findMedian(List<Double> arr) {
+        Collections.sort(arr);
+        int middle = arr.size() / 2;
+        middle = middle > 0 && middle % 2 == 0? middle -1 : middle;
+        return arr.get(middle);
     }
 }
