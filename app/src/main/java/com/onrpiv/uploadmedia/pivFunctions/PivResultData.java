@@ -23,7 +23,7 @@ public class PivResultData implements Serializable {
     private boolean calibrated = false;
     private boolean backgroundSubtracted = false;
     private double pixelToPhysicalRatio = 1d;
-    private String physicalMetric = "cm";
+    private String physicalMetric = "cm/s";
 
     // intent/io keys
     public static final String
@@ -203,10 +203,10 @@ public class PivResultData implements Serializable {
 
         for (int i = 0; i < fieldRows; i++) {
             for (int j = 0; j < fieldCols; j++) {
-                _u_calib[i][j] = _u[i][j] * pixelToPhysicalRatio;
-                _v_calib[i][j] = _v[i][j] * pixelToPhysicalRatio;
-                _mag_calib[i][j] = _mag[i][j] * pixelToPhysicalRatio;
-                _vort_calib[i][j] = _vort[i][j] * pixelToPhysicalRatio;
+                _u_calib[i][j] = (_u[i][j] * pixelToPhysicalRatio) / _dt;
+                _v_calib[i][j] = (_v[i][j] * pixelToPhysicalRatio) / _dt;
+                _mag_calib[i][j] = (_mag[i][j] * pixelToPhysicalRatio) / _dt;
+                _vort_calib[i][j] = (_vort[i][j] * pixelToPhysicalRatio) / _dt;
             }
         }
     }
