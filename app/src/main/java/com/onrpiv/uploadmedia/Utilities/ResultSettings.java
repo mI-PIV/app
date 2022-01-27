@@ -187,7 +187,7 @@ public class ResultSettings {
 
     public String formatInfoString_physical(float x, float y, float u, float v, float vort) {
         return "x: " + ((int) x) + "\t\t\t" + "y: " + ((int) y) +
-                "\nU: " + u + " cm\t\t\t" + "V: " + v + " cm" +
+                "\nU: " + u + " cm/s\t\t\t" + "V: " + v + " cm/s" +
                 "\nVorticity: " + vort;
     }
 
