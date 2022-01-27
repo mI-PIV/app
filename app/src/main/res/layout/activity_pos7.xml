@@ -77,6 +77,32 @@
                 android:src="@drawable/shear_eq"
                 tools:ignore="MissingConstraints" />
 
+            <TextView
+                android:id="@+id/pos7TextView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/pos7ImageView2"
+                tools:ignore="MissingConstraints" />
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/pos7ImageView3"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_below="@id/pos7TextView4"
+                android:src="@drawable/shear_image"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/pos7TextView5"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp"
+                android:layout_below="@id/pos7ImageView3"
+                tools:ignore="MissingConstraints" />
+
         </RelativeLayout>
 
     </ScrollView>

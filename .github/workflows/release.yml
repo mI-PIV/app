@@ -2,7 +2,7 @@ name: Auto Release APK
 
 on:
   schedule:
-    - cron: "0 19 * * 2"
+    - cron: "0 19 * * 6"
 
 jobs:
   check_date:

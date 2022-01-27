@@ -7,7 +7,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/> <!-- IMEI-->
     <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
@@ -33,7 +34,8 @@
         <uses-library android:name="android.test.base" />
         <uses-library android:name="android.test.mock" />
 
-        <activity android:name=".Experiment.HomeActivity">
+        <activity android:name=".Experiment.HomeActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -93,6 +95,7 @@
         <activity android:name=".Experiment.ViewResultsActivity"/>
         <activity android:name=".Experiment.ViewPagerActivity"/>
         <activity android:name=".Experiment.MainActivity"/>
+        <activity android:name=".Experiment.CalibrationActivity"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

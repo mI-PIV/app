@@ -37,7 +37,15 @@ public class Pos7_Activity extends FluidGlossary {
         t3.setText("Where shear stresses are indicated by \uD835\uDF0F\uD835\uDC56\uD835\uDC57. When examining a Newtonian, laminar fluid flow, the shear stress parallel to a flat plate is described through:");
         t3.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
 
-        TextView[] textViews = {t1, t2, t3};
+        TextView t4 = (TextView)findViewById(R.id.pos7TextView4);
+        t4.setText("Implications for mI-PIV: Visually, shear is the change in velocity across a certain distance. For example, the flow in the photo here changes from near zero velocity at the top and bottom, to high velocity in the center. These regions of high shear are highlighted by the vorticity (yellow and orange).");
+        t4.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
+
+        TextView t5 = (TextView)findViewById(R.id.pos7TextView5);
+        t5.setText("Be careful! Since PIV averages the velocity over each interrogation region of flow, high shear can make the PIV less accurate.");
+        t5.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
+
+        TextView[] textViews = {t1, t2, t3, t4, t5};
         for (int i = 0; i < textViews.length; i++) {
             textViews[i].setTextSize(paraTextSize);
         }
