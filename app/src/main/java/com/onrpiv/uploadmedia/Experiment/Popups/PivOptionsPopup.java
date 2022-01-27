@@ -147,7 +147,7 @@ public class PivOptionsPopup extends AlertDialog {
         setEditTextPIV.setTextSize(20);
         windowSizeText.setText(Integer.toString(parameters.getWindowSize()));
         overlapText.setText(Integer.toString(parameters.getOverlap()));
-        dtText.setText(Double.toString(parameters.getDt()));
+        dtText.setText(Double.toString(1d/parameters.getDt()));
         qMinText.setText(Double.toString(parameters.getqMin()));
         EText.setText(Double.toString(parameters.getE()));
         replaceRadioGroup.check(R.id.yesRadio);
@@ -167,7 +167,7 @@ public class PivOptionsPopup extends AlertDialog {
     public void setFPSParameters(int fps, int frame1Num, int frame2Num) {
         float dt = calculateTimeDelta(fps, frame1Num, frame2Num);
         parameters.setDt(dt);
-        dtText.setText(String.valueOf(dt));
+        dtText.setText(String.valueOf(fps));
     }
 
     private void setListeners(Context context, String userName, ActivityResultRegistry resultRegistry) {
