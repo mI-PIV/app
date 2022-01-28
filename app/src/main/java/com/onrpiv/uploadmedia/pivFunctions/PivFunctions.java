@@ -691,16 +691,6 @@ public class PivFunctions {
     private static double findMedian(double a1, double a2, double a3, double a4, double a5, double a6, double a7, double a8) {
         double[] a = new double[]{ a1, a2, a3, a4, a5, a6, a7, a8 };
         Arrays.sort(a);
-//        double m = a[3];
-//
-//        double[] r = new double[a.length];
-//        for(int i = 0; i < a.length; i++) {
-//            r[i] = a[i] - m;
-//        }
-//
-//        Arrays.sort(r);
-//
-//        return r[]
         return a[3];
     }
 
