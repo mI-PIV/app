@@ -386,8 +386,8 @@ public class PivFunctions {
 
         for (int i = 0; i < pivCorrelation.getInterrY().length; i++) {
             for (int j = 0; j < pivCorrelation.getInterrX().length; j++) {
-                x = (pivCorrelation.getInterrX()[j] * pixelToCM) / dt;
-                y = (pivCorrelation.getInterrY()[i] * pixelToCM) / dt;
+                x = pivCorrelation.getInterrX()[j] * pixelToCM;
+                y = pivCorrelation.getInterrY()[i] * pixelToCM;
                 ux = (pivCorrelation.getU()[i][j] * pixelToCM) / dt;
                 vy = (pivCorrelation.getV()[i][j]  * pixelToCM) / dt;
                 q = pivCorrelation.getSig2Noise()[i][j];
