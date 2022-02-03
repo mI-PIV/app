@@ -382,7 +382,7 @@ public class PivFunctions {
         }
 
         // Header
-        saveToFile("x (cm),y (cm),u (cm),v (cm),q", stepName);
+        saveToFile("x (cm),y (cm),u (cm/s),v (cm/s),q", stepName);
 
         for (int i = 0; i < pivCorrelation.getInterrY().length; i++) {
             for (int j = 0; j < pivCorrelation.getInterrX().length; j++) {
