@@ -343,6 +343,9 @@ public class PivFunctions {
             txtFile.delete();
         }
 
+        // Header
+        saveToFile("x,y,u,v,q", stepName);
+
         double ux, vy, q, x, y;
         ArrayList<String> toPrint = new ArrayList<>();
 
@@ -351,8 +354,8 @@ public class PivFunctions {
             for (int j = 0; j < pivResultData.getInterrX().length; j++) {
                 x = pivResultData.getInterrX()[j];
                 y = pivResultData.getInterrY()[i];
-                ux = pivResultData.getU()[i][j] * dt;
-                vy = pivResultData.getV()[i][j] * dt;
+                ux = pivResultData.getU()[i][j];
+                vy = pivResultData.getV()[i][j];
                 q = pivResultData.getSig2Noise()[i][j];
 
                 toPrint.add(String.valueOf(x));
@@ -378,12 +381,15 @@ public class PivFunctions {
             txtFile.delete();
         }
 
+        // Header
+        saveToFile("x (cm),y (cm),u (cm/s),v (cm/s),q", stepName);
+
         for (int i = 0; i < pivCorrelation.getInterrY().length; i++) {
             for (int j = 0; j < pivCorrelation.getInterrX().length; j++) {
-                x = pivCorrelation.getInterrX()[j];
-                y = pivCorrelation.getInterrY()[i];
-                ux = (pivCorrelation.getU()[i][j] * dt) * pixelToCM;
-                vy = (pivCorrelation.getV()[i][j] * dt) * pixelToCM;
+                x = pivCorrelation.getInterrX()[j] * pixelToCM;
+                y = pivCorrelation.getInterrY()[i] * pixelToCM;
+                ux = (pivCorrelation.getU()[i][j] * pixelToCM) / dt;
+                vy = (pivCorrelation.getV()[i][j]  * pixelToCM) / dt;
                 q = pivCorrelation.getSig2Noise()[i][j];
 
                 toPrint.add(String.valueOf(x));
@@ -406,6 +412,9 @@ public class PivFunctions {
         if (txtFile.exists() && txtFile.isFile()) {
             txtFile.delete();
         }
+
+        // Header
+        saveToFile("x,y,vorticity", stepName);
 
         double v;
         ArrayList<String> toPrint = new ArrayList<>();
