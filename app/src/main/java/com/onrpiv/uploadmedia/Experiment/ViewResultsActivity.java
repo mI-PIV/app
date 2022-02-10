@@ -9,6 +9,7 @@ import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_MULTI;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_REPLACED;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,7 +37,6 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -60,6 +60,7 @@ import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -134,6 +135,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         rangeSlider.setStepSize(1f);
         // https://developer.android.com/reference/com/google/android/material/slider/RangeSlider
         rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
+            @SuppressLint("RestrictedApi")
             @Override
             public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
                 List<Float> vals = rangeSlider.getValues();
@@ -501,7 +503,18 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             imageStack.setDrawingCacheEnabled(false);
         }
 
-        Toast.makeText(this, "Current image saved as " + pngFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+        try {
+            new AlertDialog.Builder(this)
+                    .setPositiveButton("Okay", null)
+                    .setMessage("Current image saved as: \n" + pngFile.getCanonicalPath())
+                    .create().show();
+        } catch (IOException | SecurityException e) {
+            new AlertDialog.Builder(this)
+                    .setPositiveButton("Okay", null)
+                    .setMessage("Current image saved as: \n" + pngFile.getAbsolutePath())
+                    .create().show();
+        }
+
         saveImageButton.setEnabled(true);
         saveImageButton.setBackgroundColor(Color.parseColor("#243EDF"));
     }
