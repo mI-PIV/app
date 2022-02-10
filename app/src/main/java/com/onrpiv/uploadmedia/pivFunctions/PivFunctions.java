@@ -889,6 +889,30 @@ public class PivFunctions {
                 getCoordinates(), cols, rows, dt);
     }
 
+    private static double getCubicInterpolation_u(double[][] u, int ii, int jj) {
+        List<Double> valueList = new ArrayList<>();
+        for (int i = ii - 2; i <= ii +2; i++) {
+            if (i < 0 || i >= u.length) {
+                valueList.add(0d);
+            } else {
+                valueList.add(u[i][jj]);
+            }
+        }
+        return cubicInterpolator(valueList);
+    }
+
+    private static double getCubicInterpolation_v(double[][] v, int ii, int jj) {
+        List<Double> valueList = new ArrayList<>();
+        for (int j = jj - 2; j <= jj +2; j++) {
+            if (j < 0 || j >= v.length) {
+                valueList.add(0d);
+            } else {
+                valueList.add(v[ii][j]);
+            }
+        }
+        return cubicInterpolator(valueList);
+    }
+
     public PivResultData replaceMissingVectors(PivResultData pivResultData, String resultName) {
         double[][] dr2 = new double[fieldRows][fieldCols];
         double[][] dc2 = new double[fieldRows][fieldCols];
@@ -899,27 +923,12 @@ public class PivFunctions {
         double[][] u = pivResultData.getU();
         double[][] v = pivResultData.getV();
 
-        for (int ii = 2; ii < fieldRows - 2; ii++) {
-            for (int jj = 2; jj < fieldCols - 2; jj++) {
-                //if pixel displacements from 1st pass are zero keep them as zero in 2nd phase
+        for (int ii = 0; ii < fieldRows; ii++) {
+            for (int jj = 0; jj < fieldCols; jj++) {
+                //if pixel displacements from 1st pass are zero calculate cubic interpolation
                 if (v[ii][jj] == 0 && u[ii][jj] == 0) {
-                    double bu1 = u[ii - 2][jj];
-                    double bu2 = u[ii - 1][jj];
-                    double bu3 = u[ii + 1][jj];
-                    double bu4 = u[ii + 2][jj];
-
-                    double[] bu = {bu1, bu2, bu3, bu4};
-                    double sol1 = cubicInterpolator(bu);
-                    dc2[ii][jj] = sol1;
-
-                    double bv1 = v[ii][jj - 2];
-                    double bv2 = v[ii][jj - 1];
-                    double bv3 = v[ii][jj + 1];
-                    double bv4 = v[ii][jj + 2];
-
-                    double[] bv = {bv1, bv2, bv3, bv4};
-                    double sol2 = cubicInterpolator(bv);
-                    dr2[ii][jj] = sol2;
+                    dc2[ii][jj] = getCubicInterpolation_u(u, ii, jj);
+                    dr2[ii][jj] = getCubicInterpolation_v(v, ii, jj);
                 } else {
                     dr2[ii][jj] = v[ii][jj];
                     dc2[ii][jj] = u[ii][jj];
@@ -933,17 +942,17 @@ public class PivFunctions {
                 getCoordinates(), cols, rows, dt);
     }
 
-    public static double cubicInterpolator(double[] values) {
+    public static double cubicInterpolator(List<Double> values) {
         double output = 0;
         //Specific to the equally spaced 4 point cubic coefficient matrix, may be removed with substitution described in sub-routine
         double[][] L = {{1, 0, 0, 0}, {0.421875, 1, 0, 0}, {0.015625, 0.33333333, 1, 0}, {0, 0, 0, 1}};
         double[][] U = {{64, 16, 4, 1}, {0, 2.25, 1.3125, 0.578125}, {0, 0, 0.5, 0.7916666667}, {0, 0, 0, 1}};
 
         //find the z values in the LU solution
-        double z0 = values[0] / L[0][0];
-        double z1 = (values[1] - z0 * L[1][0]) / L[1][1];
-        double z2 = (values[2] - z0 * L[2][0] - z1 * L[2][1]) / L[2][2];
-        double z3 = (values[3] - z0 * L[3][0] - z1 * L[3][1] - z2 * L[3][2]) / L[3][3];
+        double z0 = values.get(0) / L[0][0];
+        double z1 = (values.get(1) - z0 * L[1][0]) / L[1][1];
+        double z2 = (values.get(2) - z0 * L[2][0] - z1 * L[2][1]) / L[2][2];
+        double z3 = (values.get(3) - z0 * L[3][0] - z1 * L[3][1] - z2 * L[3][2]) / L[3][3];
 
         //Use the z values to solve for the coeffs vector
         double D = (z3 / U[3][3]);
