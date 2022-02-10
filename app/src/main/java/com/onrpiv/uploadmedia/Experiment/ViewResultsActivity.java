@@ -36,7 +36,6 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -60,6 +59,7 @@ import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -501,7 +501,18 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             imageStack.setDrawingCacheEnabled(false);
         }
 
-        Toast.makeText(this, "Current image saved as " + pngFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+        try {
+            new AlertDialog.Builder(this)
+                    .setPositiveButton("Okay", null)
+                    .setMessage("Current image saved as: \n" + pngFile.getCanonicalPath())
+                    .create().show();
+        } catch (IOException | SecurityException e) {
+            new AlertDialog.Builder(this)
+                    .setPositiveButton("Okay", null)
+                    .setMessage("Current image saved as: \n" + pngFile.getAbsolutePath())
+                    .create().show();
+        }
+
         saveImageButton.setEnabled(true);
         saveImageButton.setBackgroundColor(Color.parseColor("#243EDF"));
     }
