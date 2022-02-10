@@ -34,7 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -697,10 +697,34 @@ public class PivFunctions {
         return new double[]{min, max};
     }
 
-    private static double findMedian(double a1, double a2, double a3, double a4, double a5, double a6, double a7, double a8) {
-        double[] a = new double[]{ a1, a2, a3, a4, a5, a6, a7, a8 };
-        Arrays.sort(a);
-        return a[3];
+    private static double findMedian(double[][] arr, int k, int l) {
+        List<Double> medianList = new ArrayList<>();
+        for (int ki = k-1; ki <= k+1; ki++) {
+            for (int li = l-1; li <= l+1; li++) {
+                if (ki < 0 || ki >= arr.length || li < 0 || li >= arr.length) {
+                    medianList.add(0d);  // padding for out of bounds indices
+                } else {
+                    medianList.add(arr[ki][li]);
+                }
+            }
+        }
+        Collections.sort(medianList);
+        return medianList.get(3);
+    }
+
+    private static double findMedian(double[][] arr, int k, int l, double subValue) {
+        List<Double> medianList = new ArrayList<>();
+        for (int ki = k-1; ki <= k+1; ki++) {
+            for (int li = l-1; li <= l+1; li++) {
+                if (ki < 0 || ki >= arr.length || li < 0 || li >= arr.length) {
+                    medianList.add(0d);  // padding for out of bounds indices
+                } else {
+                    medianList.add(Math.abs(arr[ki][li]) - subValue);
+                }
+            }
+        }
+        Collections.sort(medianList);
+        return medianList.get(3);
     }
 
     public PivResultData vectorPostProcessing(PivResultData singlePassResult, String resultName) {
@@ -713,28 +737,13 @@ public class PivFunctions {
 
         double sm_r, sm_c, rm_r, rm_c, sigma_s_r, sigma_s_c, r_r, r_c;
 
-        for (int k = 1; k < fieldRows - 1; k++) {
-            for (int l = 1; l < fieldCols - 1; l++) {
-
-                sm_r = findMedian(v[k - 1][l - 1], v[k - 1][l],
-                        v[k - 1][l + 1], v[k][l - 1],
-                        v[k][l + 1], v[k + 1][l - 1],
-                        v[k + 1][l], v[k + 1][l + 1]);
-
-                sm_c = findMedian(u[k - 1][l - 1], u[k - 1][l],
-                        u[k - 1][l + 1], u[k][l - 1],
-                        u[k][l + 1], u[k + 1][l - 1],
-                        u[k + 1][l], u[k + 1][l + 1]);
-
-                rm_r = findMedian(Math.abs(v[k - 1][l - 1] - sm_r), Math.abs(v[k - 1][l] - sm_r),
-                        Math.abs(v[k - 1][l + 1] - sm_r), Math.abs(v[k][l - 1] - sm_r),
-                        Math.abs(v[k][l + 1] - sm_r), Math.abs(v[k + 1][l - 1] - sm_r),
-                        Math.abs(v[k + 1][l] - sm_r), Math.abs(v[k + 1][l + 1] - sm_r));
-
-                rm_c = findMedian(Math.abs(u[k - 1][l - 1] - sm_c), Math.abs(u[k - 1][l] - sm_c),
-                        Math.abs(u[k - 1][l + 1] - sm_c), Math.abs(u[k][l - 1] - sm_c),
-                        Math.abs(u[k][l + 1] - sm_c), Math.abs(u[k + 1][l - 1] - sm_c),
-                        Math.abs(u[k + 1][l] - sm_c), Math.abs(u[k + 1][l + 1] - sm_c));
+        for (int k = 0; k < fieldRows; k++) {
+            for (int l = 0; l < fieldCols; l++) {
+                // Find median values
+                sm_r = findMedian(v, k, l);
+                sm_c = findMedian(u, k, l);
+                rm_r = findMedian(v, k, l, sm_r);
+                rm_c = findMedian(u, k, l, sm_c);
 
                 //Normalization factor
                 sigma_s_r = rm_r + 0.1;
@@ -781,8 +790,8 @@ public class PivFunctions {
 
         int progressCounter = 0;
 
-        for (int ii = 1; ii < fieldRows - 1; ii++) {
-            for (int jj = 1; jj < fieldCols - 1; jj++) {
+        for (int ii = 0; ii < fieldRows; ii++) {
+            for (int jj = 0; jj < fieldCols; jj++) {
                 Mat window_a_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
                 Mat window_b_1 = Mat.zeros(windowSize, windowSize, CvType.CV_8U);
 
