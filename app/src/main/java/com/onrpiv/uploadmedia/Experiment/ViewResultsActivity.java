@@ -9,6 +9,7 @@ import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_MULTI;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_REPLACED;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -134,6 +135,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         rangeSlider.setStepSize(1f);
         // https://developer.android.com/reference/com/google/android/material/slider/RangeSlider
         rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
+            @SuppressLint("RestrictedApi")
             @Override
             public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
                 List<Float> vals = rangeSlider.getValues();
