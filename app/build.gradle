@@ -21,13 +21,13 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
-    lintOptions {
-        abortOnError false
-    }
 
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
+    lint {
+        abortOnError false
+    }
 }
 
 dependencies {
