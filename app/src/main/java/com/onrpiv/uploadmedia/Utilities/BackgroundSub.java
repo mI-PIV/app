@@ -82,10 +82,7 @@ public class BackgroundSub {
         PhotoView backgroundImage = new PhotoView(context);
         backgroundImage.setImageBitmap(resizedBackground);
         return new AlertDialog.Builder(context)
-                .setView(backgroundImage)
-                .setCancelable(false)
-                .setTitle("Video Extracted Background")
-                .setPositiveButton("Okay", null);
+                .setView(backgroundImage);
     }
 
     private static File[] getFramesPaths(File framesDir) {

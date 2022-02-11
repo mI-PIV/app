@@ -77,21 +77,21 @@ public class FrameExtractor {
         scale= Set the resolution of the frames. See more https://trac.ffmpeg.org/wiki/Scaling
          */
         String[] complexCommand = {"-y", "-i", videoPath, "-an", "-r", fps, "-ss", "" + videoStart, "-t", "" + (videoEnd - videoStart), jpegFile.getAbsolutePath()};
-        execFFmpegBinary(complexCommand, context, thisCallback);
+        execFFmpegBinary(complexCommand, context, videoPath, thisCallback);
     }
 
 
     public static void extractSingleFrame(Context context, String videoPath, String outPath, float videoStartTime,
                                             Callable<Void> successCallback) {
         String[] command = {"-y", "-ss", "" + videoStartTime, "-i", videoPath, "-frames:v", "1", outPath};
-        execFFmpegBinary(command, context, successCallback);
+        execFFmpegBinary(command, context, videoPath, successCallback);
     }
 
 
     /**
      * Executing ffmpeg binary
      */
-    private static void execFFmpegBinary(final String[] command, final Context context, final Callable<Void> successCallback) {
+    private static void execFFmpegBinary(final String[] command, final Context context, final String videoPath, final Callable<Void> successCallback) {
 
         // Progress dialog
         final ProgressDialog pDialog = new ProgressDialog(context);
@@ -105,6 +105,8 @@ public class FrameExtractor {
                 if (returnCode == Config.RETURN_CODE_SUCCESS) {
                     Toast.makeText(context, "Frame Extraction Completed", Toast.LENGTH_SHORT).show();
                     try {
+                        // If we retrieved the video from google drive, then delete the temp file we created
+                        PathUtil.deleteIfTempFile(context, videoPath);
                         if (pDialog.isShowing()) { pDialog.dismiss(); }
                         successCallback.call();
                     } catch (Exception e) {

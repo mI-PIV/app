@@ -1,5 +1,6 @@
 package com.onrpiv.uploadmedia.Experiment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -263,23 +264,24 @@ public class VideoActivity extends AppCompatActivity {
             public Void call() throws Exception {
                 // Change generate Frames button to green
                 generateFramesButton.setBackgroundColor(Color.parseColor("#00CC00"));
-                // If we retrieved the video from google drive, then delete the temp file we created
-                PathUtil.deleteIfTempFile(VideoActivity.this, videoPath);
-                // return to experiment menu
-                MainActivity.userName = userName;
 
-                // show the background popup if desired and exit video activity
+                // Create popup that will show background if desired and direct user to processing or stay in videoActivity
+                AlertDialog.Builder frameFinishedPopup;
                 if (viewBackgroundCheckbox.isChecked()) {
-                    AlertDialog.Builder backsubBuilder = BackgroundSub.showLatestBackground(VideoActivity.this, userName);
-                    backsubBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            finish();
-                        }
-                    }).create().show();
+                    frameFinishedPopup = BackgroundSub.showLatestBackground(VideoActivity.this, userName);
                 } else {
-                    finish();
+                    frameFinishedPopup = new AlertDialog.Builder(VideoActivity.this);
                 }
+
+                frameFinishedPopup.setMessage("Head to processing newly extracted frames? Or continue extracting frames?");
+                frameFinishedPopup.setPositiveButton("Process new frames", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent imageActivityIntent = new Intent(VideoActivity.this, ImageActivity.class);
+                        imageActivityIntent.putExtra("UserName", userName);
+                        startActivity(imageActivityIntent);
+                    }
+                }).setNegativeButton("Continue extracting", null).create().show();
                 return null;
             }
         };
@@ -333,6 +335,7 @@ public class VideoActivity extends AppCompatActivity {
         rangeSlider.setValues(0f, 0.1f);
         rangeSlider.setMinSeparation(0.1f);
         rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
+            @SuppressLint("RestrictedApi")
             @Override
             public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
                 List<Float> vals = slider.getValues();
