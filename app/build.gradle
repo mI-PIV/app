@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion '30.0.3'
     defaultConfig {
         applicationId "com.onrpiv.uploadmedia"
         minSdkVersion 25
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 2
         versionName "0.08-beta"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -18,16 +18,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
-    }
-    lintOptions {
-        abortOnError false
+        sourceCompatibility 11
+        targetCompatibility 11
     }
 
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
+    lint {
+        abortOnError false
+    }
 }
 
 dependencies {
