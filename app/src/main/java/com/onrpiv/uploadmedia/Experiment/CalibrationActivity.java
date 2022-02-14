@@ -3,16 +3,20 @@ package com.onrpiv.uploadmedia.Experiment;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
@@ -42,6 +46,8 @@ public class CalibrationActivity extends VideoActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        calibrationMessage();
 
         rangeSlider.setVisibility(View.GONE);
         viewBackgroundCheckbox.setVisibility(View.GONE);
@@ -237,5 +243,27 @@ public class CalibrationActivity extends VideoActivity {
 
     private int calcDP(int desiredDP) {
         return Math.round(desiredDP * this.getResources().getDisplayMetrics().density);
+    }
+
+    private void calibrationMessage() {
+
+        // Create a AlertDialog Builder.
+        android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(CalibrationActivity.this);
+
+        // Set title, icon, can not cancel properties (the box still remains on the screen if clicked outside).
+        alertDialogBuilder.setTitle("Calibration Variables");
+        alertDialogBuilder.setIcon(R.drawable.ic_launcher_background);
+        alertDialogBuilder.setMessage("\nBe sure to use the same camera settings and magnification as the videos you intend to conduct PIV on.");
+        alertDialogBuilder.setCancelable(false);
+
+        alertDialogBuilder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        // Create AlertDialog and show.
+        alertDialogBuilder.create().show();
     }
 }
