@@ -18,6 +18,10 @@ import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 import com.onrpiv.uploadmedia.Utilities.ProgressUpdateInterface;
 
+import org.apache.commons.math3.complex.Complex;
+import org.apache.commons.math3.transform.DftNormalization;
+import org.apache.commons.math3.transform.FastFourierTransformer;
+import org.apache.commons.math3.transform.TransformType;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -189,6 +193,63 @@ public class PivFunctions {
         submat.release();
 
         return image;
+    }
+
+    private static Mat fftPIV(Mat image, Mat searchArea) {
+        // prepare Mats for fft
+        double[] imageD = convertAndFlatten(image);
+        double[] searchAreaD = convertAndFlatten(searchArea);
+
+        // FFT
+        // https://blog.fossasia.org/performing-fourier-transforms-in-the-pslab-android-app/
+        FastFourierTransformer fft = new FastFourierTransformer(DftNormalization.STANDARD);
+        // fft, ifft
+
+        // TODO processing steps for fft two images
+        //    // fft
+        //    fftw_execute(rfft2_plan_a);  ffft
+        //    fftw_execute(rfft2_plan_b);  ffft
+        //
+        //    // Complex Conjugate Multiply
+        //    for (int i = 0; i < nfftx * nffty; i++)
+        //    {
+        //        double a = a_out[i][0];
+        //        double b = a_out[i][1];
+        //        double c = b_out[i][0];
+        //        double d = -b_out[i][1];
+        //        double e = a * c - b * d;
+        //        double f = a * d + b * c;
+        //        b_out[i][0] = e;
+        //        b_out[i][1] = f;
+        //    }
+        //
+        //    // ifft
+        //    fftw_execute(irfft2_plan);
+        //
+        //    // normalize
+        //    for (int j = 0; j < nfftx * nffty; j++)
+        //        ifft[j] /= (double) (nfftx * nffty);
+        //
+        //    // fftshift
+        //    return fftshift(ifft);
+
+        Complex[] ffft = fft.transform(imageD, TransformType.FORWARD);
+        Complex[] ifft = fft.transform(ffft, TransformType.INVERSE);
+
+        // TODO fftshift
+
+    }
+
+    private static double[] convertAndFlatten(Mat mat) {
+        double[] result = new double[mat.cols() * mat.rows()];
+        for (int y = 0; y < mat.rows(); y++) {
+            for (int x = 0; x < mat.cols(); x++) {
+                // TODO double check that mat is stored row-wise
+                int d1Index = y * mat.cols() + x;
+                result[d1Index] = mat.get(y, x)[0];
+            }
+        }
+        return result;
     }
 
     private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr) {
