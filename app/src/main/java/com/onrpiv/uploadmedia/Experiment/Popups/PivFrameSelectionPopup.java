@@ -9,8 +9,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,10 +33,12 @@ import java.util.List;
 
 public class PivFrameSelectionPopup extends AlertDialog {
 
-    private final EditText frame1Text, frame2Text;
+    private final EditText frame1Text;
+    private final TableRow secondFrameTableRow;
+    private final RadioGroup frame2RadioGroup;
     private final Spinner frameSetSpinner;
     private final Button saveButton;
-    private final SeekBar frame1Slider, frame2Slider;
+    private final SeekBar frame1Slider;
     private final HashMap<SeekBar, EditText> seekBarToTextDict;
 
     private final String userName;
@@ -73,7 +78,26 @@ public class PivFrameSelectionPopup extends AlertDialog {
         TextView descriptionText = (TextView) findViewById(R.id.frame_selection_description);
         frameSetSpinner = findViewById(R.id.frameset_spinner);
         frame1Text = (EditText) findViewById(R.id.img1);
-        frame2Text = (EditText) findViewById(R.id.img2);
+
+        secondFrameTableRow = findViewById(R.id.second_frame_tablerow);
+        secondFrameTableRow.setVisibility(View.GONE);
+        frame2RadioGroup = findViewById(R.id.second_radio_group);
+        frame2RadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int checkedId = radioGroup.getCheckedRadioButtonId();
+                RadioButton selectedButton = findViewById(checkedId);
+                String rawText = selectedButton.getText().toString();
+                int frameAddition = Integer.parseInt(rawText.substring(rawText.length() - 1));
+                frame2Num = frame1Num + frameAddition;
+                frame2IsReady = true;
+
+                frame2Path = setFrames.get(frame2Num - 1).getAbsoluteFile();
+                preview2.setImageBitmap(BitmapFactory.decodeFile(frame2Path.getAbsolutePath()));
+
+                saveButton.setEnabled(checkAllSelections());
+            }
+        });
 
         saveButton = findViewById(R.id.button_save_frame_selection);
         saveButton.setEnabled(false);
@@ -88,10 +112,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
         //init sliders
         frame1Slider = (SeekBar) findViewById(R.id.first_frame_slider);
-        frame2Slider = (SeekBar) findViewById(R.id.second_frame_slider);
         seekBarToTextDict = new HashMap<>();
         seekBarToTextDict.put(frame1Slider, frame1Text);
-        seekBarToTextDict.put(frame2Slider, frame2Text);
 
         SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -104,7 +126,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                //EMPTY
+                // EMPTY
             }
 
             @Override
@@ -114,10 +136,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
         };
 
         frame1Slider.setOnSeekBarChangeListener(seekBarListener);
-        frame2Slider.setOnSeekBarChangeListener(seekBarListener);
         frame1Slider.setMax(1);
-        frame2Slider.setMax(1);
-
 
         //init frame previews
         preview1 = (PhotoView) findViewById(R.id.frame_selection_preview1);
@@ -135,7 +154,10 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 "The image set numbers are in order (time-wise) for each users' frame generation",
                 getWindow());
         new LightBulb(context, frame1Text).setLightBulbOnClick("Images",
-                "The PIV processing identifies the most likely displacements of each region of the image from the first image to the second image. For this reason, users should select images next to each other and in order (e.g., 1 & 2, or 5 & 6, etc.).",
+                "The PIV processing identifies the most likely displacements of each region " +
+                        "of the image from the first image to the second image. For this reason, " +
+                        "users should select images next to each other and in order (e.g., 1 & 2, " +
+                        "or 5 & 6, etc.).",
                 getWindow());
 
         //set selection listeners
@@ -165,10 +187,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 setIsReady = true;
                 frame1Text.setText("", TextView.BufferType.EDITABLE);
                 frame1Text.setHint("Frame 1 - " + numFramesInSet);
-                frame2Text.setText("", TextView.BufferType.EDITABLE);
-                frame2Text.setHint("Frame 2 - " + numFramesInSet);
                 frame1Slider.setMax(numFramesInSet);
-                frame2Slider.setMax(numFramesInSet);
                 preview1.setImageResource(android.R.color.transparent);
                 preview2.setImageResource(android.R.color.transparent);
             }
@@ -187,7 +206,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //EMPTY
+                frame2RadioGroup.removeAllViews();
+                secondFrameTableRow.setVisibility(View.GONE);
             }
 
             @Override
@@ -200,60 +220,48 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     userInput = checkFrameSelections(userInput);
                     int userInt = userInput.getInt();
                     frame1Slider.setProgress(userInt);
-                    frame2Text.setHint("Frame " + userInt + " - " + numFramesInSet);
                     frame1Path = setFrames.get(userInt - 1).getAbsoluteFile();
                     frame1Num = userInt;
 
                     preview1.setImageBitmap(BitmapFactory.decodeFile(frame1Path.getAbsolutePath()));
 
                     saveButton.setEnabled(checkAllSelections());
-                }
-            }
-        });
-
-        frame2Text.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                frame2IsReady = false;
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //EMPTY
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                BoolIntStructure userInput = UserInputUtils.checkUserInputIntClamp(s.toString(),
-                        1, numFramesInSet);
-
-                if (s.length() > 0 && userInput.getBool() && setFrames.size() > 0) {
-                    frame2IsReady = true;
-                    userInput = checkFrameSelections(userInput);
-                    int userInt = userInput.getInt();
-                    frame2Slider.setProgress(userInt);
-                    frame2Path = setFrames.get(userInt - 1).getAbsoluteFile();
-                    frame2Num = userInt;
-
-                    preview2.setImageBitmap(BitmapFactory.decodeFile(frame2Path.getAbsolutePath()));
-
-                    saveButton.setEnabled(checkAllSelections());
+                    secondFrameTableRow.setVisibility(View.VISIBLE);
+                    frame2RadioGroup.removeAllViews();
+                    populateSecondFrameRadioButtons();
                 }
             }
         });
     }
 
+    private void populateSecondFrameRadioButtons() {
+        // Check that the options don't go past number of frames
+        List<Integer> fullOptions = new ArrayList<Integer>();
+        fullOptions.add(1);
+        fullOptions.add(2);
+        fullOptions.add(5);
+        fullOptions.removeIf(option -> frame1Num + option >= numFramesInSet);
+
+        // create radio buttons from options
+        for (Integer option : fullOptions) {
+            RadioButton newButton = new RadioButton(context);
+            // must ensure that the integer 'option' is always the last char
+            String newButtonText = "+" + option.toString();
+            newButton.setText(newButtonText);
+            frame2RadioGroup.addView(newButton);
+        }
+    }
+
     private BoolIntStructure checkFrameSelections(BoolIntStructure input) {
-        if (!frame1Text.hasSelection() || !frame2Text.hasSelection()) {
+        if (!frame1Text.hasSelection()) {
             return input;
         }
 
         int frame1 = Integer.parseInt(frame1Text.getText().toString());
-        int frame2 = Integer.parseInt(frame2Text.getText().toString());
         int inputInt = input.getInt();
 
         //only check if they're the same; want to keep the possibility of reverse flow visualization
-        if (frame1 == frame2) {
+        if (frame1 == frame2Num) {
             if (inputInt == numFramesInSet) {
                 input.setInt(inputInt - 1);
             } else {
