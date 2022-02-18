@@ -53,10 +53,10 @@ public class PivOptionsPopup extends AlertDialog {
     private final ArrayMap<Integer, String> idToKey;
 
 
-    public PivOptionsPopup(final Context context, String userName, int frameSet, int frameOne, int frameTwo,
+    public PivOptionsPopup(final Context context, String userName, String frameSetName, int frameOne, int frameTwo,
                            ActivityResultRegistry resultRegistry) {
         super(context);
-        parameters = new PivParameters(frameSet, frameOne, frameTwo);
+        parameters = new PivParameters(frameSetName, frameOne, frameTwo);
         idToKey = new ArrayMap<>();
 
         // build dialog

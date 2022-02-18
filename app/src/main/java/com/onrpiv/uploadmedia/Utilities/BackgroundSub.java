@@ -72,12 +72,14 @@ public class BackgroundSub {
         background.release();
     }
 
-    public static AlertDialog.Builder showLatestBackground(Context context, String userName) {
-        int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName));
-        File framesNumDir = PathUtil.getFramesNumberedDirectory(context,
-                userName, totalFrameDirs);
+    public static AlertDialog.Builder showLatestBackground(Context context, String userName,
+                                                           String frameDirName) {
+//        int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName));
+//        File framesNumDir = PathUtil.getFramesNumberedDirectory(context,
+//                userName, totalFrameDirs);
+        File framesNameDir = PathUtil.getFramesNamedDirectory(context, userName, frameDirName);
         Bitmap background = BitmapFactory.decodeFile(
-                new File(framesNumDir, BCKGRND_FILENAME+FILE_EXTENSION).getAbsolutePath());
+                new File(framesNameDir, BCKGRND_FILENAME+FILE_EXTENSION).getAbsolutePath());
         Bitmap resizedBackground = PivFunctions.resizeBitmap(background, 600);
         PhotoView backgroundImage = new PhotoView(context);
         backgroundImage.setImageBitmap(resizedBackground);

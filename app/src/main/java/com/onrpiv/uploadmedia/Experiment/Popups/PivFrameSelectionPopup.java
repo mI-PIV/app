@@ -5,9 +5,12 @@ import android.graphics.BitmapFactory;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,7 +20,6 @@ import com.github.chrisbanes.photoview.PhotoView;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
-import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.Utilities.UserInput.BoolIntStructure;
 import com.onrpiv.uploadmedia.Utilities.UserInput.UserInputUtils;
 
@@ -28,22 +30,24 @@ import java.util.List;
 
 public class PivFrameSelectionPopup extends AlertDialog {
 
-    private final EditText imgSetNumText, frame1Text, frame2Text;
+    private final EditText frame1Text, frame2Text;
+    private final Spinner frameSetSpinner;
     private final Button saveButton;
     private final SeekBar frame1Slider, frame2Slider;
     private final HashMap<SeekBar, EditText> seekBarToTextDict;
 
     private final String userName;
+    private final Context context;
 
     public File frameSetPath;
     public File frame1Path;
     public File frame2Path;
-    public int frameSet;
+    public String frameSetName;
     public int frame1Num;
     public int frame2Num;
 
-    private final int numberOfSets;
-    private List<File> setFrames = new ArrayList<>();
+    private final List<File> setFrames = new ArrayList<>();
+    final List<String> frameSetsList;
     private int numFramesInSet;
 
     private final PhotoView preview1;
@@ -63,10 +67,11 @@ public class PivFrameSelectionPopup extends AlertDialog {
         create();
 
         this.userName = userName;
+        this.context = context;
 
         //init buttons
         TextView descriptionText = (TextView) findViewById(R.id.frame_selection_description);
-        imgSetNumText = (EditText) findViewById(R.id.imgSet);
+        frameSetSpinner = findViewById(R.id.frameset_spinner);
         frame1Text = (EditText) findViewById(R.id.img1);
         frame2Text = (EditText) findViewById(R.id.img2);
 
@@ -107,6 +112,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 //EMPTY
             }
         };
+
         frame1Slider.setOnSeekBarChangeListener(seekBarListener);
         frame2Slider.setOnSeekBarChangeListener(seekBarListener);
         frame1Slider.setMax(1);
@@ -117,22 +123,15 @@ public class PivFrameSelectionPopup extends AlertDialog {
         preview1 = (PhotoView) findViewById(R.id.frame_selection_preview1);
         preview2 = (PhotoView) findViewById(R.id.frame_selection_preview2);
 
-        //get number of sets
-        numberOfSets = PersistedData.getTotalFrameDirectories(context, userName);
-
-        //description and framesets text
-        descriptionText.setText("User '" + userName + "' has " + numberOfSets + " image sets. The highest number set corresponds to the most recent generated frames.");
-        descriptionText.setTextSize(15);
-        if (numberOfSets < 1) {
-            imgSetNumText.setHint("No Frame Sets Found");
-        } else if (numberOfSets == 1) {
-            imgSetNumText.setHint("Set 1");
-        } else {
-            imgSetNumText.setHint("Set 1 - " + numberOfSets);
-        }
+        // gather all frame set names
+        frameSetsList = PathUtil.getFrameSetNames(context, userName);
+        // spinner adapter
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.support_simple_spinner_dropdown_item, frameSetsList);
+        assert frameSetSpinner != null;
+        frameSetSpinner.setAdapter(spinnerAdapter);
 
         // lightbulbs
-        new LightBulb(context, imgSetNumText).setLightBulbOnClick("Image Set",
+        new LightBulb(context, frameSetSpinner).setLightBulbOnClick("Image Set",
                 "The image set numbers are in order (time-wise) for each users' frame generation",
                 getWindow());
         new LightBulb(context, frame1Text).setLightBulbOnClick("Images",
@@ -148,46 +147,35 @@ public class PivFrameSelectionPopup extends AlertDialog {
     }
 
     private void setTextListeners() {
-        imgSetNumText.addTextChangedListener(new TextWatcher() {
+        frameSetSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                setIsReady = false;
-            }
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                frameSetName = frameSetsList.get(i);
+                frameSetPath = PathUtil.getFramesNamedDirectory(context, userName, frameSetName);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //EMPTY
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                BoolIntStructure userInput = UserInputUtils.checkUserInputIntClamp(s.toString(), 1, numberOfSets);
-                if (s.length() > 0 && userInput.getBool() && numberOfSets > 0) {
-                    setIsReady = true;
-                    frameSet = userInput.getInt();
-                    frameSetPath = PathUtil.getFramesNumberedDirectory(getContext(), userName, userInput.getInt());
-
-                    // remove the background frame if we're in a background subtracted frame dir
-                    File[] frames = frameSetPath.listFiles();
-                    for (File frame : frames) {
-                        if (!frame.getName().equals("BACKGROUND.jpg"))
-                            setFrames.add(frame);
-                    }
-
-                    setFrames.sort(null);
-                    numFramesInSet = setFrames.size();
-
-                    frame1Text.setText("", TextView.BufferType.EDITABLE);
-                    frame1Text.setHint("Frame 1 - " + numFramesInSet);
-                    frame2Text.setText("", TextView.BufferType.EDITABLE);
-                    frame2Text.setHint("Frame 2 - " + numFramesInSet);
-
-                    frame1Slider.setMax(numFramesInSet);
-                    frame2Slider.setMax(numFramesInSet);
-
-                    preview1.setImageResource(android.R.color.transparent);
-                    preview2.setImageResource(android.R.color.transparent);
+                File[] frames = frameSetPath.listFiles();
+                for (File frame : frames) {
+                    if (!frame.getName().equals("BACKGROUND.jpg"))
+                        setFrames.add(frame);
                 }
+
+                setFrames.sort(null);
+                numFramesInSet = setFrames.size();
+
+                setIsReady = true;
+                frame1Text.setText("", TextView.BufferType.EDITABLE);
+                frame1Text.setHint("Frame 1 - " + numFramesInSet);
+                frame2Text.setText("", TextView.BufferType.EDITABLE);
+                frame2Text.setHint("Frame 2 - " + numFramesInSet);
+                frame1Slider.setMax(numFramesInSet);
+                frame2Slider.setMax(numFramesInSet);
+                preview1.setImageResource(android.R.color.transparent);
+                preview2.setImageResource(android.R.color.transparent);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // EMPTY
             }
         });
 
