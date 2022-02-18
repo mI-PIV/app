@@ -42,7 +42,7 @@ public class ImageActivity extends AppCompatActivity {
     private PivParameters pivParameters;
     private File frame1File;
     private File frame2File;
-    private int frameSet;
+    private String frameSetName;
     private int frame1Num;
     private int frame2Num;
     private int fps;
@@ -109,16 +109,14 @@ public class ImageActivity extends AppCompatActivity {
                 DialogInterface.OnClickListener densityPreviewListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        frameSet = frameSelectionPopup.frameSet;
+                        frameSetName = frameSelectionPopup.frameSetName;
                         frame1File = frameSelectionPopup.frame1Path;
                         frame2File = frameSelectionPopup.frame2Path;
                         frame1Num = frameSelectionPopup.frame1Num;
                         frame2Num = frameSelectionPopup.frame2Num;
 
-                        int framesDirNum = PersistedData.getFrameDirPath(ImageActivity.this, userName,
-                                frameSelectionPopup.frameSetPath.getAbsolutePath());
                         fps = PersistedData.getFrameDirFPS(ImageActivity.this, userName,
-                                framesDirNum);
+                                frameSetName);
 
                         review.setEnabled(true);
                         parameters.setEnabled(true);
@@ -155,7 +153,7 @@ public class ImageActivity extends AppCompatActivity {
 
     public void inputPivOptions(View view) {
         final PivOptionsPopup parameterPopup = new PivOptionsPopup(ImageActivity.this,
-                userName, frameSet, frame1Num, frame2Num, getActivityResultRegistry());
+                userName, frameSetName, frame1Num, frame2Num, getActivityResultRegistry());
 
         // create listener for piv parameter save button
         View.OnClickListener saveListener = new View.OnClickListener() {
@@ -219,7 +217,7 @@ public class ImageActivity extends AppCompatActivity {
         if (step >= 1) {
             outState.putString("frame1file_str", frame1File.getAbsolutePath());
             outState.putString("frame2file_str", frame2File.getAbsolutePath());
-            outState.putInt("frameset", frameSet);
+            outState.putString("frameset", frameSetName);
             outState.putInt("frame1num", frame1Num);
             outState.putInt("frame2num", frame2Num);
             outState.putInt("fps", fps);
@@ -241,7 +239,7 @@ public class ImageActivity extends AppCompatActivity {
         if (step >= 1) {
             frame1File = new File(savedInstanceState.getString("frame1file_str"));
             frame2File = new File(savedInstanceState.getString("frame2file_str"));
-            frameSet = savedInstanceState.getInt("frameset");
+            frameSetName = savedInstanceState.getString("frameset");
             frame1Num = savedInstanceState.getInt("frame1num");
             frame2Num = savedInstanceState.getInt("frame2num");
             fps = savedInstanceState.getInt("fps");

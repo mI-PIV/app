@@ -21,19 +21,19 @@ public class FrameExtractor {
      * Command for extracting images from video
      */
     public static void generateFrames(final Context context, final String userName, String videoPath,
-                                      final String fps, float videoStart, float videoEnd,
-                                      final Callable<Void> successCallback, final boolean backSub){
+                                      final String frameSetName, final String fps, float videoStart,
+                                      float videoEnd, final Callable<Void> successCallback,
+                                      final boolean backSub){
         String fileExtn = ".jpg";
 
         String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
         String filePrefix = "EXTRACT_" + timeStamp + "_";
 
         // create and retrieve the new frames directory
-        final int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName) + 1);
-        final File framesNumDir = PathUtil.getFramesNumberedDirectory(context,
-                userName, totalFrameDirs);
+        final File framesNameDir = PathUtil.getFramesNamedDirectory(context, userName,
+                frameSetName);
 
-        File jpegFile = new File(framesNumDir, filePrefix + "%03d" + fileExtn);
+        File jpegFile = new File(framesNameDir, filePrefix + "%03d" + fileExtn);
 
         // Callback on frame extraction completion that checks if the directory is empty.
         final Callable<Void> thisCallback = new Callable<Void>() {
@@ -42,21 +42,18 @@ public class FrameExtractor {
                 // If the frame dir is empty after extraction (something bad happened),
                 // then we don't update the persisted data
                 // and we don't call the activity's callback
-                if (Objects.requireNonNull(framesNumDir.listFiles()).length < 1) return null;
-
-                // persist number of frame dirs
-                PersistedData.setTotalFrameDirectories(context, userName, totalFrameDirs);
+                if (Objects.requireNonNull(framesNameDir.listFiles()).length < 1) return null;
 
                 // persist fps for this frame dir
-                PersistedData.setFrameDirFPS(context, userName, totalFrameDirs, Integer.parseInt(fps));
+                PersistedData.setFrameDirFPS(context, userName, frameSetName, Integer.parseInt(fps));
 
                 // persist path for this frame dir
-                PersistedData.setFrameDirPath(context, userName, framesNumDir.getAbsolutePath(),
-                        totalFrameDirs);
+                PersistedData.setFrameDirPath(context, userName, framesNameDir.getAbsolutePath(),
+                        frameSetName);
 
                 // background subtraction
                 if (backSub)
-                    BackgroundSub.saveBackground(framesNumDir);
+                    BackgroundSub.saveBackground(framesNameDir);
 
                 // call the activity's callback
                 successCallback.call();

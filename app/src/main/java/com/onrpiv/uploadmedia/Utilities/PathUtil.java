@@ -28,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class PathUtil {
@@ -450,9 +452,19 @@ public class PathUtil {
         return checkDir(result);
     }
 
-    public static File getFramesNumberedDirectory(Context context, String userName, int framesDirNum) {
-        File result = new File(getFramesDirectory(context, userName), "Frames_"+framesDirNum);
+    public static File getFramesNamedDirectory(Context context, String userName, String framesDirName) {
+        File result = new File(getFramesDirectory(context, userName), framesDirName);
         return checkDir(result);
+    }
+
+    public static List<String> getFrameSetNames(Context context, String userName) {
+        File framesDir = getFramesDirectory(context, userName);
+        List<String> frameSetsList = new ArrayList<>();
+        for (File frameSet : Objects.requireNonNull(framesDir.listFiles())) {
+            if (frameSet.isDirectory())
+                frameSetsList.add(frameSet.getName());
+        }
+        return frameSetsList;
     }
 
     public static File getExperimentsDirectory(Context context, String userName) {
