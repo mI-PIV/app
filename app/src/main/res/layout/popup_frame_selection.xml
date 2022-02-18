@@ -26,9 +26,10 @@
                 android:gravity="end"
                 android:text="Which Image Set : " />
 
-            <EditText
-                android:id="@+id/imgSet"
-                android:inputType="number" />
+            <Spinner
+                android:id="@+id/frameset_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </TableRow>
 
