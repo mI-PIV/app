@@ -43,6 +43,10 @@ public class CalibrationActivity extends VideoActivity {
     private Button calibButton;
     private float vidTime;
 
+    // TODO recorded videos aren't triggering range slider
+    // TODO calibration result popup is not triggering when frame selection is > 0
+    // TODO if we can't find the fix for the >0 frame selection, then just always take the 0 frame for now
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

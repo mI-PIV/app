@@ -821,12 +821,16 @@ public class PivFunctions {
                     int IA1_x_s = (int) Math.round((IA1_x_int - (windowSize / 2f) + 1));
                     int IA1_y_s = (int) Math.round((IA1_y_int - (windowSize / 2f) + 1));
 
+                    // TODO check indices for out of bounds
+
                     Rect rectWin_a = new Rect((IA1_x_s - 1), (IA1_y_s - 1), windowSize, windowSize);
                     Mat IA1_new_t = new Mat(grayFrame1, rectWin_a);
 
                     //Interrogation window for Image 2
                     int IA2_x_s = (int) Math.round((IA2_x_int - (windowSize / 2f) + 1));
                     int IA2_y_s = (int) Math.round((IA2_y_int - (windowSize / 2f) + 1));
+
+                    // TODO check indices for out of bounds
 
                     Rect rectWin_b = new Rect((IA2_x_s - 1), (IA2_y_s - 1), windowSize, windowSize);
                     Mat IA2_new_t = new Mat(grayFrame2, rectWin_b);
@@ -845,6 +849,7 @@ public class PivFunctions {
                     int r = (int) mmr.maxLoc.y;
 
                     try {
+                        // TODO check for out of bounds
                         double epsr_new = (Math.log(corr.get(r - 1, c)[0])
                                 - Math.log(corr.get(r + 1, c)[0]))
                                 / (2 * (Math.log(corr.get(r - 1, c)[0])
