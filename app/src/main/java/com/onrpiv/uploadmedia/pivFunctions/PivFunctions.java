@@ -821,12 +821,20 @@ public class PivFunctions {
                     int IA1_x_s = (int) Math.round((IA1_x_int - (windowSize / 2f) + 1));
                     int IA1_y_s = (int) Math.round((IA1_y_int - (windowSize / 2f) + 1));
 
+                    // clamp indices for out of bounds values
+                    IA1_x_s = clamp(IA1_x_s, 1, grayFrame1.cols());
+                    IA1_y_s = clamp(IA1_y_s, 1, grayFrame1.rows());
+
                     Rect rectWin_a = new Rect((IA1_x_s - 1), (IA1_y_s - 1), windowSize, windowSize);
                     Mat IA1_new_t = new Mat(grayFrame1, rectWin_a);
 
                     //Interrogation window for Image 2
                     int IA2_x_s = (int) Math.round((IA2_x_int - (windowSize / 2f) + 1));
                     int IA2_y_s = (int) Math.round((IA2_y_int - (windowSize / 2f) + 1));
+
+                    // clamp indices for out of bounds values
+                    IA2_x_s = clamp(IA2_x_s, 1, grayFrame2.cols());
+                    IA2_y_s = clamp(IA2_y_s, 1, grayFrame2.rows());
 
                     Rect rectWin_b = new Rect((IA2_x_s - 1), (IA2_y_s - 1), windowSize, windowSize);
                     Mat IA2_new_t = new Mat(grayFrame2, rectWin_b);
@@ -843,6 +851,10 @@ public class PivFunctions {
 
                     int c = (int) mmr.maxLoc.x;
                     int r = (int) mmr.maxLoc.y;
+
+                    // clamp c and r for out of bounds values
+                    c = clamp(c, 1, corr.cols() - 1);
+                    r = clamp(r, 1, corr.rows() - 1);
 
                     try {
                         double epsr_new = (Math.log(corr.get(r - 1, c)[0])
@@ -1002,6 +1014,10 @@ public class PivFunctions {
 
     public int getFieldCols() {
         return fieldCols;
+    }
+
+    private static int clamp(int val, int min, int max) {
+        return Math.max(min, Math.min(max, val));
     }
 
     private static double[][] debugMat(Mat toDebug) {
