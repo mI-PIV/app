@@ -8,15 +8,12 @@ import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
@@ -152,7 +149,7 @@ public class CalibrationActivity extends VideoActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mVideoView.seekTo(progress * 1000);
                 selectedFrameText.setText(String.valueOf(progress));
-                vidTime = progress * 1000f;
+                vidTime = progress;
             }
 
             @Override
