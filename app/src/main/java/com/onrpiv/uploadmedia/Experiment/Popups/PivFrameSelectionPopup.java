@@ -250,6 +250,9 @@ public class PivFrameSelectionPopup extends AlertDialog {
             String newButtonText = "+" + option.toString();
             newButton.setText(newButtonText);
             frame2RadioGroup.addView(newButton);
+            if (option == 1) {
+                frame2RadioGroup.check(newButton.getId());
+            }
         }
     }
 
