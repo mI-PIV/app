@@ -1,5 +1,6 @@
 package com.onrpiv.uploadmedia.Experiment;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.onrpiv.uploadmedia.BuildConfig;
 import com.onrpiv.uploadmedia.Learn.LearnFluids;
 import com.onrpiv.uploadmedia.Learn.LearnPIV;
 import com.onrpiv.uploadmedia.R;
@@ -47,6 +49,15 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(learnPIV);
             }
         });
+    }
+
+    public void about_onclick(View view) {
+        final String versionName = BuildConfig.VERSION_NAME;
+        new AlertDialog.Builder(HomeActivity.this)
+              .setMessage("mI-PIV\nVersion: " + versionName)
+              .setPositiveButton("Close", null)
+              .setCancelable(true)
+              .create().show();
     }
 
     // ensuring the screen is locked to vertical position
