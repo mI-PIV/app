@@ -195,49 +195,60 @@ public class PivFunctions {
         return image;
     }
 
-    private static Mat fftPIV(Mat image, Mat searchArea) {
+    private static Mat fftPIV(Mat winA, Mat winB) {
         // prepare Mats for fft
-        double[] imageD = convertAndFlatten(image);
-        double[] searchAreaD = convertAndFlatten(searchArea);
+        double[] winA_flat = convertAndFlatten(winA);
+        double[] winB_flat = convertAndFlatten(winB);
 
-        // FFT
-        // https://blog.fossasia.org/performing-fourier-transforms-in-the-pslab-android-app/
         FastFourierTransformer fft = new FastFourierTransformer(DftNormalization.STANDARD);
-        // fft, ifft
+        Complex[] winA_ffft = fft.transform(winA_flat, TransformType.FORWARD);
+        Complex[] winB_ffft = fft.transform(winB_flat, TransformType.FORWARD);
 
-        // TODO processing steps for fft two images
-        //    // fft
-        //    fftw_execute(rfft2_plan_a);  ffft
-        //    fftw_execute(rfft2_plan_b);  ffft
-        //
-        //    // Complex Conjugate Multiply
-        //    for (int i = 0; i < nfftx * nffty; i++)
-        //    {
-        //        double a = a_out[i][0];
-        //        double b = a_out[i][1];
-        //        double c = b_out[i][0];
-        //        double d = -b_out[i][1];
-        //        double e = a * c - b * d;
-        //        double f = a * d + b * c;
-        //        b_out[i][0] = e;
-        //        b_out[i][1] = f;
-        //    }
-        //
-        //    // ifft
-        //    fftw_execute(irfft2_plan);
-        //
-        //    // normalize
-        //    for (int j = 0; j < nfftx * nffty; j++)
-        //        ifft[j] /= (double) (nfftx * nffty);
-        //
-        //    // fftshift
-        //    return fftshift(ifft);
+        winA_flat = null;
+        winB_flat = null;
 
-        Complex[] ffft = fft.transform(imageD, TransformType.FORWARD);
-        Complex[] ifft = fft.transform(ffft, TransformType.INVERSE);
+        Complex[] ffft_combined = new Complex[winB_ffft.length];
+        // Complex Conjugate Multiply
+        for (int i = 0; i < winB_ffft.length; i++)
+        {
+            double a = winA_ffft[i].getReal();
+            double b = winA_ffft[i].getImaginary();
+            double c = winB_ffft[i].getReal();
+            double d = -winB_ffft[i].getImaginary();
+            double e = a * c - b * d;
+            double f = a * d + b * c;
+            ffft_combined[i] = new Complex(e, f);
+        }
 
-        // TODO fftshift
+        winA_ffft = null;
+        winB_ffft = null;
 
+        Complex[] ifft_out = fft.transform(ffft_combined, TransformType.INVERSE);
+        double[] ifft_shifted = fftShift(ifft_out);
+
+        ifft_out = null;
+
+        // normalize
+        double[] ifft_shifted_normed = new double[ifft_shifted.length];
+        for (int i = 0; i < ifft_shifted.length; i++) {
+            ifft_shifted_normed[i] = ifft_shifted[i] / ifft_shifted.length;
+        }
+
+        ifft_shifted = null;
+
+        return reshapeAndConvert(ifft_shifted_normed, winA.rows(), winA.cols());
+    }
+
+    private static double[] fftShift(Complex[] ifft) {
+        int shift = (int) Math.round(ifft.length/2d);
+        double[] result = new double[ifft.length];
+        for (int i = 0; i < shift; i++) {
+            result[i+shift] = ifft[i].getReal();
+        }
+        for (int j = shift; j < ifft.length; j++) {
+            result[j-shift] = ifft[j].getReal();
+        }
+        return result;
     }
 
     private static double[] convertAndFlatten(Mat mat) {
@@ -247,6 +258,16 @@ public class PivFunctions {
                 // TODO double check that mat is stored row-wise
                 int d1Index = y * mat.cols() + x;
                 result[d1Index] = mat.get(y, x)[0];
+            }
+        }
+        return result;
+    }
+
+    private static Mat reshapeAndConvert(double[] shifted, int rows, int cols) {
+        Mat result = new Mat(new Size(cols, rows), CvType.CV_64FC1);
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < cols; x++) {
+                result.put(y, x, shifted[y * cols + x]);
             }
         }
         return result;
@@ -289,7 +310,7 @@ public class PivFunctions {
         double[][] sig2noise = new double[fieldRows][fieldCols];
 
         // Update progress bar in PIV runner
-        int progressCounter = 0;
+        int progressCounter = 1;
         if (null != progressUpdate) {
             progressUpdate.setProgressMax(fieldCols * fieldRows);
             pivGuiUpdates = true;
@@ -327,19 +348,20 @@ public class PivFunctions {
                 subtract(window_a, new Scalar(win1_avg), window_a_1);
                 subtract(window_b, new Scalar(win2_avg), window_b_1);
 
-                Mat corr = openCvPIV(window_a_1, window_b_1);
+//                Mat corr = openCvPIV(window_a_1, window_b_1);
+                Mat corr = fftPIV(window_a_1, window_b_1);
                 Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
 
                 int c = (int) mmr.maxLoc.x;
                 int r = (int) mmr.maxLoc.y;
 
-                double bottomCenter = corr.get(r-1, c)[0];
-                double topCenter = corr.get(r+1, c)[0];
-                double center = corr.get(r, c)[0];
-                double leftCenter = corr.get(r, c-1)[0];
-                double rightCenter = corr.get(r, c+1)[0];
-
                 try {
+                    double bottomCenter = corr.get(r-1, c)[0];
+                    double topCenter = corr.get(r+1, c)[0];
+                    double center = corr.get(r, c)[0];
+                    double leftCenter = corr.get(r, c-1)[0];
+                    double rightCenter = corr.get(r, c+1)[0];
+
                     double epsr = (Math.log(bottomCenter) - Math.log(topCenter)) / (2 * (Math.log(bottomCenter) - 2 * Math.log(center) + Math.log(topCenter)));
                     double epsc = (Math.log(leftCenter) - Math.log(rightCenter)) / (2 * (Math.log(leftCenter) - 2 * Math.log(center) + Math.log(rightCenter)));
 
