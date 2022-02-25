@@ -3,6 +3,7 @@ package com.onrpiv.uploadmedia.Experiment;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
@@ -39,9 +40,13 @@ public class CalibrationActivity extends VideoActivity {
     private Button calibButton;
     private float vidTime;
 
+    // TODO recorded videos aren't triggering range slider
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        calibrationMessage();
 
         rangeSlider.setVisibility(View.GONE);
         viewBackgroundCheckbox.setVisibility(View.GONE);
@@ -142,7 +147,7 @@ public class CalibrationActivity extends VideoActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mVideoView.seekTo(progress * 1000);
                 selectedFrameText.setText(String.valueOf(progress));
-                vidTime = progress * 1000f;
+                vidTime = progress;
             }
 
             @Override
@@ -237,5 +242,27 @@ public class CalibrationActivity extends VideoActivity {
 
     private int calcDP(int desiredDP) {
         return Math.round(desiredDP * this.getResources().getDisplayMetrics().density);
+    }
+
+    private void calibrationMessage() {
+
+        // Create a AlertDialog Builder.
+        android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(CalibrationActivity.this);
+
+        // Set title, icon, can not cancel properties (the box still remains on the screen if clicked outside).
+        alertDialogBuilder.setTitle("Calibration Variables");
+        alertDialogBuilder.setIcon(R.drawable.ic_launcher_background);
+        alertDialogBuilder.setMessage("\nBe sure to use the same camera settings and magnification as the videos you intend to conduct PIV on.");
+        alertDialogBuilder.setCancelable(false);
+
+        alertDialogBuilder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        // Create AlertDialog and show.
+        alertDialogBuilder.create().show();
     }
 }

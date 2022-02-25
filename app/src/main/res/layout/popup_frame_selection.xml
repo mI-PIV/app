@@ -24,11 +24,12 @@
 
             <TextView
                 android:gravity="end"
-                android:text="Which Image Set : " />
+                android:text="Image Set : " />
 
-            <EditText
-                android:id="@+id/imgSet"
-                android:inputType="number" />
+            <Spinner
+                android:id="@+id/frameset_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </TableRow>
 
@@ -72,41 +73,25 @@
         </TableRow>
 
         <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <TextView
-                android:gravity="end"
-                android:text="Second Image : " />
-
-            <EditText
-                android:id="@+id/img2"
-                android:inputType="number" />
-
-        </TableRow>
-
-        <TableRow
+            android:id="@+id/second_frame_tablerow"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_horizontal">
 
-            <Space
+            <TextView
+                android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:gravity="end"
+                android:text="Second Image : " />
 
-            <SeekBar
-                android:id="@+id/second_frame_slider"
+            <RadioGroup
+                android:id="@+id/second_radio_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="2" />
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:baselineAligned="false"
+                android:gravity="center"
+                android:orientation="horizontal" />
 
         </TableRow>
 

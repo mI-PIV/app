@@ -13,20 +13,12 @@ public class PersistedData {
         return "miPIV_" + userName;
     }
 
-    public static int getTotalFrameDirectories(Context context, String userName) {
-        return getPersistedData(context, userName).getInt(FRAME_DIRECTORY_NUMBER, 0);
+    public static String getFrameDirPath(Context context, String userName, String path) {
+        return getPersistedData(context, userName).getString(path, null);
     }
 
-    public static void setTotalFrameDirectories(Context context, String userName, int totalFrameDirs) {
-        getPersistedData(context, userName).edit().putInt(FRAME_DIRECTORY_NUMBER, totalFrameDirs).apply();
-    }
-
-    public static int getFrameDirPath(Context context, String userName, String path) {
-        return getPersistedData(context, userName).getInt(path, 0);
-    }
-
-    public static void setFrameDirPath(Context context, String userName, String path, int dirNum) {
-        getPersistedData(context, userName).edit().putInt(path, dirNum).apply();
+    public static void setFrameDirPath(Context context, String userName, String path, String dirName) {
+        getPersistedData(context, userName).edit().putString(path, dirName).apply();
     }
 
     public static int getTotalExperiments(Context context, String userName) {
@@ -37,11 +29,11 @@ public class PersistedData {
         getPersistedData(context, userName).edit().putInt(EXPERIMENT_NUMBER, totalExpDirs).apply();
     }
 
-    public static void setFrameDirFPS(Context context, String userName, int frameDir, int fps) {
+    public static void setFrameDirFPS(Context context, String userName, String frameDir, int fps) {
         getPersistedData(context, userName).edit().putInt(FPS+frameDir, fps).apply();
     }
 
-    public static int getFrameDirFPS(Context context, String userName, int frameDir) {
+    public static int getFrameDirFPS(Context context, String userName, String frameDir) {
         return getPersistedData(context, userName).getInt(FPS+frameDir,20);
     }
 

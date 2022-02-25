@@ -12,6 +12,8 @@ import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,9 +55,12 @@ public class VideoActivity extends AppCompatActivity {
     protected VideoView mVideoView;
     private TextView mBufferingTextView;
     protected CheckBox viewBackgroundCheckbox;
+    protected TextView frameSetNameInput;
+
     protected String videoPath;
     protected Uri videoUri;
     protected String userName;
+    protected String frameSetName;
     private String fps = "20";
     private float vidStart = 0f;
     private float vidEnd = 1f;
@@ -82,9 +87,11 @@ public class VideoActivity extends AppCompatActivity {
         recordVideo = (Button) findViewById(R.id.recordVideo);
         pickVideo = (Button) findViewById(R.id.pickVideo);
         generateFramesButton = (Button) findViewById(R.id.generateFrames);
+        generateFramesButton.setEnabled(false);
         rangeSlider = findViewById(R.id.vid_rangeSlider);
         ((ViewGroup) rangeSlider.getParent()).setVisibility(View.GONE);
         viewBackgroundCheckbox = findViewById(R.id.backsub_video_checkbox);
+        frameSetNameInput = findViewById(R.id.frameSetNameText);
 
         Context context = this;
         Activity activity = this;
@@ -105,7 +112,6 @@ public class VideoActivity extends AppCompatActivity {
                                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                                         videoCaptured(Uri.parse(result.getString("uri")));
                                         fps = result.getString("fps");
-                                        generateFramesButton.setEnabled(true);
                                     }
                                 });
                         fragManager.beginTransaction().replace(R.id.video_layout_container,
@@ -134,6 +140,37 @@ public class VideoActivity extends AppCompatActivity {
                     generateFrames(view);
                 }else{
                     Toast.makeText(VideoActivity.this, "Please select a video", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Frame set name input
+        frameSetNameInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                generateFramesButton.setEnabled(false);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                frameSetNameInput.setBackgroundColor(Color.WHITE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // Check for existing name
+                List<String> frameSetsList = PathUtil.getFrameSetNames(context, userName);
+                for (String existingName : frameSetsList) {
+                    if (existingName.equals(editable.toString())) {
+                        frameSetNameInput.setBackgroundColor(Color.RED);
+                        Toast.makeText(context, "Frame set name already exists!", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+
+                if (!editable.toString().isEmpty()) {
+                    generateFramesButton.setEnabled(true);
+                    frameSetName = editable.toString();
                 }
             }
         });
@@ -249,7 +286,6 @@ public class VideoActivity extends AppCompatActivity {
                 }
             }
             video_selected = true;
-            generateFramesButton.setEnabled(true);
             setupRangeSlider();
         }
         else if (resultCode != RESULT_CANCELED) {
@@ -268,7 +304,7 @@ public class VideoActivity extends AppCompatActivity {
                 // Create popup that will show background if desired and direct user to processing or stay in videoActivity
                 AlertDialog.Builder frameFinishedPopup;
                 if (viewBackgroundCheckbox.isChecked()) {
-                    frameFinishedPopup = BackgroundSub.showLatestBackground(VideoActivity.this, userName);
+                    frameFinishedPopup = BackgroundSub.showLatestBackground(VideoActivity.this, userName, frameSetName);
                 } else {
                     frameFinishedPopup = new AlertDialog.Builder(VideoActivity.this);
                 }
@@ -286,8 +322,8 @@ public class VideoActivity extends AppCompatActivity {
             }
         };
 
-        FrameExtractor.generateFrames(view.getContext(), userName, videoPath, fps, vidStart, vidEnd,
-                successCallBack, viewBackgroundCheckbox.isChecked());
+        FrameExtractor.generateFrames(view.getContext(), userName, videoPath, frameSetName,
+                fps, vidStart, vidEnd, successCallBack, viewBackgroundCheckbox.isChecked());
     }
 
     private void releasePlayer() {

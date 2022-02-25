@@ -7,8 +7,9 @@ import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibrationResu
 import java.io.Serializable;
 
 public class PivParameters implements Serializable {
-    private int windowSize = 64, overlap = 32, frameSet, frameOne, frameTwo;
-    private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.0, dt = 1.0, E = 2.0;
+    private int windowSize = 64, overlap = 32, frameOne, frameTwo;
+    private String frameSetName;
+    private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.0, dt = 1.0, E = 5.0;
     private boolean replace = true;
     private int backgroundSelection = -1;
     private CameraCalibrationResult cameraCalibrationResult;
@@ -39,9 +40,9 @@ public class PivParameters implements Serializable {
     }
 
 
-    public PivParameters(int frameSet, int frameOne, int frameTwo)
+    public PivParameters(String frameSetName, int frameOne, int frameTwo)
     {
-        this.frameSet = frameSet;
+        this.frameSetName = frameSetName;
         this.frameOne = frameOne;
         this.frameTwo = frameTwo;
         setWindowSize(windowSize);
@@ -199,6 +200,6 @@ public class PivParameters implements Serializable {
 
     public String prettyPrintData() {
         return "Window: " + windowSize + " Overlap: " + overlap + "\nFrames " + frameOne + " to "
-                + frameTwo + " in Set " + frameSet;
+                + frameTwo + " in Set " + frameSetName;
     }
 }
