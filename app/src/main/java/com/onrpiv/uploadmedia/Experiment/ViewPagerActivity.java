@@ -26,7 +26,8 @@ import com.onrpiv.uploadmedia.Utilities.LightBulb;
  */
 
 public class ViewPagerActivity extends AppCompatActivity {
-    Button startAnimation;
+    Button startAnimation, stopAnimation;
+    ImageView imageAnim;
     String [] urls;
     AnimationDrawable animation;
 
@@ -36,6 +37,8 @@ public class ViewPagerActivity extends AppCompatActivity {
         setContentView(R.layout.review_layout);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         startAnimation = (Button) findViewById(R.id.startAnim);
+        stopAnimation = (Button) findViewById(R.id.stopAnim);
+        stopAnimation.setEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         urls = intent.getStringArrayExtra("string-array-urls");
@@ -45,21 +48,8 @@ public class ViewPagerActivity extends AppCompatActivity {
         new LightBulb(context, startAnimation).setLightBulbOnClick("Start Animation",
                 "View the animation and consider if you can tell where the particles move between the first and second frame. If you can't correlate the images with your eyes, the PIV algorithm is less likely to be able to do so.",
                 getWindow());
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void startAnimation(View view) {
-        ImageView imageAnim =  (ImageView) findViewById(R.id.reviewView);
+        imageAnim =  (ImageView) findViewById(R.id.reviewView);
         animation = new AnimationDrawable();
         Drawable d1 = Drawable.createFromPath(urls[0]);
         Drawable d2 = Drawable.createFromPath(urls[1]);
@@ -76,18 +66,31 @@ public class ViewPagerActivity extends AppCompatActivity {
         animation.addFrame(transparentDrawable, 1);
         animation.addFrame(newDrawable1,1);
         animation.setOneShot(false);
-        if (animation.isRunning()) {
-            imageAnim.clearAnimation();
-            animation.stop();
-            animation.start();
-            imageAnim.setImageDrawable(animation);
-        } else {
-            animation.start();
-            imageAnim.setImageDrawable(animation);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
         }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void startAnimation(View view) {
+        startAnimation.setEnabled(false);
+        stopAnimation.setEnabled(true);
+
+        animation.start();
+        imageAnim.setImageDrawable(animation);
     }
 
     public void stopAnimation(View view) {
+        stopAnimation.setEnabled(false);
+        startAnimation.setEnabled(true);
+
         view.clearAnimation();
         animation.stop();
     }
