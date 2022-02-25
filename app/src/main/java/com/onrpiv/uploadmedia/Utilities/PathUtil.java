@@ -101,7 +101,7 @@ public class PathUtil {
         String selection = null;
         String[] selectionArgs = null;
         // DocumentProvider
-        if (isKitKat ) {
+        if (isKitKat) {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
@@ -168,7 +168,6 @@ public class PathUtil {
                         e.printStackTrace();
                     }
                     if (contentUri != null) {
-
                         return getDataColumn(context, contentUri, null, null);
                     }
                 }
@@ -251,7 +250,7 @@ public class PathUtil {
                 }
             }
         }
-        return null;
+        return uri.getPath();
     }
 
     private static boolean fileExists(String filePath) {
