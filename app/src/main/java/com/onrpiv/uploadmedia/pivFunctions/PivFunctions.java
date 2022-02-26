@@ -18,10 +18,6 @@ import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 import com.onrpiv.uploadmedia.Utilities.ProgressUpdateInterface;
 
-import org.apache.commons.math3.complex.Complex;
-import org.apache.commons.math3.transform.DftNormalization;
-import org.apache.commons.math3.transform.FastFourierTransformer;
-import org.apache.commons.math3.transform.TransformType;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -197,80 +193,49 @@ public class PivFunctions {
 
     private static Mat fftPIV(Mat winA, Mat winB) {
         // prepare Mats for fft
-        double[] winA_flat = convertAndFlatten(winA);
-        double[] winB_flat = convertAndFlatten(winB);
 
-        FastFourierTransformer fft = new FastFourierTransformer(DftNormalization.STANDARD);
-        Complex[] winA_ffft = fft.transform(winA_flat, TransformType.FORWARD);
-        Complex[] winB_ffft = fft.transform(winB_flat, TransformType.FORWARD);
+        int addPixelRows = Core.getOptimalDFTSize(winA.rows());
+        int addPixelCols = Core.getOptimalDFTSize(winA.cols());
+        Mat paddedA = new Mat();
+        Mat paddedB = new Mat();
+        Core.copyMakeBorder(winA, paddedA, 0, addPixelRows - winA.rows(), 0, addPixelCols - winA.cols(), Core.BORDER_CONSTANT, Scalar.all(0d));
+        Core.copyMakeBorder(winB, paddedB, 0, addPixelRows - winB.rows(), 0, addPixelCols - winB.cols(), Core.BORDER_CONSTANT, Scalar.all(0d));
 
-        winA_flat = null;
-        winB_flat = null;
+        paddedA.convertTo(paddedA, CvType.CV_32F);
+        paddedB.convertTo(paddedB, CvType.CV_32F);
 
-        Complex[] ffft_combined = new Complex[winB_ffft.length];
-        // Complex Conjugate Multiply
-        for (int i = 0; i < winB_ffft.length; i++)
-        {
-            double a = winA_ffft[i].getReal();
-            double b = winA_ffft[i].getImaginary();
-            double c = winB_ffft[i].getReal();
-            double d = -winB_ffft[i].getImaginary();
-            double e = a * c - b * d;
-            double f = a * d + b * c;
-            ffft_combined[i] = new Complex(e, f);
-        }
+        Core.dft(paddedA, paddedA, 0, winA.rows());
+        Core.dft(paddedB, paddedB, 0, winB.rows());
+        Core.mulSpectrums(paddedA, paddedB, paddedA, 0, true);
 
-        winA_ffft = null;
-        winB_ffft = null;
+        Mat paddedA_abs = new Mat();
+        Core.absdiff(paddedA, Scalar.all(0), paddedA_abs);
+        Core.divide(paddedA, paddedA_abs, paddedA);
 
-        Complex[] ifft_out = fft.transform(ffft_combined, TransformType.INVERSE);
-        double[] ifft_shifted = fftShift(ifft_out);
+        Core.idft(paddedA, paddedA, Core.DFT_SCALE | Core.DFT_REAL_OUTPUT);
 
-        ifft_out = null;
-
-        // normalize
-        double[] ifft_shifted_normed = new double[ifft_shifted.length];
-        for (int i = 0; i < ifft_shifted.length; i++) {
-            ifft_shifted_normed[i] = ifft_shifted[i] / ifft_shifted.length;
-        }
-
-        ifft_shifted = null;
-
-        return reshapeAndConvert(ifft_shifted_normed, winA.rows(), winA.cols());
+        fftShift2D(paddedA);
+        return paddedA;
     }
 
-    private static double[] fftShift(Complex[] ifft) {
-        int shift = (int) Math.round(ifft.length/2d);
-        double[] result = new double[ifft.length];
-        for (int i = 0; i < shift; i++) {
-            result[i+shift] = ifft[i].getReal();
-        }
-        for (int j = shift; j < ifft.length; j++) {
-            result[j-shift] = ifft[j].getReal();
-        }
-        return result;
-    }
+    private static void fftShift2D(Mat ifft) {
+        ifft = ifft.submat(new Rect(0, 0, ifft.cols() & -2, ifft.rows() & -2));
+        int cx = ifft.cols() / 2;
+        int cy = ifft.rows() / 2;
 
-    private static double[] convertAndFlatten(Mat mat) {
-        double[] result = new double[mat.cols() * mat.rows()];
-        for (int y = 0; y < mat.rows(); y++) {
-            for (int x = 0; x < mat.cols(); x++) {
-                // TODO double check that mat is stored row-wise
-                int d1Index = y * mat.cols() + x;
-                result[d1Index] = mat.get(y, x)[0];
-            }
-        }
-        return result;
-    }
+        Mat q0 = new Mat(ifft, new Rect(0, 0, cx, cy));
+        Mat q1 = new Mat(ifft, new Rect(cx, 0, cx, cy));
+        Mat q2 = new Mat(ifft, new Rect(0, cy, cx, cy));
+        Mat q3 = new Mat(ifft, new Rect(cx, cy, cx, cy));
 
-    private static Mat reshapeAndConvert(double[] shifted, int rows, int cols) {
-        Mat result = new Mat(new Size(cols, rows), CvType.CV_64FC1);
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < cols; x++) {
-                result.put(y, x, shifted[y * cols + x]);
-            }
-        }
-        return result;
+        Mat tmp = new Mat();
+        q0.copyTo(tmp);
+        q3.copyTo(q0);
+        tmp.copyTo(q3);
+
+        q1.copyTo(tmp);
+        q2.copyTo(q1);
+        tmp.copyTo(q2);
     }
 
     private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr) {
