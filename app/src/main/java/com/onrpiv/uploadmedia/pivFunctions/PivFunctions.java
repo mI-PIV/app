@@ -192,30 +192,31 @@ public class PivFunctions {
     }
 
     private static Mat fftPIV(Mat winA, Mat winB) {
+//        https://stackoverflow.com/questions/51347829/c-cross-correlation-of-2-shifted-images-with-opencv
+
         // prepare Mats for fft
+        int height = Core.getOptimalDFTSize(Math.max(winA.rows(), winB.rows()));
+        int width = Core.getOptimalDFTSize(Math.max(winA.cols(), winB.cols()));
+        Mat fft1 = new Mat();
+        Mat fft2 = new Mat();
+        // add padding to windows
+        Core.copyMakeBorder(winA, fft1, 0, height - winA.rows(), 0, width - winA.cols(), Core.BORDER_CONSTANT, Scalar.all(0d));
+        Core.copyMakeBorder(winB, fft2, 0, height - winB.rows(), 0, width - winB.cols(), Core.BORDER_CONSTANT, Scalar.all(0d));
 
-        int addPixelRows = Core.getOptimalDFTSize(winA.rows());
-        int addPixelCols = Core.getOptimalDFTSize(winA.cols());
-        Mat paddedA = new Mat();
-        Mat paddedB = new Mat();
-        Core.copyMakeBorder(winA, paddedA, 0, addPixelRows - winA.rows(), 0, addPixelCols - winA.cols(), Core.BORDER_CONSTANT, Scalar.all(0d));
-        Core.copyMakeBorder(winB, paddedB, 0, addPixelRows - winB.rows(), 0, addPixelCols - winB.cols(), Core.BORDER_CONSTANT, Scalar.all(0d));
+        fft1.convertTo(fft1, CvType.CV_32F);
+        fft2.convertTo(fft2, CvType.CV_32F);
 
-        paddedA.convertTo(paddedA, CvType.CV_32F);
-        paddedB.convertTo(paddedB, CvType.CV_32F);
-
-        Core.dft(paddedA, paddedA, 0, winA.rows());
-        Core.dft(paddedB, paddedB, 0, winB.rows());
-        Core.mulSpectrums(paddedA, paddedB, paddedA, 0, true);
-
-        Mat paddedA_abs = new Mat();
-        Core.absdiff(paddedA, Scalar.all(0), paddedA_abs);
-        Core.divide(paddedA, paddedA_abs, paddedA);
-
-        Core.idft(paddedA, paddedA, Core.DFT_SCALE | Core.DFT_REAL_OUTPUT);
-
-        fftShift2D(paddedA);
-        return paddedA;
+        // fft
+        Core.dft(fft1, fft1, 0, winA.rows());
+        Core.dft(fft2, fft2, 0, winB.rows());
+        // FFT(winA) * FFT(winB)
+        Core.mulSpectrums(fft1, fft2, fft1, 0, true);
+        // ifft
+        Core.idft(fft1, fft1, Core.DFT_SCALE | Core.DFT_REAL_OUTPUT);
+        // fft shift
+        fftShift2D(fft1);
+        fft2.release();
+        return fft1;
     }
 
     private static void fftShift2D(Mat ifft) {
@@ -333,8 +334,8 @@ public class PivFunctions {
                     epsr = Double.isNaN(epsr)? 0.0 : epsr;
                     epsc = Double.isNaN(epsc)? 0.0 : epsc;
 
-                    dr1[i][j] = (windowSize - 1) - (r + epsr);
-                    dc1[i][j] = (windowSize - 1) - (c + epsc);
+                    dr1[i][j] = (windowSize/2d - 1) - (r + epsr);
+                    dc1[i][j] = (windowSize/2d - 1) - (c + epsc);
 
                 } catch (Exception e) {
                     dr1[i][j] = 0.0;
@@ -872,8 +873,10 @@ public class PivFunctions {
                     // clamp indices for out of bounds values
                     IA1_x_s = clamp(IA1_x_s, 1, grayFrame1.cols());
                     IA1_y_s = clamp(IA1_y_s, 1, grayFrame1.rows());
+                    int winHeight = clamp(windowSize, 0, grayFrame1.rows() - IA1_y_s - 1);
+                    int winWidth = clamp(windowSize, 0, grayFrame1.cols() - IA1_x_s - 1);
 
-                    Rect rectWin_a = new Rect((IA1_x_s - 1), (IA1_y_s - 1), windowSize, windowSize);
+                    Rect rectWin_a = new Rect((IA1_x_s - 1), (IA1_y_s - 1), winWidth, winHeight);
                     Mat IA1_new_t = new Mat(grayFrame1, rectWin_a);
 
                     //Interrogation window for Image 2
@@ -883,8 +886,10 @@ public class PivFunctions {
                     // clamp indices for out of bounds values
                     IA2_x_s = clamp(IA2_x_s, 1, grayFrame2.cols());
                     IA2_y_s = clamp(IA2_y_s, 1, grayFrame2.rows());
+                    winHeight = clamp(windowSize, 0, grayFrame2.rows() - IA2_y_s - 1);
+                    winWidth = clamp(windowSize, 0, grayFrame2.cols() - IA2_x_s - 1);
 
-                    Rect rectWin_b = new Rect((IA2_x_s - 1), (IA2_y_s - 1), windowSize, windowSize);
+                    Rect rectWin_b = new Rect((IA2_x_s - 1), (IA2_y_s - 1), winWidth, winHeight);
                     Mat IA2_new_t = new Mat(grayFrame2, rectWin_b);
 
                     //Subtract the means from the windows
