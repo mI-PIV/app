@@ -80,7 +80,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 setMessage("Calculating PIV");
                 setMessage("Calculating single pass PIV");
                 // single pass
-                PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE, PivRunner.this);
+                PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE, parameters.isFFT(), PivRunner.this);
                 singlePassResult.setBackgroundSubtracted(backgroundSub);
 
                 // Save first frame for output base image

@@ -267,7 +267,6 @@ public class PivFunctions {
         return peak1_value / peak2_value;
     }
 
-
     public PivResultData extendedSearchAreaPiv_update(String resultName, boolean fft, ProgressUpdateInterface progressUpdate) {
         double[][] dr1 = new double[fieldRows][fieldCols];
         double[][] dc1 = new double[fieldRows][fieldCols];
