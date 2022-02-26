@@ -268,7 +268,7 @@ public class PivFunctions {
     }
 
 
-    public PivResultData extendedSearchAreaPiv_update(String resultName, ProgressUpdateInterface progressUpdate) {
+    public PivResultData extendedSearchAreaPiv_update(String resultName, boolean fft, ProgressUpdateInterface progressUpdate) {
         double[][] dr1 = new double[fieldRows][fieldCols];
         double[][] dc1 = new double[fieldRows][fieldCols];
 
@@ -314,8 +314,12 @@ public class PivFunctions {
                 subtract(window_a, new Scalar(win1_avg), window_a_1);
                 subtract(window_b, new Scalar(win2_avg), window_b_1);
 
-//                Mat corr = openCvPIV(window_a_1, window_b_1);
-                Mat corr = fftPIV(window_a_1, window_b_1);
+                Mat corr;
+                if (fft) {
+                    corr = fftPIV(window_a_1, window_b_1);
+                } else {
+                    corr = openCvPIV(window_a_1, window_b_1);
+                }
                 Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
 
                 int c = (int) mmr.maxLoc.x;
@@ -334,8 +338,13 @@ public class PivFunctions {
                     epsr = Double.isNaN(epsr)? 0.0 : epsr;
                     epsc = Double.isNaN(epsc)? 0.0 : epsc;
 
-                    dr1[i][j] = (windowSize/2d - 1) - (r + epsr);
-                    dc1[i][j] = (windowSize/2d - 1) - (c + epsc);
+                    if (fft) {
+                        dr1[i][j] = (windowSize / 2d - 1) - (r + epsr);
+                        dc1[i][j] = (windowSize / 2d - 1) - (c + epsc);
+                    } else {
+                        dr1[i][j] = (windowSize - 1) - (r + epsr);
+                        dc1[i][j] = (windowSize - 1) - (c + epsc);
+                    }
 
                 } catch (Exception e) {
                     dr1[i][j] = 0.0;
