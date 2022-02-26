@@ -35,7 +35,7 @@ public class PivRunnerTestObj {
 
     public PivResultData runSinglePass() {
         // single pass
-        PivResultData singlePassResult = _piv.extendedSearchAreaPiv_update(PivResultData.SINGLE, null);
+        PivResultData singlePassResult = _piv.extendedSearchAreaPiv_update(PivResultData.SINGLE, true, null);
 
         // vorticity
         PivFunctions.calculateVorticityMap(singlePassResult);
