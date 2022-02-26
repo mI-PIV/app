@@ -10,7 +10,7 @@ public class PivParameters implements Serializable {
     private int windowSize = 64, overlap = 32, frameOne, frameTwo;
     private String frameSetName;
     private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.0, dt = 1.0, E = 5.0;
-    private boolean replace = true;
+    private boolean replace = true, fft = true;
     private int backgroundSelection = -1;
     private CameraCalibrationResult cameraCalibrationResult;
 
@@ -26,6 +26,7 @@ public class PivParameters implements Serializable {
             DT_KEY = "dt",
             E_KEY = "E",
             REPLACE_KEY = "replace",
+            FFT_KEY = "fft",
             IO_FILENAME = "PIVParameters";
 
     public PivParameters() {
@@ -37,6 +38,7 @@ public class PivParameters implements Serializable {
         setqMin(qMin);
         setDt(dt);
         setE(E);
+        setFFT(fft);
     }
 
 
@@ -53,6 +55,7 @@ public class PivParameters implements Serializable {
         setqMin(qMin);
         setDt(dt);
         setE(E);
+        setFFT(fft);
     }
 
     public PivParameters(ArrayMap<String, String> parameterDictionary)
@@ -93,6 +96,9 @@ public class PivParameters implements Serializable {
                 break;
             case E_KEY:
                 E = Double.parseDouble(value);
+                break;
+            case FFT_KEY:
+                fft = Boolean.parseBoolean(value);
                 break;
             case REPLACE_KEY:
                 replace = Boolean.parseBoolean(value);
@@ -188,6 +194,14 @@ public class PivParameters implements Serializable {
 
     public int getFrame2Index(){
         return frameTwo;
+    }
+
+    public boolean isFFT() {
+        return fft;
+    }
+
+    public void setFFT(boolean fft) {
+        this.fft = fft;
     }
 
     public CameraCalibrationResult getCameraCalibrationResult() {

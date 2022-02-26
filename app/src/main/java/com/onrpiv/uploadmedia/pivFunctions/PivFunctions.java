@@ -191,6 +191,54 @@ public class PivFunctions {
         return image;
     }
 
+    private static Mat fftPIV(Mat winA, Mat winB) {
+//        https://stackoverflow.com/questions/51347829/c-cross-correlation-of-2-shifted-images-with-opencv
+
+        // prepare Mats for fft
+        int height = Core.getOptimalDFTSize(Math.max(winA.rows(), winB.rows()));
+        int width = Core.getOptimalDFTSize(Math.max(winA.cols(), winB.cols()));
+        Mat fft1 = new Mat();
+        Mat fft2 = new Mat();
+        // add padding to windows
+        Core.copyMakeBorder(winA, fft1, 0, height - winA.rows(), 0, width - winA.cols(), Core.BORDER_CONSTANT, Scalar.all(0d));
+        Core.copyMakeBorder(winB, fft2, 0, height - winB.rows(), 0, width - winB.cols(), Core.BORDER_CONSTANT, Scalar.all(0d));
+
+        fft1.convertTo(fft1, CvType.CV_32F);
+        fft2.convertTo(fft2, CvType.CV_32F);
+
+        // fft
+        Core.dft(fft1, fft1, 0, winA.rows());
+        Core.dft(fft2, fft2, 0, winB.rows());
+        // FFT(winA) * FFT(winB)
+        Core.mulSpectrums(fft1, fft2, fft1, 0, true);
+        // ifft
+        Core.idft(fft1, fft1, Core.DFT_SCALE | Core.DFT_REAL_OUTPUT);
+        // fft shift
+        fftShift2D(fft1);
+        fft2.release();
+        return fft1;
+    }
+
+    private static void fftShift2D(Mat ifft) {
+        ifft = ifft.submat(new Rect(0, 0, ifft.cols() & -2, ifft.rows() & -2));
+        int cx = ifft.cols() / 2;
+        int cy = ifft.rows() / 2;
+
+        Mat q0 = new Mat(ifft, new Rect(0, 0, cx, cy));
+        Mat q1 = new Mat(ifft, new Rect(cx, 0, cx, cy));
+        Mat q2 = new Mat(ifft, new Rect(0, cy, cx, cy));
+        Mat q3 = new Mat(ifft, new Rect(cx, cy, cx, cy));
+
+        Mat tmp = new Mat();
+        q0.copyTo(tmp);
+        q3.copyTo(q0);
+        tmp.copyTo(q3);
+
+        q1.copyTo(tmp);
+        q2.copyTo(q1);
+        tmp.copyTo(q2);
+    }
+
     private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr) {
         Mat correlation = new Mat();
         corr.copyTo(correlation);
@@ -219,8 +267,7 @@ public class PivFunctions {
         return peak1_value / peak2_value;
     }
 
-
-    public PivResultData extendedSearchAreaPiv_update(String resultName, ProgressUpdateInterface progressUpdate) {
+    public PivResultData extendedSearchAreaPiv_update(String resultName, boolean fft, ProgressUpdateInterface progressUpdate) {
         double[][] dr1 = new double[fieldRows][fieldCols];
         double[][] dc1 = new double[fieldRows][fieldCols];
 
@@ -228,7 +275,7 @@ public class PivFunctions {
         double[][] sig2noise = new double[fieldRows][fieldCols];
 
         // Update progress bar in PIV runner
-        int progressCounter = 0;
+        int progressCounter = 1;
         if (null != progressUpdate) {
             progressUpdate.setProgressMax(fieldCols * fieldRows);
             pivGuiUpdates = true;
@@ -266,27 +313,37 @@ public class PivFunctions {
                 subtract(window_a, new Scalar(win1_avg), window_a_1);
                 subtract(window_b, new Scalar(win2_avg), window_b_1);
 
-                Mat corr = openCvPIV(window_a_1, window_b_1);
+                Mat corr;
+                if (fft) {
+                    corr = fftPIV(window_a_1, window_b_1);
+                } else {
+                    corr = openCvPIV(window_a_1, window_b_1);
+                }
                 Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
 
                 int c = (int) mmr.maxLoc.x;
                 int r = (int) mmr.maxLoc.y;
 
-                double bottomCenter = corr.get(r-1, c)[0];
-                double topCenter = corr.get(r+1, c)[0];
-                double center = corr.get(r, c)[0];
-                double leftCenter = corr.get(r, c-1)[0];
-                double rightCenter = corr.get(r, c+1)[0];
-
                 try {
+                    double bottomCenter = corr.get(r-1, c)[0];
+                    double topCenter = corr.get(r+1, c)[0];
+                    double center = corr.get(r, c)[0];
+                    double leftCenter = corr.get(r, c-1)[0];
+                    double rightCenter = corr.get(r, c+1)[0];
+
                     double epsr = (Math.log(bottomCenter) - Math.log(topCenter)) / (2 * (Math.log(bottomCenter) - 2 * Math.log(center) + Math.log(topCenter)));
                     double epsc = (Math.log(leftCenter) - Math.log(rightCenter)) / (2 * (Math.log(leftCenter) - 2 * Math.log(center) + Math.log(rightCenter)));
 
                     epsr = Double.isNaN(epsr)? 0.0 : epsr;
                     epsc = Double.isNaN(epsc)? 0.0 : epsc;
 
-                    dr1[i][j] = (windowSize - 1) - (r + epsr);
-                    dc1[i][j] = (windowSize - 1) - (c + epsc);
+                    if (fft) {
+                        dr1[i][j] = (windowSize / 2d - 1) - (r + epsr);
+                        dc1[i][j] = (windowSize / 2d - 1) - (c + epsc);
+                    } else {
+                        dr1[i][j] = (windowSize - 1) - (r + epsr);
+                        dc1[i][j] = (windowSize - 1) - (c + epsc);
+                    }
 
                 } catch (Exception e) {
                     dr1[i][j] = 0.0;
@@ -788,7 +845,7 @@ public class PivFunctions {
         double[] x = pivResultData.getInterrX();
         double[] y = pivResultData.getInterrY();
 
-        int progressCounter = 0;
+        int progressCounter = 1;
 
         for (int ii = 0; ii < fieldRows; ii++) {
             for (int jj = 0; jj < fieldCols; jj++) {
@@ -824,8 +881,10 @@ public class PivFunctions {
                     // clamp indices for out of bounds values
                     IA1_x_s = clamp(IA1_x_s, 1, grayFrame1.cols());
                     IA1_y_s = clamp(IA1_y_s, 1, grayFrame1.rows());
+                    int winHeight = clamp(windowSize, 0, grayFrame1.rows() - IA1_y_s - 1);
+                    int winWidth = clamp(windowSize, 0, grayFrame1.cols() - IA1_x_s - 1);
 
-                    Rect rectWin_a = new Rect((IA1_x_s - 1), (IA1_y_s - 1), windowSize, windowSize);
+                    Rect rectWin_a = new Rect((IA1_x_s - 1), (IA1_y_s - 1), winWidth, winHeight);
                     Mat IA1_new_t = new Mat(grayFrame1, rectWin_a);
 
                     //Interrogation window for Image 2
@@ -835,8 +894,10 @@ public class PivFunctions {
                     // clamp indices for out of bounds values
                     IA2_x_s = clamp(IA2_x_s, 1, grayFrame2.cols());
                     IA2_y_s = clamp(IA2_y_s, 1, grayFrame2.rows());
+                    winHeight = clamp(windowSize, 0, grayFrame2.rows() - IA2_y_s - 1);
+                    winWidth = clamp(windowSize, 0, grayFrame2.cols() - IA2_x_s - 1);
 
-                    Rect rectWin_b = new Rect((IA2_x_s - 1), (IA2_y_s - 1), windowSize, windowSize);
+                    Rect rectWin_b = new Rect((IA2_x_s - 1), (IA2_y_s - 1), winWidth, winHeight);
                     Mat IA2_new_t = new Mat(grayFrame2, rectWin_b);
 
                     //Subtract the means from the windows

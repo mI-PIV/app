@@ -42,6 +42,7 @@ public class PivOptionsPopup extends AlertDialog {
     private final RadioGroup replaceRadioGroup;
     private final RadioGroup backSubRadioGroup;
     private final RadioGroup calibrationRadioGroup;
+    private final RadioGroup corrMethodRadioGroup;
     private final Button savePIVDataButton;
     private final Button cancelPIVDataButton;
     private final CheckBox advancedCheckbox;
@@ -79,10 +80,13 @@ public class PivOptionsPopup extends AlertDialog {
         TextView e_text = (TextView) findViewById(R.id.E_text);
 
         TextView radioGroup_text = (TextView) findViewById(R.id.groupradio_text);
-        replaceRadioGroup = (RadioGroup) findViewById(R.id.replace_radiogroup);
+        replaceRadioGroup = (RadioGroup) findViewById(R.id.params_replace_radiogroup);
 
         TextView bsRadioGroup_text = (TextView) findViewById(R.id.bs_radioText);
         backSubRadioGroup = (RadioGroup) findViewById(R.id.bs_radiogroup);
+
+        TextView corrMethod_text = (TextView) findViewById(R.id.params_method_text);
+        corrMethodRadioGroup = (RadioGroup) findViewById(R.id.params_method_group);
 
         TextView calibrationText = (TextView) findViewById(R.id.calibration_Text);
         calibrationRadioGroup = (RadioGroup) findViewById(R.id.calib_radio_group);
@@ -125,11 +129,11 @@ public class PivOptionsPopup extends AlertDialog {
                 Arrays.asList(
                         dtText, dt_text, e_text, radioGroup_text, replaceRadioGroup, qMinText, qMin_text,
                         EText, dtLB, qMinLB, eTextLB, radioGroupLB, backSubRadioGroup, bsRadioGroup_text,
-                        calibrationText, calibrationRadioGroup
+                        calibrationText, calibrationRadioGroup, corrMethod_text, corrMethodRadioGroup
                 )
         );
 
-        // keep all textviews in list for easy iteration
+        // keep all input textviews in list for easy iteration
         doubleTextViewList = new ArrayList<TextView>(
                 Arrays.asList(
                         dtText, EText, qMinText
@@ -150,8 +154,9 @@ public class PivOptionsPopup extends AlertDialog {
         dtText.setText(Double.toString(1d/parameters.getDt()));
         qMinText.setText(Double.toString(parameters.getqMin()));
         EText.setText(Double.toString(parameters.getE()));
-        replaceRadioGroup.check(R.id.yesRadio);
+        replaceRadioGroup.check(R.id.params_replace_yes);
         savePIVDataButton.setEnabled(true);
+        corrMethodRadioGroup.check(R.id.params_method_fft);
 
         // load our ids to keys translation dictionary
         loadIdToKey();
@@ -210,7 +215,7 @@ public class PivOptionsPopup extends AlertDialog {
                     public void onCheckedChanged(RadioGroup group,
                                                  int checkedId)
                     {
-                        boolean replaced = checkedId == R.id.yesRadio;
+                        boolean replaced = checkedId == R.id.params_replace_yes;
                         parameters.setReplace(replaced);
                         savePIVDataButton.setEnabled(checkTexts());
                     }
@@ -248,6 +253,16 @@ public class PivOptionsPopup extends AlertDialog {
                                 CameraCalibrationResult.loadCalibration(context, userName);
                         parameters.setCameraCalibration(calibrationResult);
                 }
+                savePIVDataButton.setEnabled(checkTexts());
+            }
+        });
+
+        // Add listener for correlation method radio group
+        corrMethodRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                boolean fft = checkedId == R.id.params_replace_yes;
+                parameters.setFFT(fft);
                 savePIVDataButton.setEnabled(checkTexts());
             }
         });
