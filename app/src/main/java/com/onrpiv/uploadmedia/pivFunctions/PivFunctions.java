@@ -845,7 +845,7 @@ public class PivFunctions {
         double[] x = pivResultData.getInterrX();
         double[] y = pivResultData.getInterrY();
 
-        int progressCounter = 0;
+        int progressCounter = 1;
 
         for (int ii = 0; ii < fieldRows; ii++) {
             for (int jj = 0; jj < fieldCols; jj++) {
