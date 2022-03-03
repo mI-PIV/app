@@ -845,6 +845,13 @@ public class PivFunctions {
         double[] x = pivResultData.getInterrX();
         double[] y = pivResultData.getInterrY();
 
+        // add padding to grayscale frames
+        Mat paddedGray1 = new Mat();
+        Mat paddedGray2 = new Mat();
+        int padding = (int) Math.sqrt(windowSize);
+        Core.copyMakeBorder(grayFrame1, paddedGray1, padding, padding, padding, padding, Core.BORDER_CONSTANT, Scalar.all(0d));
+        Core.copyMakeBorder(grayFrame2, paddedGray2, padding, padding, padding, padding, Core.BORDER_CONSTANT, Scalar.all(0d));
+
         int progressCounter = 1;
 
         for (int ii = 0; ii < fieldRows; ii++) {
@@ -875,30 +882,17 @@ public class PivFunctions {
                     double IA2_y_int = y[ii] + (vshift);
 
                     //Interrogation window for Image 1
-                    int IA1_x_s = (int) Math.round((IA1_x_int - (windowSize / 2f) + 1));
-                    int IA1_y_s = (int) Math.round((IA1_y_int - (windowSize / 2f) + 1));
-
-                    // clamp indices for out of bounds values
-                    IA1_x_s = clamp(IA1_x_s, 1, grayFrame1.cols());
-                    IA1_y_s = clamp(IA1_y_s, 1, grayFrame1.rows());
-                    int winHeight = clamp(windowSize, 0, grayFrame1.rows() - IA1_y_s - 1);
-                    int winWidth = clamp(windowSize, 0, grayFrame1.cols() - IA1_x_s - 1);
-
-                    Rect rectWin_a = new Rect((IA1_x_s - 1), (IA1_y_s - 1), winWidth, winHeight);
-                    Mat IA1_new_t = new Mat(grayFrame1, rectWin_a);
+                    int IA1_x_s = (int) Math.round((IA1_x_int - (windowSize / 2f) + padding));
+                    int IA1_y_s = (int) Math.round((IA1_y_int - (windowSize / 2f) + padding));
+                    Rect rectWin_a = new Rect((IA1_x_s - 1), (IA1_y_s - 1), windowSize, windowSize);
 
                     //Interrogation window for Image 2
-                    int IA2_x_s = (int) Math.round((IA2_x_int - (windowSize / 2f) + 1));
-                    int IA2_y_s = (int) Math.round((IA2_y_int - (windowSize / 2f) + 1));
+                    int IA2_x_s = (int) Math.round((IA2_x_int - (windowSize / 2f) + padding));
+                    int IA2_y_s = (int) Math.round((IA2_y_int - (windowSize / 2f) + padding));
+                    Rect rectWin_b = new Rect((IA2_x_s - 1), (IA2_y_s - 1), windowSize, windowSize);
 
-                    // clamp indices for out of bounds values
-                    IA2_x_s = clamp(IA2_x_s, 1, grayFrame2.cols());
-                    IA2_y_s = clamp(IA2_y_s, 1, grayFrame2.rows());
-                    winHeight = clamp(windowSize, 0, grayFrame2.rows() - IA2_y_s - 1);
-                    winWidth = clamp(windowSize, 0, grayFrame2.cols() - IA2_x_s - 1);
-
-                    Rect rectWin_b = new Rect((IA2_x_s - 1), (IA2_y_s - 1), winWidth, winHeight);
-                    Mat IA2_new_t = new Mat(grayFrame2, rectWin_b);
+                    Mat IA1_new_t = new Mat(paddedGray1, rectWin_a);
+                    Mat IA2_new_t = new Mat(paddedGray2, rectWin_b);
 
                     //Subtract the means from the windows
                     double i1_avg_new = mean(IA1_new_t).val[0];
@@ -912,10 +906,6 @@ public class PivFunctions {
 
                     int c = (int) mmr.maxLoc.x;
                     int r = (int) mmr.maxLoc.y;
-
-                    // clamp c and r for out of bounds values
-                    c = clamp(c, 1, corr.cols() - 1);
-                    r = clamp(r, 1, corr.rows() - 1);
 
                     try {
                         double epsr_new = (Math.log(corr.get(r - 1, c)[0])
@@ -957,6 +947,9 @@ public class PivFunctions {
                 System.gc();
             }
         }
+        // cleanup mats
+        paddedGray1.release();
+        paddedGray2.release();
 
         return new PivResultData(resultName, dc2, dr2, mag, sig2noise,
                 getCoordinates(), cols, rows, dt);
