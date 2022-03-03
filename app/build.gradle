@@ -7,7 +7,7 @@ android {
         applicationId "com.onrpiv.uploadmedia"
         minSdkVersion 25
         targetSdkVersion 31
-        versionCode 2
+        versionCode 3
         versionName "0.11-beta"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
