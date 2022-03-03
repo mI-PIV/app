@@ -30,7 +30,7 @@ public class Pos12_Activity extends FluidGlossary {
         t1.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
 
         TextView t2 = (TextView)findViewById(R.id.pos12TextView2);
-        t2.setText("If the fluid is flowing outside of the object of interest such as flow over a cylinder (below), the flow is referred to as external:");
+        t2.setText("If the fluid is flowing around an object, such as flow over a cylinder (below), the flow is referred to as 'external flow'.");
         t2.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
 
         TextView[] textViews = {t1, t2};
