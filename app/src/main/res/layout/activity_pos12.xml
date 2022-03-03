@@ -56,9 +56,9 @@
             <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/pos12ImageView1"
                 android:layout_width="match_parent"
-                android:layout_height="128dp"
+                android:layout_height="280dp"
                 android:layout_below="@id/pos12TextView2"
-                android:src="@drawable/new_externalflowimage"
+                android:src="@drawable/external_flow"
                 tools:ignore="MissingConstraints" />
 
         </RelativeLayout>
