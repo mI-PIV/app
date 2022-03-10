@@ -261,7 +261,7 @@ public class PivOptionsPopup extends AlertDialog {
         corrMethodRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                boolean fft = checkedId == R.id.params_replace_yes;
+                boolean fft = checkedId == R.id.params_method_fft;
                 parameters.setFFT(fft);
                 savePIVDataButton.setEnabled(checkTexts());
             }
