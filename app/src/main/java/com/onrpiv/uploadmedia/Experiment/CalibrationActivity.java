@@ -40,8 +40,6 @@ public class CalibrationActivity extends VideoActivity {
     private Button calibButton;
     private float vidTime;
 
-    // TODO recorded videos aren't triggering range slider
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
