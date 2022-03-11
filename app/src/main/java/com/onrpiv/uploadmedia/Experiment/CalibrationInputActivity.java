@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -39,6 +40,7 @@ public class CalibrationInputActivity extends FragmentActivity implements Positi
     private Button clearLastButton;
     private Button clearAllButton;
     private Button calibrateButton;
+    private TextView helpText;
 
     // Calibration
     private List<org.opencv.core.Point> selectedPoints;
@@ -73,6 +75,8 @@ public class CalibrationInputActivity extends FragmentActivity implements Positi
         calibFrameView.setPositionCallback(this);
         ImageView frameView = findViewById(R.id.calib_input_frame);
         frameView.setImageBitmap(calibrationFrame);
+
+        helpText = findViewById(R.id.calib_input_helpText);
 
         drawView = findViewById(R.id.calib_input_drawFrame);
         drawView.setImageBitmap(drawFrame);
@@ -185,6 +189,8 @@ public class CalibrationInputActivity extends FragmentActivity implements Positi
     private void addPoint(Point p) {
         clearAllButton.setEnabled(true);
         clearLastButton.setEnabled(true);
+        helpText.setVisibility(View.INVISIBLE);
+
         selectedPoints.add(p);
 
         if (selectedPoints.size() >= 2) {
@@ -208,6 +214,8 @@ public class CalibrationInputActivity extends FragmentActivity implements Positi
         clearAllButton.setEnabled(false);
         clearLastButton.setEnabled(false);
         calibrateButton.setEnabled(false);
+        helpText.setVisibility(View.VISIBLE);
+
         pointsSelected = false;
         selectedPoints.clear();
 
