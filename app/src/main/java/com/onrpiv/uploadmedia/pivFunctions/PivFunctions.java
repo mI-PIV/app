@@ -12,6 +12,7 @@ import static org.opencv.imgproc.Imgproc.cvtColor;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.util.Log;
 
 import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
@@ -493,6 +494,51 @@ public class PivFunctions {
 
     public void saveBaseImage(String stepName) {
         saveImage(frame1, stepName);
+    }
+
+    public static Bitmap createLinedBitmap(List<Point> points, int rows, int cols) {
+        Mat transparentBackground = new Mat(rows, cols, CV_8UC4, new Scalar(255, 255, 255, 0));
+
+        int red = ((Color.RED >> 16) & 0xFF) * 255;
+        int yred = ((Color.YELLOW >> 16) & 0xFF) * 255;
+        int ygreen = ((Color.YELLOW >> 8) & 0xFF) * 255;
+
+        Point prevP = null;
+        for (Point p : points) {
+            // draw point
+            Point bottomLeft = new Point(p.x - 4, p.y -4);
+            Point topRight = new Point(p.x + 4, p.y + 4);
+            Imgproc.rectangle(transparentBackground, bottomLeft, topRight, new Scalar(red, 0, 0, 255), -1);
+            if (null != prevP) {
+                Imgproc.line(transparentBackground, prevP, p, new Scalar(yred, ygreen, 0, 255), 3, 8);
+            }
+            prevP = p;
+        }
+
+        Mat resized = resizeMat(transparentBackground);
+        Bitmap bmp = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
+        bmp.setHasAlpha(true);
+        Utils.matToBitmap(resized, bmp, true);
+
+        //clean up mats
+        transparentBackground.release();
+        resized.release();
+        System.gc();
+        return bmp;
+    }
+
+    public static Bitmap createTransparentBitmap(int rows, int cols) {
+        Mat transparentBackground = new Mat(rows, cols, CV_8UC4, new Scalar(255, 255, 255, 0));
+        Mat resized = resizeMat(transparentBackground);
+        Bitmap bmp = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
+        bmp.setHasAlpha(true);
+        Utils.matToBitmap(resized, bmp, true);
+
+        //clean up mats
+        transparentBackground.release();
+        resized.release();
+        System.gc();
+        return bmp;
     }
 
     public static Bitmap createVectorFieldBitmap(PivResultData pivResultData,

@@ -1,9 +1,9 @@
 package com.onrpiv.uploadmedia.Experiment;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
@@ -15,19 +15,17 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.ContextCompat;
 
 import com.onrpiv.uploadmedia.R;
-import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibration;
 import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibrationResult;
 import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.FrameExtractor;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
-
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfDouble;
 
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -39,8 +37,12 @@ public class CalibrationActivity extends VideoActivity {
     private LinearLayout seekbarLayout;
     private Button calibButton;
     private float vidTime;
+    private String calImgPath;
 
-    // TODO recorded videos aren't triggering range slider
+    // calibration input registration
+    private Intent calibInputIntent;
+    private ActivityResultLauncher<Intent> calibInputLauncher;
+    private CameraCalibrationResult ccResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +85,7 @@ public class CalibrationActivity extends VideoActivity {
 
         // calibration button
         calibButton = new Button(this);
-        calibButton.setText("Calibrate");
+        calibButton.setText("Input Measurement");
         calibButton.setBackground(ContextCompat.getDrawable(this, R.drawable.buttons));
         calibButton.setTextColor(Color.parseColor("#FFFFFF"));
         calibButton.setVisibility(View.GONE);
@@ -123,6 +125,37 @@ public class CalibrationActivity extends VideoActivity {
         ViewGroup buttonContainer = (ViewGroup) pickVideo.getParent();
         buttonContainer.addView(seekbarLayout);
         buttonContainer.addView(calibButton);
+
+        // register calibration input
+        ccResult = new CameraCalibrationResult();
+        calibInputIntent = new Intent(CalibrationActivity.this, CalibrationInputActivity.class);
+        calibInputLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                Intent resultsIntent = result.getData();
+                if (null == resultsIntent) {
+                    return;
+                }
+                ccResult.ratio = resultsIntent.getDoubleExtra("pixelsPerCm",-1d);
+
+                // delete calibration frame
+                PathUtil.deleteRecursive(new File(calImgPath));
+
+                // save calibration
+                File calibrationSaveFile = new File(PathUtil.getUserDirectory(CalibrationActivity.this, userName), "calibration.obj");
+                FileIO.write(ccResult, calibrationSaveFile);
+
+                new AlertDialog.Builder(CalibrationActivity.this)
+                        .setMessage("Calibration saved!")
+                        .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                finish();
+                            }
+                        })
+                        .setCancelable(true).create().show();
+            }
+        });
     }
 
     @Override
@@ -164,80 +197,13 @@ public class CalibrationActivity extends VideoActivity {
         calibButton.setVisibility(View.VISIBLE);
     }
 
-    private void calibrationCallback(Context context, String imagePath) {
-        if (!new File(imagePath).exists())
+    private void calibrationCallback(Context context, String imagePath){
+        File calibImage = new File(imagePath);
+        if (!calibImage.exists())
             return;
-
-        ProgressDialog pDialog = new ProgressDialog(context);
-        pDialog.setMessage("Searching for calibration pattern...");
-        pDialog.setCancelable(false);
-        pDialog.show();
-
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                // calculate calibration
-                CameraCalibrationResult ccResult = new CameraCalibrationResult();
-                ccResult.ratio = CameraCalibration.calculatePixelToPhysicalRatio(imagePath);
-
-                // check to see if calibration pattern was found
-                if (ccResult.ratio == -1d) {
-                    AlertDialog.Builder failedDialog = new AlertDialog.Builder(context)
-                            .setMessage("Couldn't find a calibration pattern. Please make sure " +
-                                    "the calibration pattern is completely visible in " +
-                                    "the photo and try again.")
-                            .setPositiveButton("Okay", null);
-                    threadedPopup(context, failedDialog);
-                } else {
-                    AlertDialog.Builder successDialog = new AlertDialog.Builder(context)
-                            .setMessage("Calibration pattern found!")
-                            .setPositiveButton("Save Calibration", null);
-                    threadedPopup(context, successDialog);
-                    setMessage("Calculating camera matrices...", context, pDialog);
-
-                    Mat cameraMatrix = new Mat();
-                    Mat distanceCoefficients = new MatOfDouble();
-                    Mat.eye(3, 3, CvType.CV_64FC1).copyTo(cameraMatrix);
-                    Mat.zeros(5, 1, CvType.CV_64FC1).copyTo(distanceCoefficients);
-                    CameraCalibration.saveCameraProperties(context, cameraMatrix, distanceCoefficients);
-
-                    setMessage("Saving camera calibration...", context, pDialog);
-                    ccResult.saveCameraMatrix(cameraMatrix);
-                    ccResult.saveDistanceCoeffs(distanceCoefficients);
-
-                    // save calibration
-                    File calibrationSaveFile = new File(PathUtil.getUserDirectory(context, userName), "calibration.obj");
-                    FileIO.write(ccResult, calibrationSaveFile);
-                }
-
-                // delete temp calibration image
-                PathUtil.deleteRecursive(new File(imagePath));
-
-                if (pDialog.isShowing())
-                    pDialog.dismiss();
-            }
-        };
-        thread.start();
-    }
-
-    public static void setMessage(String msg, Context context, ProgressDialog pDialog) {
-        Activity activity = (Activity) context;
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                pDialog.setMessage(msg);
-            }
-        });
-    }
-
-    private static void threadedPopup(Context context, AlertDialog.Builder dialogBuilder) {
-        Activity activity = (Activity) context;
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                dialogBuilder.create().show();
-            }
-        });
+        calImgPath = imagePath;
+        calibInputIntent.putExtra("framePath", imagePath);
+        calibInputLauncher.launch(calibInputIntent);
     }
 
     private int calcDP(int desiredDP) {
@@ -245,7 +211,6 @@ public class CalibrationActivity extends VideoActivity {
     }
 
     private void calibrationMessage() {
-
         // Create a AlertDialog Builder.
         android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(CalibrationActivity.this);
 
