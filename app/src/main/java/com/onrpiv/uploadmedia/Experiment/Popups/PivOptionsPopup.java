@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -103,6 +105,10 @@ public class PivOptionsPopup extends AlertDialog {
         advancedCheckbox = findViewById(R.id.advancedCheckbox);
         advancedCheckbox.setChecked(false);
 
+        // this needs to be place inside when the advanced parameters is clicked because we need the screen to be bigger for it.
+        System.out.println("helooooooooooooooooooooooo");
+
+
         // lightbulbs
         final String linkText = "Learn More";
         new LightBulb(context, windowSizeText).setLightBulbOnClick("Window Size",
@@ -175,6 +181,8 @@ public class PivOptionsPopup extends AlertDialog {
         dtText.setText(String.valueOf(fps));
     }
 
+
+
     private void setListeners(Context context, String userName, ActivityResultRegistry resultRegistry) {
         // Hide/Show advanced options
         advancedCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -184,8 +192,17 @@ public class PivOptionsPopup extends AlertDialog {
                     view.setVisibility(isChecked? View.VISIBLE : View.GONE);
                 }
                 savePIVDataButton.setEnabled(checkTexts());
+
+                // need a larger and smaller window for when advanced parameters is checked
+                if (isChecked) {
+                    getWindow().setLayout(1450, 2450);
+                }
+                else {
+                    getWindow().setLayout(1450, 1150);
+                }
             }
         });
+
 
         // Set the default overlap to 50% of windowSize if windowSize is changed from default
         windowSizeText.addTextChangedListener(new TextWatcher() {
