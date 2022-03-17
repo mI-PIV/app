@@ -339,8 +339,8 @@ public class PivFunctions {
                     epsc = Double.isNaN(epsc)? 0.0 : epsc;
 
                     if (fft) {
-                        dr1[i][j] = (windowSize / 2d - 1) - (r + epsr);
-                        dc1[i][j] = (windowSize / 2d - 1) - (c + epsc);
+                        dr1[i][j] = (windowSize / 2d) - (r + epsr);
+                        dc1[i][j] = (windowSize / 2d) - (c + epsc);
                     } else {
                         dr1[i][j] = (windowSize - 1) - (r + epsr);
                         dc1[i][j] = (windowSize - 1) - (c + epsc);
@@ -806,6 +806,8 @@ public class PivFunctions {
             for (int li = l-1; li <= l+1; li++) {
                 if (ki < 0 || ki >= arr.length || li < 0 || li >= arr.length) {
                     medianList.add(0d);  // padding for out of bounds indices
+                } else if (ki == k && li == l) {
+                    continue;
                 } else {
                     medianList.add(arr[ki][li]);
                 }
@@ -821,6 +823,8 @@ public class PivFunctions {
             for (int li = l-1; li <= l+1; li++) {
                 if (ki < 0 || ki >= arr.length || li < 0 || li >= arr.length) {
                     medianList.add(0d);  // padding for out of bounds indices
+                } else if (ki == k && li == l) {
+                    continue;
                 } else {
                     medianList.add(Math.abs(arr[ki][li]) - subValue);
                 }
@@ -849,10 +853,10 @@ public class PivFunctions {
                 rm_c = findMedian(u, k, l, sm_c);
 
                 //Normalization factor
-                sigma_s_r = rm_r + 0.1;
-                sigma_s_c = rm_c + 0.1;
+                sigma_s_r = rm_r + 0.1d;
+                sigma_s_c = rm_c + 0.1d;
 
-                //absolute deviation of pixel displacement with respect to the media pixel displacement of the 8 nearest neighbors
+                //absolute deviation of pixel displacement with respect to the median pixel displacement of the 8 nearest neighbors
                 r_r = Math.abs(v[k][l] - sm_r) / sigma_s_r;
                 r_c = Math.abs(u[k][l] - sm_c) / sigma_s_c;
 
@@ -909,7 +913,7 @@ public class PivFunctions {
                     progressUpdate.updateProgressIteration(progressCounter++);
 
                 //if pixel displacements from 1st pass are zero keep them as zero in 2nd phase
-                if (v[ii][jj] == 0 && u[ii][jj] == 0) {
+                if (v[ii][jj] == 0d && u[ii][jj] == 0d) {
                     dr2[ii][jj] = 0.0;
                     dc2[ii][jj] = 0.0;
                     sig2noise[ii][jj] = 0.0;
@@ -948,6 +952,7 @@ public class PivFunctions {
 
                     //Find the correlation
                     Mat corr = openCvPIV(window_a_1, window_b_1);
+                    // TODO add FFT option here
                     Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
 
                     int c = (int) mmr.maxLoc.x;
