@@ -90,13 +90,15 @@ public class PIVTests {
 
         // run piv
         PivResultData results = piv.runSinglePass();
+        PivResultData postProcResults = piv.runPostProcessing(results);
+        PivResultData multiPassResults = piv.runMultiPass_withReplace(postProcResults);
 
         // cleanup
         frame1.release();
         frame2.release();
         try {dataStream.close();} catch (IOException e){e.printStackTrace();}
 
-        return compareData(data, results);
+        return compareData(data, multiPassResults);
     }
 
     private double[] compareData(List<String[]> realData, PivResultData resultData) {
@@ -107,8 +109,8 @@ public class PIVTests {
         for (int x = 0; x < resultData.getU().length; x++) {
             for (int y = 0; y < resultData.getU()[x].length; y++) {
                 //result data
-                double u = resultData.getU()[x][y];
-                double v = resultData.getV()[x][y];
+                double u = resultData.getU()[y][x];
+                double v = resultData.getV()[y][x];
 
                 // real data
                 int xs = (x+1) * resultData.getStepX();
