@@ -796,21 +796,32 @@ public class PivFunctions {
         return new double[]{min, max};
     }
 
+    private static double median(List<Double> medianList) {
+        Collections.sort(medianList);
+
+        double median;
+        int half = medianList.size() / 2;
+        if (medianList.size() % 2 == 0) {
+            median = (medianList.get(half) + medianList.get(half - 1)) / 2d;
+        } else {
+            median = medianList.get(half);
+        }
+        return median;
+    }
+
     private static double findMedian(double[][] arr, int k, int l) {
         List<Double> medianList = new ArrayList<>();
         for (int ki = k-1; ki <= k+1; ki++) {
             for (int li = l-1; li <= l+1; li++) {
                 if (ki < 0 || ki >= arr.length || li < 0 || li >= arr.length) {
-                    medianList.add(0d);  // padding for out of bounds indices
+                    continue;
                 } else if (ki == k && li == l) {
                     continue;
-                } else {
-                    medianList.add(arr[ki][li]);
                 }
+                medianList.add(arr[ki][li]);
             }
         }
-        Collections.sort(medianList);
-        return medianList.get(3);
+        return median(medianList);
     }
 
     private static double findMedian(double[][] arr, int k, int l, double subValue) {
@@ -818,16 +829,14 @@ public class PivFunctions {
         for (int ki = k-1; ki <= k+1; ki++) {
             for (int li = l-1; li <= l+1; li++) {
                 if (ki < 0 || ki >= arr.length || li < 0 || li >= arr.length) {
-                    medianList.add(0d);  // padding for out of bounds indices
+                    continue;
                 } else if (ki == k && li == l) {
                     continue;
-                } else {
-                    medianList.add(Math.abs(arr[ki][li]) - subValue);
                 }
+                medianList.add(Math.abs(arr[ki][li]) - subValue);
             }
         }
-        Collections.sort(medianList);
-        return medianList.get(3);
+        return median(medianList);
     }
 
     public PivResultData vectorPostProcessing(PivResultData singlePassResult, String resultName) {
