@@ -29,8 +29,9 @@ public class PivResultData implements Serializable {
     public static final String
             REPLACED_BOOL = "replaced",
             SINGLE = "singlepass",
-            MULTI = "pivCorrelationMulti",
-            REPLACE2 = "pivReplaceMissing2",
+            MULTI = "multipass",
+            PROCESSED = "_processed",
+            REPLACE = "_replaced",
             USERNAME = "username";
 
     public PivResultData(String name, double[][] u, double[][] v, double[][] mag,
