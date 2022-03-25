@@ -842,13 +842,20 @@ public class PivFunctions {
         return median(medianList);
     }
 
-    public PivResultData vectorPostProcessing(PivResultData singlePassResult, String resultName) {
+    public PivResultData vectorPostProcessing(PivResultData passResult, boolean replacement,
+                                              String resultName) {
+
+        if (replacement) {
+            resultName += PivResultData.REPLACE;
+            passResult = replaceMissingVectors(passResult, resultName);
+        }
+
         double[][] dr1_p = new double[fieldRows][fieldCols];
         double[][] dc1_p = new double[fieldRows][fieldCols];
         double[][] mag_p = new double[fieldRows][fieldCols];
 
-        double[][] u = singlePassResult.getU();
-        double[][] v = singlePassResult.getV();
+        double[][] u = passResult.getU();
+        double[][] v = passResult.getV();
 
         double sm_r, sm_c, rm_r, rm_c, sigma_s_r, sigma_s_c, r_r, r_c;
 
@@ -870,10 +877,10 @@ public class PivFunctions {
 
                 // DONT ERASE COMMENTED LINE BELOW IN CASE WE NEED TO USE A SIMILAR LOGIC LATER
                 //if (pivCorrelation.get("magnitude")[k][l] * dt < nMaxUpper && pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
-                if (singlePassResult.getSig2Noise()[k][l] > qMin && r_r < _e && r_c < _e && singlePassResult.getMag()[k][l] < windowSize*0.5) {
-                    dr1_p[k][l] = singlePassResult.getV()[k][l];
-                    dc1_p[k][l] = singlePassResult.getU()[k][l];
-                    mag_p[k][l] = singlePassResult.getMag()[k][l];
+                if (passResult.getSig2Noise()[k][l] > qMin && r_r < _e && r_c < _e && passResult.getMag()[k][l] < windowSize*0.5) {
+                    dr1_p[k][l] = passResult.getV()[k][l];
+                    dc1_p[k][l] = passResult.getU()[k][l];
+                    mag_p[k][l] = passResult.getMag()[k][l];
                 } else {
                     dr1_p[k][l] = 0.0d;
                     dc1_p[k][l] = 0.0d;
@@ -882,7 +889,7 @@ public class PivFunctions {
         }
 
         return new PivResultData(resultName, dc1_p, dr1_p, mag_p,
-                singlePassResult.getSig2Noise(), getCoordinates(), cols, rows, dt);
+                passResult.getSig2Noise(), getCoordinates(), cols, rows, dt);
     }
 
     public PivResultData calculateMultipass(PivResultData pivResultData, String resultName, boolean fft,
