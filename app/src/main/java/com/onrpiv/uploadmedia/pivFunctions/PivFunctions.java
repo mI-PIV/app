@@ -301,10 +301,6 @@ public class PivFunctions {
                 Rect rectWin_a = new Rect(j1l, i1t, windowSize, windowSize);
                 Mat window_a = new Mat(grayFrame1, rectWin_a);
 
-//                now shift the left corner of the smaller window inside the larger one
-                i1t += (windowSize - windowSize) / 2;
-                j1l += (windowSize - windowSize) / 2;
-
                 Rect rectWin_b = new Rect(j1l, i1t, windowSize, windowSize);
                 Mat window_b = new Mat(grayFrame2, rectWin_b);
 
@@ -877,7 +873,8 @@ public class PivFunctions {
                 singlePassResult.getSig2Noise(), getCoordinates(), cols, rows, dt);
     }
 
-    public PivResultData calculateMultipass(PivResultData pivResultData, String resultName, ProgressUpdateInterface progressUpdate) {
+    public PivResultData calculateMultipass(PivResultData pivResultData, String resultName, boolean fft,
+                                            ProgressUpdateInterface progressUpdate) {
         double[][] dr_new = new double[fieldRows][fieldCols];
         double[][] dc_new = new double[fieldRows][fieldCols];
 
@@ -951,8 +948,13 @@ public class PivFunctions {
                     subtract(IA2_new_t, new Scalar(i2_avg_new), window_b_1);
 
                     //Find the correlation
-                    Mat corr = openCvPIV(window_a_1, window_b_1);
-                    // TODO add FFT option here
+                    Mat corr;
+                    if (fft) {
+                        corr = fftPIV(window_a_1, window_b_1);
+                    } else {
+                        corr = openCvPIV(window_a_1, window_b_1);
+                    }
+
                     Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
 
                     int c = (int) mmr.maxLoc.x;
@@ -974,8 +976,13 @@ public class PivFunctions {
                         eps_r_new[ii][jj] = Double.isNaN(epsr_new)? 0.0 : epsr_new;
                         eps_c_new[ii][jj] = Double.isNaN(epsc_new)? 0.0 : epsc_new;
 
-                        dr_new[ii][jj] = (windowSize - 1) - (r + eps_r_new[ii][jj]);
-                        dc_new[ii][jj] = (windowSize - 1) - (c + eps_c_new[ii][jj]);
+                        if (fft) {
+                            dr_new[ii][jj] = (windowSize / 2d) - (r + eps_r_new[ii][jj]);
+                            dc_new[ii][jj] = (windowSize / 2d) - (c + eps_c_new[ii][jj]);
+                        } else {
+                            dr_new[ii][jj] = (windowSize - 1) - (r + eps_r_new[ii][jj]);
+                            dc_new[ii][jj] = (windowSize - 1) - (c + eps_c_new[ii][jj]);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -120,7 +120,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 if (parameters.isReplace()) {
                     setMessage("Calculating multi-pass PIV");
                     PivResultData pivReplaceMissing = pivFunctions.replaceMissingVectors(pivCorrelationProcessed, null);
-                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivReplaceMissing, PivResultData.MULTI, PivRunner.this);
+                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivReplaceMissing, PivResultData.MULTI, parameters.isFFT(), PivRunner.this);
 
                     String stepMulti = "Multipass";
                     pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);
@@ -151,7 +151,7 @@ public class PivRunner implements ProgressUpdateInterface {
                     parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivReplaceMissing2.getMag()));
                 } else {
                     setMessage("Calculating multi-pass PIV");
-                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivCorrelationProcessed, PivResultData.MULTI, PivRunner.this);
+                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivCorrelationProcessed, PivResultData.MULTI, parameters.isFFT(), PivRunner.this);
 
                     String stepMulti = "Multipass";
                     pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);

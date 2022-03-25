@@ -48,19 +48,20 @@ public class PivRunnerTestObj {
     }
 
     public PivResultData runMultiPass_withReplace(PivResultData postProcessed) {
+        boolean fft = true;
         PivResultData pivReplaceMissing = _piv.replaceMissingVectors(postProcessed, null);
-        PivResultData pivCorrelationMulti = _piv.calculateMultipass(pivReplaceMissing, PivResultData.MULTI, null);
+        PivResultData pivCorrelationMulti = _piv.calculateMultipass(pivReplaceMissing, PivResultData.MULTI, fft, null);
         PivResultData pivReplaceMissing2 = _piv.replaceMissingVectors(pivCorrelationMulti, PivResultData.REPLACE2);
         PivFunctions.calculateVorticityMap(pivReplaceMissing2);
         _params.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivReplaceMissing2.getMag()));
         return pivReplaceMissing2;
     }
 
-    public PivResultData runReplacement_withoutReplace(PivResultData postProcessed) {
-        PivResultData pivCorrelationMulti = _piv.calculateMultipass(postProcessed, PivResultData.MULTI, null);
-        _params.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivCorrelationMulti.getMag()));
-        return pivCorrelationMulti;
-    }
+//    public PivResultData runReplacement_withoutReplace(PivResultData postProcessed) {
+//        PivResultData pivCorrelationMulti = _piv.calculateMultipass(postProcessed, PivResultData.MULTI, null);
+//        _params.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivCorrelationMulti.getMag()));
+//        return pivCorrelationMulti;
+//    }
 
     private String getCanonicalPath(File file) {
         String result = null;
