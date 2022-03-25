@@ -797,6 +797,9 @@ public class PivFunctions {
     }
 
     private static double median(List<Double> medianList) {
+        if (medianList.size() == 0)
+            return 0d;
+
         Collections.sort(medianList);
 
         double median;
