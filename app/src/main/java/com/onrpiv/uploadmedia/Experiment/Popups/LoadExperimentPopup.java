@@ -96,10 +96,10 @@ public class LoadExperimentPopup extends Popup {
                 PivParameters.IO_FILENAME);
 
         // load results activity with the data
-        ViewResultsActivity.singlePass = (PivResultData) FileIO.read(context, userName, experimentNum, PivResultData.SINGLE);
+        ViewResultsActivity.singlePass = (PivResultData) FileIO.read(context, userName, experimentNum, PivResultData.SINGLE+PivResultData.PROCESSED+PivResultData.REPLACE);
         ViewResultsActivity.multiPass = (PivResultData) FileIO.read(context, userName, experimentNum, PivResultData.MULTI);
         if (params.isReplace()) {
-            ViewResultsActivity.replacedPass = (PivResultData) FileIO.read(context, userName, experimentNum, PivResultData.REPLACE2);
+            ViewResultsActivity.replacedPass = (PivResultData) FileIO.read(context, userName, experimentNum, PivResultData.MULTI+PivResultData.PROCESSED+PivResultData.REPLACE);
         }
 
         Intent displayIntent = new Intent(context, ViewResultsActivity.class);
