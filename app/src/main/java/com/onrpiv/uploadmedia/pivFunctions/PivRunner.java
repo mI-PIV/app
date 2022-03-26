@@ -70,6 +70,9 @@ public class PivRunner implements ProgressUpdateInterface {
         Thread thread = new Thread() {
             @Override
             public void run() {
+                ////////////////////////////////////////////////////////////////////////////////////
+                //// SETUP & BACKGROUND SUB ////
+                ////////////////////////////////////////////////////////////////////////////////////
                 boolean backgroundSub = false;
                 if (backgroundSelection >= 0) {
                     setMessage("Subtracting frames");
@@ -77,106 +80,91 @@ public class PivRunner implements ProgressUpdateInterface {
                     pivFunctions.framesSubtraction(backgroundSelection, frame1File.getParentFile(),
                             parameters.getFrame1Index(), parameters.getFrame2Index());
                 }
-                setMessage("Calculating PIV");
-                setMessage("Calculating single pass PIV");
-                // single pass
-                PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE, parameters.isFFT(), PivRunner.this);
-                singlePassResult.setBackgroundSubtracted(backgroundSub);
 
                 // Save first frame for output base image
                 pivFunctions.saveBaseImage("Base");
 
-                setMessage("Calculating single pass vorticity");
-                String vortStep = "Vorticity";
-                PivFunctions.calculateVorticityMap(singlePassResult);
-                pivFunctions.saveVorticityValues(singlePassResult.getVorticityValues(), vortStep);
+
+                ////////////////////////////////////////////////////////////////////////////////////
+                //// SINGLE PASS ////
+                ////////////////////////////////////////////////////////////////////////////////////
+                setMessage("Calculating PIV");
+                setMessage("Calculating single pass PIV");
+                PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE,
+                        parameters.isFFT(), PivRunner.this);
+                singlePassResult.setBackgroundSubtracted(backgroundSub);
+
+                // save raw single pass
+                pivFunctions.saveVectorsValues(singlePassResult, singlePassResult.getName());
+
+                setMessage("Post-Processing Single Pass PIV");
+                PivResultData singlePassProcessed =
+                        pivFunctions.vectorPostProcessing(singlePassResult, true,
+                                PivResultData.SINGLE+PivResultData.PROCESSED);
 
                 if (parameters.getCameraCalibrationResult() != null) {
-                    setMessage("Applying Camera Calibration to single pass");
-                    singlePassResult.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
+                    setMessage("Applying Camera Calibration to Single Pass post-processed vectors");
+                    singlePassProcessed.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
                             pivFunctions.getFieldRows(), pivFunctions.getFieldCols());
 
-                    pivFunctions.saveVectorCentimeters(singlePassResult,
+                    pivFunctions.saveVectorCentimeters(singlePassProcessed,
                             parameters.getCameraCalibrationResult().ratio, "CENTIMETERS_SINGLEPASS");
 
                     singlePassResult.setCalibrated(true);
                 }
 
-                setMessage("Saving single pass data");
-                String step = "SinglePass";
-                pivFunctions.saveVectorsValues(singlePassResult, step);
+                // single pass vorticity
+                PivFunctions.calculateVorticityMap(singlePassProcessed);
 
-                setMessage("Post-Processing Single Pass PIV");
-                PivResultData pivCorrelationProcessed =
-                        pivFunctions.vectorPostProcessing(singlePassResult, "PostProcessing");
+                // save post-processed single pass
+                resultData.put(singlePassProcessed.getName(), singlePassProcessed);
+                pivFunctions.saveVectorsValues(singlePassProcessed, singlePassProcessed.getName());
 
-                setMessage("Saving post processing data");
-                String stepPro = "VectorPostProcess";
-                pivFunctions.saveVectorsValues(pivCorrelationProcessed, stepPro);
-                resultData.put(PivResultData.SINGLE, singlePassResult);
 
-                PivResultData pivCorrelationMulti;
+                ////////////////////////////////////////////////////////////////////////////////////
+                //// MULTI PASS ////
+                ////////////////////////////////////////////////////////////////////////////////////
+                setMessage("Calculating Multi-Pass PIV");
+                PivResultData multipassResults = pivFunctions.calculateMultipass(singlePassProcessed,
+                        PivResultData.MULTI, parameters.isFFT(), PivRunner.this);
 
-                if (parameters.isReplace()) {
-                    setMessage("Calculating multi-pass PIV");
-                    PivResultData pivReplaceMissing = pivFunctions.replaceMissingVectors(pivCorrelationProcessed, null);
-                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivReplaceMissing, PivResultData.MULTI, PivRunner.this);
+                resultData.put(multipassResults.getName(), multipassResults);
+                pivFunctions.saveVectorsValues(multipassResults, multipassResults.getName());
 
-                    String stepMulti = "Multipass";
-                    pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);
-                    setMessage("Calculating replaced vectors");
-                    PivResultData pivReplaceMissing2 = pivFunctions.replaceMissingVectors(pivCorrelationMulti, PivResultData.REPLACE2);
+                setMessage("Post-Processing Multi-Pass PIV");
+                PivResultData multiPassProcessed = pivFunctions.vectorPostProcessing(multipassResults,
+                        parameters.isReplace(), PivResultData.MULTI+PivResultData.PROCESSED);
 
-                    setMessage("Calculating replacement vorticity");
-                    PivFunctions.calculateVorticityMap(pivReplaceMissing2);
-                    pivFunctions.saveVorticityValues(pivReplaceMissing2.getVorticityValues(), "Replace_Vorticity");
-
-                    if (parameters.getCameraCalibrationResult() != null) {
-                        setMessage("Applying Camera Calibration to replaced vectors");
-
-                        pivReplaceMissing2.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
-                                pivFunctions.getFieldRows(), pivFunctions.getFieldCols());
-
-                        pivFunctions.saveVectorCentimeters(pivReplaceMissing2,
-                                parameters.getCameraCalibrationResult().ratio, "CENTIMETERS_REPLACED");
-
-                        pivReplaceMissing2.setCalibrated(true);
-                    }
-
-                    resultData.put(PivResultData.REPLACE2, pivReplaceMissing2);
-
-                    String stepReplace2 = "Replaced2";
-                    pivFunctions.saveVectorsValues(pivReplaceMissing2, stepReplace2);
-
-                    parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivReplaceMissing2.getMag()));
-                } else {
-                    setMessage("Calculating multi-pass PIV");
-                    pivCorrelationMulti = pivFunctions.calculateMultipass(pivCorrelationProcessed, PivResultData.MULTI, PivRunner.this);
-
-                    String stepMulti = "Multipass";
-                    pivFunctions.saveVectorsValues(pivCorrelationMulti, stepMulti);
-
-                    parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivCorrelationMulti.getMag()));
-                }
-
-                setMessage("Calculating multi-pass vorticity");
-                PivFunctions.calculateVorticityMap(pivCorrelationMulti);
-                pivFunctions.saveVorticityValues(pivCorrelationMulti.getVorticityValues(), "Multi_Vorticity");
+                parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(multiPassProcessed.getMag()));
 
                 if (parameters.getCameraCalibrationResult() != null) {
-                    setMessage("Applying Camera Calibration to replaced vectors");
-                    pivCorrelationMulti.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
+                    setMessage("Applying Camera Calibration to Multi-pass post-processed vectors");
+
+                    multiPassProcessed.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
                             pivFunctions.getFieldRows(), pivFunctions.getFieldCols());
 
-                    pivFunctions.saveVectorCentimeters(pivCorrelationMulti,
-                            parameters.getCameraCalibrationResult().ratio, "CENTIMETERS_MULTIPASS");
+                    pivFunctions.saveVectorCentimeters(multiPassProcessed,
+                            parameters.getCameraCalibrationResult().ratio, "CENTIMETERS_REPLACED");
 
-                    pivCorrelationMulti.setCalibrated(true);
+                    multiPassProcessed.setCalibrated(true);
                 }
 
-                resultData.put(PivResultData.MULTI, pivCorrelationMulti);
+                // save multi pass post-processed
+                resultData.put(multiPassProcessed.getName(), multiPassProcessed);
+                pivFunctions.saveVectorsValues(multiPassProcessed, multiPassProcessed.getName());
 
-                // write our PivResultData object and our PivParameter object to a file for loading later
+
+                ////////////////////////////////////////////////////////////////////////////////////
+                //// VORTICITY ////
+                ////////////////////////////////////////////////////////////////////////////////////
+                setMessage("Calculating vorticity");
+                PivFunctions.calculateVorticityMap(multiPassProcessed);
+                pivFunctions.saveVorticityValues(multiPassProcessed.getVorticityValues(), "Vorticity");
+
+
+                ////////////////////////////////////////////////////////////////////////////////////
+                //// SAVE DATA ////
+                ////////////////////////////////////////////////////////////////////////////////////
                 setMessage("Saving data...");
                 FileIO.writePIVData(resultData, parameters, context, userName, newExpTotal);
 

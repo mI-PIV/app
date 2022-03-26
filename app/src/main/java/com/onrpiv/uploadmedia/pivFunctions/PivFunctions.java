@@ -301,10 +301,6 @@ public class PivFunctions {
                 Rect rectWin_a = new Rect(j1l, i1t, windowSize, windowSize);
                 Mat window_a = new Mat(grayFrame1, rectWin_a);
 
-//                now shift the left corner of the smaller window inside the larger one
-                i1t += (windowSize - windowSize) / 2;
-                j1l += (windowSize - windowSize) / 2;
-
                 Rect rectWin_b = new Rect(j1l, i1t, windowSize, windowSize);
                 Mat window_b = new Mat(grayFrame2, rectWin_b);
 
@@ -339,8 +335,8 @@ public class PivFunctions {
                     epsc = Double.isNaN(epsc)? 0.0 : epsc;
 
                     if (fft) {
-                        dr1[i][j] = (windowSize / 2d - 1) - (r + epsr);
-                        dc1[i][j] = (windowSize / 2d - 1) - (c + epsc);
+                        dr1[i][j] = (windowSize / 2d) - (r + epsr);
+                        dc1[i][j] = (windowSize / 2d) - (c + epsc);
                     } else {
                         dr1[i][j] = (windowSize - 1) - (r + epsr);
                         dc1[i][j] = (windowSize - 1) - (c + epsc);
@@ -800,19 +796,35 @@ public class PivFunctions {
         return new double[]{min, max};
     }
 
+    private static double median(List<Double> medianList) {
+        if (medianList.size() == 0)
+            return 0d;
+
+        Collections.sort(medianList);
+
+        double median;
+        int half = medianList.size() / 2;
+        if (medianList.size() % 2 == 0) {
+            median = (medianList.get(half) + medianList.get(half - 1)) / 2d;
+        } else {
+            median = medianList.get(half);
+        }
+        return median;
+    }
+
     private static double findMedian(double[][] arr, int k, int l) {
         List<Double> medianList = new ArrayList<>();
         for (int ki = k-1; ki <= k+1; ki++) {
             for (int li = l-1; li <= l+1; li++) {
                 if (ki < 0 || ki >= arr.length || li < 0 || li >= arr.length) {
-                    medianList.add(0d);  // padding for out of bounds indices
-                } else {
-                    medianList.add(arr[ki][li]);
+                    continue;
+                } else if (ki == k && li == l) {
+                    continue;
                 }
+                medianList.add(arr[ki][li]);
             }
         }
-        Collections.sort(medianList);
-        return medianList.get(3);
+        return median(medianList);
     }
 
     private static double findMedian(double[][] arr, int k, int l, double subValue) {
@@ -820,23 +832,30 @@ public class PivFunctions {
         for (int ki = k-1; ki <= k+1; ki++) {
             for (int li = l-1; li <= l+1; li++) {
                 if (ki < 0 || ki >= arr.length || li < 0 || li >= arr.length) {
-                    medianList.add(0d);  // padding for out of bounds indices
-                } else {
-                    medianList.add(Math.abs(arr[ki][li]) - subValue);
+                    continue;
+                } else if (ki == k && li == l) {
+                    continue;
                 }
+                medianList.add(Math.abs(arr[ki][li]) - subValue);
             }
         }
-        Collections.sort(medianList);
-        return medianList.get(3);
+        return median(medianList);
     }
 
-    public PivResultData vectorPostProcessing(PivResultData singlePassResult, String resultName) {
+    public PivResultData vectorPostProcessing(PivResultData passResult, boolean replacement,
+                                              String resultName) {
+
+        if (replacement) {
+            resultName += PivResultData.REPLACE;
+            passResult = replaceMissingVectors(passResult, resultName);
+        }
+
         double[][] dr1_p = new double[fieldRows][fieldCols];
         double[][] dc1_p = new double[fieldRows][fieldCols];
         double[][] mag_p = new double[fieldRows][fieldCols];
 
-        double[][] u = singlePassResult.getU();
-        double[][] v = singlePassResult.getV();
+        double[][] u = passResult.getU();
+        double[][] v = passResult.getV();
 
         double sm_r, sm_c, rm_r, rm_c, sigma_s_r, sigma_s_c, r_r, r_c;
 
@@ -849,19 +868,19 @@ public class PivFunctions {
                 rm_c = findMedian(u, k, l, sm_c);
 
                 //Normalization factor
-                sigma_s_r = rm_r + 0.1;
-                sigma_s_c = rm_c + 0.1;
+                sigma_s_r = rm_r + 0.1d;
+                sigma_s_c = rm_c + 0.1d;
 
-                //absolute deviation of pixel displacement with respect to the media pixel displacement of the 8 nearest neighbors
+                //absolute deviation of pixel displacement with respect to the median pixel displacement of the 8 nearest neighbors
                 r_r = Math.abs(v[k][l] - sm_r) / sigma_s_r;
                 r_c = Math.abs(u[k][l] - sm_c) / sigma_s_c;
 
                 // DONT ERASE COMMENTED LINE BELOW IN CASE WE NEED TO USE A SIMILAR LOGIC LATER
                 //if (pivCorrelation.get("magnitude")[k][l] * dt < nMaxUpper && pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
-                if (singlePassResult.getSig2Noise()[k][l] > qMin && r_r < _e && r_c < _e && singlePassResult.getMag()[k][l] < windowSize*0.5) {
-                    dr1_p[k][l] = singlePassResult.getV()[k][l];
-                    dc1_p[k][l] = singlePassResult.getU()[k][l];
-                    mag_p[k][l] = singlePassResult.getMag()[k][l];
+                if (passResult.getSig2Noise()[k][l] > qMin && r_r < _e && r_c < _e && passResult.getMag()[k][l] < windowSize*0.5) {
+                    dr1_p[k][l] = passResult.getV()[k][l];
+                    dc1_p[k][l] = passResult.getU()[k][l];
+                    mag_p[k][l] = passResult.getMag()[k][l];
                 } else {
                     dr1_p[k][l] = 0.0d;
                     dc1_p[k][l] = 0.0d;
@@ -870,10 +889,11 @@ public class PivFunctions {
         }
 
         return new PivResultData(resultName, dc1_p, dr1_p, mag_p,
-                singlePassResult.getSig2Noise(), getCoordinates(), cols, rows, dt);
+                passResult.getSig2Noise(), getCoordinates(), cols, rows, dt);
     }
 
-    public PivResultData calculateMultipass(PivResultData pivResultData, String resultName, ProgressUpdateInterface progressUpdate) {
+    public PivResultData calculateMultipass(PivResultData pivResultData, String resultName, boolean fft,
+                                            ProgressUpdateInterface progressUpdate) {
         double[][] dr_new = new double[fieldRows][fieldCols];
         double[][] dc_new = new double[fieldRows][fieldCols];
 
@@ -909,7 +929,7 @@ public class PivFunctions {
                     progressUpdate.updateProgressIteration(progressCounter++);
 
                 //if pixel displacements from 1st pass are zero keep them as zero in 2nd phase
-                if (v[ii][jj] == 0 && u[ii][jj] == 0) {
+                if (v[ii][jj] == 0d && u[ii][jj] == 0d) {
                     dr2[ii][jj] = 0.0;
                     dc2[ii][jj] = 0.0;
                     sig2noise[ii][jj] = 0.0;
@@ -947,7 +967,13 @@ public class PivFunctions {
                     subtract(IA2_new_t, new Scalar(i2_avg_new), window_b_1);
 
                     //Find the correlation
-                    Mat corr = openCvPIV(window_a_1, window_b_1);
+                    Mat corr;
+                    if (fft) {
+                        corr = fftPIV(window_a_1, window_b_1);
+                    } else {
+                        corr = openCvPIV(window_a_1, window_b_1);
+                    }
+
                     Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
 
                     int c = (int) mmr.maxLoc.x;
@@ -969,8 +995,13 @@ public class PivFunctions {
                         eps_r_new[ii][jj] = Double.isNaN(epsr_new)? 0.0 : epsr_new;
                         eps_c_new[ii][jj] = Double.isNaN(epsc_new)? 0.0 : epsc_new;
 
-                        dr_new[ii][jj] = (windowSize - 1) - (r + eps_r_new[ii][jj]);
-                        dc_new[ii][jj] = (windowSize - 1) - (c + eps_c_new[ii][jj]);
+                        if (fft) {
+                            dr_new[ii][jj] = (windowSize / 2d) - (r + eps_r_new[ii][jj]);
+                            dc_new[ii][jj] = (windowSize / 2d) - (c + eps_c_new[ii][jj]);
+                        } else {
+                            dr_new[ii][jj] = (windowSize - 1) - (r + eps_r_new[ii][jj]);
+                            dc_new[ii][jj] = (windowSize - 1) - (c + eps_c_new[ii][jj]);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
