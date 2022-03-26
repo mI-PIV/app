@@ -102,17 +102,6 @@ public class PivRunner implements ProgressUpdateInterface {
                         pivFunctions.vectorPostProcessing(singlePassResult, true,
                                 PivResultData.SINGLE+PivResultData.PROCESSED);
 
-                if (parameters.getCameraCalibrationResult() != null) {
-                    setMessage("Applying Camera Calibration to Single Pass post-processed vectors");
-                    singlePassProcessed.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
-                            pivFunctions.getFieldRows(), pivFunctions.getFieldCols());
-
-                    pivFunctions.saveVectorCentimeters(singlePassProcessed,
-                            parameters.getCameraCalibrationResult().ratio, "CENTIMETERS_SINGLEPASS");
-
-                    singlePassResult.setCalibrated(true);
-                }
-
                 // single pass vorticity
                 PivFunctions.calculateVorticityMap(singlePassProcessed);
 
@@ -137,21 +126,47 @@ public class PivRunner implements ProgressUpdateInterface {
 
                 parameters.setMaxDisplacement(PivFunctions.checkMaxDisplacement(multiPassProcessed.getMag()));
 
-                if (parameters.getCameraCalibrationResult() != null) {
-                    setMessage("Applying Camera Calibration to Multi-pass post-processed vectors");
+                // save multi pass post-processed
+                resultData.put(multiPassProcessed.getName(), multiPassProcessed);
+                pivFunctions.saveVectorsValues(multiPassProcessed, multiPassProcessed.getName());
 
+
+                ////////////////////////////////////////////////////////////////////////////////////
+                //// CALIBRATION ////
+                ////////////////////////////////////////////////////////////////////////////////////
+                if (parameters.getCameraCalibrationResult() != null) {
+                    setMessage("Applying Camera Calibration");
+
+                    // singlepass processed
+                    singlePassProcessed.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
+                            pivFunctions.getFieldRows(), pivFunctions.getFieldCols());
+
+                    pivFunctions.saveVectorCentimeters(singlePassProcessed,
+                            parameters.getCameraCalibrationResult().ratio,
+                            "CENTIMETERS_" + singlePassProcessed.getName());
+
+                    singlePassProcessed.setCalibrated(true);
+
+                    // multipass
+                    multipassResults.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
+                            pivFunctions.getFieldRows(), pivFunctions.getFieldCols());
+
+                    pivFunctions.saveVectorCentimeters(multipassResults,
+                            parameters.getCameraCalibrationResult().ratio,
+                            "CENTIMETERS_" + multipassResults.getName());
+
+                    multipassResults.setCalibrated(true);
+
+                    // multipass processed
                     multiPassProcessed.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
                             pivFunctions.getFieldRows(), pivFunctions.getFieldCols());
 
                     pivFunctions.saveVectorCentimeters(multiPassProcessed,
-                            parameters.getCameraCalibrationResult().ratio, "CENTIMETERS_REPLACED");
+                            parameters.getCameraCalibrationResult().ratio,
+                            "CENTIMETERS_" + multiPassProcessed.getName());
 
                     multiPassProcessed.setCalibrated(true);
                 }
-
-                // save multi pass post-processed
-                resultData.put(multiPassProcessed.getName(), multiPassProcessed);
-                pivFunctions.saveVectorsValues(multiPassProcessed, multiPassProcessed.getName());
 
 
                 ////////////////////////////////////////////////////////////////////////////////////
