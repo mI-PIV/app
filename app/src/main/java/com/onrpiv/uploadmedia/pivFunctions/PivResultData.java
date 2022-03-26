@@ -204,10 +204,12 @@ public class PivResultData implements Serializable {
 
         for (int i = 0; i < fieldRows; i++) {
             for (int j = 0; j < fieldCols; j++) {
-                _u_calib[i][j] = (_u[i][j] * pixelToPhysicalRatio) / _dt;
-                _v_calib[i][j] = (_v[i][j] * pixelToPhysicalRatio) / _dt;
-                _mag_calib[i][j] = (_mag[i][j] * pixelToPhysicalRatio) / _dt;
-                _vort_calib[i][j] = (_vort[i][j] * pixelToPhysicalRatio) / _dt;
+                _u_calib[i][j] = (_u[i][j] / pixelToPhysicalRatio) / _dt;
+                _v_calib[i][j] = (_v[i][j] / pixelToPhysicalRatio) / _dt;
+                _mag_calib[i][j] = (_mag[i][j] / pixelToPhysicalRatio) / _dt;
+                if (null != _vort) {  // some correlations won't have vorticity values
+                    _vort_calib[i][j] = (_vort[i][j] / pixelToPhysicalRatio) / _dt;
+                }
             }
         }
     }
