@@ -44,14 +44,14 @@ public class PivRunnerTestObj {
     }
 
     public PivResultData runPostProcessing(PivResultData singlePass) {
-        return _piv.vectorPostProcessing(singlePass, "PostProcessing");
+        return _piv.vectorPostProcessing(singlePass, true, "SinglePassPostProcessing");
     }
 
     public PivResultData runMultiPass_withReplace(PivResultData postProcessed) {
         boolean fft = true;
         PivResultData pivReplaceMissing = _piv.replaceMissingVectors(postProcessed, null);
         PivResultData pivCorrelationMulti = _piv.calculateMultipass(pivReplaceMissing, PivResultData.MULTI, fft, null);
-        PivResultData pivReplaceMissing2 = _piv.replaceMissingVectors(pivCorrelationMulti, PivResultData.REPLACE2);
+        PivResultData pivReplaceMissing2 = _piv.replaceMissingVectors(pivCorrelationMulti, PivResultData.MULTI+PivResultData.PROCESSED+PivResultData.REPLACE);
         PivFunctions.calculateVorticityMap(pivReplaceMissing2);
         _params.setMaxDisplacement(PivFunctions.checkMaxDisplacement(pivReplaceMissing2.getMag()));
         return pivReplaceMissing2;
