@@ -47,7 +47,6 @@ public class CalibrationInputActivity extends FragmentActivity implements Positi
     private double productFactor = 1d;
     private double measureInput;
 
-
     // Switches
     boolean spinnerSelected = false;
     boolean pointsSelected = false;
@@ -100,7 +99,8 @@ public class CalibrationInputActivity extends FragmentActivity implements Positi
         calibrateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                double pixelsPerCm = (productFactor * measureInput) * getLinesPixelLength();
+                double cmInput = productFactor * measureInput;
+                double pixelsPerCm = getLinesPixelLength() / cmInput;
                 Intent finalIntent = getIntent();
                 finalIntent.putExtra("pixelsPerCm", pixelsPerCm);
                 setResult(RESULT_OK, finalIntent);
@@ -119,8 +119,8 @@ public class CalibrationInputActivity extends FragmentActivity implements Positi
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 spinnerSelected = true;
                 if (i == 1) {  // mm
-                    // 10 mm in a cm
-                    productFactor = 10d;
+                    // 0.1 cm in a mm
+                    productFactor = 0.1d;
                 } else if (i == 2) {  // inches
                     // 2.54 cm in an inch
                     productFactor = 2.54d;

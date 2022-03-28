@@ -174,13 +174,13 @@ public class ImageActivity extends AppCompatActivity {
 
     public void displayResults(View view) {
         // Pass PIV result data to ViewResultsActivity
-        PivResultData singlePassResult = resultData.get(PivResultData.SINGLE);
+        PivResultData singlePassResult = resultData.get(PivResultData.SINGLE+PivResultData.PROCESSED+PivResultData.REPLACE);
         assert singlePassResult != null;
 
         ViewResultsActivity.singlePass = singlePassResult;
         ViewResultsActivity.multiPass = resultData.get(PivResultData.MULTI);
         if (pivParameters.isReplace()) {
-            ViewResultsActivity.replacedPass = resultData.get(PivResultData.REPLACE2);
+            ViewResultsActivity.replacedPass = resultData.get(PivResultData.MULTI+PivResultData.PROCESSED+PivResultData.REPLACE);
         }
         ViewResultsActivity.calibrated = singlePassResult.isCalibrated();
         ViewResultsActivity.backgroundSubtracted = singlePassResult.isBackgroundSubtracted();
