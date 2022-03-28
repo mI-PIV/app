@@ -152,7 +152,7 @@ public class LightBulb extends AppCompatImageButton {
                 activityWindow.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                         WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-                activityWindow.setBackgroundDrawableResource(android.R.color.darker_gray);
+                activityWindow.getDecorView().setBackgroundColor(Color.GRAY);
 
                 // set title and message
                 TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
@@ -176,7 +176,7 @@ public class LightBulb extends AppCompatImageButton {
                     public void onClick(View v) {
                         popupWindow.dismiss();
                         activityWindow.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        activityWindow.setBackgroundDrawableResource(android.R.color.background_light);
+                        activityWindow.getDecorView().setBackgroundColor(Color.WHITE);
                     }
                 });
 
