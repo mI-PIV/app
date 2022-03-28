@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.text.LineBreaker;
 import android.os.Build;
 import android.util.TypedValue;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatImageButton;
 
+import com.onrpiv.uploadmedia.Experiment.Popups.PivOptionsPopup;
 import com.onrpiv.uploadmedia.R;
 
 /**
@@ -150,6 +152,8 @@ public class LightBulb extends AppCompatImageButton {
                 activityWindow.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                         WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
+                activityWindow.getDecorView().setBackgroundColor(Color.GRAY);
+
                 // set title and message
                 TextView windowTitle = (TextView) customView.findViewById(R.id.popupWindowTitle);
                 windowTitle.setText(title);
@@ -172,6 +176,7 @@ public class LightBulb extends AppCompatImageButton {
                     public void onClick(View v) {
                         popupWindow.dismiss();
                         activityWindow.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        activityWindow.getDecorView().setBackgroundColor(Color.WHITE);
                     }
                 });
 

@@ -1,53 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <RelativeLayout
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:ignore="MissingConstraints">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/popupWindowTitle"
-            android:layout_width="205dp"
-            android:layout_height="215dp"
-            android:gravity="center_horizontal"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="18dp"
+            android:textSize="20dp"
+            android:textFontWeight="500"
             android:background="#FFFFFF"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/border"
-            android:layout_width="205dp"
-            android:layout_height="215dp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/black_de"
             android:gravity="center_horizontal"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="100dp"
-            android:background="@drawable/group_text_border"
-            android:textStyle="bold" />
+            android:orientation="horizontal" />
 
-        <TextView
-            android:id="@+id/popupWindowMessage"
-            android:layout_width="205dp"
-            android:layout_height="145dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="130dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/button_close"
-            android:layout_width="63dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="130dp"
-            android:layout_marginTop="280dp"
-            android:gravity="center_horizontal"
-            android:text="Close"
-            android:textSize="12sp" />
+            <TextView
+                android:id="@+id/popupWindowMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:background="#FFFFFF"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="25dp"
+                android:paddingBottom="80dp"/>
 
-    </RelativeLayout>
+            <Button
+                android:id="@+id/button_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#243EDF"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:layout_below="@id/popupWindowMessage"
+                android:layout_centerInParent="true"
+                android:text="Cancel"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="-60dp"
+                android:textSize="20dp" />
 
-</RelativeLayout>
+        </RelativeLayout>
+
+    </TableLayout>
+
+</LinearLayout>
