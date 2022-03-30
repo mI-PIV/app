@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -90,13 +91,20 @@ public class DensityPreviewPopup {
     private AnimationDrawable createAnimation() {
         Bitmap bmp1 = BitmapFactory.decodeFile(frame1Path);
         Bitmap bmp2 = BitmapFactory.decodeFile(frame2Path);
-        Bitmap cropped1 = getCroppedBitmap(bmp1);
-        Bitmap cropped2 = getCroppedBitmap(bmp2);
+//        Bitmap cropped11 = getCroppedBitmap(bmp1);
+//        Bitmap cropped12 = getCroppedBitmap(bmp2);
+
+        // Shrinking bitmap
+        Bitmap cropped1 = getBitmapResized(getCroppedBitmap(bmp1), cropSize, cropSize);
+        Bitmap cropped2 = getBitmapResized(getCroppedBitmap(bmp2), cropSize, cropSize);
+        // Expanding bitmap
+        Bitmap pixelated1 = getBitmapResized(cropped1, 700, 700);
+        Bitmap pixelated2 = getBitmapResized(cropped2, 700, 700);
 
         AnimationDrawable animation = new AnimationDrawable();
 
-        Drawable d1 = new BitmapDrawable(context.getResources(), cropped1);
-        Drawable d2 = new BitmapDrawable(context.getResources(), cropped2);
+        Drawable d1 = new BitmapDrawable(context.getResources(), pixelated1);
+        Drawable d2 = new BitmapDrawable(context.getResources(), pixelated2);
         Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
         animation.addFrame(d1,1000);
         animation.addFrame(d2,1000);
@@ -113,5 +121,18 @@ public class DensityPreviewPopup {
                 Math.round(toBeCropped.getWidth()/2f), Math.round(toBeCropped.getHeight()/2f),
                 cropSize, cropSize);
         return PivFunctions.resizeBitmap(cropped1, 600);
+    }
+
+    public Bitmap getBitmapResized(Bitmap bitmap, int newW, int newH) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float rescaledW = (float)newW / width;
+        float rescaledH = (float)newH / height;
+
+        Matrix bitmapMatrix = new Matrix();
+        bitmapMatrix.postScale(rescaledW, rescaledH);
+
+        Bitmap resized = Bitmap.createBitmap(bitmap, 0, 0, width, height, bitmapMatrix, false);
+        return resized;
     }
 }
