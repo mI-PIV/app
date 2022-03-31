@@ -916,7 +916,7 @@ public class PivFunctions {
         // add padding to grayscale frames
         Mat paddedGray1 = new Mat();
         Mat paddedGray2 = new Mat();
-        int padding = (int) Math.sqrt(windowSize);
+        int padding = windowSize + 1;
         Core.copyMakeBorder(grayFrame1, paddedGray1, padding, padding, padding, padding, Core.BORDER_CONSTANT, Scalar.all(0d));
         Core.copyMakeBorder(grayFrame2, paddedGray2, padding, padding, padding, padding, Core.BORDER_CONSTANT, Scalar.all(0d));
 
