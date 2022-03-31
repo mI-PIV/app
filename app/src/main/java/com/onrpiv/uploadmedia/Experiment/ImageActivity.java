@@ -174,7 +174,7 @@ public class ImageActivity extends AppCompatActivity {
 
     public void displayResults(View view) {
         // Pass PIV result data to ViewResultsActivity
-        PivResultData singlePassResult = resultData.get(PivResultData.SINGLE+PivResultData.PROCESSED+PivResultData.REPLACE);
+        PivResultData singlePassResult = resultData.get(PivResultData.SINGLE);
         assert singlePassResult != null;
 
         ViewResultsActivity.singlePass = singlePassResult;

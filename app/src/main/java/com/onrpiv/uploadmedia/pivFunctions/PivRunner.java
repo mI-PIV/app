@@ -95,6 +95,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 singlePassResult.setBackgroundSubtracted(backgroundSub);
 
                 // save raw single pass
+                resultData.put(singlePassResult.getName(), singlePassResult);
                 pivFunctions.saveVectorsValues(singlePassResult, singlePassResult.getName());
 
                 setMessage("Post-Processing Single Pass PIV");
