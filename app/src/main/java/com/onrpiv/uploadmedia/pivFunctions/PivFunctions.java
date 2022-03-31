@@ -845,11 +845,6 @@ public class PivFunctions {
     public PivResultData vectorPostProcessing(PivResultData passResult, boolean replacement,
                                               String resultName) {
 
-        if (replacement) {
-            resultName += PivResultData.REPLACE;
-            passResult = replaceMissingVectors(passResult, resultName);
-        }
-
         double[][] dr1_p = new double[fieldRows][fieldCols];
         double[][] dc1_p = new double[fieldRows][fieldCols];
         double[][] mag_p = new double[fieldRows][fieldCols];
@@ -888,8 +883,15 @@ public class PivFunctions {
             }
         }
 
-        return new PivResultData(resultName, dc1_p, dr1_p, mag_p,
+        PivResultData processedResult = new PivResultData(resultName, dc1_p, dr1_p, mag_p,
                 passResult.getSig2Noise(), getCoordinates(), cols, rows, dt);
+
+        if (replacement) {
+            resultName += PivResultData.REPLACE;
+            processedResult = replaceMissingVectors(processedResult, resultName);
+        }
+
+        return processedResult;
     }
 
     public PivResultData calculateMultipass(PivResultData pivResultData, String resultName, boolean fft,
