@@ -43,6 +43,8 @@ public class PivOptionsPopup extends AlertDialog {
     private final RadioGroup backSubRadioGroup;
     private final RadioGroup calibrationRadioGroup;
     private final RadioGroup corrMethodRadioGroup;
+    private final Button setAsDefault;
+    private final Button resetDefault;
     private final Button savePIVDataButton;
     private final Button cancelPIVDataButton;
     private final CheckBox advancedCheckbox;
@@ -98,14 +100,12 @@ public class PivOptionsPopup extends AlertDialog {
             calibrationRadioBtn.setText(calibString);
         }
 
+        setAsDefault = findViewById(R.id.set_as_default);
+        resetDefault = findViewById(R.id.reset_default);
         savePIVDataButton = findViewById(R.id.button_save_piv_data);
         cancelPIVDataButton = findViewById(R.id.button_cancel_piv_data);
         advancedCheckbox = findViewById(R.id.advancedCheckbox);
         advancedCheckbox.setChecked(false);
-
-        // this needs to be place inside when the advanced parameters is clicked because we need the screen to be bigger for it.
-        System.out.println("helooooooooooooooooooooooo");
-
 
         // lightbulbs
         final String linkText = "Learn More";
@@ -193,10 +193,10 @@ public class PivOptionsPopup extends AlertDialog {
 
                 // need a larger and smaller window for when advanced parameters is checked
                 if (isChecked) {
-                    getWindow().setLayout(1420, 2450);
+                    getWindow().setLayout(1420, 2500);
                 }
                 else {
-                    getWindow().setLayout(1420, 1150);
+                    getWindow().setLayout(1420, 1325);
                 }
             }
         });
