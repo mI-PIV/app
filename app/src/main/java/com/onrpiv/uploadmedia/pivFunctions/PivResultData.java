@@ -22,7 +22,8 @@ public class PivResultData implements Serializable {
     private int stepY;
     private boolean calibrated = false;
     private boolean backgroundSubtracted = false;
-    private double pixelToPhysicalRatio = 1d;
+    private double pixelToPhysicalRatio;
+    private double uvConversion;
     private String physicalMetric = "cm/s";
 
     // intent/io keys
@@ -115,6 +116,7 @@ public class PivResultData implements Serializable {
     public void setPixelToPhysicalRatio(double ratio, int fieldRows, int fieldCols) {
         pixelToPhysicalRatio = ratio;
         calculatePhysicalVectors(fieldRows, fieldCols);
+        calibrated = true;
     }
 
     public String getPhysicalMetric() {
@@ -202,13 +204,15 @@ public class PivResultData implements Serializable {
         _mag_calib = new double[fieldRows][fieldCols];
         _vort_calib = new double[fieldRows][fieldCols];
 
+        uvConversion = (1d / pixelToPhysicalRatio) / _dt;
+
         for (int i = 0; i < fieldRows; i++) {
             for (int j = 0; j < fieldCols; j++) {
-                _u_calib[i][j] = (_u[i][j] / pixelToPhysicalRatio) / _dt;
-                _v_calib[i][j] = (_v[i][j] / pixelToPhysicalRatio) / _dt;
-                _mag_calib[i][j] = (_mag[i][j] / pixelToPhysicalRatio) / _dt;
+                _u_calib[i][j] = _u[i][j] * uvConversion;
+                _v_calib[i][j] = _v[i][j] * uvConversion;
+                _mag_calib[i][j] = _mag[i][j] * uvConversion;
                 if (null != _vort) {  // some correlations won't have vorticity values
-                    _vort_calib[i][j] = (_vort[i][j] / pixelToPhysicalRatio) / _dt;
+                    _vort_calib[i][j] = _vort[i][j] * uvConversion;
                 }
             }
         }
