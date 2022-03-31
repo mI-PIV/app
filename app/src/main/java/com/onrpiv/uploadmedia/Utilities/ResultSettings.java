@@ -185,10 +185,13 @@ public class ResultSettings {
                 "\nVorticity: " + vort;
     }
 
-    public String formatInfoString_physical(float x, float y, float u, float v, float vort) {
-        return "x: " + ((int) x) + "\t\t\t" + "y: " + ((int) y) +
+    public String formatInfoString_physical(float x, float y, float u, float v, float vort,
+                                            float xyconversion, float uvconversion) {
+        return  "x: " + ((int) x) + "\t\t\t" + "y: " + ((int) y) +
                 "\nU: " + u + " cm/s\t\t\t" + "V: " + v + " cm/s" +
-                "\nVorticity: " + vort;
+                "\nVorticity: " + vort +
+                "\nconversion factor xy (px/cm): " + xyconversion +
+                "\nconversion factor uv ((px/cm)/dt -> cm/s): " + uvconversion;
     }
 
     public String debugString(int pivX, int pivY, double imgX, double imgY, float viewX, float viewY) {
