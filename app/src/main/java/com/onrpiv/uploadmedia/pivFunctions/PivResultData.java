@@ -22,8 +22,8 @@ public class PivResultData implements Serializable {
     private int stepY;
     private boolean calibrated = false;
     private boolean backgroundSubtracted = false;
-    private double pixelToPhysicalRatio;
-    private double uvConversion;
+    private double pixelToPhysicalRatio = 1d;
+    private double uvConversion = 1d;
     private String physicalMetric = "cm/s";
 
     // intent/io keys
@@ -198,6 +198,10 @@ public class PivResultData implements Serializable {
         backgroundSubtracted = bool;
     }
 
+    public double getUvConversion() {
+        return uvConversion;
+    }
+
     private void calculatePhysicalVectors(int fieldRows, int fieldCols) {
         _u_calib = new double[fieldRows][fieldCols];
         _v_calib = new double[fieldRows][fieldCols];
@@ -217,12 +221,4 @@ public class PivResultData implements Serializable {
             }
         }
     }
-
-//    private void applyTimeDelta(double[][] vectorComponent) {
-//        for (int i = 0; i < _interrY.length; i++) {
-//            for (int j = 0; j < _interrX.length; j++) {
-//                vectorComponent[i][j] *= _dt;
-//            }
-//        }
-//    }
 }

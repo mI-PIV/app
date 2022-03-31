@@ -726,7 +726,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             float vort = (float) pivCorr.getCalibratedVorticity()[pivCoords.y][pivCoords.x];
             // because we're inverting the y axis, we also invert the v values
             updatedText = settings.formatInfoString_physical((float) imgX, (float) dispY, u, -v, vort,
-                    pivCorr.getPixelToPhysicalRatio());
+                    (float) pivCorr.getPixelToPhysicalRatio(), (float) pivCorr.getUvConversion());
         } else {
             // compile the data
             float u = (float)pivCorr.getU()[pivCoords.y][pivCoords.x];
