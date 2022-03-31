@@ -98,7 +98,6 @@ public class PivRunner implements ProgressUpdateInterface {
                 resultData.put(singlePassResult.getName(), singlePassResult);
                 pivFunctions.saveVectorsValues(singlePassResult, singlePassResult.getName());
 
-                setMessage("Post-Processing Single Pass PIV");
                 PivResultData singlePassProcessed =
                         pivFunctions.vectorPostProcessing(singlePassResult, true,
                                 PivResultData.SINGLE+PivResultData.PROCESSED);
@@ -121,7 +120,6 @@ public class PivRunner implements ProgressUpdateInterface {
                 resultData.put(multipassResults.getName(), multipassResults);
                 pivFunctions.saveVectorsValues(multipassResults, multipassResults.getName());
 
-                setMessage("Post-Processing Multi-Pass PIV");
                 PivResultData multiPassProcessed = pivFunctions.vectorPostProcessing(multipassResults,
                         parameters.isReplace(), PivResultData.MULTI+PivResultData.PROCESSED);
 
@@ -138,15 +136,13 @@ public class PivRunner implements ProgressUpdateInterface {
                 if (parameters.getCameraCalibrationResult() != null) {
                     setMessage("Applying Camera Calibration");
 
-                    // singlepass processed
-                    singlePassProcessed.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
+                    // singlepass
+                    singlePassResult.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
                             pivFunctions.getFieldRows(), pivFunctions.getFieldCols());
 
-                    pivFunctions.saveVectorCentimeters(singlePassProcessed,
+                    pivFunctions.saveVectorCentimeters(singlePassResult,
                             parameters.getCameraCalibrationResult().ratio,
-                            "CENTIMETERS_" + singlePassProcessed.getName());
-
-                    singlePassProcessed.setCalibrated(true);
+                            "CENTIMETERS_" + singlePassResult.getName());
 
                     // multipass
                     multipassResults.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
@@ -156,8 +152,6 @@ public class PivRunner implements ProgressUpdateInterface {
                             parameters.getCameraCalibrationResult().ratio,
                             "CENTIMETERS_" + multipassResults.getName());
 
-                    multipassResults.setCalibrated(true);
-
                     // multipass processed
                     multiPassProcessed.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
                             pivFunctions.getFieldRows(), pivFunctions.getFieldCols());
@@ -165,8 +159,6 @@ public class PivRunner implements ProgressUpdateInterface {
                     pivFunctions.saveVectorCentimeters(multiPassProcessed,
                             parameters.getCameraCalibrationResult().ratio,
                             "CENTIMETERS_" + multiPassProcessed.getName());
-
-                    multiPassProcessed.setCalibrated(true);
                 }
 
 
