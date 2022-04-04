@@ -353,25 +353,36 @@
 
                 <TableRow android:gravity="center_horizontal">
 
+                    <TextView
+                        android:gravity="end"
+                        android:text="Set parameters to default: "/>
+
                     <Button
                         android:id="@+id/set_as_default"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Set as default"
+                        android:text="Set"
                         android:textSize="15dp"
                         android:textAllCaps="false"
-                        android:backgroundTint="#243EDF"
+                        android:backgroundTint="#4CAF50"
                         android:textColor="#FFFFFF"
                         android:gravity="center_horizontal"/>
+                </TableRow>
+
+                <TableRow android:gravity="center_horizontal">
+
+                    <TextView
+                        android:gravity="end"
+                        android:text="Reset to original default: "/>
 
                     <Button
                         android:id="@+id/reset_default"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Reset Default"
+                        android:text="Reset"
                         android:textSize="15dp"
                         android:textAllCaps="false"
-                        android:backgroundTint="#243EDF"
+                        android:backgroundTint="#4CAF50"
                         android:textColor="#FFFFFF"
                         android:gravity="center_horizontal"/>
                 </TableRow>

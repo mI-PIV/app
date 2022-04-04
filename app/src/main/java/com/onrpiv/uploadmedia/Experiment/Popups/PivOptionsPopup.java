@@ -193,10 +193,10 @@ public class PivOptionsPopup extends AlertDialog {
 
                 // need a larger and smaller window for when advanced parameters is checked
                 if (isChecked) {
-                    getWindow().setLayout(1420, 2500);
+                    getWindow().setLayout(1420, 2675);
                 }
                 else {
-                    getWindow().setLayout(1420, 1325);
+                    getWindow().setLayout(1420, 1500);
                 }
             }
         });
