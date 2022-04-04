@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultRegistry;
 import androidx.collection.ArrayMap;
@@ -281,6 +282,28 @@ public class PivOptionsPopup extends AlertDialog {
                 savePIVDataButton.setEnabled(checkTexts());
             }
         });
+
+        // set as default button
+        setAsDefault.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                Toast.makeText(context, "You're new default parameters are set.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        // reset to original default button
+        resetDefault.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                Toast.makeText(context, "The parameters have been set to the original default.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         // cancel button
         cancelPIVDataButton.setOnClickListener(new View.OnClickListener() {
