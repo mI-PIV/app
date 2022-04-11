@@ -3,8 +3,10 @@ package com.onrpiv.uploadmedia.Experiment.Popups;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.text.Editable;
+import android.text.Layout;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -68,6 +70,8 @@ public class PivOptionsPopup extends AlertDialog {
         setCancelable(false);
         setView(getLayoutInflater().inflate(R.layout.popup_piv_dialog, null));
         create();
+
+        getWindow().getAttributes().width = 1420; // increasing width to fit all content
 
         // init texts
         TextView setEditTextPIV = (TextView) findViewById(R.id.piv_options_description);
@@ -191,17 +195,8 @@ public class PivOptionsPopup extends AlertDialog {
                     view.setVisibility(isChecked? View.VISIBLE : View.GONE);
                 }
                 savePIVDataButton.setEnabled(checkTexts());
-
-                // need a larger and smaller window for when advanced parameters is checked
-                if (isChecked) {
-                    getWindow().setLayout(1420, 2675);
-                }
-                else {
-                    getWindow().setLayout(1420, 1500);
-                }
             }
         });
-
 
         // Set the default overlap to 50% of windowSize if windowSize is changed from default
         windowSizeText.addTextChangedListener(new TextWatcher() {
