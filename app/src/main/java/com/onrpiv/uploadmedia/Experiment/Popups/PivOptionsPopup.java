@@ -46,8 +46,8 @@ public class PivOptionsPopup extends AlertDialog {
     private final RadioGroup backSubRadioGroup;
     private final RadioGroup calibrationRadioGroup;
     private final RadioGroup corrMethodRadioGroup;
-    private final Button setAsDefault;
-    private final Button resetDefault;
+    private final Button setAsDefaultButton;
+    private final Button resetDefaultButton;
     private final Button savePIVDataButton;
     private final Button cancelPIVDataButton;
     private final CheckBox advancedCheckbox;
@@ -105,8 +105,8 @@ public class PivOptionsPopup extends AlertDialog {
             calibrationRadioBtn.setText(calibString);
         }
 
-        setAsDefault = findViewById(R.id.set_as_default);
-        resetDefault = findViewById(R.id.reset_default);
+        setAsDefaultButton = findViewById(R.id.set_as_default);
+        resetDefaultButton = findViewById(R.id.reset_default);
         savePIVDataButton = findViewById(R.id.button_save_piv_data);
         cancelPIVDataButton = findViewById(R.id.button_cancel_piv_data);
         advancedCheckbox = findViewById(R.id.advancedCheckbox);
@@ -279,7 +279,7 @@ public class PivOptionsPopup extends AlertDialog {
         });
 
         // set as default button
-        setAsDefault.setOnClickListener(new View.OnClickListener() {
+        setAsDefaultButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -290,10 +290,17 @@ public class PivOptionsPopup extends AlertDialog {
 
 
         // reset to original default button
-        resetDefault.setOnClickListener(new View.OnClickListener() {
+        resetDefaultButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                windowSizeText.setText(Integer.toString(parameters.getWindowSize()));
+                overlapText.setText(Integer.toString(parameters.getOverlap()));
+                corrMethodRadioGroup.check(R.id.params_method_fft);
+                dtText.setText(Double.toString(1d/parameters.getDt()));
+                qMinText.setText(Double.toString(parameters.getqMin()));
+                EText.setText(Double.toString(parameters.getE()));
+                replaceRadioGroup.check(R.id.params_replace_yes);
 
                 Toast.makeText(context, "The parameters have been set to the original default.", Toast.LENGTH_SHORT).show();
             }
