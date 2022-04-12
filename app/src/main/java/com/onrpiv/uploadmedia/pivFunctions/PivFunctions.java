@@ -845,11 +845,6 @@ public class PivFunctions {
     public PivResultData vectorPostProcessing(PivResultData passResult, boolean replacement,
                                               String resultName) {
 
-        if (replacement) {
-            resultName += PivResultData.REPLACE;
-            passResult = replaceMissingVectors(passResult, resultName);
-        }
-
         double[][] dr1_p = new double[fieldRows][fieldCols];
         double[][] dc1_p = new double[fieldRows][fieldCols];
         double[][] mag_p = new double[fieldRows][fieldCols];
@@ -888,8 +883,15 @@ public class PivFunctions {
             }
         }
 
-        return new PivResultData(resultName, dc1_p, dr1_p, mag_p,
+        PivResultData processedResult = new PivResultData(resultName, dc1_p, dr1_p, mag_p,
                 passResult.getSig2Noise(), getCoordinates(), cols, rows, dt);
+
+        if (replacement) {
+            resultName += PivResultData.REPLACE;
+            processedResult = replaceMissingVectors(processedResult, resultName);
+        }
+
+        return processedResult;
     }
 
     public PivResultData calculateMultipass(PivResultData pivResultData, String resultName, boolean fft,
@@ -914,7 +916,7 @@ public class PivFunctions {
         // add padding to grayscale frames
         Mat paddedGray1 = new Mat();
         Mat paddedGray2 = new Mat();
-        int padding = (int) Math.sqrt(windowSize);
+        int padding = windowSize + 1;
         Core.copyMakeBorder(grayFrame1, paddedGray1, padding, padding, padding, padding, Core.BORDER_CONSTANT, Scalar.all(0d));
         Core.copyMakeBorder(grayFrame2, paddedGray2, padding, padding, padding, padding, Core.BORDER_CONSTANT, Scalar.all(0d));
 

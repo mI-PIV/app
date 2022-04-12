@@ -94,6 +94,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private TextView infoText;
     private float currentX;
     private float currentY;
+    private static float conversionFactor;
 
     // From Image Activity
     public static PivResultData singlePass;
@@ -724,7 +725,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             float v = (float) pivCorr.getCalibratedV()[pivCoords.y][pivCoords.x];
             float vort = (float) pivCorr.getCalibratedVorticity()[pivCoords.y][pivCoords.x];
             // because we're inverting the y axis, we also invert the v values
-            updatedText = settings.formatInfoString_physical((float) imgX, (float) dispY, u, -v, vort);
+            updatedText = settings.formatInfoString_physical((float) imgX, (float) dispY, u, -v, vort,
+                    (float) pivCorr.getPixelToPhysicalRatio(), (float) pivCorr.getUvConversion());
         } else {
             // compile the data
             float u = (float)pivCorr.getU()[pivCoords.y][pivCoords.x];

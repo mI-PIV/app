@@ -174,7 +174,7 @@ public class ImageActivity extends AppCompatActivity {
 
     public void displayResults(View view) {
         // Pass PIV result data to ViewResultsActivity
-        PivResultData singlePassResult = resultData.get(PivResultData.SINGLE+PivResultData.PROCESSED+PivResultData.REPLACE);
+        PivResultData singlePassResult = resultData.get(PivResultData.SINGLE);
         assert singlePassResult != null;
 
         ViewResultsActivity.singlePass = singlePassResult;
@@ -182,7 +182,12 @@ public class ImageActivity extends AppCompatActivity {
         if (pivParameters.isReplace()) {
             ViewResultsActivity.replacedPass = resultData.get(PivResultData.MULTI+PivResultData.PROCESSED+PivResultData.REPLACE);
         }
-        ViewResultsActivity.calibrated = singlePassResult.isCalibrated();
+
+        // calibration
+        ViewResultsActivity.calibrated = singlePassResult.isCalibrated() ||
+                ViewResultsActivity.multiPass.isCalibrated() ||
+                ViewResultsActivity.replacedPass.isCalibrated();
+
         ViewResultsActivity.backgroundSubtracted = singlePassResult.isBackgroundSubtracted();
 
         Intent displayIntent = new Intent(ImageActivity.this, ViewResultsActivity.class);
