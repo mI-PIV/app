@@ -816,7 +816,7 @@ public class PivFunctions {
         List<Double> medianList = new ArrayList<>();
         for (int ki = k-1; ki <= k+1; ki++) {
             for (int li = l-1; li <= l+1; li++) {
-                if (ki < 0 || ki >= arr.length || li < 0 || li >= arr.length) {
+                if (ki < 0 || ki >= arr.length || li < 0 || li >= arr[0].length) {
                     continue;
                 } else if (ki == k && li == l) {
                     continue;
@@ -831,7 +831,7 @@ public class PivFunctions {
         List<Double> medianList = new ArrayList<>();
         for (int ki = k-1; ki <= k+1; ki++) {
             for (int li = l-1; li <= l+1; li++) {
-                if (ki < 0 || ki >= arr.length || li < 0 || li >= arr.length) {
+                if (ki < 0 || ki >= arr.length || li < 0 || li >= arr[0].length) {
                     continue;
                 } else if (ki == k && li == l) {
                     continue;
