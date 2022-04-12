@@ -117,8 +117,6 @@ public class PIVTests {
                 int ys = (y+1) * resultData.getStepY();
                 int oneDIndex = (xs-1) * resultData.getCols() + (ys-1);
                 String[] realLine = realData.get(oneDIndex);
-//                int rx = Integer.parseInt(realLine[0]);
-//                int ry = Integer.parseInt(realLine[1]);
                 double ru = Double.parseDouble(realLine[2]);
                 double rv = Double.parseDouble(realLine[3]);
 
