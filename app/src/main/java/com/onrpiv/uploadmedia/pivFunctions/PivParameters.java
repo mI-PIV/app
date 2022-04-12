@@ -188,6 +188,10 @@ public class PivParameters implements Serializable {
         backgroundSelection = selection;
     }
 
+    public String getFrameSetName() {
+        return frameSetName;
+    }
+
     public int getFrame1Index(){
         return frameOne;
     }

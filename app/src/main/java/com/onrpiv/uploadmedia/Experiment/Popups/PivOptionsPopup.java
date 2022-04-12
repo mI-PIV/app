@@ -3,10 +3,8 @@ package com.onrpiv.uploadmedia.Experiment.Popups;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.text.Editable;
-import android.text.Layout;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -75,6 +73,8 @@ public class PivOptionsPopup extends AlertDialog {
 
         // init texts
         TextView setEditTextPIV = (TextView) findViewById(R.id.piv_options_description);
+        setEditTextPIV.setText("Please Input the parameters to be used in your PIV experiment");
+        setEditTextPIV.setTextSize(20);
 
         windowSizeText = (EditText) findViewById(R.id.windowSize);
         overlapText = (EditText) findViewById(R.id.overlap);
@@ -155,17 +155,8 @@ public class PivOptionsPopup extends AlertDialog {
                 )
         );
 
-        // set default texts
-        setEditTextPIV.setText("Please Input the parameters to be used in your PIV experiment");
-        setEditTextPIV.setTextSize(20);
-        windowSizeText.setText(Integer.toString(parameters.getWindowSize()));
-        overlapText.setText(Integer.toString(parameters.getOverlap()));
-        dtText.setText(Double.toString(1d/parameters.getDt()));
-        qMinText.setText(Double.toString(parameters.getqMin()));
-        EText.setText(Double.toString(parameters.getE()));
-        replaceRadioGroup.check(R.id.params_replace_yes);
-        savePIVDataButton.setEnabled(true);
-        corrMethodRadioGroup.check(R.id.params_method_fft);
+        // set texts
+        setGUITexts();
 
         // load our ids to keys translation dictionary
         loadIdToKey();
@@ -394,5 +385,23 @@ public class PivOptionsPopup extends AlertDialog {
     private float calculateTimeDelta(int fps, int frame1Num, int frame2Num) {
         int deltaFrameNums = frame2Num - frame1Num;
         return (float) deltaFrameNums/ (float) fps;
+    }
+
+    private void setGUITexts() {
+        // set default texts
+        windowSizeText.setText(Integer.toString(parameters.getWindowSize()));
+        overlapText.setText(Integer.toString(parameters.getOverlap()));
+        dtText.setText(Double.toString(1d/parameters.getDt()));
+        qMinText.setText(Double.toString(parameters.getqMin()));
+        EText.setText(Double.toString(parameters.getE()));
+        replaceRadioGroup.check(R.id.params_replace_yes);
+        savePIVDataButton.setEnabled(true);
+        corrMethodRadioGroup.check(R.id.params_method_fft);
+    }
+
+    private void UserSelectedOriginalValues() {
+        // TODO change the name of this function
+        parameters = new PivParameters(parameters.getFrameSetName(), parameters.getFrame1Index(), parameters.getFrame2Index());
+        setGUITexts();
     }
 }
