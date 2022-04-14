@@ -294,12 +294,14 @@ public class PivOptionsPopup extends AlertDialog {
             @Override
             public void onClick(View v) {
 
-                windowSizeText.setText(Integer.toString(parameters.getWindowSize()));
-                overlapText.setText(Integer.toString(parameters.getOverlap()));
+                PivParameters parameters1 = new PivParameters();
+
+                windowSizeText.setText(Integer.toString(parameters1.getWindowSize()));
+                overlapText.setText(Integer.toString(parameters1.getOverlap()));
                 corrMethodRadioGroup.check(R.id.params_method_fft);
-                dtText.setText(Double.toString(1d/parameters.getDt()));
-                qMinText.setText(Double.toString(parameters.getqMin()));
-                EText.setText(Double.toString(parameters.getE()));
+                dtText.setText(Double.toString(20));
+                qMinText.setText(Double.toString(parameters1.getqMin()));
+                EText.setText(Double.toString(parameters1.getE()));
                 replaceRadioGroup.check(R.id.params_replace_yes);
 
                 Toast.makeText(context, "The parameters have been set to the original default.", Toast.LENGTH_SHORT).show();

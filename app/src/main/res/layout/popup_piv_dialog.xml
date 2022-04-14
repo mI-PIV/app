@@ -355,7 +355,7 @@
 
                     <TextView
                         android:gravity="end"
-                        android:text="Set parameters to default: "/>
+                        android:text="Set parameters as default: "/>
 
                     <Button
                         android:id="@+id/set_as_default"
