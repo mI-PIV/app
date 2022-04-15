@@ -872,7 +872,7 @@ public class PivFunctions {
 
                 // DONT ERASE COMMENTED LINE BELOW IN CASE WE NEED TO USE A SIMILAR LOGIC LATER
                 //if (pivCorrelation.get("magnitude")[k][l] * dt < nMaxUpper && pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
-                if (passResult.getSig2Noise()[k][l] > qMin && passResult.getMag()[k][l] < windowSize*0.5) {
+                if (passResult.getSig2Noise()[k][l] > qMin && r_r < _e && r_c < _e && passResult.getMag()[k][l] < windowSize*0.5) {
                     dr1_p[k][l] = passResult.getV()[k][l];
                     dc1_p[k][l] = passResult.getU()[k][l];
                     mag_p[k][l] = passResult.getMag()[k][l];
