@@ -872,7 +872,7 @@ public class PivFunctions {
 
                 // DONT ERASE COMMENTED LINE BELOW IN CASE WE NEED TO USE A SIMILAR LOGIC LATER
                 //if (pivCorrelation.get("magnitude")[k][l] * dt < nMaxUpper && pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
-                if (passResult.getSig2Noise()[k][l] > qMin && r_r < _e && r_c < _e && passResult.getMag()[k][l] < windowSize*0.5) {
+                if (passResult.getSig2Noise()[k][l] > qMin && passResult.getMag()[k][l] < windowSize*0.5) {
                     dr1_p[k][l] = passResult.getV()[k][l];
                     dc1_p[k][l] = passResult.getU()[k][l];
                     mag_p[k][l] = passResult.getMag()[k][l];
@@ -1039,6 +1039,8 @@ public class PivFunctions {
         for (int i = ii - 2; i <= ii +2; i++) {
             if (i < 0 || i >= u.length) {
                 valueList.add(0d);
+            } else if (i == ii) {
+                continue;
             } else {
                 valueList.add(u[i][jj]);
             }
@@ -1051,6 +1053,8 @@ public class PivFunctions {
         for (int j = jj - 2; j <= jj +2; j++) {
             if (j < 0 || j >= v.length) {
                 valueList.add(0d);
+            } else if (j == jj) {
+                continue;
             } else {
                 valueList.add(v[ii][j]);
             }
@@ -1071,7 +1075,7 @@ public class PivFunctions {
         for (int ii = 0; ii < fieldRows; ii++) {
             for (int jj = 0; jj < fieldCols; jj++) {
                 //if pixel displacements from 1st pass are zero calculate cubic interpolation
-                if (v[ii][jj] == 0 && u[ii][jj] == 0) {
+                if (v[ii][jj] == 0d && u[ii][jj] == 0d) {
                     dc2[ii][jj] = getCubicInterpolation_u(u, ii, jj);
                     dr2[ii][jj] = getCubicInterpolation_v(v, ii, jj);
                 } else {
@@ -1079,6 +1083,11 @@ public class PivFunctions {
                     dc2[ii][jj] = u[ii][jj];
                 }
                 mag[ii][jj] = Math.sqrt(Math.pow(dr2[ii][jj], 2) + Math.pow(dc2[ii][jj], 2));
+
+                if (mag[ii][jj] > windowSize * 0.5) {
+                    Log.d("Interpolation Mag", "Magnitude exceeds limit at " + ii + " " + jj);
+                }
+
                 sig2noise[ii][jj] = pivResultData.getSig2Noise()[ii][jj];
             }
         }
@@ -1088,7 +1097,6 @@ public class PivFunctions {
     }
 
     public static double cubicInterpolator(List<Double> values) {
-        double output = 0;
         //Specific to the equally spaced 4 point cubic coefficient matrix, may be removed with substitution described in sub-routine
         double[][] L = {{1, 0, 0, 0}, {0.421875, 1, 0, 0}, {0.015625, 0.33333333, 1, 0}, {0, 0, 0, 1}};
         double[][] U = {{64, 16, 4, 1}, {0, 2.25, 1.3125, 0.578125}, {0, 0, 0.5, 0.7916666667}, {0, 0, 0, 1}};
@@ -1106,8 +1114,7 @@ public class PivFunctions {
         double A = (z0 - U[0][1] * B - U[0][2] * C - U[0][3] * D) / U[0][0];
 
         //output the y value at x = 2
-        output = 8 * A + 4 * B + 2 * C + D;
-        return output;
+        return 8 * A + 4 * B + 2 * C + D;
     }
 
     public static double checkMaxDisplacement(double[][] magnitude) {
