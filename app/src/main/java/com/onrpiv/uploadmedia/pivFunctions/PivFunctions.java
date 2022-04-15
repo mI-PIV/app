@@ -870,6 +870,8 @@ public class PivFunctions {
                 r_r = Math.abs(v[k][l] - sm_r) / sigma_s_r;
                 r_c = Math.abs(u[k][l] - sm_c) / sigma_s_c;
 
+                // TODO check
+
                 // DONT ERASE COMMENTED LINE BELOW IN CASE WE NEED TO USE A SIMILAR LOGIC LATER
                 //if (pivCorrelation.get("magnitude")[k][l] * dt < nMaxUpper && pivCorrelation.get("sig2Noise")[k][l] > qMin && r_r < _e && r_c < _e) {
                 if (passResult.getSig2Noise()[k][l] > qMin && r_r < _e && r_c < _e && passResult.getMag()[k][l] < windowSize*0.5) {
@@ -1078,16 +1080,15 @@ public class PivFunctions {
                 if (v[ii][jj] == 0d && u[ii][jj] == 0d) {
                     dc2[ii][jj] = getCubicInterpolation_u(u, ii, jj);
                     dr2[ii][jj] = getCubicInterpolation_v(v, ii, jj);
+                    double tempMag = Math.sqrt(Math.pow(dr2[ii][jj], 2) + Math.pow(dc2[ii][jj], 2));
+                    if (tempMag > windowSize * 0.5) {
+                        Log.d("Interpolation Mag", "Magnitude exceeds limit at " + ii + " " + jj);
+                    }
                 } else {
                     dr2[ii][jj] = v[ii][jj];
                     dc2[ii][jj] = u[ii][jj];
                 }
                 mag[ii][jj] = Math.sqrt(Math.pow(dr2[ii][jj], 2) + Math.pow(dc2[ii][jj], 2));
-
-                if (mag[ii][jj] > windowSize * 0.5) {
-                    Log.d("Interpolation Mag", "Magnitude exceeds limit at " + ii + " " + jj);
-                }
-
                 sig2noise[ii][jj] = pivResultData.getSig2Noise()[ii][jj];
             }
         }

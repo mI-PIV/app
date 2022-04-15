@@ -34,6 +34,14 @@ public class FileIO {
         write(parameters, context, userName, newExpTotal, PivParameters.IO_FILENAME);
     }
 
+//    public static void writeUserParameters(Context context, String username) {
+//        write()
+//    }
+
+//    public static void loadUserParameters() {
+//
+//    }
+
     public static List<Integer> getSavedExperimentsDict(Context context, String userName) {
         List<Integer> experimentNumbersWithData = new ArrayList<>();
         int totalExperiments = PersistedData.getTotalExperiments(context, userName);
