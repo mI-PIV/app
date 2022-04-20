@@ -44,6 +44,13 @@ public class FileIO {
         write(parameters, context, userName, PivParameters.IO_FILENAME);
     }
 
+    public static boolean deleteParametersFile(Context context, String userName) {
+        File userDir = PathUtil.getUserDirectory(context, userName);
+        File paramsFile = new File(userDir, PivParameters.IO_FILENAME);
+        return paramsFile.delete();
+    }
+
+
     public static PivParameters readUserParametersFile(Context context, String userName) {
         File userDir = PathUtil.getUserDirectory(context, userName);
         File paramsFile = new File(userDir, PivParameters.IO_FILENAME);
