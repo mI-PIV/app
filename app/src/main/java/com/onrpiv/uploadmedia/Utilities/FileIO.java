@@ -34,6 +34,16 @@ public class FileIO {
         write(parameters, context, userName, newExpTotal, PivParameters.IO_FILENAME);
     }
 
+    public static void writeUserParametersFile(PivParameters parameters, Context context, String userName) {
+        write(parameters, context, userName, PivParameters.IO_FILENAME);
+    }
+
+    public static PivParameters readUserParametersFile(Context context, String userName) {
+        File userDir = PathUtil.getUserDirectory(context, userName);
+        File paramsFile = new File(userDir, PivParameters.IO_FILENAME);
+        return (PivParameters) read(paramsFile);
+    }
+
     public static List<Integer> getSavedExperimentsDict(Context context, String userName) {
         List<Integer> experimentNumbersWithData = new ArrayList<>();
         int totalExperiments = PersistedData.getTotalExperiments(context, userName);
@@ -73,6 +83,12 @@ public class FileIO {
     public static void write(Object object, Context context, String userName, int experimentNumber, String fileName) {
         File outputFile = getFile(context, userName, experimentNumber, fileName);
         write(object, outputFile);
+    }
+
+    public static void write(Object obj, Context context, String userName, String fileName) {
+        File userDir = PathUtil.getUserDirectory(context, userName);
+        File outputFile = new File(userDir, fileName+".obj");
+        write(obj, outputFile);
     }
 
     public static void write(Object object, File outputFile) {
