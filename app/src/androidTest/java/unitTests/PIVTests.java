@@ -49,6 +49,7 @@ public class PIVTests {
             e.printStackTrace();
         }
 
+        // TODO this works. Need to loop with counter in the "frame00001"
         int testId = context.getResources().getIdentifier("frame00001", "drawable", context.getPackageName());
 
         defaultParameters.setOverlap(48);
