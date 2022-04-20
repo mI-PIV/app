@@ -62,6 +62,10 @@ public class PivOptionsPopup extends AlertDialog {
                            ActivityResultRegistry resultRegistry) {
         super(context);
         parameters = new PivParameters(frameSetName, frameOne, frameTwo);
+        parameters = FileIO.checkParametersFile(context, userName) ?
+                FileIO.readUserParametersFile(context, userName) :
+                new PivParameters(frameSetName, frameOne, frameTwo);
+
         idToKey = new ArrayMap<>();
 
         // build dialog
@@ -285,17 +289,8 @@ public class PivOptionsPopup extends AlertDialog {
         resetDefaultButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 parameters = new PivParameters(parameters.getFrameSetName(), parameters.getFrame1Index(), parameters.getFrame2Index());
                 setGUITexts();
-
-                boolean exists = FileIO.checkParametersFile(context, userName);
-
-                parameters = FileIO.checkParametersFile(context, userName) ? FileIO.readUserParametersFile(context, userName) : new PivParameters();
-
-                FileIO.writeUserParametersFile(parameters, context, userName);
-                FileIO.readUserParametersFile(context, userName);
-
                 Toast.makeText(context, "The parameters have been set to the original default.", Toast.LENGTH_SHORT).show();
             }
         });
