@@ -23,6 +23,7 @@ import com.onrpiv.uploadmedia.Learn.PIVBasics4;
 import com.onrpiv.uploadmedia.Learn.PIVBasics5;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibrationResult;
+import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.Utilities.UserInput.BoolDoubleStruct;
 import com.onrpiv.uploadmedia.Utilities.UserInput.BoolIntStructure;
@@ -287,6 +288,13 @@ public class PivOptionsPopup extends AlertDialog {
 
                 parameters = new PivParameters(parameters.getFrameSetName(), parameters.getFrame1Index(), parameters.getFrame2Index());
                 setGUITexts();
+
+                boolean exists = FileIO.checkParametersFile(context, userName);
+
+                parameters = FileIO.checkParametersFile(context, userName) ? FileIO.readUserParametersFile(context, userName) : new PivParameters();
+
+                FileIO.writeUserParametersFile(parameters, context, userName);
+                FileIO.readUserParametersFile(context, userName);
 
                 Toast.makeText(context, "The parameters have been set to the original default.", Toast.LENGTH_SHORT).show();
             }
