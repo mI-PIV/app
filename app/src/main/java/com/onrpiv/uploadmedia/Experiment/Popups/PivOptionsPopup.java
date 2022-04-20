@@ -61,7 +61,7 @@ public class PivOptionsPopup extends AlertDialog {
     public PivOptionsPopup(final Context context, String userName, String frameSetName, int frameOne, int frameTwo,
                            ActivityResultRegistry resultRegistry) {
         super(context);
-        parameters = new PivParameters(frameSetName, frameOne, frameTwo);
+        // parameters = new PivParameters(frameSetName, frameOne, frameTwo);
         parameters = FileIO.checkParametersFile(context, userName) ?
                 FileIO.readUserParametersFile(context, userName) :
                 new PivParameters(frameSetName, frameOne, frameTwo);
@@ -278,8 +278,7 @@ public class PivOptionsPopup extends AlertDialog {
         setAsDefaultButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
+                FileIO.writeUserParametersFile(parameters, context, userName);
                 Toast.makeText(context, "You're new default parameters are set.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -289,6 +288,7 @@ public class PivOptionsPopup extends AlertDialog {
         resetDefaultButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FileIO.deleteParametersFile(context, userName);
                 parameters = new PivParameters(parameters.getFrameSetName(), parameters.getFrame1Index(), parameters.getFrame2Index());
                 setGUITexts();
                 Toast.makeText(context, "The parameters have been set to the original default.", Toast.LENGTH_SHORT).show();
