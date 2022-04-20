@@ -34,6 +34,12 @@ public class FileIO {
         write(parameters, context, userName, newExpTotal, PivParameters.IO_FILENAME);
     }
 
+    public static boolean checkParametersFile(Context context, String userName) {
+        File userDir = PathUtil.getUserDirectory(context, userName);
+        File paramsFile = new File(userDir, PivParameters.IO_FILENAME);
+        return paramsFile.exists();
+    }
+
     public static void writeUserParametersFile(PivParameters parameters, Context context, String userName) {
         write(parameters, context, userName, PivParameters.IO_FILENAME);
     }
