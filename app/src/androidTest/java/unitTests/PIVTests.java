@@ -6,7 +6,6 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
-import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
@@ -39,34 +38,42 @@ public class PIVTests {
 
     @Test
     public void processFrames() {
-        Mat frame1 = new Mat();
-        Mat frame2 = new Mat();
-        String frameString = "167";
-        try {
-            frame1 = Utils.loadResource(context, R.drawable.frame00167);
-            frame2 = Utils.loadResource(context, R.drawable.frame00168);
-        } catch (IOException e) {
-            e.printStackTrace();
+//        for (int i = 1; i < 5; i++) {
+        for (int i = 1; i < 400; i++) {
+            String frameOneString = "frame" + String.format("%05d", i-1);
+            String frameTwoString = "frame" + String.format("%05d", i);
+            String saveOutputFileName = "output_" + frameOneString + ".txt";
+
+            int frameOneId = context.getResources().getIdentifier(frameOneString, "drawable", context.getPackageName());
+            int frameTwoId = context.getResources().getIdentifier(frameTwoString, "drawable", context.getPackageName());
+
+            Mat frame1 = new Mat();
+            Mat frame2 = new Mat();
+            try {
+                frame1 = Utils.loadResource(context, frameOneId);
+                frame2 = Utils.loadResource(context, frameTwoId);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            defaultParameters.setOverlap(48);
+            defaultParameters.setE(2d);
+
+            File outputDir = PathUtil.getUserDirectory(context, "Test");
+
+            PivFunctions pivFuncs = new PivFunctions(frame1, frame2, null, defaultParameters, outputDir,
+                    "test", saveOutputFileName);
+
+            PivRunnerTestObj piv = new PivRunnerTestObj(defaultParameters, pivFuncs);
+
+            PivResultData singlePass = piv.runSinglePass();
+            PivResultData sp_processed = piv.runPostProcessing(singlePass);
+            PivResultData multipass_replace = piv.runMultiPass_withReplace(sp_processed);
+
+            pivFuncs.saveVectorsValues(multipass_replace, multipass_replace.getName());
+            frame1.release();
+            frame2.release();
         }
-
-        // TODO this works. Need to loop with counter in the "frame00001"
-        int testId = context.getResources().getIdentifier("frame00001", "drawable", context.getPackageName());
-
-        defaultParameters.setOverlap(48);
-        defaultParameters.setE(2d);
-
-
-        File outputDir = PathUtil.getUserDirectory(context, "Test");
-
-        PivRunnerTestObj piv = new PivRunnerTestObj(defaultParameters, frame1, frame2);
-        PivResultData singlePass = piv.runSinglePass();
-        PivResultData sp_processed = piv.runPostProcessing(singlePass);
-        PivResultData multipass_replace = piv.runMultiPass_withReplace(sp_processed);
-
-        PivFunctions pivFuncs = new PivFunctions(frame1, frame2, null, defaultParameters, outputDir,
-                "test", frameString+".txt");
-        pivFuncs.saveVectorsValues(multipass_replace, multipass_replace.getName());
-
     }
 
 
