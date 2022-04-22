@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultRegistry;
 import androidx.collection.ArrayMap;
@@ -22,6 +23,7 @@ import com.onrpiv.uploadmedia.Learn.PIVBasics4;
 import com.onrpiv.uploadmedia.Learn.PIVBasics5;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibrationResult;
+import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.Utilities.UserInput.BoolDoubleStruct;
 import com.onrpiv.uploadmedia.Utilities.UserInput.BoolIntStructure;
@@ -43,6 +45,8 @@ public class PivOptionsPopup extends AlertDialog {
     private final RadioGroup backSubRadioGroup;
     private final RadioGroup calibrationRadioGroup;
     private final RadioGroup corrMethodRadioGroup;
+    private final Button setAsDefaultButton;
+    private final Button resetDefaultButton;
     private final Button savePIVDataButton;
     private final Button cancelPIVDataButton;
     private final CheckBox advancedCheckbox;
@@ -57,7 +61,15 @@ public class PivOptionsPopup extends AlertDialog {
     public PivOptionsPopup(final Context context, String userName, String frameSetName, int frameOne, int frameTwo,
                            ActivityResultRegistry resultRegistry) {
         super(context);
-        parameters = new PivParameters(frameSetName, frameOne, frameTwo);
+        if (FileIO.checkParametersFile(context, userName)) {
+            parameters = FileIO.readUserParametersFile(context, userName);
+            parameters.setFrameOne(frameOne);
+            parameters.setFrameTwo(frameTwo);
+            parameters.setFrameSetName(frameSetName);
+        } else {
+            parameters = new PivParameters(frameSetName, frameOne, frameTwo);
+        }
+
         idToKey = new ArrayMap<>();
 
         // build dialog
@@ -66,8 +78,12 @@ public class PivOptionsPopup extends AlertDialog {
         setView(getLayoutInflater().inflate(R.layout.popup_piv_dialog, null));
         create();
 
+        getWindow().getAttributes().width = 1420; // increasing width to fit all content
+
         // init texts
         TextView setEditTextPIV = (TextView) findViewById(R.id.piv_options_description);
+        setEditTextPIV.setText("Please Input the parameters to be used in your PIV experiment");
+        setEditTextPIV.setTextSize(20);
 
         windowSizeText = (EditText) findViewById(R.id.windowSize);
         overlapText = (EditText) findViewById(R.id.overlap);
@@ -98,14 +114,12 @@ public class PivOptionsPopup extends AlertDialog {
             calibrationRadioBtn.setText(calibString);
         }
 
+        setAsDefaultButton = findViewById(R.id.set_as_default);
+        resetDefaultButton = findViewById(R.id.reset_default);
         savePIVDataButton = findViewById(R.id.button_save_piv_data);
         cancelPIVDataButton = findViewById(R.id.button_cancel_piv_data);
         advancedCheckbox = findViewById(R.id.advancedCheckbox);
         advancedCheckbox.setChecked(false);
-
-        // this needs to be place inside when the advanced parameters is clicked because we need the screen to be bigger for it.
-        System.out.println("helooooooooooooooooooooooo");
-
 
         // lightbulbs
         final String linkText = "Learn More";
@@ -150,17 +164,8 @@ public class PivOptionsPopup extends AlertDialog {
                 )
         );
 
-        // set default texts
-        setEditTextPIV.setText("Please Input the parameters to be used in your PIV experiment");
-        setEditTextPIV.setTextSize(20);
-        windowSizeText.setText(Integer.toString(parameters.getWindowSize()));
-        overlapText.setText(Integer.toString(parameters.getOverlap()));
-        dtText.setText(Double.toString(1d/parameters.getDt()));
-        qMinText.setText(Double.toString(parameters.getqMin()));
-        EText.setText(Double.toString(parameters.getE()));
-        replaceRadioGroup.check(R.id.params_replace_yes);
-        savePIVDataButton.setEnabled(true);
-        corrMethodRadioGroup.check(R.id.params_method_fft);
+        // set texts
+        setGUITexts();
 
         // load our ids to keys translation dictionary
         loadIdToKey();
@@ -190,17 +195,8 @@ public class PivOptionsPopup extends AlertDialog {
                     view.setVisibility(isChecked? View.VISIBLE : View.GONE);
                 }
                 savePIVDataButton.setEnabled(checkTexts());
-
-                // need a larger and smaller window for when advanced parameters is checked
-                if (isChecked) {
-                    getWindow().setLayout(1420, 2450);
-                }
-                else {
-                    getWindow().setLayout(1420, 1150);
-                }
             }
         });
-
 
         // Set the default overlap to 50% of windowSize if windowSize is changed from default
         windowSizeText.addTextChangedListener(new TextWatcher() {
@@ -281,6 +277,28 @@ public class PivOptionsPopup extends AlertDialog {
                 savePIVDataButton.setEnabled(checkTexts());
             }
         });
+
+        // set as default button
+        setAsDefaultButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FileIO.writeUserParametersFile(parameters, context, userName);
+                Toast.makeText(context, "Your new default parameters are set.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        // reset to original default button
+        resetDefaultButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FileIO.deleteParametersFile(context, userName);
+                parameters = new PivParameters(parameters.getFrameSetName(), parameters.getFrame1Index(), parameters.getFrame2Index());
+                setGUITexts();
+                Toast.makeText(context, "The parameters have been set to the original default.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         // cancel button
         cancelPIVDataButton.setOnClickListener(new View.OnClickListener() {
@@ -369,5 +387,29 @@ public class PivOptionsPopup extends AlertDialog {
     private float calculateTimeDelta(int fps, int frame1Num, int frame2Num) {
         int deltaFrameNums = frame2Num - frame1Num;
         return (float) deltaFrameNums/ (float) fps;
+    }
+
+    private void setGUITexts() {
+        // set default texts
+        windowSizeText.setText(Integer.toString(parameters.getWindowSize()));
+        overlapText.setText(Integer.toString(parameters.getOverlap()));
+        dtText.setText(Double.toString(20));
+        qMinText.setText(Double.toString(parameters.getqMin()));
+        EText.setText(Double.toString(parameters.getE()));
+        replaceRadioGroup.check(parameters.isReplace()? R.id.params_replace_yes : R.id.params_replace_no);
+        corrMethodRadioGroup.check(parameters.isFFT()? R.id.params_method_fft : R.id.params_method_template);
+        backSubRadioGroup.check(checkBackgroundSelection());
+        savePIVDataButton.setEnabled(true);
+    }
+    private int checkBackgroundSelection() {
+        if (parameters.getBackgroundSelection() == -1) {
+            return R.id.bs_none;
+        }
+        else if (parameters.getBackgroundSelection() == 0) {
+            return R.id.bs_twoframe;
+        }
+        else {
+            return R.id.bs_frameset;
+        }
     }
 }
