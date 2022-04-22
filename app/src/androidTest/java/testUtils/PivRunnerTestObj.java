@@ -28,6 +28,11 @@ public class PivRunnerTestObj {
                 );
     }
 
+    public PivRunnerTestObj(PivParameters params, PivFunctions pivFuncs) {
+        _params = params;
+        _piv = pivFuncs;
+    }
+
 //    public HashMap<String, PivResultData> runFullPIV() {
 //        PivRunner runner = new PivRunner(null, null, _params, _frame1, _frame2);
 //        return runner.Run();
