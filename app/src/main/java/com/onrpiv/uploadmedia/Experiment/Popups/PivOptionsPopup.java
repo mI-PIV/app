@@ -398,6 +398,18 @@ public class PivOptionsPopup extends AlertDialog {
         EText.setText(Double.toString(parameters.getE()));
         replaceRadioGroup.check(parameters.isReplace()? R.id.params_replace_yes : R.id.params_replace_no);
         corrMethodRadioGroup.check(parameters.isFFT()? R.id.params_method_fft : R.id.params_method_template);
+        backSubRadioGroup.check(checkBackgroundSelection());
         savePIVDataButton.setEnabled(true);
+    }
+    private int checkBackgroundSelection() {
+        if (parameters.getBackgroundSelection() == -1) {
+            return R.id.bs_none;
+        }
+        else if (parameters.getBackgroundSelection() == 0) {
+            return R.id.bs_twoframe;
+        }
+        else {
+            return R.id.bs_frameset;
+        }
     }
 }
