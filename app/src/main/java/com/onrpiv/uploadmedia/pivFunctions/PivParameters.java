@@ -233,14 +233,4 @@ public class PivParameters implements Serializable {
         return "Window: " + windowSize + " Overlap: " + overlap + "\nFrames " + frameOne + " to "
                 + frameTwo + " in Set " + frameSetName;
     }
-
-    // getter methods for all original defaulted values
-    public int getDefaultWindowSize() {
-        return 64;
-    }
-    public int getDefaultOverlap() {
-        return 32;
-    }
-
-
 }
