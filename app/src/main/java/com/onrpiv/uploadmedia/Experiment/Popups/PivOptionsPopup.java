@@ -61,10 +61,14 @@ public class PivOptionsPopup extends AlertDialog {
     public PivOptionsPopup(final Context context, String userName, String frameSetName, int frameOne, int frameTwo,
                            ActivityResultRegistry resultRegistry) {
         super(context);
-        // parameters = new PivParameters(frameSetName, frameOne, frameTwo);
-        parameters = FileIO.checkParametersFile(context, userName) ?
-                FileIO.readUserParametersFile(context, userName) :
-                new PivParameters(frameSetName, frameOne, frameTwo);
+        if (FileIO.checkParametersFile(context, userName)) {
+            parameters = FileIO.readUserParametersFile(context, userName);
+            parameters.setFrameOne(frameOne);
+            parameters.setFrameTwo(frameTwo);
+            parameters.setFrameSetName(frameSetName);
+        } else {
+            parameters = new PivParameters(frameSetName, frameOne, frameTwo);
+        }
 
         idToKey = new ArrayMap<>();
 
@@ -279,7 +283,7 @@ public class PivOptionsPopup extends AlertDialog {
             @Override
             public void onClick(View v) {
                 FileIO.writeUserParametersFile(parameters, context, userName);
-                Toast.makeText(context, "You're new default parameters are set.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Your new default parameters are set.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -395,11 +399,5 @@ public class PivOptionsPopup extends AlertDialog {
         replaceRadioGroup.check(R.id.params_replace_yes);
         savePIVDataButton.setEnabled(true);
         corrMethodRadioGroup.check(R.id.params_method_fft);
-    }
-
-    private void UserSelectedOriginalValues() {
-        // TODO change the name of this function
-        parameters = new PivParameters(parameters.getFrameSetName(), parameters.getFrame1Index(), parameters.getFrame2Index());
-        setGUITexts();
     }
 }
