@@ -396,8 +396,8 @@ public class PivOptionsPopup extends AlertDialog {
         dtText.setText(Double.toString(20));
         qMinText.setText(Double.toString(parameters.getqMin()));
         EText.setText(Double.toString(parameters.getE()));
-        replaceRadioGroup.check(R.id.params_replace_yes);
+        replaceRadioGroup.check(parameters.isReplace()? R.id.params_replace_yes : R.id.params_replace_no);
+        corrMethodRadioGroup.check(parameters.isFFT()? R.id.params_method_fft : R.id.params_method_template);
         savePIVDataButton.setEnabled(true);
-        corrMethodRadioGroup.check(R.id.params_method_fft);
     }
 }
