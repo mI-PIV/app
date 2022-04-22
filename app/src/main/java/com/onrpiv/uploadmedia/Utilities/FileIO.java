@@ -36,7 +36,7 @@ public class FileIO {
 
     public static boolean checkParametersFile(Context context, String userName) {
         File userDir = PathUtil.getUserDirectory(context, userName);
-        File paramsFile = new File(userDir, PivParameters.IO_FILENAME);
+        File paramsFile = new File(userDir, PivParameters.IO_FILENAME + ".obj");
         return paramsFile.exists();
     }
 
@@ -46,15 +46,17 @@ public class FileIO {
 
     public static boolean deleteParametersFile(Context context, String userName) {
         File userDir = PathUtil.getUserDirectory(context, userName);
-        File paramsFile = new File(userDir, PivParameters.IO_FILENAME);
+        File paramsFile = new File(userDir, PivParameters.IO_FILENAME + ".obj");
         return paramsFile.delete();
     }
 
 
     public static PivParameters readUserParametersFile(Context context, String userName) {
         File userDir = PathUtil.getUserDirectory(context, userName);
-        File paramsFile = new File(userDir, PivParameters.IO_FILENAME);
-        return (PivParameters) read(paramsFile);
+        File paramsFile = new File(userDir, PivParameters.IO_FILENAME + ".obj");
+        Object fileObj = read(paramsFile);
+        PivParameters result = (PivParameters) fileObj;
+        return result;
     }
 
     public static List<Integer> getSavedExperimentsDict(Context context, String userName) {
