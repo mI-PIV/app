@@ -57,7 +57,7 @@ public class PivParameters implements Serializable {
         setMaxDisplacement(maxDisplacement);
         setqMin(qMin);
         int fps = PersistedData.getFrameDirFPS(context, userName, frameSetName);
-        setDt(fps);
+        setDt(1d / fps);
         setE(E);
         setFFT(fft);
     }
