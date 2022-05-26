@@ -1,15 +1,33 @@
 package com.onrpiv.uploadmedia.Utilities;
 
-import org.opencv.videoio.VideoCapture;
-import org.opencv.videoio.Videoio;
+import android.media.MediaExtractor;
+import android.media.MediaFormat;
+
+import java.io.IOException;
 
 
 public class FpsExtractor {
 
     public static String extractFps(String videoPath) {
-        VideoCapture capture = new VideoCapture(videoPath);
-        double fps = capture.get(Videoio.CAP_PROP_FPS);
-        capture.release();
-        return Integer.toString((int) Math.round(fps));
+        int fps = 30; // default
+
+        MediaExtractor extractor = new MediaExtractor();
+        try {
+            extractor.setDataSource(videoPath);
+            for (int i = 0; i < extractor.getTrackCount(); i++) {
+                MediaFormat format = extractor.getTrackFormat(i);
+                String mime = format.getString(MediaFormat.KEY_MIME);
+                if (mime.startsWith("video/") && format.containsKey(MediaFormat.KEY_FRAME_RATE)) {
+                    fps = format.getInteger(MediaFormat.KEY_FRAME_RATE);
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            extractor.release();
+        }
+
+        return Integer.toString(fps);
     }
 }
