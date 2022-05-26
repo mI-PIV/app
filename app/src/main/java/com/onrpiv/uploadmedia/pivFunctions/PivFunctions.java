@@ -879,6 +879,7 @@ public class PivFunctions {
                 } else {
                     dr1_p[k][l] = 0.0d;
                     dc1_p[k][l] = 0.0d;
+                    mag_p[k][l] = 0.0d;
                 }
             }
         }
