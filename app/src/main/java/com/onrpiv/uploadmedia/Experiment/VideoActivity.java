@@ -36,6 +36,7 @@ import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraConfigPopup;
 import com.onrpiv.uploadmedia.Utilities.Camera.CameraFragment;
 import com.onrpiv.uploadmedia.Utilities.Camera.HighSpeedCaptureCallback;
+import com.onrpiv.uploadmedia.Utilities.FpsExtractor;
 import com.onrpiv.uploadmedia.Utilities.FrameExtractor;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 
@@ -65,6 +66,8 @@ public class VideoActivity extends AppCompatActivity {
     private float vidStart = 0f;
     private float vidEnd = 1f;
 
+    private Context context;
+
     // Current playback position (in milliseconds).
     private int mCurrentPosition = 0;
     private boolean video_selected = false;
@@ -93,7 +96,7 @@ public class VideoActivity extends AppCompatActivity {
         viewBackgroundCheckbox = findViewById(R.id.backsub_video_checkbox);
         frameSetNameInput = findViewById(R.id.frameSetNameText);
 
-        Context context = this;
+        context = this;
         Activity activity = this;
 
         // record button click
@@ -349,6 +352,7 @@ public class VideoActivity extends AppCompatActivity {
         videoPath = PathUtil.getRealPath(VideoActivity.this, video);
         videoUri = video;
         initializePlayer(video);
+        fps = FpsExtractor.extractFps(videoPath);
         pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
     }
 
