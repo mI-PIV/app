@@ -1,8 +1,11 @@
 package com.onrpiv.uploadmedia.pivFunctions;
 
+import android.content.Context;
+
 import androidx.collection.ArrayMap;
 
 import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibrationResult;
+import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
 import java.io.Serializable;
 
@@ -42,8 +45,7 @@ public class PivParameters implements Serializable {
         setFFT(fft);
     }
 
-
-    public PivParameters(String frameSetName, int frameOne, int frameTwo)
+    public PivParameters(Context context, String userName, String frameSetName, int frameOne, int frameTwo)
     {
         this.frameSetName = frameSetName;
         this.frameOne = frameOne;
@@ -54,7 +56,8 @@ public class PivParameters implements Serializable {
         setnMaxLower(nMaxLower);
         setMaxDisplacement(maxDisplacement);
         setqMin(qMin);
-        setDt(dt);
+        int fps = PersistedData.getFrameDirFPS(context, userName, frameSetName);
+        setDt(1d / fps);
         setE(E);
         setFFT(fft);
     }
@@ -92,8 +95,7 @@ public class PivParameters implements Serializable {
                 qMin = Double.parseDouble(value);
                 break;
             case DT_KEY:
-                double v = Double.parseDouble(value);
-                dt = v > 1d? 1/v : v;
+                dt = 1d / Double.parseDouble(value);
                 break;
             case E_KEY:
                 E = Double.parseDouble(value);
