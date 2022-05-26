@@ -104,31 +104,4 @@ public class FluidGlossary extends LearnFluids {
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
     }
-
-    public BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-            switch (menuItem.getItemId()){
-
-                case R.id.nav_startExperiment:
-                    Intent intent1 = new Intent(FluidGlossary.this, VideoActivity.class);
-                    startActivity(intent1);
-                    break;
-
-                case R.id.nav_Home:
-                    System.out.println("Home it is");
-                    Intent intent2 = new Intent(FluidGlossary.this, HomeActivity.class);
-                    startActivity(intent2);
-                    break;
-
-                case R.id.nav_feedback:
-                    System.out.println("Feedback it is");
-                    Intent intent3 = new Intent("android.intent.action.VIEW", Uri.parse("https://usu.co1.qualtrics.com/jfe/form/SV_3WtfQHquWuN0ujj"));
-                    startActivity(intent3);
-                    break;
-            }
-            return true;
-        }
-    };
-
 }

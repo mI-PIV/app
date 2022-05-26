@@ -97,6 +97,7 @@
         <activity android:name=".Experiment.MainActivity"/>
         <activity android:name=".Experiment.CalibrationActivity"/>
         <activity android:name=".Experiment.CalibrationInputActivity"/>
+        <activity android:name=".Experiment.Account"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
