@@ -67,7 +67,7 @@ public class PivOptionsPopup extends AlertDialog {
             parameters.setFrameTwo(frameTwo);
             parameters.setFrameSetName(frameSetName);
         } else {
-            parameters = new PivParameters(frameSetName, frameOne, frameTwo);
+            parameters = new PivParameters(context, userName, frameSetName, frameOne, frameTwo);
         }
 
         idToKey = new ArrayMap<>();
@@ -293,9 +293,13 @@ public class PivOptionsPopup extends AlertDialog {
             @Override
             public void onClick(View v) {
                 FileIO.deleteParametersFile(context, userName);
-                parameters = new PivParameters(parameters.getFrameSetName(), parameters.getFrame1Index(), parameters.getFrame2Index());
+
+                parameters = new PivParameters(context, userName, parameters.getFrameSetName(),
+                        parameters.getFrame1Index(), parameters.getFrame2Index());
+
                 setGUITexts();
-                Toast.makeText(context, "The parameters have been set to the original default.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "The parameters have been set to the original default.",
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -393,7 +397,7 @@ public class PivOptionsPopup extends AlertDialog {
         // set default texts
         windowSizeText.setText(Integer.toString(parameters.getWindowSize()));
         overlapText.setText(Integer.toString(parameters.getOverlap()));
-        dtText.setText(Double.toString(20));
+        dtText.setText(Double.toString(Math.round(1d / parameters.getDt())));
         qMinText.setText(Double.toString(parameters.getqMin()));
         EText.setText(Double.toString(parameters.getE()));
         replaceRadioGroup.check(parameters.isReplace()? R.id.params_replace_yes : R.id.params_replace_no);
