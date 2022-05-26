@@ -7,6 +7,7 @@ import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibrationResu
 import java.io.Serializable;
 
 public class PivParameters implements Serializable {
+    private static final long serialVersionUID = 42L;
     private int windowSize = 64, overlap = 32, frameOne, frameTwo;
     private String frameSetName;
     private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.0, dt = 1.0, E = 5.0;
@@ -188,6 +189,10 @@ public class PivParameters implements Serializable {
         backgroundSelection = selection;
     }
 
+    public String getFrameSetName() {
+        return frameSetName;
+    }
+
     public int getFrame1Index(){
         return frameOne;
     }
@@ -202,6 +207,18 @@ public class PivParameters implements Serializable {
 
     public void setFFT(boolean fft) {
         this.fft = fft;
+    }
+
+    public void setFrameOne(int frameOneIndex) {
+        frameOne = frameOneIndex;
+    }
+
+    public void setFrameTwo(int frameTwoIndex) {
+        frameTwo = frameTwoIndex;
+    }
+
+    public void setFrameSetName(String frameSetName) {
+        this.frameSetName = frameSetName;
     }
 
     public CameraCalibrationResult getCameraCalibrationResult() {

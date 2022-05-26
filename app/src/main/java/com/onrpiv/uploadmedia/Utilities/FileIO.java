@@ -34,13 +34,30 @@ public class FileIO {
         write(parameters, context, userName, newExpTotal, PivParameters.IO_FILENAME);
     }
 
-//    public static void writeUserParameters(Context context, String username) {
-//        write()
-//    }
+    public static boolean checkParametersFile(Context context, String userName) {
+        File userDir = PathUtil.getUserDirectory(context, userName);
+        File paramsFile = new File(userDir, PivParameters.IO_FILENAME + ".obj");
+        return paramsFile.exists();
+    }
 
-//    public static void loadUserParameters() {
-//
-//    }
+    public static void writeUserParametersFile(PivParameters parameters, Context context, String userName) {
+        write(parameters, context, userName, PivParameters.IO_FILENAME);
+    }
+
+    public static boolean deleteParametersFile(Context context, String userName) {
+        File userDir = PathUtil.getUserDirectory(context, userName);
+        File paramsFile = new File(userDir, PivParameters.IO_FILENAME + ".obj");
+        return paramsFile.delete();
+    }
+
+
+    public static PivParameters readUserParametersFile(Context context, String userName) {
+        File userDir = PathUtil.getUserDirectory(context, userName);
+        File paramsFile = new File(userDir, PivParameters.IO_FILENAME + ".obj");
+        Object fileObj = read(paramsFile);
+        PivParameters result = (PivParameters) fileObj;
+        return result;
+    }
 
     public static List<Integer> getSavedExperimentsDict(Context context, String userName) {
         List<Integer> experimentNumbersWithData = new ArrayList<>();
@@ -81,6 +98,12 @@ public class FileIO {
     public static void write(Object object, Context context, String userName, int experimentNumber, String fileName) {
         File outputFile = getFile(context, userName, experimentNumber, fileName);
         write(object, outputFile);
+    }
+
+    public static void write(Object obj, Context context, String userName, String fileName) {
+        File userDir = PathUtil.getUserDirectory(context, userName);
+        File outputFile = new File(userDir, fileName+".obj");
+        write(obj, outputFile);
     }
 
     public static void write(Object object, File outputFile) {
