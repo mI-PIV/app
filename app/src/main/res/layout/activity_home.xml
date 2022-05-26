@@ -27,8 +27,8 @@
 
             <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/usu_narwhal"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="300dp"
+                android:layout_height="250dp"
                 android:src="@drawable/narwhal_new" />
 
             <Button
