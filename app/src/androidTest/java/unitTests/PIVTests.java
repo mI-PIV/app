@@ -5,6 +5,8 @@ import android.content.Context;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.PathUtil;
+import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
@@ -15,6 +17,7 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -31,6 +34,46 @@ public class PIVTests {
     @Before
     public void before() {
         OpenCVLoader.initDebug();
+    }
+
+    @Test
+    public void processFrames() {
+//        for (int i = 1; i < 5; i++) {
+        for (int i = 1; i < 400; i++) {
+            String frameOneString = "frame" + String.format("%05d", i-1);
+            String frameTwoString = "frame" + String.format("%05d", i);
+            String saveOutputFileName = "output_" + frameOneString + ".txt";
+
+            int frameOneId = context.getResources().getIdentifier(frameOneString, "drawable", context.getPackageName());
+            int frameTwoId = context.getResources().getIdentifier(frameTwoString, "drawable", context.getPackageName());
+
+            Mat frame1 = new Mat();
+            Mat frame2 = new Mat();
+            try {
+                frame1 = Utils.loadResource(context, frameOneId);
+                frame2 = Utils.loadResource(context, frameTwoId);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            defaultParameters.setOverlap(48);
+            defaultParameters.setE(2d);
+
+            File outputDir = PathUtil.getUserDirectory(context, "Test");
+
+            PivFunctions pivFuncs = new PivFunctions(frame1, frame2, null, defaultParameters, outputDir,
+                    "test", saveOutputFileName);
+
+            PivRunnerTestObj piv = new PivRunnerTestObj(defaultParameters, pivFuncs);
+
+            PivResultData singlePass = piv.runSinglePass();
+            PivResultData sp_processed = piv.runPostProcessing(singlePass);
+            PivResultData multipass_replace = piv.runMultiPass_withReplace(sp_processed);
+
+            pivFuncs.saveVectorsValues(multipass_replace, multipass_replace.getName());
+            frame1.release();
+            frame2.release();
+        }
     }
 
 
@@ -117,8 +160,6 @@ public class PIVTests {
                 int ys = (y+1) * resultData.getStepY();
                 int oneDIndex = (xs-1) * resultData.getCols() + (ys-1);
                 String[] realLine = realData.get(oneDIndex);
-//                int rx = Integer.parseInt(realLine[0]);
-//                int ry = Integer.parseInt(realLine[1]);
                 double ru = Double.parseDouble(realLine[2]);
                 double rv = Double.parseDouble(realLine[3]);
 

@@ -40,7 +40,7 @@ public class PivResultData implements Serializable {
                          double dt) {
         this.name = name;
         _dt = dt;
-        _sig2noise = sig2noise;
+        _sig2noise = sig2noise.clone();
         this.rows = rows;
         this.cols = cols;
         setInterrCenters(interrCenters);
@@ -58,7 +58,7 @@ public class PivResultData implements Serializable {
     }
 
     public void setMag(double[][] magnitude) {
-        _mag = magnitude;
+        _mag = magnitude.clone();
     }
 
     public double[][] getSig2Noise() {
@@ -66,7 +66,7 @@ public class PivResultData implements Serializable {
     }
 
     public void setSig2Noise(double[][] sig2Noise) {
-        _sig2noise = sig2Noise;
+        _sig2noise = sig2Noise.clone();
     }
 
     public double[][] getU() {
@@ -74,7 +74,7 @@ public class PivResultData implements Serializable {
     }
 
     public void setU(double[][] u) {
-        _u = u;
+        _u = u.clone();
     }
 
     public double[][] getV() {
@@ -82,7 +82,7 @@ public class PivResultData implements Serializable {
     }
 
     public void setV(double[][] v) {
-        _v = v;
+        _v = v.clone();
     }
 
     public double[][] getCalibratedU() {
@@ -90,7 +90,7 @@ public class PivResultData implements Serializable {
     }
 
     public void setCalibratedU(double[][] u_calibrated) {
-        _u_calib = u_calibrated;
+        _u_calib = u_calibrated.clone();
     }
 
     public double[][] getCalibratedV() {
@@ -98,7 +98,7 @@ public class PivResultData implements Serializable {
     }
 
     public void setCalibratedV(double[][] v_calibrated) {
-        _v_calib = v_calibrated;
+        _v_calib = v_calibrated.clone();
     }
 
     public double[][] getCalibratedMag() {
@@ -106,7 +106,7 @@ public class PivResultData implements Serializable {
     }
 
     public void setCalibratedMag(double[][] mag_calibrated) {
-        _mag_calib = mag_calibrated;
+        _mag_calib = mag_calibrated.clone();
     }
 
     public double getPixelToPhysicalRatio() {
@@ -128,7 +128,7 @@ public class PivResultData implements Serializable {
     }
 
     public void setInterrX(double[] interrX) {
-        _interrX = interrX;
+        _interrX = interrX.clone();
     }
 
     public double[] getInterrY() {
@@ -136,7 +136,7 @@ public class PivResultData implements Serializable {
     }
 
     public void setInterrY(double[] interrY) {
-        _interrY = interrY;
+        _interrY = interrY.clone();
     }
 
     public void setInterrCenters(double[][] interrCenters) {
@@ -151,7 +151,7 @@ public class PivResultData implements Serializable {
     }
 
     public void setVorticity(double[][] vort) {
-        _vort = vort;
+        _vort = vort.clone();
     }
 
     public double[][] getCalibratedVorticity() {
