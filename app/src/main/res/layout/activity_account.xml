@@ -17,6 +17,13 @@
             android:gravity="center"
             android:orientation="vertical">
 
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/usu_narwhal"
+                android:layout_width="300dp"
+                android:layout_height="250dp"
+                android:paddingBottom="50dp"
+                android:src="@drawable/narwhal_new" />
+
             <Button
                 android:id="@+id/changeUserBtn"
                 android:layout_width="245dp"

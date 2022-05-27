@@ -1,74 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_root"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.onrpiv.uploadmedia.Experiment.MainActivity">
 
-    <Button
-        android:id="@+id/video"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="top"
+            android:orientation="vertical">
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/usu_narwhal"
+                android:layout_width="350dp"
+                android:layout_height="325dp"
+                android:paddingBottom="25dp"
+                android:paddingTop="25dp"
+                android:layout_gravity="center"
+                android:src="@drawable/narwhal_new" />
+
+            <Button
+                android:id="@+id/video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#165A7D"
+                android:textColor="#FFFFFF"
+                android:text="Select or Record Video"/>
+
+            <Button
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/video"
+                android:backgroundTint="#165A7D"
+                android:textColor="#FFFFFF"
+                android:text="select images for PIV"/>
+
+            <Button
+                android:id="@+id/main_load_exp_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/image"
+                android:backgroundTint="#165A7D"
+                android:text="Load Experiment"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/main_create_calibration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/main_load_exp_btn"
+                android:backgroundTint="#165A7D"
+                android:text="Create Camera Calibration"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/feedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/main_create_calibration"
+                android:backgroundTint="#165A7D"
+                android:text="Feedback"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/usu_logo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitEnd"
+            android:src="@drawable/usuonr"
+            android:layout_alignParentBottom="true"
+            android:paddingBottom="50dp"
+            tools:ignore="MissingConstraints" />
+
+    </RelativeLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:backgroundTint="#243EDF"
-        android:textColor="#FFFFFF"
-        android:text="Select or Record Video"/>
-
-    <Button
-        android:id="@+id/image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/video"
-        android:backgroundTint="#243EDF"
-        android:textColor="#FFFFFF"
-        android:text="select images for PIV"/>
-
-    <Button
-        android:id="@+id/main_load_exp_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/image"
-        android:backgroundTint="#243EDF"
-        android:text="Load Experiment"
-        android:textColor="#FFFFFF" />
-
-    <Button
-        android:id="@+id/main_create_calibration"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/main_load_exp_btn"
-        android:backgroundTint="#243EDF"
-        android:text="Create Camera Calibration"
-        android:textColor="#FFFFFF" />
-
-    <Button
-        android:id="@+id/userSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/main_create_calibration"
-        android:backgroundTint="#243EDF"
-        android:text="User Settings"
-        android:textColor="#FFFFFF" />
-
-    <ImageView
-        android:id="@+id/unicorn"
-        android:layout_width="308dp"
-        android:layout_height="237dp"
-        android:layout_below="@+id/userSettings"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="38dp"
-        android:layout_marginEnd="49dp"
-        android:layout_marginBottom="186dp"
-        android:src="@drawable/narwhal_new" />
+        app:menu="@menu/bottom_navigation2"
+        app:itemBackground="@android:color/white"/>
 
-    <ImageView
-        android:id="@+id/bottomLabel"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/userSettings"
-        android:layout_marginTop="308dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/usuonr" />
 </RelativeLayout>

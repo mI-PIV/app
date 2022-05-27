@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -28,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.onrpiv.uploadmedia.Experiment.Popups.LoadExperimentPopup;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
@@ -37,7 +39,7 @@ import com.onrpiv.uploadmedia.Utilities.PersistedData;
  * author: sarbajit mukherjee
  * Created by sarbajit mukherjee on 09/07/2020.
  */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends HomeActivity implements View.OnClickListener {
     private Button image;
     private Button video;
 
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         image = (Button) findViewById(R.id.image);
         video = (Button) findViewById(R.id.video);
-        Button userSettings = (Button) findViewById(R.id.userSettings);
+        Button feedbackBtn = (Button) findViewById(R.id.feedback);
         Button loadExpBtn = (Button) findViewById(R.id.main_load_exp_btn);
         Button cameraCalibBtn = (Button) findViewById(R.id.main_create_calibration);
 
@@ -70,10 +72,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             image.setOnClickListener(this);
             video.setOnClickListener(this);
-            userSettings.setOnClickListener(this);
+            feedbackBtn.setOnClickListener(this);
             loadExpBtn.setOnClickListener(this);
             cameraCalibBtn.setOnClickListener(this);
         }
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
     }
 
     @Override
@@ -170,96 +175,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     userNameDialog();
                 }
                 break;
-            case R.id.userSettings:
-                userSettingsPopup(MainActivity.this, getWindow());
+            case R.id.feedback:
+                Intent intent = new Intent("android.intent.action.VIEW", Uri.parse("https://usu.co1.qualtrics.com/jfe/form/SV_3WtfQHquWuN0ujj"));
+                startActivity(intent);
                 break;
         }
-    }
-
-    private void userSettingsPopup(final Context context, final Window activityWindow)
-    {
-        // inflate view
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View userSettingsView = inflater.inflate(R.layout.user_settings, null);
-
-        // buttons
-        ImageButton exitBtn = userSettingsView.findViewById(R.id.userSettingsCloseBtn);
-        Button changeUserBtn = userSettingsView.findViewById(R.id.changeUserBtn);
-        Button deleteDataBtn = userSettingsView.findViewById(R.id.deleteDataBtn);
-
-        // listeners
-        changeUserBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userNameDialog();
-            }
-        });
-
-        deleteDataBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // warning dialog
-                new androidx.appcompat.app.AlertDialog.Builder(context)
-                        .setTitle("Delete User Settings")
-                        .setMessage("All extracted frames, calibrations, and saved experiments will be deleted." +
-                                " Are you sure you wish to continue?")
-
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                final ProgressDialog pDialog = new ProgressDialog(context);
-                                pDialog.setCancelable(false);
-                                if (!pDialog.isShowing()) pDialog.show();
-
-                                Thread thread = new Thread() {
-                                    @Override
-                                    public void run(){
-                                        // delete all frames
-                                        pDialog.setMessage("Deleting Frames...");
-                                        PathUtil.deleteRecursive(PathUtil.getFramesDirectory(context, userName));
-
-                                        // delete all experiments
-                                        pDialog.setMessage("Deleting Experiments...");
-                                        PathUtil.deleteRecursive(PathUtil.getExperimentsDirectory(context, userName));
-
-                                        // delete all persisted data
-                                        pDialog.setMessage("Deleting persisted data...");
-                                        PersistedData.clearUserPersistedData(context, userName);
-
-                                        // delete any camera calibrations
-                                        pDialog.setMessage("Deleting camera calibration...");
-                                        PathUtil.deleteRecursive(PathUtil.getUserDirectory(context, userName));
-
-                                        if (pDialog.isShowing()) pDialog.dismiss();
-                                    }
-                                };
-                                thread.start();
-                            }
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
-            }
-        });
-
-        // popup
-        activityWindow.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-        final PopupWindow userSettingsPopup = new PopupWindow(userSettingsView,
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            userSettingsPopup.setElevation(5f);
-        }
-        exitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userSettingsPopup.dismiss();
-                activityWindow.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            }
-        });
-
-        userSettingsPopup.showAtLocation(activityWindow.getDecorView(), Gravity.CENTER, 0, 0);
     }
 
     @Override
