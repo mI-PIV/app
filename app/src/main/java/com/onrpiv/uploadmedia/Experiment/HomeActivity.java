@@ -85,7 +85,6 @@ public class HomeActivity extends AppCompatActivity {
                 case R.id.nav_feedback:
                     System.out.println("Account it is");
                     Intent intent3 = new Intent(HomeActivity.this, Account.class);
-                    // Intent intent3 = new Intent("android.intent.action.VIEW", Uri.parse("https://usu.co1.qualtrics.com/jfe/form/SV_3WtfQHquWuN0ujj"));
                     startActivity(intent3);
                     break;
             }
