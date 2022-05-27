@@ -6,25 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".Learn.LaserSafetyLayout">
 
-
-    <TextView
-        android:id="@+id/laserSafetytextview0"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#0F2439"
-        android:gravity="center"
-        android:text="Laser Safety"
-        android:textColor="#FFFFFF"
-        android:textSize="35sp" />
-
     <TextView
         android:id="@+id/laserSafetytextview1"
         android:textStyle="bold"
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints"
-        android:layout_below="@+id/laserSafetytextview0"/>
+        tools:ignore="MissingConstraints" />
 
 
     <com.github.chrisbanes.photoview.PhotoView

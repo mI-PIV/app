@@ -35,7 +35,8 @@
         <uses-library android:name="android.test.mock" />
 
         <activity android:name=".Experiment.HomeActivity"
-            android:exported="true">
+            android:exported="true"
+            android:label="mI-PIV Home">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,61 +44,61 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Learn.Experiment1"/>
-        <activity android:name=".Learn.Experiment2"/>
-        <activity android:name=".Learn.Experiment3"/>
-        <activity android:name=".Learn.Experiment4"/>
-        <activity android:name=".Learn.Experiment5"/>
-        <activity android:name=".Learn.Experiment6"/>
-        <activity android:name=".Learn.Experiment7"/>
-        <activity android:name=".Learn.FluidGlossary"/>
-        <activity android:name=".Learn.LaserSafetyLayout"/>
-        <activity android:name=".Learn.LearnImagingLayout"/>
-        <activity android:name=".Learn.PIVBasicsLayout"/>
-        <activity android:name=".Learn.PIVBasics1"/>
-        <activity android:name=".Learn.PIVBasics2"/>
-        <activity android:name=".Learn.PIVBasics3"/>
-        <activity android:name=".Learn.PIVBasics4"/>
-        <activity android:name=".Learn.PIVBasics5"/>
-        <activity android:name=".Learn.Imaging1"/>
-        <activity android:name=".Learn.Imaging2"/>
-        <activity android:name=".Learn.Imaging3"/>
-        <activity android:name=".Learn.Imaging4"/>
-        <activity android:name=".Learn.Imaging5"/>
-        <activity android:name=".Learn.Imaging6"/>
-        <activity android:name=".Learn.Imaging7"/>
-        <activity android:name=".Learn.Imaging8"/>
-        <activity android:name=".Learn.Imaging9"/>
-        <activity android:name=".Learn.Laser1"/>
-        <activity android:name=".Learn.Laser2"/>
-        <activity android:name=".Learn.Laser3"/>
-        <activity android:name=".Learn.Pos1_Activity"/>
-        <activity android:name=".Learn.Pos2_Activity"/>
-        <activity android:name=".Learn.Pos3_Activity"/>
-        <activity android:name=".Learn.Pos4_Activity"/>
-        <activity android:name=".Learn.Pos5_Activity"/>
-        <activity android:name=".Learn.Pos6_Activity"/>
-        <activity android:name=".Learn.Pos7_Activity"/>
-        <activity android:name=".Learn.Pos8_Activity"/>
-        <activity android:name=".Learn.Pos9_Activity"/>
-        <activity android:name=".Learn.Pos10_Activity"/>
-        <activity android:name=".Learn.Pos11_Activity"/>
-        <activity android:name=".Learn.Pos12_Activity"/>
-        <activity android:name=".Learn.Pos13_Activity"/>
-        <activity android:name=".Learn.Pos14_Activity"/>
-        <activity android:name=".Learn.Pos15_Activity"/>
-        <activity android:name=".Learn.TryExperiments"/>
-        <activity android:name=".Learn.LearnFluids"/>
-        <activity android:name=".Learn.LearnPIV"/>
-        <activity android:name=".Experiment.ImageActivity"/>
-        <activity android:name=".Learn.VideoTutorial"/>
-        <activity android:name=".Experiment.VideoActivity"/>
-        <activity android:name=".Experiment.ViewResultsActivity"/>
-        <activity android:name=".Experiment.ViewPagerActivity"/>
-        <activity android:name=".Experiment.MainActivity"/>
-        <activity android:name=".Experiment.CalibrationActivity"/>
-        <activity android:name=".Experiment.CalibrationInputActivity"/>
-        <activity android:name=".Experiment.Account"/>
+        <activity android:name=".Learn.Experiment1" android:label="Try These Experiments"/>
+        <activity android:name=".Learn.Experiment2" android:label="Try These Experiments"/>
+        <activity android:name=".Learn.Experiment3" android:label="Try These Experiments"/>
+        <activity android:name=".Learn.Experiment4" android:label="Try These Experiments"/>
+        <activity android:name=".Learn.Experiment5" android:label="Try These Experiments"/>
+        <activity android:name=".Learn.Experiment6" android:label="Try These Experiments"/>
+        <activity android:name=".Learn.Experiment7" android:label="Try These Experiments"/>
+        <activity android:name=".Learn.FluidGlossary" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.LaserSafetyLayout" android:label="Laser Safety"/>
+        <activity android:name=".Learn.LearnImagingLayout" android:label="Learn About Imaging"/>
+        <activity android:name=".Learn.PIVBasicsLayout" android:label="PIV Basics"/>
+        <activity android:name=".Learn.PIVBasics1" android:label="PIV Basics"/>
+        <activity android:name=".Learn.PIVBasics2" android:label="PIV Basics"/>
+        <activity android:name=".Learn.PIVBasics3" android:label="PIV Basics"/>
+        <activity android:name=".Learn.PIVBasics4" android:label="PIV Basics"/>
+        <activity android:name=".Learn.PIVBasics5" android:label="PIV Basics"/>
+        <activity android:name=".Learn.Imaging1" android:label="Learn About Imaging"/>
+        <activity android:name=".Learn.Imaging2" android:label="Learn About Imaging"/>
+        <activity android:name=".Learn.Imaging3" android:label="Learn About Imaging"/>
+        <activity android:name=".Learn.Imaging4" android:label="Learn About Imaging"/>
+        <activity android:name=".Learn.Imaging5" android:label="Learn About Imaging"/>
+        <activity android:name=".Learn.Imaging6" android:label="Learn About Imaging"/>
+        <activity android:name=".Learn.Imaging7" android:label="Learn About Imaging"/>
+        <activity android:name=".Learn.Imaging8" android:label="Learn About Imaging"/>
+        <activity android:name=".Learn.Imaging9" android:label="Learn About Imaging"/>
+        <activity android:name=".Learn.Laser1" android:label="Laser Safety"/>
+        <activity android:name=".Learn.Laser2" android:label="Laser Safety"/>
+        <activity android:name=".Learn.Laser3" android:label="Laser Safety"/>
+        <activity android:name=".Learn.Pos1_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos2_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos3_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos4_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos5_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos6_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos7_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos8_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos9_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos10_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos11_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos12_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos13_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos14_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.Pos15_Activity" android:label="Fluids Glossary"/>
+        <activity android:name=".Learn.TryExperiments" android:label="Try These Experiments"/>
+        <activity android:name=".Learn.LearnFluids" android:label="Learn About Fluids"/>
+        <activity android:name=".Learn.LearnPIV" android:label="Learn About PIV"/>
+        <activity android:name=".Experiment.ImageActivity" android:label="Experiment"/>
+        <activity android:name=".Learn.VideoTutorial" android:label="Video Tutorial"/>
+        <activity android:name=".Experiment.VideoActivity" android:label="Experiment"/>
+        <activity android:name=".Experiment.ViewResultsActivity" android:label="Experiment"/>
+        <activity android:name=".Experiment.ViewPagerActivity" android:label="Experiment"/>
+        <activity android:name=".Experiment.MainActivity" android:label="Experiment"/>
+        <activity android:name=".Experiment.CalibrationActivity" android:label="Experiment"/>
+        <activity android:name=".Experiment.CalibrationInputActivity" android:label="Experiment"/>
+        <activity android:name=".Experiment.Account" android:label="User Settings"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

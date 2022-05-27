@@ -6,34 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".Learn.TryExperiments">
 
-    <TextView
-        android:id="@+id/mipivtextview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#0F2439"
-        android:gravity="center"
-        android:text="@string/app_name"
-        android:textColor="#FFFFFF"
-        android:textSize="40sp" />
-
-    <TextView
-        android:id="@+id/tryExperimentTextview"
-        android:text="Try These Experiments!"
-        android:background="#0F2439"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/mipivtextview"
-        android:textColor="#FFFFFF"
-        android:textSize="30sp"
-        android:layout_marginTop="1dip" />
-
     <ListView
         android:id="@+id/experimentList"
         android:layout_marginBottom="60dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tryExperimentTextview">
+        android:layout_height="wrap_content">
     </ListView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

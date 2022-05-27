@@ -6,24 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".Learn.LearnPIV">
 
-
-        <TextView
-            android:id="@+id/learnFluidstextview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#0F2439"
-            android:gravity="center"
-            android:text="Learn About PIV"
-            android:textColor="#FFFFFF"
-            android:textSize="35sp" />
-
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:orientation="vertical"
-            android:layout_below="@id/learnFluidstextview"
             android:layout_centerHorizontal="true">
 
             <Button
