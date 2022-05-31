@@ -28,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_margin="8dp"
         android:background="@drawable/buttons"
         android:text="Record Video"
         android:textColor="#FFFFFF" />
@@ -37,6 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_margin="8dp"
         android:background="@drawable/buttons"
         android:text="Pick a video"
         android:textColor="#FFFFFF" />
@@ -45,6 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_margin="8dp"
         android:theme="@style/MaterialTheme">
 
         <TextView
@@ -92,6 +95,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_margin="8dp"
         android:background="@drawable/buttons"
         android:enabled="false"
         android:text="Generate Frames"
