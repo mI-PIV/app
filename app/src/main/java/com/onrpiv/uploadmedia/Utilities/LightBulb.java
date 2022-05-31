@@ -53,7 +53,7 @@ public class LightBulb extends AppCompatImageButton {
         this.context = context;
 
         // init our lightbulb
-        setBackgroundResource(R.drawable.information);
+        setBackgroundResource(R.drawable.info);
         baseParent.addView(this);
         setVisibility(baseView.getVisibility());
 
