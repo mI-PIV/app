@@ -77,6 +77,7 @@ public class CalibrationActivity extends VideoActivity {
         LinearLayout.LayoutParams seekBarParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         seekBarParams.gravity = Gravity.CENTER;
+        seekBarParams.setMargins(29, 0 , 29, 0); // adding space to button
         frameSeekBar.setLayoutParams(seekBarParams);
 
         // seek bar container
@@ -86,6 +87,7 @@ public class CalibrationActivity extends VideoActivity {
         // calibration button
         calibButton = new Button(this);
         calibButton.setText("Input Measurement");
+        calibButton.setLayoutParams(seekBarParams);
         calibButton.setBackground(ContextCompat.getDrawable(this, R.drawable.buttons));
         calibButton.setTextColor(Color.parseColor("#FFFFFF"));
         calibButton.setVisibility(View.GONE);
