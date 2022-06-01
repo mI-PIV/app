@@ -50,7 +50,7 @@ public class ImageActivity extends AppCompatActivity {
 
     private int step = 0;
     private static final String greenString = "#00CC00";
-    private static final String blueString = "#243EDF";
+    private static final String blueString = "#165A7D";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
