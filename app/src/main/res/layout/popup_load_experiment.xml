@@ -11,6 +11,7 @@
             android:id="@+id/load_popup_cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginEnd="-70dp"
             android:backgroundTint="#FFFFFF"
             android:stateListAnimator="@null"
             android:text="Cancel"
