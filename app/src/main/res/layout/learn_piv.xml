@@ -6,31 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".Learn.LearnPIV">
 
-
-        <TextView
-            android:id="@+id/learnFluidstextview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#0F2439"
-            android:gravity="center"
-            android:text="Learn About PIV"
-            android:textColor="#FFFFFF"
-            android:textSize="35sp" />
-
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:orientation="vertical"
-            android:layout_below="@id/learnFluidstextview"
             android:layout_centerHorizontal="true">
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/usu_narwhal"
+                android:layout_width="300dp"
+                android:layout_height="250dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="25dp"
+                android:src="@drawable/narwhal_new" />
 
             <Button
                 android:id="@+id/pivBasicsButton"
                 android:layout_width="245dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
+                android:layout_gravity="center"
                 android:background="@drawable/mybuttons"
                 android:text="PIV Basics"
                 android:textColor="#FFFFFF"
@@ -41,6 +38,7 @@
                 android:layout_width="245dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
+                android:layout_gravity="center"
                 android:background="@drawable/mybuttons"
                 android:text="Learn About Imaging"
                 android:textColor="#FFFFFF"
@@ -51,6 +49,7 @@
                 android:layout_width="245dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
+                android:layout_gravity="center"
                 android:background="@drawable/mybuttons"
                 android:text="Laser Safety"
                 android:textColor="#FFFFFF"
@@ -62,19 +61,13 @@
                 android:layout_width="245dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
+                android:layout_gravity="center"
                 android:background="@drawable/mybuttons"
                 android:text="Video Tutorial"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp" />
 
         </LinearLayout>
-
-        <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/usu_logo"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/linearLayout"
-            android:src="@drawable/narwhal" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -83,7 +76,6 @@
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation2"
         app:itemBackground="@android:color/white"/>
-
 
 </RelativeLayout>
 

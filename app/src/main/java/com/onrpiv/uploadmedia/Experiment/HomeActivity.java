@@ -4,11 +4,14 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.onrpiv.uploadmedia.BuildConfig;
 import com.onrpiv.uploadmedia.Learn.LearnFluids;
 import com.onrpiv.uploadmedia.Learn.LearnPIV;
@@ -49,6 +52,9 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(learnPIV);
             }
         });
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
     }
 
     public void about_onclick(View view) {
@@ -59,6 +65,32 @@ public class HomeActivity extends AppCompatActivity {
               .setCancelable(true)
               .create().show();
     }
+
+    public BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            switch (menuItem.getItemId()){
+
+                case R.id.nav_startExperiment:
+                    Intent intent1 = new Intent(HomeActivity.this, VideoActivity.class);
+                    startActivity(intent1);
+                    break;
+
+                case R.id.nav_Home:
+                    System.out.println("Home it is");
+                    Intent intent2 = new Intent(HomeActivity.this, HomeActivity.class);
+                    startActivity(intent2);
+                    break;
+
+                case R.id.nav_feedback:
+                    System.out.println("Account it is");
+                    Intent intent3 = new Intent(HomeActivity.this, Account.class);
+                    startActivity(intent3);
+                    break;
+            }
+            return true;
+        }
+    };
 
     // ensuring the screen is locked to vertical position
     @Override

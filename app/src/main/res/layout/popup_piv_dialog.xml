@@ -387,32 +387,35 @@
                         android:gravity="center_horizontal"/>
                 </TableRow>
 
-                <TableRow android:gravity="center_horizontal">
+                <TableRow android:gravity="right">
 
                     <Button
                         android:id="@+id/button_cancel_piv_data"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingTop="20dp"
+                        android:layout_marginEnd="-5dp"
+                        android:backgroundTint="#FFFFFF"
+                        android:stateListAnimator="@null"
                         android:text="Cancel"
-                        android:textSize="20dp"
-                        android:textAllCaps="false"
-                        android:backgroundTint="#243EDF"
-                        android:textColor="#FFFFFF"
-                        android:gravity="center_horizontal"
-                        android:layout_marginBottom="20dp"/>
+                        android:layout_gravity="right"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="14sp" />
 
 
                     <Button
                         android:id="@+id/button_save_piv_data"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingTop="20dp"
+                        android:backgroundTint="#FFFFFF"
+                        android:stateListAnimator="@null"
                         android:text="Select Values"
-                        android:textSize="20dp"
-                        android:textAllCaps="false"
-                        android:backgroundTint="#243EDF"
-                        android:textColor="#FFFFFF"
-                        android:gravity="center_horizontal"
-                        android:layout_marginBottom="20dp"/>
+                        android:layout_gravity="right"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="14sp" />
 
                 </TableRow>
             </TableLayout>

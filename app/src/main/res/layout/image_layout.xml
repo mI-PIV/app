@@ -8,7 +8,8 @@
     <RelativeLayout
         android:id="@+id/imageActivityRelativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="5dp">
 
         <Button
             android:id="@+id/pickImageMultiple"
@@ -24,13 +25,13 @@
             android:id="@+id/Review"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:onClick="reviewFile"
-            android:enabled="false"
-            android:text="Check Image Correlation"
-            android:background="@drawable/buttons"
-            android:textColor="#FFFFFF"
             android:layout_below="@+id/pickImageMultiple"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/buttons"
+            android:enabled="false"
+            android:onClick="reviewFile"
+            android:text="Check Image Correlation"
+            android:textColor="#FFFFFF"
             android:visibility="visible" />
 
         <Button

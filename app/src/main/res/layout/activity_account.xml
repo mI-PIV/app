@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbarStyle="outsideInset"
+    tools:context=".Experiment.HomeActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/usu_narwhal"
+                android:layout_width="300dp"
+                android:layout_height="250dp"
+                android:paddingBottom="50dp"
+                android:src="@drawable/narwhal_new" />
+
+            <Button
+                android:id="@+id/changeUserBtn"
+                android:layout_width="245dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="@drawable/mybuttons"
+                android:text="Change User"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/deleteDataBtn"
+                android:layout_width="245dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="@drawable/mybuttons"
+                android:text="Delete User Data"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

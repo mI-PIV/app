@@ -6,34 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".Learn.VideoTutorial">
 
-    <TextView
-        android:id="@+id/mipivtextview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#0F2439"
-        android:gravity="center"
-        android:text="@string/app_name"
-        android:textColor="#FFFFFF"
-        android:textSize="40sp" />
-
-    <TextView
-        android:id="@+id/videoTutorialTextview"
-        android:text="PIV Video Tutorials"
-        android:background="#0F2439"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/mipivtextview"
-        android:textColor="#FFFFFF"
-        android:textSize="30sp"
-        android:layout_marginTop="1dip" />
-
     <ListView
         android:id="@+id/tutorial_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#C1C1C1"
-        android:layout_below="@+id/videoTutorialTextview">
+        android:background="#C1C1C1">
     </ListView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
