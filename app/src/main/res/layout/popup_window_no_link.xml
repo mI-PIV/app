@@ -3,57 +3,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="45dp"
+    android:paddingRight="45dp">
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/popupWindowTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="18dp"
-            android:textSize="20dp"
-            android:textFontWeight="500"
-            android:background="#FFFFFF"
-            android:fontFamily="sans-serif"
-            android:textColor="@color/black_de"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:background="@drawable/border">
+        <TableRow
+            android:layout_margin="5dp">
+            <TextView
+                android:id="@+id/popupWindowTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="18dp"
+                android:textSize="20dp"
+                android:textFontWeight="500"
+                android:background="#FFFFFF"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/black_de"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" />
+        </TableRow>
+        <TableRow
+            android:layout_margin="5dp">
             <TextView
                 android:id="@+id/popupWindowMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:background="#FFFFFF"
-                android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingTop="25dp"
-                android:paddingBottom="80dp"/>
-
+                android:paddingBottom="25dp"/>
+        </TableRow>
+        <TableRow>
             <Button
                 android:id="@+id/button_close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#243EDF"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:stateListAnimator="@null"
+                android:backgroundTint="#FFFFFF"
+                android:gravity="right"
                 android:layout_below="@id/popupWindowMessage"
-                android:layout_centerInParent="true"
                 android:text="Cancel"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:layout_marginTop="-60dp"
-                android:textSize="20dp" />
-
-        </RelativeLayout>
-
+                android:textAllCaps="true"
+                android:textColor="@color/colorAccent"
+                android:textSize="14sp" />
+        </TableRow>
     </TableLayout>
 
 </LinearLayout>
