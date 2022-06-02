@@ -78,7 +78,7 @@ public class PivOptionsPopup extends AlertDialog {
         setView(getLayoutInflater().inflate(R.layout.popup_piv_dialog, null));
         create();
 
-        getWindow().getAttributes().width = 1435; // increasing width to fit all content
+        getWindow().getAttributes().width = 1450; // increasing width to fit all content
 
         // init texts
         TextView setEditTextPIV = (TextView) findViewById(R.id.piv_options_description);
