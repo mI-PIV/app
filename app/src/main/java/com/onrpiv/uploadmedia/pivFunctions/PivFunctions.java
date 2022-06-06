@@ -797,9 +797,6 @@ public class PivFunctions {
     }
 
     private static double median(List<Double> medianList) {
-        if (medianList.size() == 0)
-            return 0d;
-
         Collections.sort(medianList);
 
         double median;
@@ -836,7 +833,7 @@ public class PivFunctions {
                 } else if (ki == k && li == l) {
                     continue;
                 }
-                medianList.add(Math.abs(arr[ki][li]) - subValue);
+                medianList.add(Math.abs(arr[ki][li] - subValue));
             }
         }
         return median(medianList);
