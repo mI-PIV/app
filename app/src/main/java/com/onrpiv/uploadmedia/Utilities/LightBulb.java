@@ -37,8 +37,8 @@ public class LightBulb extends AppCompatImageButton {
     public final View baseView;
     private final Context context;
     private final ViewGroup baseParent;
-    private final int lightBulbWidth = 45;
-    private final int lightBulbHeight = 45;
+    private final int lightBulbWidth = 35;
+    private final int lightBulbHeight = 35;
 
 
     /**
