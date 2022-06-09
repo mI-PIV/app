@@ -38,9 +38,9 @@ public class LoadExperimentPopup extends Popup {
         radioListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentlySelected.toggle();
+                currentlySelected.setChecked(false);
                 currentlySelected = (RadioButton) v;
-                currentlySelected.toggle();
+                currentlySelected.setChecked(true);
             }
         };
 
