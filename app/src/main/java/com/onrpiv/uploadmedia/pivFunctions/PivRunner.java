@@ -131,6 +131,14 @@ public class PivRunner implements ProgressUpdateInterface {
 
 
                 ////////////////////////////////////////////////////////////////////////////////////
+                //// VORTICITY ////
+                ////////////////////////////////////////////////////////////////////////////////////
+                setMessage("Calculating vorticity");
+                PivFunctions.calculateVorticityMap(multipassResults);
+                pivFunctions.saveVorticityValues(multipassResults.getVorticityValues(), "Vorticity");
+
+
+                ////////////////////////////////////////////////////////////////////////////////////
                 //// CALIBRATION ////
                 ////////////////////////////////////////////////////////////////////////////////////
                 if (parameters.getCameraCalibrationResult() != null) {
@@ -143,6 +151,7 @@ public class PivRunner implements ProgressUpdateInterface {
                     pivFunctions.saveVectorCentimeters(singlePassResult,
                             parameters.getCameraCalibrationResult().ratio,
                             "CENTIMETERS_" + singlePassResult.getName());
+                    singlePassResult.setCalibrated(true);
 
                     // multipass
                     multipassResults.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
@@ -151,6 +160,7 @@ public class PivRunner implements ProgressUpdateInterface {
                     pivFunctions.saveVectorCentimeters(multipassResults,
                             parameters.getCameraCalibrationResult().ratio,
                             "CENTIMETERS_" + multipassResults.getName());
+                    multipassResults.setCalibrated(true);
 
                     // multipass processed
                     multiPassProcessed.setPixelToPhysicalRatio(parameters.getCameraCalibrationResult().ratio,
@@ -159,16 +169,8 @@ public class PivRunner implements ProgressUpdateInterface {
                     pivFunctions.saveVectorCentimeters(multiPassProcessed,
                             parameters.getCameraCalibrationResult().ratio,
                             "CENTIMETERS_" + multiPassProcessed.getName());
+                    multiPassProcessed.setCalibrated(true);
                 }
-
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                //// VORTICITY ////
-                ////////////////////////////////////////////////////////////////////////////////////
-                setMessage("Calculating vorticity");
-                PivFunctions.calculateVorticityMap(multiPassProcessed);
-                pivFunctions.saveVorticityValues(multiPassProcessed.getVorticityValues(), "Vorticity");
-
 
                 ////////////////////////////////////////////////////////////////////////////////////
                 //// SAVE DATA ////
