@@ -172,6 +172,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
         frameSetSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                setFrames.clear();
                 frameSetName = frameSetsList.get(i);
                 frameSetPath = PathUtil.getFramesNamedDirectory(context, userName, frameSetName);
 
