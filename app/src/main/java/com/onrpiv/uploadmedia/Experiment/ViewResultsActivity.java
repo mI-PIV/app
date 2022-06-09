@@ -94,7 +94,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private TextView infoText;
     private float currentX;
     private float currentY;
-    private static float conversionFactor;
 
     // From Image Activity
     public static PivResultData singlePass;
@@ -127,6 +126,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         correlationMaps = loadCorrelationMaps(replaced);
         colorMaps = ColorMap.loadColorMaps(this);
         settings = new ResultSettings(this);
+        settings.setCalibrated(calibrated);
 
         // sliders
         rangeSlider = findViewById(R.id.rangeSeekBar);
@@ -256,17 +256,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                 applyButton.setEnabled(true);
             }
         });
-
-        SwitchCompat calibrationSwitch = findViewById(R.id.results_calib_switch);
-        calibrationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                settings.setCalibrated(isChecked);
-                applyButton.setEnabled(true);
-                settings.selectionChanged = true;
-            }
-        });
-        calibrationSwitch.setVisibility(calibrated? View.VISIBLE : View.GONE);
 
         // radio groups
         RadioGroup vectorRadioGroup = findViewById(R.id.postp_rgroup);
@@ -723,7 +712,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             // compile the data
             float u = (float) pivCorr.getCalibratedU()[pivCoords.y][pivCoords.x];
             float v = (float) pivCorr.getCalibratedV()[pivCoords.y][pivCoords.x];
-            float vort = (float) pivCorr.getCalibratedVorticity()[pivCoords.y][pivCoords.x];
+            // Only multipass has vorticity values (design decision to only show one vorticity field)
+            float vort = (float) multiPass.getCalibratedVorticity()[pivCoords.y][pivCoords.x];
             // because we're inverting the y axis, we also invert the v values
             updatedText = settings.formatInfoString_physical((float) imgX, (float) dispY, u, -v, vort,
                     (float) pivCorr.getPixelToPhysicalRatio(), (float) pivCorr.getUvConversion());
@@ -732,7 +722,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             float u = (float)pivCorr.getU()[pivCoords.y][pivCoords.x];
             float v = (float)pivCorr.getV()[pivCoords.y][pivCoords.x];
             // Only multipass has vorticity values (design decision to only show one vorticity field)
-            float vort = (float)multiPass.getVorticityValues()[pivCoords.y][pivCoords.x];
+            float vort = (float) multiPass.getVorticityValues()[pivCoords.y][pivCoords.x];
             // because we're inverting the y axis, we also invert the v values
             updatedText = settings.formatInfoString_pixel((float)imgX, (float)dispY, u, -v, vort);
         }
