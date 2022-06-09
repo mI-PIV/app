@@ -206,7 +206,8 @@ public class PivResultData implements Serializable {
         _u_calib = new double[fieldRows][fieldCols];
         _v_calib = new double[fieldRows][fieldCols];
         _mag_calib = new double[fieldRows][fieldCols];
-        _vort_calib = new double[fieldRows][fieldCols];
+        if (null != _vort)   // some correlations won't have vorticity values
+            _vort_calib = new double[fieldRows][fieldCols];
 
         uvConversion = (1d / pixelToPhysicalRatio) / _dt;
 
