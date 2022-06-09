@@ -731,7 +731,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             // compile the data
             float u = (float)pivCorr.getU()[pivCoords.y][pivCoords.x];
             float v = (float)pivCorr.getV()[pivCoords.y][pivCoords.x];
-            float vort = (float)pivCorr.getVorticityValues()[pivCoords.y][pivCoords.x];
+            // Only multipass has vorticity values (design decision to only show one vorticity field)
+            float vort = (float)multiPass.getVorticityValues()[pivCoords.y][pivCoords.x];
             // because we're inverting the y axis, we also invert the v values
             updatedText = settings.formatInfoString_pixel((float)imgX, (float)dispY, u, -v, vort);
         }
