@@ -295,11 +295,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // popups
-//        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
-//        double maxDisplacement = displayIntent.getDoubleExtra("max-displacement", 0);
-//        popups(nMaxLower, maxDisplacement);
-
         // Setup images and paths
         String userName = displayIntent.getStringExtra(PivResultData.USERNAME);
         int currentExpDir = PersistedData.getTotalExperiments(this, userName);
@@ -310,6 +305,12 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         displayBaseImage(BACKGRND_SOLID);
         displayVectorImage(correlationMaps.get(settings.getVecOption()));
         applyDisplay(applyButton);
+
+        // popups
+//        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
+//        double maxDisplacement = displayIntent.getDoubleExtra("max-displacement", 0);
+//        popups(nMaxLower, maxDisplacement);
+        saveLocationPopup();
     }
 
     @Override
@@ -637,6 +638,14 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         dropDownMap.put((View) findViewById(R.id.backgroundDropDown), (LinearLayout)findViewById(R.id.backgroundLayout));
         dropDownMap.put((View) findViewById(R.id.infoDropDown), (LinearLayout)findViewById(R.id.infoSection));
         return dropDownMap;
+    }
+
+    private void saveLocationPopup() {
+        new AlertDialog.Builder(ViewResultsActivity.this)
+                .setTitle("Data Saved Location")
+                .setMessage("This experiment's data can be found in the text files located on your phone at:\n\n" + outputDirectory)
+                .setPositiveButton("Okay", null)
+                .show();
     }
 
     private void popups(double nMaxLower, double maxDisplacement) {
