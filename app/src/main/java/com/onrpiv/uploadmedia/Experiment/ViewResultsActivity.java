@@ -1,5 +1,6 @@
 package com.onrpiv.uploadmedia.Experiment;
 
+import static com.onrpiv.uploadmedia.Experiment.MainActivity.userName;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_IMG;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_SOLID;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_SUB;
@@ -11,6 +12,8 @@ import static com.onrpiv.uploadmedia.Utilities.ResultSettings.VEC_SINGLE;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,7 +25,10 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -59,11 +65,11 @@ import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
 
@@ -87,6 +93,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private HashMap<View, LinearLayout> sectionMaps;
     private ArrayList<ColorMap> colorMaps;
     private ResultSettings settings;
+    private int experimentNumber;
     private int imageCounter = 0;
 
     // info section
@@ -127,6 +134,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         colorMaps = ColorMap.loadColorMaps(this);
         settings = new ResultSettings(this);
         settings.setCalibrated(calibrated);
+        experimentNumber = PersistedData.getTotalExperiments(ViewResultsActivity.this, userName);
 
         // sliders
         rangeSlider = findViewById(R.id.rangeSeekBar);
@@ -287,11 +295,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // popups
-//        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
-//        double maxDisplacement = displayIntent.getDoubleExtra("max-displacement", 0);
-//        popups(nMaxLower, maxDisplacement);
-
         // Setup images and paths
         String userName = displayIntent.getStringExtra(PivResultData.USERNAME);
         int currentExpDir = PersistedData.getTotalExperiments(this, userName);
@@ -302,6 +305,12 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         displayBaseImage(BACKGRND_SOLID);
         displayVectorImage(correlationMaps.get(settings.getVecOption()));
         applyDisplay(applyButton);
+
+        // popups
+//        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
+//        double maxDisplacement = displayIntent.getDoubleExtra("max-displacement", 0);
+//        popups(nMaxLower, maxDisplacement);
+        saveLocationPopup();
     }
 
     @Override
@@ -477,13 +486,25 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         View imageStack = findViewById(R.id.img_frame);
         imageStack.setDrawingCacheEnabled(true);
         Bitmap bmp = imageStack.getDrawingCache();
-        File pngFile = new File(outputDirectory, "Saved_Image_" + imageCounter++ + ".png");
+
+        String imageFilename = "mI_PIV_" + experimentNumber + "_" + imageCounter++ + ".png";
+        ContentResolver resolver = getContentResolver();
+        Uri imageCollection;
+
+        if (Build.VERSION.SDK_INT >= 29) {
+            imageCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+        }
+        else {
+            imageCollection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        }
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, imageFilename);
+        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+        Uri imageUri = resolver.insert(imageCollection, contentValues);
 
         try {
-            if (!pngFile.exists()) {
-                pngFile.createNewFile();
-            }
-            FileOutputStream ostream = new FileOutputStream(pngFile);
+            OutputStream ostream = resolver.openOutputStream(Objects.requireNonNull(imageUri));
             bmp.compress(Bitmap.CompressFormat.PNG, 100, ostream);
             ostream.close();
             imageStack.invalidate();
@@ -493,17 +514,11 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             imageStack.setDrawingCacheEnabled(false);
         }
 
-        try {
-            new AlertDialog.Builder(this)
-                    .setPositiveButton("Okay", null)
-                    .setMessage("Current image saved as: \n" + pngFile.getCanonicalPath())
-                    .create().show();
-        } catch (IOException | SecurityException e) {
-            new AlertDialog.Builder(this)
-                    .setPositiveButton("Okay", null)
-                    .setMessage("Current image saved as: \n" + pngFile.getAbsolutePath())
-                    .create().show();
-        }
+        // popup showing user where to find the saved image
+        new AlertDialog.Builder(this)
+                .setPositiveButton("Okay", null)
+                .setMessage("Current experiment results view saved to your photo gallery.")
+                .create().show();
 
         saveImageButton.setEnabled(true);
         saveImageButton.setBackgroundColor(Color.parseColor("#243EDF"));
@@ -623,6 +638,14 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         dropDownMap.put((View) findViewById(R.id.backgroundDropDown), (LinearLayout)findViewById(R.id.backgroundLayout));
         dropDownMap.put((View) findViewById(R.id.infoDropDown), (LinearLayout)findViewById(R.id.infoSection));
         return dropDownMap;
+    }
+
+    private void saveLocationPopup() {
+        new AlertDialog.Builder(ViewResultsActivity.this)
+                .setTitle("Data Saved Location")
+                .setMessage("This experiment's data can be found in the text files located on your phone at:\n\n" + outputDirectory)
+                .setPositiveButton("Okay", null)
+                .show();
     }
 
     private void popups(double nMaxLower, double maxDisplacement) {
