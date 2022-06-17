@@ -177,6 +177,8 @@ public class ImageActivity extends AppCompatActivity {
         PivResultData singlePassResult = resultData.get(PivResultData.SINGLE);
         assert singlePassResult != null;
 
+        ViewResultsActivity.pivParameters = pivParameters;
+
         ViewResultsActivity.singlePass = singlePassResult;
         ViewResultsActivity.multiPass = resultData.get(PivResultData.MULTI);
         if (pivParameters.isReplace()) {

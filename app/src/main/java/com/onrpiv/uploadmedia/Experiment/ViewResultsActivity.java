@@ -60,6 +60,7 @@ import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.Utilities.PositionCallback;
 import com.onrpiv.uploadmedia.Utilities.ResultSettings;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
+import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
 import org.opencv.android.OpenCVLoader;
@@ -106,6 +107,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     public static PivResultData singlePass;
     public static PivResultData multiPass;
     public static PivResultData replacedPass;
+    public static PivParameters pivParameters;
     public static boolean calibrated;
     public static boolean backgroundSubtracted;
     private int rows;
