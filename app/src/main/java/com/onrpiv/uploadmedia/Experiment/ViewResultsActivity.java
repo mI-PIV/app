@@ -138,6 +138,10 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         settings.setCalibrated(calibrated);
         experimentNumber = PersistedData.getTotalExperiments(ViewResultsActivity.this, userName);
 
+        // load params section
+        TextView paramsText = findViewById(R.id.paramsText);
+        paramsText.setText(pivParameters.prettyPrintData_comprehensive());
+
         // sliders
         rangeSlider = findViewById(R.id.rangeSeekBar);
         float[] rangeVals = settings.getVortTransVals();
