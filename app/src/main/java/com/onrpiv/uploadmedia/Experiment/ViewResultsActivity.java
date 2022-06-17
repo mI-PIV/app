@@ -608,6 +608,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         ImageButton vortDropDown = findViewById(R.id.vortDropDown);
         ImageButton backgroundDropDown = findViewById(R.id.backgroundDropDown);
         ImageButton infoDropDown = findViewById(R.id.infoDropDown);
+        ImageButton paramsDropDown = findViewById(R.id.paramsDropDown);
 
         View.OnClickListener dropDownListener = new View.OnClickListener() {
             @Override
@@ -633,12 +634,14 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         vortDropDown.setOnClickListener(dropDownListener);
         backgroundDropDown.setOnClickListener(dropDownListener);
         infoDropDown.setOnClickListener(dropDownListener);
+        paramsDropDown.setOnClickListener(dropDownListener);
 
         dropDownMap.put((View) findViewById(R.id.vecDropDown), (LinearLayout)findViewById(R.id.vecFieldLayout));
         dropDownMap.put((View) findViewById(R.id.postpDropDown), (LinearLayout)findViewById(R.id.postpLayout));
         dropDownMap.put((View) findViewById(R.id.vortDropDown), (LinearLayout)findViewById(R.id.vortLayout));
         dropDownMap.put((View) findViewById(R.id.backgroundDropDown), (LinearLayout)findViewById(R.id.backgroundLayout));
         dropDownMap.put((View) findViewById(R.id.infoDropDown), (LinearLayout)findViewById(R.id.infoSection));
+        dropDownMap.put((View) findViewById(R.id.paramsDropDown), (LinearLayout) findViewById(R.id.paramsSection));
         return dropDownMap;
     }
 
