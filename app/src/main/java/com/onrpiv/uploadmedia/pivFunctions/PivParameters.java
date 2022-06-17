@@ -13,7 +13,7 @@ public class PivParameters implements Serializable {
     private static final long serialVersionUID = 42L;
     private int windowSize = 64, overlap = 32, frameOne, frameTwo;
     private String frameSetName;
-    private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.0, dt = 1.0, E = 5.0;
+    private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.0, dt = 1.0, E = 2.0;
     private boolean replace = true, fft = true;
     private int backgroundSelection = -1;
     private CameraCalibrationResult cameraCalibrationResult;
