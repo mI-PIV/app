@@ -239,7 +239,7 @@ public class PivParameters implements Serializable {
     public String prettyPrintData_comprehensive()
     {
         String result = "Frame set: " + frameSetName + "\n";
-        result += "Frame index start: " + frameOne + "\t\t";
+        result += "Frame index start: " + frameOne + "\t";
         result += "Frame index end: " + frameTwo + "\n";
         result += "Window size: " + windowSize + "\t\t";
         result += "Overlap: " + overlap + "\n";
