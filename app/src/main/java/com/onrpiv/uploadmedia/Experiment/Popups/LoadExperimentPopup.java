@@ -60,7 +60,7 @@ public class LoadExperimentPopup extends Popup {
                 if (null == params) continue;
 
                 // create a string that contains the piv parameter data
-                String paramString = params.prettyPrintData();
+                String paramString = params.prettyPrintData_small();
                 // create a table row with the param data string and add it to our table
                 tableLayout.addView(createDataRow(i, paramString), 0);
             }

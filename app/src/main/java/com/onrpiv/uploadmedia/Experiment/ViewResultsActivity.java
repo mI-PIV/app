@@ -60,6 +60,7 @@ import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.Utilities.PositionCallback;
 import com.onrpiv.uploadmedia.Utilities.ResultSettings;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
+import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
 import org.opencv.android.OpenCVLoader;
@@ -106,6 +107,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     public static PivResultData singlePass;
     public static PivResultData multiPass;
     public static PivResultData replacedPass;
+    public static PivParameters pivParameters;
     public static boolean calibrated;
     public static boolean backgroundSubtracted;
     private int rows;
@@ -135,6 +137,10 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         settings = new ResultSettings(this);
         settings.setCalibrated(calibrated);
         experimentNumber = PersistedData.getTotalExperiments(ViewResultsActivity.this, userName);
+
+        // load params section
+        TextView paramsText = findViewById(R.id.paramsText);
+        paramsText.setText(pivParameters.prettyPrintData_comprehensive());
 
         // sliders
         rangeSlider = findViewById(R.id.rangeSeekBar);
@@ -606,6 +612,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         ImageButton vortDropDown = findViewById(R.id.vortDropDown);
         ImageButton backgroundDropDown = findViewById(R.id.backgroundDropDown);
         ImageButton infoDropDown = findViewById(R.id.infoDropDown);
+        ImageButton paramsDropDown = findViewById(R.id.paramsDropDown);
 
         View.OnClickListener dropDownListener = new View.OnClickListener() {
             @Override
@@ -631,12 +638,14 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         vortDropDown.setOnClickListener(dropDownListener);
         backgroundDropDown.setOnClickListener(dropDownListener);
         infoDropDown.setOnClickListener(dropDownListener);
+        paramsDropDown.setOnClickListener(dropDownListener);
 
         dropDownMap.put((View) findViewById(R.id.vecDropDown), (LinearLayout)findViewById(R.id.vecFieldLayout));
         dropDownMap.put((View) findViewById(R.id.postpDropDown), (LinearLayout)findViewById(R.id.postpLayout));
         dropDownMap.put((View) findViewById(R.id.vortDropDown), (LinearLayout)findViewById(R.id.vortLayout));
         dropDownMap.put((View) findViewById(R.id.backgroundDropDown), (LinearLayout)findViewById(R.id.backgroundLayout));
         dropDownMap.put((View) findViewById(R.id.infoDropDown), (LinearLayout)findViewById(R.id.infoSection));
+        dropDownMap.put((View) findViewById(R.id.paramsDropDown), (LinearLayout) findViewById(R.id.paramsSection));
         return dropDownMap;
     }
 

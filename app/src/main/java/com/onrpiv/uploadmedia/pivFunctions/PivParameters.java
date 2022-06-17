@@ -231,8 +231,31 @@ public class PivParameters implements Serializable {
         cameraCalibrationResult = cameraCalibration;
     }
 
-    public String prettyPrintData() {
+    public String prettyPrintData_small() {
         return "Window: " + windowSize + " Overlap: " + overlap + "\nFrames " + frameOne + " to "
                 + frameTwo + " in Set " + frameSetName;
+    }
+
+    public String prettyPrintData_comprehensive()
+    {
+        String result = "Frame set: " + frameSetName + "\n";
+        result += "Frame index start: " + frameOne + "\t";
+        result += "Frame index end: " + frameTwo + "\n";
+        result += "Window size: " + windowSize + "\t\t";
+        result += "Overlap: " + overlap + "\n";
+        // minQ thresh "1.0"
+        result += "Minimum Q: " + qMin + "\t\t";
+        // median thresh "2.0"
+        result += "Median Threshold: " + E + "\n";
+        // interpolation (replace)
+        result += "Interpolation: " + replace;
+        return result;
+    }
+
+    public String outputPrint()
+    {
+        String output = "Piv Parameters\n";
+        output += prettyPrintData_comprehensive();
+        return output;
     }
 }

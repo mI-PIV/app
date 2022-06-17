@@ -31,7 +31,6 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -383,11 +382,14 @@ public class PivFunctions {
             FileOutputStream fileOutputStream = new FileOutputStream(txtFile, true);
             fileOutputStream.write((data + System.getProperty("line.separator")).getBytes());
             fileOutputStream.close();
-        } catch (FileNotFoundException ex) {
-            Log.d("", ex.getMessage());
         } catch (IOException ex) {
             Log.d("", ex.getMessage());
         }
+    }
+
+    public void saveParametersPlainText(PivParameters params)
+    {
+        saveToFile(params.outputPrint(), "Parameters");
     }
 
     public void saveVectorsValues(PivResultData pivResultData, String stepName) {

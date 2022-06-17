@@ -53,6 +53,9 @@ public class PivRunner implements ProgressUpdateInterface {
                 imgFileSaveName,
                 txtFileSaveName);
 
+        // save parameters plain text
+        pivFunctions.saveParametersPlainText(parameters);
+
         // background sub
         final int backgroundSelection = parameters.getBackgroundSelection();
 
