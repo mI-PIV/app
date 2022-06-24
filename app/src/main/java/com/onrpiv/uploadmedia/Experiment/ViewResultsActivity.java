@@ -93,7 +93,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private HashMap<String, PivResultData> correlationMaps;
     private HashMap<View, LinearLayout> sectionMaps;
     private ArrayList<ColorMap> colorMaps;
-    private ResultSettings settings;
+    protected ResultSettings settings;
     private int experimentNumber;
     private int imageCounter = 0;
 
