@@ -13,12 +13,12 @@ public class PersistedData {
         return "miPIV_" + userName;
     }
 
-    public static String getFrameDirPath(Context context, String userName, String path) {
-        return getPersistedData(context, userName).getString(path, null);
+    public static String getFrameDirPath(Context context, String userName, String setName) {
+        return getPersistedData(context, userName).getString(setName, null);
     }
 
-    public static void setFrameDirPath(Context context, String userName, String path, String dirName) {
-        getPersistedData(context, userName).edit().putString(path, dirName).apply();
+    public static void setFrameDirPath(Context context, String userName, String path, String setName) {
+        getPersistedData(context, userName).edit().putString(setName, path).apply();
     }
 
     public static int getTotalExperiments(Context context, String userName) {
