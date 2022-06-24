@@ -8,7 +8,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -50,6 +53,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
     public String frameSetName;
     public int frame1Num;
     public int frame2Num;
+
+    public boolean wholeSetProcessing = false;
 
     private final List<File> setFrames = new ArrayList<>();
     final List<String> frameSetsList;
@@ -96,6 +101,27 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 preview2.setImageBitmap(BitmapFactory.decodeFile(frame2Path.getAbsolutePath()));
 
                 saveButton.setEnabled(checkAllSelections());
+            }
+        });
+
+        CheckBox wholeSetCheckBox = findViewById(R.id.whole_set_checkbox);
+        wholeSetCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                wholeSetProcessing = isChecked;
+                saveButton.setEnabled(checkAllSelections() || isChecked);
+
+                int visibility = isChecked? View.INVISIBLE : View.VISIBLE;
+
+                TableRow firstFrameRow = findViewById(R.id.frame_selection_first_frame_row);
+                TableRow firstFrameSliderRow = findViewById(R.id.frame_selection_first_frame_slider_row);
+                TableRow secondFrameRow = findViewById(R.id.second_frame_tablerow);
+                LinearLayout previewLayout = findViewById(R.id.frame_selection_preview_layout);
+
+                firstFrameRow.setVisibility(visibility);
+                firstFrameSliderRow.setVisibility(visibility);
+                secondFrameRow.setVisibility(visibility);
+                previewLayout.setVisibility(visibility);
             }
         });
 

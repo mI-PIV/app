@@ -34,6 +34,22 @@
         </TableRow>
 
         <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <CheckBox
+                android:id="@+id/whole_set_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:gravity="center"
+                android:layoutDirection="rtl"
+                android:text="Process Whole Set?" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/frame_selection_first_frame_row"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_horizontal"
@@ -50,6 +66,7 @@
         </TableRow>
 
         <TableRow
+            android:id="@+id/frame_selection_first_frame_slider_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal">
@@ -129,6 +146,7 @@
     </TableLayout>
 
     <LinearLayout
+        android:id="@+id/frame_selection_preview_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
