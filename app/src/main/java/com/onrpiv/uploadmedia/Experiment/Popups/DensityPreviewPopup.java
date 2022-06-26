@@ -23,49 +23,59 @@ import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
 
 public class DensityPreviewPopup {
     private int cropSize = 32;
-    private final AlertDialog popup;
-    private final View popupLayout;
-    private final String frame1Path;
-    private final String frame2Path;
+    private AlertDialog popup;
+    private View popupLayout;
+    private String frame1Path;
+    private String frame2Path;
     private final Context context;
-    private final DialogInterface.OnClickListener yesListener;
+    private DialogInterface.OnClickListener yesListener;
+    private boolean isFake = false;
 
 
-    public DensityPreviewPopup(Activity activity, String frame1path, String frame2path,
+    public DensityPreviewPopup(Activity activity, PivFrameSelectionPopup frameSelection,
                                DialogInterface.OnClickListener yesListener) {
         this.context = activity;
 
-        // inflate our button radio group and get the crop size radio group
-        popupLayout = activity.getLayoutInflater().inflate(R.layout.popup_review_dialog, null);
+        // whole set processing doesn't have density preview
+        if (frameSelection.wholeSetProcessing)
+        {
+            AlertDialog fakeDialog = new AlertDialog.Builder(context).create();
+            yesListener.onClick(fakeDialog, DialogInterface.BUTTON_POSITIVE);
+            isFake = true;
+        } else {
+            // inflate our button radio group and get the crop size radio group
+            popupLayout = activity.getLayoutInflater().inflate(R.layout.popup_review_dialog, null);
 
-        RadioGroup cropSizeRadioGroup = popupLayout.findViewById(R.id.review_density_rgroup);
-        cropSizeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.size64x64:
-                        cropSize = 64;
-                        break;
-                    case R.id.size128x128:
-                        cropSize = 128;
-                        break;
-                    default:
-                        cropSize = 32;
+            RadioGroup cropSizeRadioGroup = popupLayout.findViewById(R.id.review_density_rgroup);
+            cropSizeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    switch (checkedId) {
+                        case R.id.size64x64:
+                            cropSize = 64;
+                            break;
+                        case R.id.size128x128:
+                            cropSize = 128;
+                            break;
+                        default:
+                            cropSize = 32;
+                    }
+                    buildView();
+                    popup.setView(popupLayout);
                 }
-                buildView();
-                popup.setView(popupLayout);
-            }
-        });
+            });
 
-        frame1Path = frame1path;
-        frame2Path = frame2path;
+            frame1Path = frameSelection.frame1Path.getAbsolutePath();
+            frame2Path = frameSelection.frame2Path.getAbsolutePath();
 
-        this.yesListener = yesListener;
-        popup = buildPopup().create();
+            this.yesListener = yesListener;
+            popup = buildPopup().create();
+        }
     }
 
     public void show() {
-        popup.show();
+        if (!isFake)
+            popup.show();
     }
 
     private AlertDialog.Builder buildPopup() {
@@ -91,8 +101,6 @@ public class DensityPreviewPopup {
     private AnimationDrawable createAnimation() {
         Bitmap bmp1 = BitmapFactory.decodeFile(frame1Path);
         Bitmap bmp2 = BitmapFactory.decodeFile(frame2Path);
-//        Bitmap cropped11 = getCroppedBitmap(bmp1);
-//        Bitmap cropped12 = getCroppedBitmap(bmp2);
 
         // Shrinking bitmap
         Bitmap cropped1 = getBitmapResized(getCroppedBitmap(bmp1), cropSize, cropSize);
@@ -132,7 +140,6 @@ public class DensityPreviewPopup {
         Matrix bitmapMatrix = new Matrix();
         bitmapMatrix.postScale(rescaledW, rescaledH);
 
-        Bitmap resized = Bitmap.createBitmap(bitmap, 0, 0, width, height, bitmapMatrix, false);
-        return resized;
+        return Bitmap.createBitmap(bitmap, 0, 0, width, height, bitmapMatrix, false);
     }
 }

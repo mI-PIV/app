@@ -16,9 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:onClick="onClick_MultipleImages"
             android:background="@drawable/buttons"
-            android:text="Select Image Pair"
+            android:onClick="onClick_MultipleImages"
+            android:text="Select Images"
             android:textColor="#FFFFFF" />
 
         <Button
