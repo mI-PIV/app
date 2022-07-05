@@ -10,40 +10,25 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.onrpiv.uploadmedia.R;
-import com.onrpiv.uploadmedia.Utilities.ResultSettings;
-import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ViewMultipleResultsActivity extends ViewResultsActivity {
 
-    private HashMap<Integer, ArrayList<PivResultData>> data;
+    public static HashMap<Integer, HashMap<String, PivResultData>> data;
     private int currentIndex;
-    private ResultSettings settings;
-    private PivParameters parameters;
-    // TODO override the save "image" button to save a video
-    // TODO lastly, figure out the whole video processing pipeline
-
-    // ui
     TextView frameText;
 
     protected void onCreate(Bundle savedInstanceState) {
+        changeData(0);
         super.onCreate(savedInstanceState);
-
-        // TODO need to add the data before we switch to this activity
-        data = new HashMap<>();
-        onIndexChange(0);
 
         // add temporal seekbar to the results layout
         RelativeLayout base = findViewById(R.id.base_layout);
         base.addView(buildSliderLayout(), 1);  // index 1 -> underneath images
-    }
 
-    public void addData(ArrayList<PivResultData> data, int idx)
-    {
-        this.data.put(idx, data);
+        onIndexChange(0);
     }
 
     @Override
@@ -55,15 +40,20 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
 
     private void onIndexChange(int newIdx)
     {
-        // TODO this is called when seekbar changes
-        // TODO need to rework this
-        this.settings = super.settings;
-        parameters = pivParameters;
-
-        // TODO apply changes to the new pivresultdata?
+        changeData(newIdx);
+        super.applyDisplay(null);
 
         currentIndex = newIdx;
         frameText.setText("frame: " + newIdx);
+    }
+
+    private void changeData(int newIdx)
+    {
+        singlePass = data.get(newIdx).get(PivResultData.SINGLE);
+        multiPass = data.get(newIdx).get(PivResultData.MULTI);
+        if (pivParameters.isReplace()) {
+            replacedPass = data.get(newIdx).get(PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE);
+        }
     }
 
     private LinearLayout buildSliderLayout()

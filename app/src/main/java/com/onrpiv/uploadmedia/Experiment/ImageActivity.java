@@ -120,7 +120,6 @@ public class ImageActivity extends AppCompatActivity {
                             wholeSetProcessing = true;
                         }
                         else {
-                            frameSetName = frameSelectionPopup.frameSetName;
                             frame1File = frameSelectionPopup.frame1Path;
                             frame2File = frameSelectionPopup.frame2Path;
                             frame1Num = frameSelectionPopup.frame1Num;
@@ -128,6 +127,7 @@ public class ImageActivity extends AppCompatActivity {
                             review.setEnabled(true);
                         }
 
+                        frameSetName = frameSelectionPopup.frameSetName;
                         fps = PersistedData.getFrameDirFPS(ImageActivity.this, userName,
                                 frameSetName);
 
@@ -136,10 +136,10 @@ public class ImageActivity extends AppCompatActivity {
                         frameSelectionPopup.dismiss();
                     }
                 };
+
                 // create and display our density preview popup
                 DensityPreviewPopup densityPreviewPopup = new DensityPreviewPopup(
-                        ImageActivity.this, frameSelectionPopup.frame1Path.getAbsolutePath(),
-                        frameSelectionPopup.frame2Path.getAbsolutePath(), densityPreviewListener);
+                        ImageActivity.this, frameSelectionPopup, densityPreviewListener);
                 densityPreviewPopup.show();
             }
         };
@@ -230,6 +230,8 @@ public class ImageActivity extends AppCompatActivity {
 
     // Process Images
     public void processPiv(View view) {
+        compute.setEnabled(false);
+        // TODO need a progress dialog for whole set processing
         if (wholeSetProcessing) {
             Context context = ImageActivity.this;
             File framesDir = new File(PersistedData.getFrameDirPath(context, userName, frameSetName));
@@ -243,7 +245,6 @@ public class ImageActivity extends AppCompatActivity {
                 multipleResultData.put(i, processSinglePiv(context, userName, pivParameters,
                         frame1, frame2));
             }
-
         } else {
             resultData = processSinglePiv(ImageActivity.this, userName, pivParameters,
                     frame1File, frame2File);
@@ -251,6 +252,7 @@ public class ImageActivity extends AppCompatActivity {
 
         display.setEnabled(true);
         step = 4;
+        compute.setEnabled(true);
         compute.setBackgroundColor(Color.parseColor(greenString));
     }
 
