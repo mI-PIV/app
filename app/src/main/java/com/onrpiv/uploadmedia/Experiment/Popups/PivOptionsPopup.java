@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -78,14 +77,6 @@ public class PivOptionsPopup extends AlertDialog {
         setCancelable(false);
         setView(getLayoutInflater().inflate(R.layout.popup_piv_dialog, null));
         create();
-
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindow().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int width = displayMetrics.widthPixels;
-        // int width is the width of the popup. This cannot be a "magic number" because various
-        // phones will respond differently to the command: 'getWindow().getAttributes().width'. The
-        // value 35 is like a buffer, just to make sure the information icons don't get cut off.
-        getWindow().getAttributes().width = width + 35; // increasing width to fit all content
 
         // init texts
         TextView setEditTextPIV = (TextView) findViewById(R.id.piv_options_description);
