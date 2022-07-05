@@ -120,6 +120,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
                 firstFrameRow.setVisibility(visibility);
                 firstFrameSliderRow.setVisibility(visibility);
+                // TODO secondFrameRow could be invisible before we switch
                 secondFrameRow.setVisibility(visibility);
                 previewLayout.setVisibility(visibility);
             }

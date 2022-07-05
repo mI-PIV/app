@@ -231,7 +231,8 @@ public class ImageActivity extends AppCompatActivity {
     // Process Images
     public void processPiv(View view) {
         compute.setEnabled(false);
-        // TODO need a progress dialog for whole set processing
+        // TODO need a progress dialog for whole set processing (long duration warning in this dialog)
+
         if (wholeSetProcessing) {
             Context context = ImageActivity.this;
             File framesDir = new File(PersistedData.getFrameDirPath(context, userName, frameSetName));
