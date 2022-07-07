@@ -23,15 +23,19 @@ public class PivRunner implements ProgressUpdateInterface {
 
     private Activity imageActivity;
     private ProgressDialog pDialog;
+    private final ProgressUpdateInterface progressUpdate;
+    private final boolean showProgress;
 
 
     public PivRunner(Context context, String userName, PivParameters parameters, File frame1File,
-                     File frame2File) {
+                     File frame2File, boolean showProgress) {
         this.parameters = parameters;
         this.frame1File = frame1File;
         this.frame2File = frame2File;
         this.context = context;
         this.userName = userName;
+        progressUpdate = showProgress? this : null;
+        this.showProgress = showProgress;
     }
 
     public HashMap<String, PivResultData> Run() {
@@ -60,11 +64,13 @@ public class PivRunner implements ProgressUpdateInterface {
         final int backgroundSelection = parameters.getBackgroundSelection();
 
         // progress dialog
-        pDialog = new ProgressDialog(context);
-        pDialog.setMessage(context.getString(R.string.msg_loading));
-        pDialog.setCancelable(false);
-        pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        if (!pDialog.isShowing()) pDialog.show();
+        if (showProgress) {
+            pDialog = new ProgressDialog(context);
+            pDialog.setMessage(context.getString(R.string.msg_loading));
+            pDialog.setCancelable(false);
+            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            if (!pDialog.isShowing()) pDialog.show();
+        }
 
         final HashMap<String, PivResultData> resultData = new HashMap<>();
 
@@ -94,7 +100,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 setMessage("Calculating PIV");
                 setMessage("Calculating single pass PIV");
                 PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE,
-                        parameters.isFFT(), PivRunner.this);
+                        parameters.isFFT(), progressUpdate);
                 singlePassResult.setBackgroundSubtracted(backgroundSub);
 
                 // save raw single pass
@@ -118,7 +124,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 ////////////////////////////////////////////////////////////////////////////////////
                 setMessage("Calculating Multi-Pass PIV");
                 PivResultData multipassResults = pivFunctions.calculateMultipass(singlePassProcessed,
-                        PivResultData.MULTI, parameters.isFFT(), PivRunner.this);
+                        PivResultData.MULTI, parameters.isFFT(), progressUpdate);
 
                 resultData.put(multipassResults.getName(), multipassResults);
                 pivFunctions.saveVectorsValues(multipassResults, multipassResults.getName());
@@ -181,7 +187,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 setMessage("Saving data...");
                 FileIO.writePIVData(resultData, parameters, context, userName, newExpTotal);
 
-                if (pDialog.isShowing()) pDialog.dismiss();
+                if (null != pDialog && pDialog.isShowing()) pDialog.dismiss();
             }
         };
         //-------------------------------Thread End-------------------------------------------//
@@ -191,6 +197,8 @@ public class PivRunner implements ProgressUpdateInterface {
     }
 
     private void setMessage(String msg) {
+        if (null == pDialog)
+            return;
         imageActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
