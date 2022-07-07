@@ -111,7 +111,17 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 wholeSetProcessing = isChecked;
                 saveButton.setEnabled(checkAllSelections() || isChecked);
 
-                int visibility = isChecked? View.INVISIBLE : View.VISIBLE;
+                int visibility = View.VISIBLE;
+                if (isChecked)
+                {
+                    visibility = View.GONE;
+                    AlertDialog.Builder warning = new AlertDialog.Builder(context);
+                    warning.setMessage("Processing a whole frame set will take a long time to process " +
+                            "(Depending on the amount of frames in the set).");
+                    warning.setPositiveButton( "Okay", (OnClickListener) null);
+                    warning.setNegativeButton("Nevermind", (dialog, which) -> wholeSetCheckBox.setChecked(false));
+                    warning.create().show();
+                }
 
                 TableRow firstFrameRow = findViewById(R.id.frame_selection_first_frame_row);
                 TableRow firstFrameSliderRow = findViewById(R.id.frame_selection_first_frame_slider_row);
@@ -120,8 +130,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
                 firstFrameRow.setVisibility(visibility);
                 firstFrameSliderRow.setVisibility(visibility);
-                // TODO secondFrameRow could be invisible before we switch
-                secondFrameRow.setVisibility(visibility);
+                secondFrameRow.setVisibility(View.INVISIBLE);
                 previewLayout.setVisibility(visibility);
             }
         });
