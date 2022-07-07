@@ -320,6 +320,8 @@ public class PivFunctions {
                 int c = (int) mmr.maxLoc.x;
                 int r = (int) mmr.maxLoc.y;
 
+                double epsr;
+                double epsc;
                 try {
                     double bottomCenter = corr.get(r-1, c)[0];
                     double topCenter = corr.get(r+1, c)[0];
@@ -327,24 +329,25 @@ public class PivFunctions {
                     double leftCenter = corr.get(r, c-1)[0];
                     double rightCenter = corr.get(r, c+1)[0];
 
-                    double epsr = (Math.log(bottomCenter) - Math.log(topCenter)) / (2 * (Math.log(bottomCenter) - 2 * Math.log(center) + Math.log(topCenter)));
-                    double epsc = (Math.log(leftCenter) - Math.log(rightCenter)) / (2 * (Math.log(leftCenter) - 2 * Math.log(center) + Math.log(rightCenter)));
+                    epsr = (Math.log(bottomCenter) - Math.log(topCenter)) / (2 * (Math.log(bottomCenter) - 2 * Math.log(center) + Math.log(topCenter)));
+                    epsc = (Math.log(leftCenter) - Math.log(rightCenter)) / (2 * (Math.log(leftCenter) - 2 * Math.log(center) + Math.log(rightCenter)));
 
                     epsr = Double.isNaN(epsr)? 0.0 : epsr;
                     epsc = Double.isNaN(epsc)? 0.0 : epsc;
 
-                    if (fft) {
-                        dr1[i][j] = (windowSize / 2d) - (r + epsr);
-                        dc1[i][j] = (windowSize / 2d) - (c + epsc);
-                    } else {
-                        dr1[i][j] = (windowSize - 1) - (r + epsr);
-                        dc1[i][j] = (windowSize - 1) - (c + epsc);
-                    }
-
                 } catch (Exception e) {
-                    dr1[i][j] = 0.0;
-                    dc1[i][j] = 0.0;
+                    epsr = 0.0;
+                    epsc = 0.0;
                 }
+
+                if (fft) {
+                    dr1[i][j] = (windowSize / 2d) - (r + epsr);
+                    dc1[i][j] = (windowSize / 2d) - (c + epsc);
+                } else {
+                    dr1[i][j] = (windowSize - 1) - (r + epsr);
+                    dc1[i][j] = (windowSize - 1) - (c + epsc);
+                }
+
                 mag[i][j] = Math.sqrt(Math.pow(dr1[i][j], 2) + Math.pow(dc1[i][j], 2));
                 sig2noise[i][j] = sig2Noise_update(corr, mmr);
 
