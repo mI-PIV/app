@@ -2,6 +2,7 @@ package com.onrpiv.uploadmedia.Experiment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -21,13 +22,13 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
     TextView frameText;
 
     protected void onCreate(Bundle savedInstanceState) {
-        changeData(0);
-        super.onCreate(savedInstanceState);
+        changeData(0);  // need to load the data before showing the results
+        super.onCreate(savedInstanceState);  // show the results page
 
         // add temporal seekbar to the results layout
         RelativeLayout base = findViewById(R.id.base_layout);
         // TODO this isn't working, try adding the slider to frame viewer view
-        base.addView(buildSliderLayout(), 2);  // index 1 -> underneath images
+        base.addView(buildSliderLayout(R.id.img_frame, R.id.apply_layout));
 
         onIndexChange(0);
     }
@@ -47,7 +48,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         super.applyDisplay(null);
 
         currentIndex = newIdx;
-        frameText.setText("frame: " + newIdx);
+        frameText.setText("frame: " + (newIdx+1));
     }
 
     private void changeData(int newIdx)
@@ -60,17 +61,33 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
          correlationMaps = loadCorrelationMaps(pivParameters.isReplace());
     }
 
-    private LinearLayout buildSliderLayout()
+    private RelativeLayout buildSliderLayout(int belowThisId, int aboveThisId)
     {
         Context context = ViewMultipleResultsActivity.this;
-        LinearLayout root = new LinearLayout(context);
-        root.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+        RelativeLayout root = new RelativeLayout(context);
+        LinearLayout container = new LinearLayout(context);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        RelativeLayout.LayoutParams paramsR = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                // width, length
+
+        // add the below rule
+        paramsR.addRule(RelativeLayout.BELOW, belowThisId);
+        root.setLayoutParams(paramsR);
+
+        // change the 'aboveThis' below rule
+        View aboveThis = findViewById(aboveThisId);
+        ViewGroup.LayoutParams aboveThisParams = aboveThis.getLayoutParams();
+        if ((RelativeLayout.LayoutParams) aboveThisParams != null) {
+            root.setId(View.generateViewId());
+            ((RelativeLayout.LayoutParams) aboveThisParams).addRule(RelativeLayout.BELOW, root.getId());
+        }
 
         // text
         frameText = new TextView(context);
+        frameText.setGravity(Gravity.CENTER);
         frameText.setText("frame: " + currentIndex);
 
         // temporal seekbar
@@ -82,13 +99,9 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         seekBar.setOnSeekBarChangeListener(getSeekBarListener());
 
         // add children to root
-        root.addView(frameText);
-        root.addView(seekBar);
-
-        // set layout params
-        root.setLayoutParams(params);
-        frameText.setLayoutParams(params);
-        seekBar.setLayoutParams(params);
+        container.addView(frameText);
+        container.addView(seekBar);
+        root.addView(container);
 
         return root;
     }
