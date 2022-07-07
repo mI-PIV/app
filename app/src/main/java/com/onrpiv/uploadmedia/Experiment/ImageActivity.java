@@ -1,5 +1,6 @@
 package com.onrpiv.uploadmedia.Experiment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -95,10 +96,9 @@ public class ImageActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -118,8 +118,7 @@ public class ImageActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         if (frameSelectionPopup.wholeSetProcessing) {
                             wholeSetProcessing = true;
-                        }
-                        else {
+                        } else {
                             frame1File = frameSelectionPopup.frame1Path;
                             frame2File = frameSelectionPopup.frame2Path;
                             frame1Num = frameSelectionPopup.frame1Num;
@@ -231,21 +230,45 @@ public class ImageActivity extends AppCompatActivity {
     // Process Images
     public void processPiv(View view) {
         compute.setEnabled(false);
-        // TODO need a progress dialog for whole set processing (long duration warning in this dialog)
 
         if (wholeSetProcessing) {
             Context context = ImageActivity.this;
+
+            // retrieve the entire frameset
             File framesDir = new File(PersistedData.getFrameDirPath(context, userName, frameSetName));
-            assert framesDir.isDirectory();
             File[] allFrames = framesDir.listFiles();
 
-            for(int i = 0; i < Objects.requireNonNull(allFrames).length-1; i++)
-            {
-                File frame1 = allFrames[i];
-                File frame2 = allFrames[i+1];
-                multipleResultData.put(i, processSinglePiv(context, userName, pivParameters,
-                        frame1, frame2));
-            }
+            // progress dialog
+            ProgressDialog wholeProgress = new ProgressDialog(context);
+            wholeProgress.setMessage("Processing PIV on whole frame set... This may take a while.");
+            wholeProgress.setCancelable(true);
+            wholeProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            wholeProgress.setMax(Objects.requireNonNull(allFrames).length);
+            wholeProgress.show();
+
+            // process frames
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for(int i = 0; i < Objects.requireNonNull(allFrames).length-1; i++)
+                    {
+                        File frame1 = allFrames[i];
+                        File frame2 = allFrames[i+1];
+                        multipleResultData.put(i, processSinglePiv(context, userName, pivParameters,
+                                frame1, frame2));
+
+                        // update progress
+//                        final int iteration = i;
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() { wholeProgress.setProgress(iteration); }
+//                        });
+                        updateProgress(wholeProgress, i);
+                    }
+                    if (!wholeProgress.isShowing()) { wholeProgress.dismiss(); }
+                }
+            }).start();
+
         } else {
             resultData = processSinglePiv(ImageActivity.this, userName, pivParameters,
                     frame1File, frame2File);
@@ -263,6 +286,16 @@ public class ImageActivity extends AppCompatActivity {
     {
         PivRunner pivRunner = new PivRunner(context, userName, params, frame1, frame2);
         return pivRunner.Run();
+    }
+
+    private void updateProgress(ProgressDialog dialog, int iteration)
+    {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dialog.setProgress(iteration);
+            }
+        });
     }
 
     @Override
