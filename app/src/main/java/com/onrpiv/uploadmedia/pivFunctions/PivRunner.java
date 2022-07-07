@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 
 public class PivRunner implements ProgressUpdateInterface {
+    public Thread pivRunningThread;
     private final PivParameters parameters;
     private final Context context;
     private final File frame1File;
@@ -76,7 +77,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
 
         //---------------------------------Using Threads--------------------------------------//
-        Thread thread = new Thread() {
+        pivRunningThread = new Thread() {
             @Override
             public void run() {
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -191,7 +192,7 @@ public class PivRunner implements ProgressUpdateInterface {
             }
         };
         //-------------------------------Thread End-------------------------------------------//
-        thread.start();
+        pivRunningThread.start();
 
         return resultData;
     }
