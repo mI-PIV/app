@@ -26,7 +26,8 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
 
         // add temporal seekbar to the results layout
         RelativeLayout base = findViewById(R.id.base_layout);
-        base.addView(buildSliderLayout(), 1);  // index 1 -> underneath images
+        // TODO this isn't working, try adding the slider to frame viewer view
+        base.addView(buildSliderLayout(), 2);  // index 1 -> underneath images
 
         onIndexChange(0);
     }
@@ -41,6 +42,8 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
     private void onIndexChange(int newIdx)
     {
         changeData(newIdx);
+        settings.vecFieldChanged = true;
+        settings.vortMapChanged = true;
         super.applyDisplay(null);
 
         currentIndex = newIdx;
@@ -54,6 +57,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         if (pivParameters.isReplace()) {
             replacedPass = data.get(newIdx).get(PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE);
         }
+         correlationMaps = loadCorrelationMaps(pivParameters.isReplace());
     }
 
     private LinearLayout buildSliderLayout()
@@ -71,7 +75,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
 
         // temporal seekbar
         SeekBar seekBar = new SeekBar(context);
-        seekBar.setMax(data.size());
+        seekBar.setMax(data.size()-1);
         seekBar.setProgress(0);
 
         // add listener to seekBar

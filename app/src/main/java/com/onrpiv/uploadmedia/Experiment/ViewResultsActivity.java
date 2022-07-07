@@ -90,7 +90,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private File outputDirectory;
 
     // maps and settings
-    private HashMap<String, PivResultData> correlationMaps;
+    protected HashMap<String, PivResultData> correlationMaps;
     private HashMap<View, LinearLayout> sectionMaps;
     private ArrayList<ColorMap> colorMaps;
     protected ResultSettings settings;
@@ -596,7 +596,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         return result;
     }
 
-    private HashMap<String, PivResultData> loadCorrelationMaps(boolean replaced) {
+    protected HashMap<String, PivResultData> loadCorrelationMaps(boolean replaced) {
         HashMap<String, PivResultData> result = new HashMap<>();
         result.put(VEC_SINGLE, singlePass);
         result.put(VEC_MULTI, multiPass);
