@@ -322,22 +322,21 @@ public class PivFunctions {
 
                 double epsr;
                 double epsc;
-                try {
-                    double bottomCenter = corr.get(r-1, c)[0];
-                    double topCenter = corr.get(r+1, c)[0];
+                if (r > 0 && r < windowSize-1 && c > 0 && c < windowSize-1) {
+                    double bottomCenter = corr.get(r - 1, c)[0];
+                    double topCenter = corr.get(r + 1, c)[0];
                     double center = corr.get(r, c)[0];
-                    double leftCenter = corr.get(r, c-1)[0];
-                    double rightCenter = corr.get(r, c+1)[0];
+                    double leftCenter = corr.get(r, c - 1)[0];
+                    double rightCenter = corr.get(r, c + 1)[0];
 
                     epsr = (Math.log(bottomCenter) - Math.log(topCenter)) / (2 * (Math.log(bottomCenter) - 2 * Math.log(center) + Math.log(topCenter)));
                     epsc = (Math.log(leftCenter) - Math.log(rightCenter)) / (2 * (Math.log(leftCenter) - 2 * Math.log(center) + Math.log(rightCenter)));
 
-                    epsr = Double.isNaN(epsr)? 0.0 : epsr;
-                    epsc = Double.isNaN(epsc)? 0.0 : epsc;
-
-                } catch (Exception e) {
-                    epsr = 0.0;
-                    epsc = 0.0;
+                    epsr = Double.isNaN(epsr) ? 0.0 : epsr;
+                    epsc = Double.isNaN(epsc) ? 0.0 : epsc;
+                } else {
+                epsr = 0.0;
+                epsc = 0.0;
                 }
 
                 if (fft) {
@@ -899,14 +898,8 @@ public class PivFunctions {
 
     public PivResultData calculateMultipass(PivResultData pivResultData, String resultName, boolean fft,
                                             ProgressUpdateInterface progressUpdate) {
-        double[][] dr_new = new double[fieldRows][fieldCols];
-        double[][] dc_new = new double[fieldRows][fieldCols];
-
         double[][] dr2 = new double[fieldRows][fieldCols];
         double[][] dc2 = new double[fieldRows][fieldCols];
-
-        double[][] eps_r_new = new double[fieldRows][fieldCols];
-        double[][] eps_c_new = new double[fieldRows][fieldCols];
 
         double[][] mag = new double[fieldRows][fieldCols];
         double[][] sig2noise = new double[fieldRows][fieldCols];
@@ -984,37 +977,41 @@ public class PivFunctions {
                     int c = (int) mmr.maxLoc.x;
                     int r = (int) mmr.maxLoc.y;
 
-                    try {
-                        double epsr_new = (Math.log(corr.get(r - 1, c)[0])
+                    double epsr_new;
+                    double epsc_new;
+                    if (r > 0 && r < windowSize-1 && c > 0 && c < windowSize-1) {
+                        epsr_new = (Math.log(corr.get(r - 1, c)[0])
                                 - Math.log(corr.get(r + 1, c)[0]))
                                 / (2 * (Math.log(corr.get(r - 1, c)[0])
                                 - 2 * Math.log(corr.get(r, c)[0])
                                 + Math.log(corr.get(r + 1, c)[0])));
 
-                        double epsc_new = (Math.log(corr.get(r, c - 1)[0])
+                        epsc_new = (Math.log(corr.get(r, c - 1)[0])
                                 - Math.log(corr.get(r, c + 1)[0]))
                                 / (2 * (Math.log(corr.get(r, c - 1)[0])
                                 - 2 * Math.log(corr.get(r, c)[0])
                                 + Math.log(corr.get(r, c + 1)[0])));
 
-                        eps_r_new[ii][jj] = Double.isNaN(epsr_new)? 0.0 : epsr_new;
-                        eps_c_new[ii][jj] = Double.isNaN(epsc_new)? 0.0 : epsc_new;
+                        epsr_new = Double.isNaN(epsr_new) ? 0.0 : epsr_new;
+                        epsc_new = Double.isNaN(epsc_new) ? 0.0 : epsc_new;
+                    } else {
+                        epsc_new = 0d;
+                        epsr_new = 0d;
+                    }
 
-                        if (fft) {
-                            dr_new[ii][jj] = (windowSize / 2d) - (r + eps_r_new[ii][jj]);
-                            dc_new[ii][jj] = (windowSize / 2d) - (c + eps_c_new[ii][jj]);
-                        } else {
-                            dr_new[ii][jj] = (windowSize - 1) - (r + eps_r_new[ii][jj]);
-                            dc_new[ii][jj] = (windowSize - 1) - (c + eps_c_new[ii][jj]);
-                        }
-                    } catch (Exception e) {
-                        eps_r_new[ii][jj] = corr.get(r, c)[0];
-                        eps_c_new[ii][jj] = corr.get(r, c)[0];
+                    double dr_new;
+                    double dc_new;
+                    if (fft) {
+                        dr_new = (windowSize / 2d) - (r + epsr_new);
+                        dc_new = (windowSize / 2d) - (c + epsc_new);
+                    } else {
+                        dr_new = (windowSize - 1) - (r + epsr_new);
+                        dc_new = (windowSize - 1) - (c + epsc_new);
                     }
 
                     //Add new pixel displacement to pixel displacements from 1st pass
-                    dc2[ii][jj] = ushift*2 + dc_new[ii][jj];
-                    dr2[ii][jj] = vshift*2 + dr_new[ii][jj];
+                    dc2[ii][jj] = ushift*2 + dc_new;
+                    dr2[ii][jj] = vshift*2 + dr_new;
 
                     sig2noise[ii][jj] = sig2Noise_update(corr, mmr);
 
