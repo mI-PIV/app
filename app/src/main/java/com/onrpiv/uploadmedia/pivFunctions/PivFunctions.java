@@ -1005,8 +1005,10 @@ public class PivFunctions {
                             dc_new[ii][jj] = (windowSize - 1) - (c + eps_c_new[ii][jj]);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        eps_r_new[ii][jj] = corr.get(r, c)[0];
+                        eps_c_new[ii][jj] = corr.get(r, c)[0];
                     }
+
                     //Add new pixel displacement to pixel displacements from 1st pass
                     dc2[ii][jj] = ushift*2 + dc_new[ii][jj];
                     dr2[ii][jj] = vshift*2 + dr_new[ii][jj];
