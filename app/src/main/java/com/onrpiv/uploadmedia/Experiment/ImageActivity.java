@@ -253,10 +253,19 @@ public class ImageActivity extends AppCompatActivity {
                     int progressCounter = 0;
                     for(int i = 0; i < Objects.requireNonNull(allFrames).length-1; i++)
                     {
+                        // run piv thread
                         File frame1 = allFrames[i];
                         File frame2 = allFrames[i+1];
-                        multipleResultData.put(i, processSinglePiv(context, userName, pivParameters,
-                                frame1, frame2, false));
+                        PivRunner runner = processSinglePiv(context, userName, pivParameters,
+                                frame1, frame2, false);
+                        multipleResultData.put(i, runner.Run());
+
+                        // wait for piv thread to stop
+                        try {
+                            runner.pivRunningThread.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
                         updateProgress(wholeProgress, ++progressCounter);
                     }
@@ -267,7 +276,7 @@ public class ImageActivity extends AppCompatActivity {
 
         } else {
             resultData = processSinglePiv(ImageActivity.this, userName, pivParameters,
-                    frame1File, frame2File, true);
+                    frame1File, frame2File, true).Run();
         }
 
         display.setEnabled(true);
@@ -276,12 +285,11 @@ public class ImageActivity extends AppCompatActivity {
         compute.setBackgroundColor(Color.parseColor(greenString));
     }
 
-    private static HashMap<String, PivResultData> processSinglePiv(Context context, String userName,
+    private static PivRunner processSinglePiv(Context context, String userName,
                                                                    PivParameters params, File frame1,
                                                                    File frame2, boolean showProgress)
     {
-        PivRunner pivRunner = new PivRunner(context, userName, params, frame1, frame2, showProgress);
-        return pivRunner.Run();
+        return new PivRunner(context, userName, params, frame1, frame2, showProgress);
     }
 
     private void updateProgress(ProgressDialog dialog, int iteration)
