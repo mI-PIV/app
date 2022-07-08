@@ -219,6 +219,7 @@ public class ImageActivity extends AppCompatActivity {
 
         displayIntent.putExtra(PivResultData.USERNAME, userName);
         displayIntent.putExtra(PivResultData.REPLACED_BOOL, pivParameters.isReplace());
+        displayIntent.putExtra(PivResultData.FRAMESET, frameSetName);
 
         startActivity(displayIntent);
         pickImageMultiple.setBackgroundColor(Color.parseColor(blueString));
