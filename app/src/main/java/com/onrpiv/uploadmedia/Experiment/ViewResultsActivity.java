@@ -94,8 +94,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private HashMap<View, LinearLayout> sectionMaps;
     private ArrayList<ColorMap> colorMaps;
     protected ResultSettings settings;
-    private int experimentNumber;
-    private int imageCounter = 0;
+    protected int experimentNumber;
+    protected int imageCounter = 0;
 
     // info section
     private ImageView selectionImage;
