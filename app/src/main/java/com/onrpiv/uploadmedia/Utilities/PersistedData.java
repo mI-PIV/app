@@ -29,12 +29,12 @@ public class PersistedData {
         getPersistedData(context, userName).edit().putInt(EXPERIMENT_NUMBER, totalExpDirs).apply();
     }
 
-    public static void setFrameDirFPS(Context context, String userName, String frameDir, int fps) {
-        getPersistedData(context, userName).edit().putInt(FPS+frameDir, fps).apply();
+    public static void setFrameDirFPS(Context context, String userName, String framesetName, int fps) {
+        getPersistedData(context, userName).edit().putInt(FPS+framesetName, fps).apply();
     }
 
-    public static int getFrameDirFPS(Context context, String userName, String frameDir) {
-        return getPersistedData(context, userName).getInt(FPS+frameDir,20);
+    public static int getFrameDirFPS(Context context, String userName, String framesetName) {
+        return getPersistedData(context, userName).getInt(FPS+framesetName,20);
     }
 
     public static void clearUserPersistedData(Context context, String userName) {
