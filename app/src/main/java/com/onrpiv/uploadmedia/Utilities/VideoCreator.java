@@ -13,14 +13,12 @@ import java.io.File;
 
 public class VideoCreator {
 
-    public static void createAndSaveVideo(Context context, File frameDir, File outputDir,
-                                          String fileName, int fps) {
+    public static void createAndSaveVideo(Context context, File frameDir, String output, int fps) {
 
-        String outputFull = outputDir.getAbsolutePath() + fileName;
         String fullInputPattern = "'" + frameDir.getAbsolutePath() + "/*.jpg'";
 
         String[] command = {"-framerate", ""+fps, "-pattern_type", "glob", "-i", fullInputPattern,
-                "-c:v", "libx264", "-pix_fmt", "yuv420p", outputFull};
+                "-c:v", "libx264", "-pix_fmt", "yuv420p", output};
         execFfmpeg(command, context);
     }
 
