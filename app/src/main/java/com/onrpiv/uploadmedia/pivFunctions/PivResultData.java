@@ -33,7 +33,8 @@ public class PivResultData implements Serializable {
             MULTI = "multipass",
             PROCESSED = "_processed",
             REPLACE = "_replaced",
-            USERNAME = "username";
+            USERNAME = "username",
+            FRAMESET = "frameset";
 
     public PivResultData(String name, double[][] u, double[][] v, double[][] mag,
                          double[][] sig2noise, double[][] interrCenters, int cols, int rows,
