@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -20,11 +21,12 @@ import android.widget.TextView;
 
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
-import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.Utilities.VideoCreator;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class ViewMultipleResultsActivity extends ViewResultsActivity {
@@ -33,13 +35,15 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
     private TextView frameText;
     private String userName;
     private String framesetName;
+    private SeekBar temporalSlider;
 
     protected void onCreate(Bundle savedInstanceState) {
         changeData(0);  // need to load the data before showing the results
         super.onCreate(savedInstanceState);  // show the results page
 
-        userName = savedInstanceState.getString(PivResultData.USERNAME);
-        framesetName = savedInstanceState.getString(PivResultData.FRAMESET);
+        Bundle extras = getIntent().getExtras();
+        userName = (String) extras.get(PivResultData.USERNAME);
+        framesetName = (String) extras.get(PivResultData.FRAMESET);
 
         // add temporal seekbar to the results layout
         RelativeLayout base = findViewById(R.id.base_layout);
@@ -54,52 +58,73 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         saveImageButton.setEnabled(false);
         saveImageButton.setBackgroundColor(Color.parseColor("#576674"));
 
-        // create and save video
+        // create frames
+        File expFrames = PathUtil.getNumberedExperimentFramesDirectory(this, userName, experimentNumber);
+        int currentIdx = temporalSlider.getProgress();
+        for (int i = 0; i < data.size(); i++) {
+            // change data
+            onIndexChange(i);
+            // get results view
+            View imageStack = findViewById(R.id.img_frame);
+            imageStack.setDrawingCacheEnabled(true);
+            Bitmap bmp = imageStack.getDrawingCache();
+            // save results frame
+            File framePath = new File(expFrames, String.format("%04d", i) + ".jpg");
+            try (FileOutputStream output = new FileOutputStream(framePath)) {
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, output);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        onIndexChange(currentIdx);
+
+        // video creation
+        // TODO run on different thread w/ pDialog
+        String testPath = getExternalFilesDir(null).getPath() + "/test.avi";
+        VideoCreator.createAndSaveVideo(expFrames, testPath);
+
+        // move temp vid to gallery
         Context context = this;
-        File frameDir = new File(PersistedData.getFrameDirPath(context, userName, framesetName));
-        int fps = PersistedData.getFrameDirFPS(context, userName, framesetName);
-        String imageFilename = "mI_PIV_" + experimentNumber + "_" + imageCounter++ + ".png";
-
+        String vidFilename = "mI_PIV_" + experimentNumber + "_" + imageCounter++;
         ContentResolver resolver = getContentResolver();
-        Uri imageCollection;
-
+        Uri videoCollection;
         if (Build.VERSION.SDK_INT >= 29) {
-            imageCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+            videoCollection = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+        } else {
+            videoCollection = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         }
-        else {
-            imageCollection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        }
-
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, imageFilename);
-        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "video/mp4");
-        Uri videoUri = resolver.insert(imageCollection, contentValues);
+        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, vidFilename);
+        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "video/avi");
+        Uri videoUri = resolver.insert(videoCollection, contentValues);
         String videoPath = PathUtil.getRealPath(context, videoUri);
 
-        VideoCreator.createAndSaveVideo(context, frameDir, videoPath, fps);
+
+        // TODO move temp vid to gallery
+
 
         // popup showing user where to find the saved image
         new AlertDialog.Builder(this)
                 .setPositiveButton("Okay", null)
-                .setMessage("Current experiment results view saved to your photo gallery.")
+                .setMessage("Current experiment results view saved to your video gallery.")
                 .create().show();
+
+        // cleanup results frames
+        PathUtil.deleteRecursive(expFrames);
 
         saveImageButton.setEnabled(true);
         saveImageButton.setBackgroundColor(Color.parseColor("#243EDF"));
     }
 
-    private void onIndexChange(int newIdx)
-    {
+    private void onIndexChange(int newIdx) {
         changeData(newIdx);
         settings.vecFieldChanged = true;
         settings.vortMapChanged = true;
         super.applyDisplay(null);
-
         frameText.setText(getFrameText(newIdx+1));
     }
 
-    private void changeData(int newIdx)
-    {
+    private void changeData(int newIdx) {
         singlePass = data.get(newIdx).get(PivResultData.SINGLE);
         multiPass = data.get(newIdx).get(PivResultData.MULTI);
         if (pivParameters.isReplace()) {
@@ -108,8 +133,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
          correlationMaps = loadCorrelationMaps(pivParameters.isReplace());
     }
 
-    private RelativeLayout buildSliderLayout(int belowThisId, int aboveThisId)
-    {
+    private RelativeLayout buildSliderLayout(int belowThisId, int aboveThisId) {
         Context context = ViewMultipleResultsActivity.this;
         RelativeLayout root = new RelativeLayout(context);
         LinearLayout container = new LinearLayout(context);
@@ -138,23 +162,22 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         frameText.setText(getFrameText(1));
 
         // temporal seekbar
-        SeekBar seekBar = new SeekBar(context);
-        seekBar.setMax(data.size()-1);
-        seekBar.setProgress(0);
+        temporalSlider = new SeekBar(context);
+        temporalSlider.setMax(data.size()-1);
+        temporalSlider.setProgress(0);
 
         // add listener to seekBar
-        seekBar.setOnSeekBarChangeListener(getSeekBarListener());
+        temporalSlider.setOnSeekBarChangeListener(getSeekBarListener());
 
         // add children to root
         container.addView(frameText);
-        container.addView(seekBar);
+        container.addView(temporalSlider);
         root.addView(container);
 
         return root;
     }
 
-    private SeekBar.OnSeekBarChangeListener getSeekBarListener()
-    {
+    private SeekBar.OnSeekBarChangeListener getSeekBarListener() {
         return new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
