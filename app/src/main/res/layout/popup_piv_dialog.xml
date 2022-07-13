@@ -232,7 +232,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/groupradio_text"
+                        android:id="@+id/params_replace_text"
                         android:gravity="end"
                         android:text="Replace Missing Vectors: "
                         android:visibility="gone"
@@ -260,6 +260,49 @@
 
                         <RadioButton
                             android:id="@+id/params_replace_no"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="NO" />
+                    </RadioGroup>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/params_negativef_text"
+                        android:gravity="end"
+                        android:text="Negative Filter:"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+
+                    <RadioGroup
+                        android:id="@+id/params_negativef_radiogroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <RadioButton
+                            android:id="@+id/params_negativef_yes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="true"
+                            android:gravity="center"
+                            android:text="YES" />
+
+                        <RadioButton
+                            android:id="@+id/params_negativef_no"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -387,18 +430,21 @@
                         android:gravity="center_horizontal"/>
                 </TableRow>
 
-                <TableRow android:gravity="right">
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right">
 
                     <Button
                         android:id="@+id/button_cancel_piv_data"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:paddingTop="20dp"
+                        android:layout_gravity="right"
                         android:layout_marginEnd="-5dp"
                         android:backgroundTint="#FFFFFF"
+                        android:paddingTop="20dp"
                         android:stateListAnimator="@null"
                         android:text="Cancel"
-                        android:layout_gravity="right"
                         android:textAllCaps="true"
                         android:textColor="@color/colorAccent"
                         android:textSize="14sp" />
@@ -408,11 +454,11 @@
                         android:id="@+id/button_save_piv_data"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:paddingTop="20dp"
+                        android:layout_gravity="right"
                         android:backgroundTint="#FFFFFF"
+                        android:paddingTop="20dp"
                         android:stateListAnimator="@null"
                         android:text="Select Values"
-                        android:layout_gravity="right"
                         android:textAllCaps="true"
                         android:textColor="@color/colorAccent"
                         android:textSize="14sp" />
