@@ -21,6 +21,7 @@ import com.onrpiv.uploadmedia.Learn.PIVBasics3;
 import com.onrpiv.uploadmedia.Learn.PIVBasicsLayout;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
+import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
@@ -247,6 +248,8 @@ public class ImageActivity extends AppCompatActivity {
             wholeProgress.setMax(Objects.requireNonNull(allFrames).length-1);
             wholeProgress.show();
 
+            File expDir = PathUtil.createNewExperimentDirectory(this, userName);
+
             // process frames
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -258,7 +261,7 @@ public class ImageActivity extends AppCompatActivity {
                         File frame1 = allFrames[i];
                         File frame2 = allFrames[i+1];
                         PivRunner runner = processSinglePiv(context, userName, pivParameters,
-                                frame1, frame2, false);
+                                frame1, frame2, expDir, false);
                         multipleResultData.put(i, runner.Run());
 
                         // wait for piv thread to stop
@@ -277,7 +280,7 @@ public class ImageActivity extends AppCompatActivity {
 
         } else {
             resultData = processSinglePiv(ImageActivity.this, userName, pivParameters,
-                    frame1File, frame2File, true).Run();
+                    frame1File, frame2File, null, true).Run();
         }
 
         display.setEnabled(true);
@@ -287,10 +290,10 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     private static PivRunner processSinglePiv(Context context, String userName,
-                                                                   PivParameters params, File frame1,
-                                                                   File frame2, boolean showProgress)
+                                              PivParameters params, File frame1, File frame2,
+                                              File expDir, boolean showProgress)
     {
-        return new PivRunner(context, userName, params, frame1, frame2, showProgress);
+        return new PivRunner(context, userName, params, frame1, frame2, expDir, showProgress);
     }
 
     private void updateProgress(ProgressDialog dialog, int iteration)
