@@ -20,6 +20,7 @@ public class PivRunner implements ProgressUpdateInterface {
     private final Context context;
     private final File frame1File;
     private final File frame2File;
+    private final File expDir;
     private final String userName;
 
     private Activity imageActivity;
@@ -29,7 +30,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
 
     public PivRunner(Context context, String userName, PivParameters parameters, File frame1File,
-                     File frame2File, boolean showProgress) {
+                     File frame2File, File expDir, boolean showProgress) {
         this.parameters = parameters;
         this.frame1File = frame1File;
         this.frame2File = frame2File;
@@ -37,16 +38,17 @@ public class PivRunner implements ProgressUpdateInterface {
         this.userName = userName;
         progressUpdate = showProgress? this : null;
         this.showProgress = showProgress;
+        this.expDir = expDir;
     }
 
     public HashMap<String, PivResultData> Run() {
-        // create new experiment directory
-        int newExpTotal = (PersistedData.getTotalExperiments(context, userName) + 1);
-        File experimentDir = PathUtil.getExperimentNumberedDirectory(context, userName, newExpTotal);
-        PersistedData.setTotalExperiments(context, userName, newExpTotal);
+        if (null == expDir) {
+            PathUtil.createNewExperimentDirectory(context, userName);
+        }
+        final int expTotal = PersistedData.getTotalExperiments(context, userName);
 
-        final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(newExpTotal);
-        final String txtFileSaveName = PathUtil.getExperimentTextFileSuffix(newExpTotal);
+        final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(expTotal);
+        final String txtFileSaveName = PathUtil.getExperimentTextFileSuffix(expTotal);
 
         imageActivity = (Activity) context;
 
@@ -54,7 +56,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 frame2File.getAbsolutePath(),
                 "peak2peak",
                 parameters,
-                experimentDir,
+                expDir,
                 imgFileSaveName,
                 txtFileSaveName);
 
@@ -186,7 +188,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 //// SAVE DATA ////
                 ////////////////////////////////////////////////////////////////////////////////////
                 setMessage("Saving data...");
-                FileIO.writePIVData(resultData, parameters, context, userName, newExpTotal);
+                FileIO.writePIVData(resultData, parameters, context, userName, expTotal);
 
                 if (null != pDialog && pDialog.isShowing()) pDialog.dismiss();
             }
