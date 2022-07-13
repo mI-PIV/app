@@ -14,14 +14,17 @@ public class PivParameters implements Serializable {
     private int windowSize = 64, overlap = 32, frameOne, frameTwo;
     private String frameSetName;
     private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.0, dt = 1.0, E = 2.0;
-    private boolean replace = true, fft = true;
+    private boolean replace = true, fft = true, negativeFilter = false;
     private int backgroundSelection = -1;
     private CameraCalibrationResult cameraCalibrationResult;
 
-    public final static int BACKGROUNDSUB_NONE = -1,
-            BACKGROUNDSUB_TWOFRAME = 0, BACKGROUNDSUB_ALLFRAME = 1;
+    public final static int
+            BACKGROUNDSUB_NONE = -1,
+            BACKGROUNDSUB_TWOFRAME = 0,
+            BACKGROUNDSUB_ALLFRAME = 1;
 
-    public final static String WINDOW_SIZE_KEY = "windowSize",
+    public final static String
+            WINDOW_SIZE_KEY = "windowSize",
             OVERLAP_KEY = "overlap",
             NUM_MAX_UPPER_KEY = "nMaxUpper",
             NUM_MAX_LOWER_KEY = "nMaxLower",
@@ -31,7 +34,8 @@ public class PivParameters implements Serializable {
             E_KEY = "E",
             REPLACE_KEY = "replace",
             FFT_KEY = "fft",
-            IO_FILENAME = "PIVParameters";
+            IO_FILENAME = "PIVParameters",
+            NEG_FILTER = "negativeFilter";
 
     public PivParameters() {
         setWindowSize(windowSize);
@@ -221,6 +225,14 @@ public class PivParameters implements Serializable {
 
     public void setFrameSetName(String frameSetName) {
         this.frameSetName = frameSetName;
+    }
+
+    public void setNegativeFilter(boolean negativeFilter) {
+        this.negativeFilter = negativeFilter;
+    }
+
+    public boolean isNegativeFilter() {
+        return negativeFilter;
     }
 
     public CameraCalibrationResult getCameraCalibrationResult() {

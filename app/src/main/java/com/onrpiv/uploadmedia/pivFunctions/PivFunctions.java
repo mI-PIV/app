@@ -170,6 +170,22 @@ public class PivFunctions {
         saveImage(grayFrame2, BackgroundSub.SUB2_FILENAME);
     }
 
+    public void applyNegativeFilter() {
+        negativeFilter(grayFrame1);
+        negativeFilter(grayFrame2);
+    }
+
+    private static void negativeFilter(Mat frame) {
+        byte[] frameBuff = new byte[frame.rows() * frame.cols()];
+        frame.get(0, 0, frameBuff);
+
+        for (int i = 0; i < frameBuff.length; i++) {
+            frameBuff[i] = (byte)(255 - frameBuff[i]);
+        }
+
+        frame.put(0, 0, frameBuff);
+    }
+
     private static Mat openCvPIV(Mat image, Mat template) {
         int P = template.rows();
         int Q = template.cols();
@@ -655,6 +671,11 @@ public class PivFunctions {
         //clean up mats
         resized.release();
         System.gc();
+    }
+
+    public void saveGrayFrames_debug(String additional_filename) {
+        saveImage(grayFrame1, "GrayFrame1_" + additional_filename);
+        saveImage(grayFrame2, "GrayFrame2_" + additional_filename);
     }
 
     public static Bitmap loadAndResizeBitmap(String bmpPath, int width) {
