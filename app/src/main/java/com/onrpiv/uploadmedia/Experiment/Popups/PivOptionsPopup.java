@@ -45,6 +45,7 @@ public class PivOptionsPopup extends AlertDialog {
     private final RadioGroup backSubRadioGroup;
     private final RadioGroup calibrationRadioGroup;
     private final RadioGroup corrMethodRadioGroup;
+    private final RadioGroup negativeFilterGroup;
     private final Button setAsDefaultButton;
     private final Button resetDefaultButton;
     private final Button savePIVDataButton;
@@ -93,8 +94,11 @@ public class PivOptionsPopup extends AlertDialog {
         EText = findViewById(R.id.E);
         TextView e_text = (TextView) findViewById(R.id.E_text);
 
-        TextView radioGroup_text = (TextView) findViewById(R.id.groupradio_text);
+        TextView radioGroup_text = (TextView) findViewById(R.id.params_replace_text);
         replaceRadioGroup = (RadioGroup) findViewById(R.id.params_replace_radiogroup);
+
+        TextView negativeFilter_text = (TextView) findViewById(R.id.params_negativef_text);
+        negativeFilterGroup = (RadioGroup) findViewById(R.id.params_negativef_radiogroup);
 
         TextView bsRadioGroup_text = (TextView) findViewById(R.id.bs_radioText);
         backSubRadioGroup = (RadioGroup) findViewById(R.id.bs_radiogroup);
@@ -145,7 +149,8 @@ public class PivOptionsPopup extends AlertDialog {
                 Arrays.asList(
                         dtText, dt_text, e_text, radioGroup_text, replaceRadioGroup, qMinText, qMin_text,
                         EText, dtLB, qMinLB, eTextLB, radioGroupLB, backSubRadioGroup, bsRadioGroup_text,
-                        calibrationText, calibrationRadioGroup, corrMethod_text, corrMethodRadioGroup
+                        calibrationText, calibrationRadioGroup, corrMethod_text, corrMethodRadioGroup,
+                        negativeFilter_text, negativeFilterGroup
                 )
         );
 
@@ -221,14 +226,22 @@ public class PivOptionsPopup extends AlertDialog {
                 new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     // Check which radio button has been clicked
-                    public void onCheckedChanged(RadioGroup group,
-                                                 int checkedId)
-                    {
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
                         boolean replaced = checkedId == R.id.params_replace_yes;
                         parameters.setReplace(replaced);
                         savePIVDataButton.setEnabled(checkTexts());
                     }
                 });
+
+        // Add listener for negative image filter
+        negativeFilterGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                boolean filterOn = checkedId == R.id.params_negativef_yes;
+                parameters.setNegativeFilter(filterOn);
+                savePIVDataButton.setEnabled(checkTexts());
+            }
+        });
 
         // Add listener for background subtract
         backSubRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
