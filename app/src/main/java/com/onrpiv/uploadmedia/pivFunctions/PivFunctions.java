@@ -194,6 +194,7 @@ public class PivFunctions {
     private static Mat fftPIV(Mat winA, Mat winB) {
 //        https://stackoverflow.com/questions/51347829/c-cross-correlation-of-2-shifted-images-with-opencv
 
+        // TODO throw this in a try and catch block
         // prepare Mats for fft
         int height = Core.getOptimalDFTSize(Math.max(winA.rows(), winB.rows()));
         int width = Core.getOptimalDFTSize(Math.max(winA.cols(), winB.cols()));
