@@ -457,6 +457,11 @@ public class PathUtil {
         return frameSetsList;
     }
 
+    public static File getNumberedExperimentFramesDirectory(Context context, String userName, int expDirNum) {
+        File result = new File(getExperimentNumberedDirectory(context, userName, expDirNum), "Frames");
+        return checkDir(result);
+    }
+
     public static File getExperimentsDirectory(Context context, String userName) {
         File result = new File(getUserDirectory(context, userName), "Experiments");
         return checkDir(result);
@@ -465,6 +470,12 @@ public class PathUtil {
     public static File getExperimentNumberedDirectory(Context context, String userName, int expDirNum) {
         File result = new File(getExperimentsDirectory(context, userName), "Experiment_"+expDirNum);
         return checkDir(result);
+    }
+
+    public static File createNewExperimentDirectory(Context context, String userName) {
+        int expTotal = PersistedData.getTotalExperiments(context, userName) + 1;
+        PersistedData.setTotalExperiments(context, userName, expTotal);
+        return PathUtil.getExperimentNumberedDirectory(context, userName, expTotal);
     }
 
     public static String getExperimentImageFileSuffix(int currentExperiment) {
@@ -481,7 +492,13 @@ public class PathUtil {
                 deleteRecursive(child);
             }
         }
-        fileOrDirectory.delete();
+
+        boolean deleted = fileOrDirectory.delete();
+        if (!deleted) {
+            Log.e("DELETE", "Unable to delete " + fileOrDirectory);
+        } else {
+            Log.d("DELETE", "Successfully deleted " + fileOrDirectory);
+        }
     }
 
     private static File checkDir(File dir) {
@@ -489,7 +506,7 @@ public class PathUtil {
             if (dir.mkdirs()) {
                 Log.d("MAKEDIRS", "Directory created successfully.");
             } else {
-                Log.d("MAKEDIRS", "Failed to create directory.");
+                Log.e("MAKEDIRS", "Failed to create directory.");
             }
         }
         return dir;
