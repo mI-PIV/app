@@ -1,47 +1,37 @@
 package com.onrpiv.uploadmedia.Utilities;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.arthenica.mobileffmpeg.Config;
-import com.arthenica.mobileffmpeg.ExecuteCallback;
-import com.arthenica.mobileffmpeg.FFmpeg;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.videoio.VideoWriter;
 
 import java.io.File;
 
 public class VideoCreator {
 
-    public static void createAndSaveVideo(Context context, File frameDir, String output, int fps) {
+    public static boolean createAndSaveVideo(File framesDir, String output) {
+        OpenCVLoader.initDebug();
 
-        String fullInputPattern = "'" + frameDir.getAbsolutePath() + "/*.jpg'";
+        File[] frames = framesDir.listFiles();
+        if (null == frames) { return false; }
 
-        String[] command = {"-framerate", ""+fps, "-pattern_type", "glob", "-i", fullInputPattern,
-                "-c:v", "libx264", "-pix_fmt", "yuv420p", output};
-        execFfmpeg(command, context);
-    }
+        Mat sizeMat = Imgcodecs.imread(frames[0].getAbsolutePath());
+        Size frameSize = sizeMat.size();
 
-    private static void execFfmpeg(final String[] command, final Context context) {
-        final ProgressDialog pDialog = new ProgressDialog(context);
-        pDialog.setMessage("Creating video and saving video to the gallery...");
-        pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pDialog.setCancelable(false);
-        pDialog.show();
+        VideoWriter writer = new VideoWriter();
+        writer.open(output, VideoWriter.fourcc('M', 'J', 'P', 'G'), 2.0d, frameSize, true);
+        sizeMat.release();
 
-        FFmpeg.executeAsync(command, new ExecuteCallback() {
-            @Override
-            public void apply(long executionId, int returnCode) {
-                if (returnCode == Config.RETURN_CODE_SUCCESS) {
-                    Toast.makeText(context, "Video created and saved", Toast.LENGTH_SHORT).show();
-                } else if (returnCode == Config.RETURN_CODE_CANCEL) {
-                    Log.d("FFMPEG", "Video creation cancelled!");
-                } else {
-                    Toast.makeText(context, "Video creation FAILED", Toast.LENGTH_SHORT).show();
-                    Log.e("FFMPEG", "Async video creation failed with return code = " + returnCode);
-                }
-                if (pDialog.isShowing()) pDialog.dismiss();
-            }
-        });
+        if (!writer.isOpened()) { return false; }
+
+        for (int i = 0; i < frames.length; i++) {
+            Mat frame = Imgcodecs.imread(frames[i].getAbsolutePath());
+            writer.write(frame);
+            frame.release();
+        }
+        writer.release();
+        return true;
     }
 }
