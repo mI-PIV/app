@@ -385,7 +385,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // Vorticity
         if (settings.vortMapChanged && settings.getVortDisplay()) {
-            displayVortImage(correlationMaps.get(settings.getVecOption()));
+            displayVortImage();
         } else if (!settings.getVortDisplay()) {
             vorticityImage.setVisibility(View.INVISIBLE);
             vorticityImage.invalidate();
@@ -536,8 +536,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         vectorFieldImage.setVisibility(View.VISIBLE);
     }
 
-    private void displayVortImage(PivResultData pivResultData) {
-        Bitmap bmp = createVorticityBitmap(pivResultData);
+    private void displayVortImage() {
+        Bitmap bmp = createVorticityBitmap(multiPass);
         vorticityImage.setImageBitmap(bmp);
         vorticityImage.setVisibility(View.VISIBLE);
     }
