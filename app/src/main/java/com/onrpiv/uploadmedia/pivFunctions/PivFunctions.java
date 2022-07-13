@@ -673,6 +673,11 @@ public class PivFunctions {
         System.gc();
     }
 
+    public void saveGrayFrames_debug(String additional_filename) {
+        saveImage(grayFrame1, "GrayFrame1_" + additional_filename);
+        saveImage(grayFrame2, "GrayFrame2_" + additional_filename);
+    }
+
     public static Bitmap loadAndResizeBitmap(String bmpPath, int width) {
         Bitmap orig = BitmapFactory.decodeFile(bmpPath);
         return resizeBitmap(orig, width);
