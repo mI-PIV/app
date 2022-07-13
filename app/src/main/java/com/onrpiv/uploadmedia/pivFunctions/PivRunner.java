@@ -74,7 +74,7 @@ public class PivRunner implements ProgressUpdateInterface {
             @Override
             public void run() {
                 ////////////////////////////////////////////////////////////////////////////////////
-                //// SETUP & BACKGROUND SUB ////
+                //// SETUP & BACKGROUND SUB & NEGATIVE IMAGE FILTER ////
                 ////////////////////////////////////////////////////////////////////////////////////
                 boolean backgroundSub = false;
                 if (backgroundSelection >= 0) {
@@ -82,6 +82,11 @@ public class PivRunner implements ProgressUpdateInterface {
                     backgroundSub = true;
                     pivFunctions.framesSubtraction(backgroundSelection, frame1File.getParentFile(),
                             parameters.getFrame1Index(), parameters.getFrame2Index());
+                }
+
+                if (parameters.isNegativeFilter()) {
+                    setMessage("Applying Negative Filter");
+                    pivFunctions.applyNegativeFilter();
                 }
 
                 // Save first frame for output base image
