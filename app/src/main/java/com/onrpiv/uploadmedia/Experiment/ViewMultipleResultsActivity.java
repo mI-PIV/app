@@ -21,9 +21,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arthenica.mobileffmpeg.Config;
+import com.arthenica.mobileffmpeg.FFmpeg;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
-import com.onrpiv.uploadmedia.Utilities.VideoCreator;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
 import java.io.File;
@@ -63,6 +64,8 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         saveImageButton.setEnabled(false);
         saveImageButton.setBackgroundColor(Color.parseColor("#576674"));
 
+        // TODO run on different thread w/ pDialog
+
         // create frames
         File expFrames = PathUtil.getNumberedExperimentFramesDirectory(this, userName, experimentNumber);
         int currentIdx = temporalSlider.getProgress();
@@ -84,9 +87,9 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         onIndexChange(currentIdx);
 
         // video creation
-        // TODO run on different thread w/ pDialog
-        String tempVidPath = getExternalFilesDir(null).getPath() + "/temp.avi";
-        if (VideoCreator.createAndSaveVideo(expFrames, tempVidPath)) {
+        String tempVidPath = getExternalFilesDir(null).getPath() + "/temp.mp4";
+        String input = expFrames + "/%04d.jpg";
+        if (FFmpeg.execute("-framerate 2 -i " + input + " " + tempVidPath) == Config.RETURN_CODE_SUCCESS) {
             // cleanup results frames
             PathUtil.deleteRecursive(expFrames);
             Log.d("VID_CREATE", "Created vid at: " + tempVidPath);
@@ -106,10 +109,9 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         }
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Video.Media.DISPLAY_NAME, vidFilename);
-        contentValues.put(MediaStore.Video.Media.MIME_TYPE, "video/avi");
+        contentValues.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
         Uri videoUri = resolver.insert(videoCollection, contentValues);
 
-        // TODO test this
         // move temp vid to gallery
         boolean moveSuccess = false;
         try {
