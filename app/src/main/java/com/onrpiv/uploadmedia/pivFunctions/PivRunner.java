@@ -22,6 +22,7 @@ public class PivRunner implements ProgressUpdateInterface {
     private final File frame2File;
     private final File expDir;
     private final String userName;
+    private final int index;
 
     private Activity imageActivity;
     private ProgressDialog pDialog;
@@ -30,7 +31,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
 
     public PivRunner(Context context, String userName, PivParameters parameters, File frame1File,
-                     File frame2File, File expDir, boolean showProgress) {
+                     File frame2File, File expDir, int index, boolean showProgress) {
         this.parameters = parameters;
         this.frame1File = frame1File;
         this.frame2File = frame2File;
@@ -39,6 +40,7 @@ public class PivRunner implements ProgressUpdateInterface {
         progressUpdate = showProgress? this : null;
         this.showProgress = showProgress;
         this.expDir = expDir;
+        this.index = index;
     }
 
     public HashMap<String, PivResultData> Run() {
@@ -94,7 +96,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 }
 
                 // Save first frame for output base image
-                pivFunctions.saveBaseImage("Base");
+                pivFunctions.saveBaseImage("Base_" + index);
 
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -108,7 +110,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
                 // save raw single pass
                 resultData.put(singlePassResult.getName(), singlePassResult);
-                pivFunctions.saveVectorsValues(singlePassResult, singlePassResult.getName());
+                pivFunctions.saveVectorsValues(singlePassResult, singlePassResult.getName()+ "_" + index);
 
                 PivResultData singlePassProcessed =
                         pivFunctions.vectorPostProcessing(singlePassResult, true,
@@ -119,7 +121,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
                 // save post-processed single pass
                 resultData.put(singlePassProcessed.getName(), singlePassProcessed);
-                pivFunctions.saveVectorsValues(singlePassProcessed, singlePassProcessed.getName());
+                pivFunctions.saveVectorsValues(singlePassProcessed, singlePassProcessed.getName()+ "_" + index);
 
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -130,7 +132,7 @@ public class PivRunner implements ProgressUpdateInterface {
                         PivResultData.MULTI, parameters.isFFT(), progressUpdate);
 
                 resultData.put(multipassResults.getName(), multipassResults);
-                pivFunctions.saveVectorsValues(multipassResults, multipassResults.getName());
+                pivFunctions.saveVectorsValues(multipassResults, multipassResults.getName()+ "_" + index);
 
                 PivResultData multiPassProcessed = pivFunctions.vectorPostProcessing(multipassResults,
                         parameters.isReplace(), PivResultData.MULTI+PivResultData.PROCESSED);
@@ -139,7 +141,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
                 // save multi pass post-processed
                 resultData.put(multiPassProcessed.getName(), multiPassProcessed);
-                pivFunctions.saveVectorsValues(multiPassProcessed, multiPassProcessed.getName());
+                pivFunctions.saveVectorsValues(multiPassProcessed, multiPassProcessed.getName()+ "_" + index);
 
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +149,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 ////////////////////////////////////////////////////////////////////////////////////
                 setMessage("Calculating vorticity");
                 PivFunctions.calculateVorticityMap(multipassResults);
-                pivFunctions.saveVorticityValues(multipassResults.getVorticityValues(), "Vorticity");
+                pivFunctions.saveVorticityValues(multipassResults.getVorticityValues(), "Vorticity_" + index);
 
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -162,7 +164,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
                     pivFunctions.saveVectorCentimeters(singlePassResult,
                             parameters.getCameraCalibrationResult().ratio,
-                            "CENTIMETERS_" + singlePassResult.getName());
+                            "CENTIMETERS_" + singlePassResult.getName()+ "_" + index);
                     singlePassResult.setCalibrated(true);
 
                     // multipass
@@ -180,7 +182,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
                     pivFunctions.saveVectorCentimeters(multiPassProcessed,
                             parameters.getCameraCalibrationResult().ratio,
-                            "CENTIMETERS_" + multiPassProcessed.getName());
+                            "CENTIMETERS_" + multiPassProcessed.getName()+ "_" + index);
                     multiPassProcessed.setCalibrated(true);
                 }
 

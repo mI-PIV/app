@@ -261,7 +261,7 @@ public class ImageActivity extends AppCompatActivity {
                         File frame1 = allFrames[i];
                         File frame2 = allFrames[i+1];
                         PivRunner runner = processSinglePiv(context, userName, pivParameters,
-                                frame1, frame2, expDir, false);
+                                frame1, frame2, expDir, i, false);
                         multipleResultData.put(i, runner.Run());
 
                         // wait for piv thread to stop
@@ -280,7 +280,7 @@ public class ImageActivity extends AppCompatActivity {
 
         } else {
             resultData = processSinglePiv(ImageActivity.this, userName, pivParameters,
-                    frame1File, frame2File, null, true).Run();
+                    frame1File, frame2File, null, 0, true).Run();
         }
 
         display.setEnabled(true);
@@ -291,9 +291,9 @@ public class ImageActivity extends AppCompatActivity {
 
     private static PivRunner processSinglePiv(Context context, String userName,
                                               PivParameters params, File frame1, File frame2,
-                                              File expDir, boolean showProgress)
+                                              File expDir, int idx, boolean showProgress)
     {
-        return new PivRunner(context, userName, params, frame1, frame2, expDir, showProgress);
+        return new PivRunner(context, userName, params, frame1, frame2, expDir, idx, showProgress);
     }
 
     private void updateProgress(ProgressDialog dialog, int iteration)
