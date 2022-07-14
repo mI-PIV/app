@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
@@ -25,8 +27,11 @@ import com.onrpiv.uploadmedia.Utilities.VideoCreator;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 
 public class ViewMultipleResultsActivity extends ViewResultsActivity {
@@ -80,8 +85,14 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
 
         // video creation
         // TODO run on different thread w/ pDialog
-        String testPath = getExternalFilesDir(null).getPath() + "/test.avi";
-        VideoCreator.createAndSaveVideo(expFrames, testPath);
+        String tempVidPath = getExternalFilesDir(null).getPath() + "/temp.avi";
+        if (VideoCreator.createAndSaveVideo(expFrames, tempVidPath)) {
+            // cleanup results frames
+            PathUtil.deleteRecursive(expFrames);
+            Log.d("VID_CREATE", "Created vid at: " + tempVidPath);
+        } else {
+            Log.e("VID_CREATE", "Failed to create video.");
+        }
 
         // move temp vid to gallery
         Context context = this;
@@ -94,23 +105,42 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
             videoCollection = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         }
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, vidFilename);
-        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "video/avi");
+        contentValues.put(MediaStore.Video.Media.DISPLAY_NAME, vidFilename);
+        contentValues.put(MediaStore.Video.Media.MIME_TYPE, "video/avi");
         Uri videoUri = resolver.insert(videoCollection, contentValues);
-        String videoPath = PathUtil.getRealPath(context, videoUri);
 
+        // TODO test this
+        // move temp vid to gallery
+        boolean moveSuccess = false;
+        try {
+            InputStream istream = new FileInputStream(tempVidPath);
+            OutputStream ostream = resolver.openOutputStream(videoUri);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = istream.read(buf)) > 0) {
+                ostream.write(buf, 0, len);
+            }
+            ostream.close();
+            istream.close();
+            moveSuccess = true;
+            Log.d("MOVE_VID", "Moved temp vid to " + videoUri);
+        } catch (Exception e) {
+            Log.e("MOVE_VID", "Failed to move temp video:\n");
+            e.printStackTrace();
+        }
 
-        // TODO move temp vid to gallery
+        if (moveSuccess) {
+            // popup showing user where to find the saved image
+            new AlertDialog.Builder(this)
+                    .setPositiveButton("Okay", null)
+                    .setMessage("Current experiment results view saved to your video gallery.")
+                    .create().show();
 
-
-        // popup showing user where to find the saved image
-        new AlertDialog.Builder(this)
-                .setPositiveButton("Okay", null)
-                .setMessage("Current experiment results view saved to your video gallery.")
-                .create().show();
-
-        // cleanup results frames
-        PathUtil.deleteRecursive(expFrames);
+            // delete temp vid
+            PathUtil.deleteRecursive(new File(tempVidPath));
+        } else {
+            Toast.makeText(this, "Failed to move temp vid to gallery", Toast.LENGTH_LONG).show();
+        }
 
         saveImageButton.setEnabled(true);
         saveImageButton.setBackgroundColor(Color.parseColor("#243EDF"));
