@@ -1,6 +1,7 @@
 package com.onrpiv.uploadmedia.Experiment;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -19,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.arthenica.mobileffmpeg.Config;
 import com.arthenica.mobileffmpeg.FFmpeg;
@@ -40,7 +40,6 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
     public static HashMap<Integer, HashMap<String, PivResultData>> data;
     private TextView frameText;
     private String userName;
-    private String framesetName;
     private SeekBar temporalSlider;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,6 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
 
         Bundle extras = getIntent().getExtras();
         userName = (String) extras.get(PivResultData.USERNAME);
-        framesetName = (String) extras.get(PivResultData.FRAMESET);
 
         // add temporal seekbar to the results layout
         RelativeLayout base = findViewById(R.id.base_layout);
@@ -64,88 +62,107 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         saveImageButton.setEnabled(false);
         saveImageButton.setBackgroundColor(Color.parseColor("#576674"));
 
-        // TODO run on different thread w/ pDialog
+        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog.setCancelable(false);
+        pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pDialog.setMessage("Saving video...");
+        pDialog.show();
 
-        // create frames
-        File expFrames = PathUtil.getNumberedExperimentFramesDirectory(this, userName, experimentNumber);
-        int currentIdx = temporalSlider.getProgress();
-        for (int i = 0; i < data.size(); i++) {
-            // change data
-            onIndexChange(i);
-            // get results view
-            View imageStack = findViewById(R.id.img_frame);
-            imageStack.setDrawingCacheEnabled(true);
-            Bitmap bmp = imageStack.getDrawingCache();
-            // save results frame
-            File framePath = new File(expFrames, String.format("%04d", i) + ".jpg");
-            try (FileOutputStream output = new FileOutputStream(framePath)) {
-                bmp.compress(Bitmap.CompressFormat.JPEG, 100, output);
-            } catch (IOException e) {
-                e.printStackTrace();
+        // popup showing user where to find the saved image
+        final AlertDialog successDialog = new AlertDialog.Builder(this)
+                .setPositiveButton("Okay", null)
+                .setMessage("Current experiment results view saved to your video gallery.")
+                .create();
+
+        final Context context = this;
+
+        Thread vidThread = new Thread() {
+            @Override
+            public void run() {
+                // create frames
+                File expFrames = PathUtil.getNumberedExperimentFramesDirectory(context, userName, experimentNumber);
+                int currentIdx = temporalSlider.getProgress();
+                for (int i = 0; i < data.size(); i++) {
+                    // change data
+                    onIndexChange(i);
+                    // get results view
+                    View imageStack = findViewById(R.id.img_frame);
+                    imageStack.setDrawingCacheEnabled(true);
+                    Bitmap bmp = imageStack.getDrawingCache();
+                    // save results frame
+                    File framePath = new File(expFrames, String.format("%04d", i) + ".jpg");
+                    try (FileOutputStream output = new FileOutputStream(framePath)) {
+                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, output);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                onIndexChange(currentIdx);
+
+                // video creation
+                String tempVidPath = getExternalFilesDir(null).getPath() + "/temp.mp4";
+                String input = expFrames + "/%04d.jpg";
+                if (FFmpeg.execute("-framerate 2 -i " + input + " " + tempVidPath) == Config.RETURN_CODE_SUCCESS) {
+                    // cleanup results frames
+                    PathUtil.deleteRecursive(expFrames);
+                    Log.d("VID_CREATE", "Created vid at: " + tempVidPath);
+                } else {
+                    Log.e("VID_CREATE", "Failed to create video.");
+                }
+
+                // move temp vid to gallery
+                String vidFilename = "mI_PIV_" + experimentNumber + "_" + imageCounter++;
+                ContentResolver resolver = getContentResolver();
+                Uri videoCollection;
+                if (Build.VERSION.SDK_INT >= 29) {
+                    videoCollection = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+                } else {
+                    videoCollection = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                }
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Video.Media.DISPLAY_NAME, vidFilename);
+                contentValues.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
+                Uri videoUri = resolver.insert(videoCollection, contentValues);
+
+                // move temp vid to gallery
+                boolean moveSuccess = false;
+                try {
+                    InputStream istream = new FileInputStream(tempVidPath);
+                    OutputStream ostream = resolver.openOutputStream(videoUri);
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = istream.read(buf)) > 0) {
+                        ostream.write(buf, 0, len);
+                    }
+                    ostream.close();
+                    istream.close();
+                    Log.d("MOVE_VID", "Moved temp vid to " + videoUri);
+
+                    moveSuccess = true;
+                    // delete temp vid
+                    PathUtil.deleteRecursive(new File(tempVidPath));
+                } catch (Exception e) {
+                    Log.e("MOVE_VID", "Failed to move temp video:\n");
+                    e.printStackTrace();
+                }
+
+                if (pDialog.isShowing()) { pDialog.dismiss(); }
+                if (moveSuccess) { showSuccessDialog(successDialog); }
             }
-        }
-        onIndexChange(currentIdx);
-
-        // video creation
-        String tempVidPath = getExternalFilesDir(null).getPath() + "/temp.mp4";
-        String input = expFrames + "/%04d.jpg";
-        if (FFmpeg.execute("-framerate 2 -i " + input + " " + tempVidPath) == Config.RETURN_CODE_SUCCESS) {
-            // cleanup results frames
-            PathUtil.deleteRecursive(expFrames);
-            Log.d("VID_CREATE", "Created vid at: " + tempVidPath);
-        } else {
-            Log.e("VID_CREATE", "Failed to create video.");
-        }
-
-        // move temp vid to gallery
-        Context context = this;
-        String vidFilename = "mI_PIV_" + experimentNumber + "_" + imageCounter++;
-        ContentResolver resolver = getContentResolver();
-        Uri videoCollection;
-        if (Build.VERSION.SDK_INT >= 29) {
-            videoCollection = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-        } else {
-            videoCollection = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-        }
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.Video.Media.DISPLAY_NAME, vidFilename);
-        contentValues.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
-        Uri videoUri = resolver.insert(videoCollection, contentValues);
-
-        // move temp vid to gallery
-        boolean moveSuccess = false;
-        try {
-            InputStream istream = new FileInputStream(tempVidPath);
-            OutputStream ostream = resolver.openOutputStream(videoUri);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = istream.read(buf)) > 0) {
-                ostream.write(buf, 0, len);
-            }
-            ostream.close();
-            istream.close();
-            moveSuccess = true;
-            Log.d("MOVE_VID", "Moved temp vid to " + videoUri);
-        } catch (Exception e) {
-            Log.e("MOVE_VID", "Failed to move temp video:\n");
-            e.printStackTrace();
-        }
-
-        if (moveSuccess) {
-            // popup showing user where to find the saved image
-            new AlertDialog.Builder(this)
-                    .setPositiveButton("Okay", null)
-                    .setMessage("Current experiment results view saved to your video gallery.")
-                    .create().show();
-
-            // delete temp vid
-            PathUtil.deleteRecursive(new File(tempVidPath));
-        } else {
-            Toast.makeText(this, "Failed to move temp vid to gallery", Toast.LENGTH_LONG).show();
-        }
+        };
+        vidThread.start();
 
         saveImageButton.setEnabled(true);
         saveImageButton.setBackgroundColor(Color.parseColor("#243EDF"));
+    }
+
+    private void showSuccessDialog(AlertDialog dialog) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dialog.show();
+            }
+        });
     }
 
     private void onIndexChange(int newIdx) {
