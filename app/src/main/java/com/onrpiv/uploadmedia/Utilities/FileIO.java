@@ -23,11 +23,11 @@ public class FileIO {
     }
 
     public static void writePIVData(HashMap<String, PivResultData> resultData, PivParameters parameters,
-                                    Context context, String userName, int newExpTotal) {
+                                    Context context, String userName, int newExpTotal, int index) {
         // loop through our result data hashmap and write data
         for (String key : resultData.keySet()) {
             PivResultData data = resultData.get(key);
-            write(data, context, userName, newExpTotal, key);
+            write(data, context, userName, newExpTotal, key + "_" + index);
         }
 
         // write our parameter file

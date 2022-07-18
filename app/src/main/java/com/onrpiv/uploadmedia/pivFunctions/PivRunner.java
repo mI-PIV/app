@@ -190,7 +190,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 //// SAVE DATA ////
                 ////////////////////////////////////////////////////////////////////////////////////
                 setMessage("Saving data...");
-                FileIO.writePIVData(resultData, parameters, context, userName, expTotal);
+                FileIO.writePIVData(resultData, parameters, context, userName, expTotal, index);
 
                 if (null != pDialog && pDialog.isShowing()) pDialog.dismiss();
             }
