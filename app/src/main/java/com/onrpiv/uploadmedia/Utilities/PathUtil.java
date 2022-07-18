@@ -429,7 +429,25 @@ public class PathUtil {
     }
 
     private static boolean isGoogleDriveUri(Uri uri) {
-        return "com.google.android.apps.docs.storage".equals(uri.getAuthority()) || "com.google.android.apps.docs.storage.legacy".equals(uri.getAuthority());
+        return "com.google.android.apps.docs.storage".equals(uri.getAuthority()) ||
+                "com.google.android.apps.docs.storage.legacy".equals(uri.getAuthority());
+    }
+
+    public static boolean isMultipleResult(File experimentDir) {
+        if (!experimentDir.isDirectory()) return false;
+        File sp = new File(experimentDir, "singlepass_1.obj");
+        File mp = new File(experimentDir, "multipass_1.obj");
+        return sp.exists() && mp.exists();
+    }
+
+    public static File getObjectFile(Context context, String userName, int expNum, String pivType,
+                                     int index) {
+        File expDir = getExperimentNumberedDirectory(context, userName, expNum);
+        return getObjectFile(expDir, pivType, index);
+    }
+
+    public static File getObjectFile(File expDir, String pivType, int index) {
+        return new File(expDir, pivType + "_" + index + ".obj");
     }
 
     public static File getUserDirectory(Context context, String userName) {
