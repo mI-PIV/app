@@ -1,11 +1,15 @@
 package com.onrpiv.uploadmedia.Experiment;
 
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_IMG;
+import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_SUB;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -24,7 +28,10 @@ import android.widget.TextView;
 import com.arthenica.mobileffmpeg.Config;
 import com.arthenica.mobileffmpeg.FFmpeg;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
+import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
+import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
 import java.io.File;
@@ -41,6 +48,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
     private TextView frameText;
     private String userName;
     private SeekBar temporalSlider;
+    private int currIdx;
 
     protected void onCreate(Bundle savedInstanceState) {
         changeData(0);  // need to load the data before showing the results
@@ -156,6 +164,27 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         saveImageButton.setBackgroundColor(Color.parseColor("#243EDF"));
     }
 
+    @Override
+    protected void displayBaseImage(String backgroundCode) {
+        Bitmap bmp;
+        switch (backgroundCode) {
+            case BACKGRND_IMG:
+                File pngFile = new File(outputDirectory,
+                        "Base_"+ currIdx + "_" + imgFileToDisplay);
+                bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
+                break;
+            case BACKGRND_SUB:
+                File backsubFile = new File(outputDirectory,
+                        BackgroundSub.SUB1_FILENAME + "_" + currIdx + "_" + imgFileToDisplay);
+                bmp = BitmapFactory.decodeFile(backsubFile.getAbsolutePath());
+                break;
+            default:
+                bmp = createSolidBaseImage();
+                break;
+        }
+        baseImage.setImageBitmap(bmp);
+    }
+
     private void showSuccessDialog(AlertDialog dialog) {
         runOnUiThread(new Runnable() {
             @Override
@@ -166,6 +195,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
     }
 
     private void onIndexChange(int newIdx) {
+        currIdx = newIdx;
         changeData(newIdx);
         settings.vecFieldChanged = true;
         settings.vortMapChanged = true;
@@ -248,5 +278,56 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
     private static String getFrameText(int idx)
     {
         return "Frames: " + idx + " & " + (idx + 1);
+    }
+
+    public static Class<?> loadFromFiles(Context context, String userName, int expNum) {
+        PivParameters params = (PivParameters) FileIO.read(context, userName, expNum, PivParameters.IO_FILENAME);
+        File expDir = PathUtil.getExperimentNumberedDirectory(context, userName, expNum);
+
+        // filenames
+        String spFilename = PivResultData.SINGLE + PivResultData.PROCESSED;
+        spFilename += params.isReplace()? PivResultData.REPLACE : "";
+        String mpFilename = PivResultData.MULTI + PivResultData.PROCESSED;
+        String repFilename = PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE;
+
+        // multiple results
+        HashMap<Integer, HashMap<String, PivResultData>> multipleResultData = new HashMap<>();
+        // load single pass
+        HashMap<Integer, PivResultData> singlepassResults = loadMultipleResults(expDir, spFilename);
+        // load multi pass
+        HashMap<Integer, PivResultData> multipassResults = loadMultipleResults(expDir, mpFilename);
+        // load replaced
+        HashMap<Integer, PivResultData> repResults = new HashMap<>();
+        if (params.isReplace()) {
+            repResults = loadMultipleResults(expDir, repFilename);
+        }
+
+        // reformat data
+        for (int i = 0; i < singlepassResults.size(); i++) {
+            HashMap<String, PivResultData> indexResults = new HashMap<>();
+            PivResultData sp = singlepassResults.get(i);
+            PivResultData mp = multipassResults.get(i);
+            indexResults.put(sp.getName(), sp);
+            indexResults.put(mp.getName(), mp);
+            if (params.isReplace()) {
+                PivResultData rp = repResults.get(i);
+                indexResults.put(rp.getName(), rp);
+            }
+            multipleResultData.put(i, indexResults);
+        }
+        // pass to the multiple results activity
+        ViewMultipleResultsActivity.data = multipleResultData;
+        return ViewMultipleResultsActivity.class;
+    }
+
+    private static HashMap<Integer, PivResultData> loadMultipleResults(File expDir, String filename) {
+        int i = 0;
+        File file = PathUtil.getObjectFile(expDir, filename, 0);
+        HashMap<Integer, PivResultData> results = new HashMap<>();
+        while (file.exists()) {
+            results.put(i, (PivResultData) FileIO.read(file));
+            file = PathUtil.getObjectFile(expDir, filename, ++i);
+        }
+        return results;
     }
 }

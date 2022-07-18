@@ -10,12 +10,13 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.onrpiv.uploadmedia.Experiment.ViewMultipleResultsActivity;
 import com.onrpiv.uploadmedia.Experiment.ViewResultsActivity;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.FileIO;
+import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.Popup;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
-import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
 import java.util.HashMap;
 import java.util.List;
@@ -91,20 +92,14 @@ public class LoadExperimentPopup extends Popup {
 
     private void load() {
         int experimentNum = selectionToExpNumDict.get(currentlySelected);
-
-        PivParameters params = (PivParameters) FileIO.read(context, userName, experimentNum,
-                PivParameters.IO_FILENAME);
-
-        // load results activity with the data
-        ViewResultsActivity.singlePass = (PivResultData) FileIO.read(context, userName, experimentNum, PivResultData.SINGLE+PivResultData.PROCESSED+PivResultData.REPLACE);
-        ViewResultsActivity.multiPass = (PivResultData) FileIO.read(context, userName, experimentNum, PivResultData.MULTI);
-        if (params.isReplace()) {
-            ViewResultsActivity.replacedPass = (PivResultData) FileIO.read(context, userName, experimentNum, PivResultData.MULTI+PivResultData.PROCESSED+PivResultData.REPLACE);
+        Intent displayIntent;
+        if (PathUtil.isMultipleResult(PathUtil.getExperimentNumberedDirectory(context, userName, experimentNum))) {
+            Class<?> multipleIntentClass = ViewMultipleResultsActivity.loadFromFiles(context, userName, experimentNum);
+            displayIntent = new Intent(context, multipleIntentClass);
+        } else {
+            Class<?> singleIntentClass = ViewResultsActivity.loadFromFiles(context, userName, experimentNum);
+            displayIntent = new Intent(context, singleIntentClass);
         }
-
-        Intent displayIntent = new Intent(context, ViewResultsActivity.class);
-        displayIntent.putExtra(PivResultData.USERNAME, userName);
-        displayIntent.putExtra(PivResultData.REPLACED_BOOL, params.isReplace());
 
         // start the results activity
         context.startActivity(displayIntent);

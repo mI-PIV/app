@@ -14,6 +14,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -54,6 +55,7 @@ import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMapPicker;
+import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.FrameView;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
@@ -791,5 +793,22 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         pivY = Math.max(0, Math.min(pivY, pivHeight - 1));
 
         return new Point(pivX, pivY);
+    }
+
+    public static Class<?> loadFromFiles(Context context, String userName, int expNum) {
+        PivParameters params = (PivParameters) FileIO.read(context, userName, expNum, PivParameters.IO_FILENAME);
+
+        // filenames
+        String spFilename = PivResultData.SINGLE + PivResultData.PROCESSED;
+        spFilename += params.isReplace()? PivResultData.REPLACE : "";
+        String mpFilename = PivResultData.MULTI + PivResultData.PROCESSED;
+        String repFilename = PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE;
+
+        ViewResultsActivity.singlePass = (PivResultData) FileIO.read(context, userName, expNum, spFilename);
+        ViewResultsActivity.multiPass = (PivResultData) FileIO.read(context, userName, expNum, mpFilename);
+        if (params.isReplace()) {
+            ViewResultsActivity.replacedPass = (PivResultData) FileIO.read(context, userName, expNum, repFilename);
+        }
+        return ViewResultsActivity.class;
     }
 }
