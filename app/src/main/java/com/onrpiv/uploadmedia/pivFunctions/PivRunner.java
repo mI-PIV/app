@@ -92,7 +92,7 @@ public class PivRunner implements ProgressUpdateInterface {
                     setMessage("Subtracting frames");
                     backgroundSub = true;
                     pivFunctions.framesSubtraction(backgroundSelection, frame1File.getParentFile(),
-                            parameters.getFrame1Index(), parameters.getFrame2Index());
+                            parameters.getFrame1Index(), parameters.getFrame2Index(), index);
                 }
 
                 // Save first frame for output base image
