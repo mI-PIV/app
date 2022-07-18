@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,9 +66,10 @@ public class FileIO {
 
         // search the experiments for saved objects
         for (int i = 0; i <= totalExperiments; i++) {
+            File expDir = PathUtil.getExperimentNumberedDirectory(context, userName, i);
             File paramFile = getFile(context, userName, i, PivParameters.IO_FILENAME);
-            File singleFile = getFile(context, userName, i, PivResultData.SINGLE);
-            File multiFile = getFile(context, userName, i, PivResultData.MULTI);
+            File singleFile = PathUtil.getObjectFile(expDir, PivResultData.SINGLE, 0);
+            File multiFile = PathUtil.getObjectFile(expDir, PivResultData.MULTI, 0);
             if (paramFile.exists() && singleFile.exists() && multiFile.exists()) {
                 experimentNumbersWithData.add(i);
             }
