@@ -145,7 +145,8 @@ public class PivFunctions {
         return new int[]{nCols, nRows};
     }
 
-    public void framesSubtraction(int backgroundSubType, File frameDir, int frame1Idx, int frame2Idx) {
+    public void framesSubtraction(int backgroundSubType, File frameDir, int frame1Idx, int frame2Idx,
+                                  int expIndex) {
         Mat[] subtractedFrames;
 
         if (backgroundSubType == PivParameters.BACKGROUNDSUB_ALLFRAME) {
@@ -166,8 +167,8 @@ public class PivFunctions {
         grayFrame2 = subtractedFrames[1];
 
         // save frames for results page
-        saveImage(grayFrame1, BackgroundSub.SUB1_FILENAME);
-        saveImage(grayFrame2, BackgroundSub.SUB2_FILENAME);
+        saveImage(grayFrame1, BackgroundSub.SUB1_FILENAME + "_" + expIndex);
+        saveImage(grayFrame2, BackgroundSub.SUB2_FILENAME + "_" + expIndex);
     }
 
     private static Mat openCvPIV(Mat image, Mat template) {
