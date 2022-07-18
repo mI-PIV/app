@@ -82,12 +82,13 @@ import petrov.kristiyan.colorpicker.ColorPicker;
 public class ViewResultsActivity extends AppCompatActivity implements PositionCallback {
     // Widgets
     private RangeSlider rangeSlider;
-    private ImageView baseImage, vectorFieldImage, vorticityImage;
+    protected ImageView baseImage;
+    private ImageView vectorFieldImage, vorticityImage;
     private Button arrowColor, vorticityColors, solidColor, applyButton, selectColor;
 
     // paths
-    private String imgFileToDisplay;
-    private File outputDirectory;
+    protected String imgFileToDisplay;
+    protected File outputDirectory;
 
     // maps and settings
     protected HashMap<String, PivResultData> correlationMaps;
@@ -542,11 +543,11 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         vorticityImage.setVisibility(View.VISIBLE);
     }
 
-    private void displayBaseImage(String backgroundCode) {
+    protected void displayBaseImage(String backgroundCode) {
         Bitmap bmp;
         switch (backgroundCode) {
             case BACKGRND_IMG:
-                File pngFile = new File(outputDirectory, "Base_" + imgFileToDisplay);
+                File pngFile = new File(outputDirectory, "Base_0_" + imgFileToDisplay);
                 bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
                 break;
             case BACKGRND_SUB:
@@ -577,7 +578,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                 rows, cols);
     }
 
-    private Bitmap createSolidBaseImage() {
+    protected Bitmap createSolidBaseImage() {
         // TODO fix the hard code
         Rect rect = new Rect(0, 0, 2560, 1440);
         Bitmap bmp = Bitmap.createBitmap(rect.right, rect.bottom, Bitmap.Config.ARGB_8888);
