@@ -13,7 +13,8 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="650dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -28,7 +29,7 @@
                 android:id="@+id/startExperimentButton"
                 android:layout_width="245dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_margin="5dp"
                 android:background="@drawable/mybuttons"
                 android:text="@string/start_an_experiment"
                 android:textColor="#FFFFFF"
@@ -38,7 +39,7 @@
                 android:id="@+id/learnFluidsButton"
                 android:layout_width="245dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_margin="5dp"
                 android:background="@drawable/mybuttons"
                 android:text="@string/learn_about_fluids"
                 android:textColor="#FFFFFF"
@@ -48,7 +49,7 @@
                 android:id="@+id/learnPIVButton"
                 android:layout_width="245dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_margin="5dp"
                 android:background="@drawable/mybuttons"
                 android:text="Learn About PIV"
                 android:textColor="#FFFFFF"
@@ -57,7 +58,7 @@
             <Button
                 android:layout_width="245dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_margin="5dp"
                 android:background="@drawable/mybuttons"
                 android:onClick="about_onclick"
                 android:text="About"
