@@ -34,7 +34,8 @@ public class PivResultData implements Serializable {
             PROCESSED = "_processed",
             REPLACE = "_replaced",
             USERNAME = "username",
-            FRAMESET = "frameset";
+            FRAMESET = "frameset",
+            EXP_NUM = "experiment_num";
 
     public PivResultData(String name, double[][] u, double[][] v, double[][] mag,
                          double[][] sig2noise, double[][] interrCenters, int cols, int rows,

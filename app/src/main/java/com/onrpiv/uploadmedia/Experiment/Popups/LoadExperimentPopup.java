@@ -104,6 +104,7 @@ public class LoadExperimentPopup extends Popup {
             displayIntent.putExtra(PivResultData.REPLACED_BOOL, ViewResultsActivity.pivParameters.isReplace());
         }
 
+        displayIntent.putExtra(PivResultData.EXP_NUM, experimentNum);
 
         // start the results activity
         context.startActivity(displayIntent);

@@ -139,7 +139,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         colorMaps = ColorMap.loadColorMaps(this);
         settings = new ResultSettings(this);
         settings.setCalibrated(calibrated);
-        experimentNumber = PersistedData.getTotalExperiments(ViewResultsActivity.this, userName);
+        experimentNumber = (int) extras.get(PivResultData.EXP_NUM);
 
         // load params section
         TextView paramsText = findViewById(R.id.paramsText);

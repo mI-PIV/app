@@ -201,7 +201,6 @@ public class ImageActivity extends AppCompatActivity {
             assert singlePassResult != null;
 
             ViewResultsActivity.pivParameters = pivParameters;
-
             ViewResultsActivity.singlePass = singlePassResult;
             ViewResultsActivity.multiPass = resultData.get(PivResultData.MULTI);
             if (pivParameters.isReplace()) {
@@ -218,6 +217,7 @@ public class ImageActivity extends AppCompatActivity {
             displayIntent = new Intent(ImageActivity.this, ViewResultsActivity.class);
         }
 
+        displayIntent.putExtra(PivResultData.EXP_NUM, PersistedData.getTotalExperiments(this, userName));
         displayIntent.putExtra(PivResultData.USERNAME, userName);
         displayIntent.putExtra(PivResultData.REPLACED_BOOL, pivParameters.isReplace());
         displayIntent.putExtra(PivResultData.FRAMESET, frameSetName);
