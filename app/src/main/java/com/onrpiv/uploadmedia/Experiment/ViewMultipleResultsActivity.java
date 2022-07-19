@@ -97,14 +97,6 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
                     View imageStack = findViewById(R.id.img_frame);
                     imageStack.setDrawingCacheEnabled(true);
                     saveResultsViewBitmap(imageStack, expFrames, i);
-//                    Bitmap bmp = saveResultsViewBitmap(imageStack);
-//                    // save results frame
-//                    File framePath = new File(expFrames, String.format("%04d", i) + ".jpg");
-//                    try (FileOutputStream output = new FileOutputStream(framePath)) {
-//                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, output);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
                 }
                 onIndexChange(currentIdx);
 
