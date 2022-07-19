@@ -15,33 +15,42 @@ import java.util.HashMap;
 
 
 public class PivRunner implements ProgressUpdateInterface {
+    public Thread pivRunningThread;
     private final PivParameters parameters;
     private final Context context;
     private final File frame1File;
     private final File frame2File;
+    private final File expDir;
     private final String userName;
+    private final int index;
 
     private Activity imageActivity;
     private ProgressDialog pDialog;
+    private final ProgressUpdateInterface progressUpdate;
+    private final boolean showProgress;
 
 
     public PivRunner(Context context, String userName, PivParameters parameters, File frame1File,
-                     File frame2File) {
+                     File frame2File, File expDir, int index, boolean showProgress) {
         this.parameters = parameters;
         this.frame1File = frame1File;
         this.frame2File = frame2File;
         this.context = context;
         this.userName = userName;
+        progressUpdate = showProgress? this : null;
+        this.showProgress = showProgress;
+        this.expDir = expDir;
+        this.index = index;
     }
 
     public HashMap<String, PivResultData> Run() {
-        // create new experiment directory
-        int newExpTotal = (PersistedData.getTotalExperiments(context, userName) + 1);
-        File experimentDir = PathUtil.getExperimentNumberedDirectory(context, userName, newExpTotal);
-        PersistedData.setTotalExperiments(context, userName, newExpTotal);
+        if (null == expDir) {
+            PathUtil.createNewExperimentDirectory(context, userName);
+        }
+        final int expTotal = PersistedData.getTotalExperiments(context, userName);
 
-        final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(newExpTotal);
-        final String txtFileSaveName = PathUtil.getExperimentTextFileSuffix(newExpTotal);
+        final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(expTotal);
+        final String txtFileSaveName = PathUtil.getExperimentTextFileSuffix(expTotal);
 
         imageActivity = (Activity) context;
 
@@ -49,7 +58,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 frame2File.getAbsolutePath(),
                 "peak2peak",
                 parameters,
-                experimentDir,
+                expDir,
                 imgFileSaveName,
                 txtFileSaveName);
 
@@ -60,17 +69,19 @@ public class PivRunner implements ProgressUpdateInterface {
         final int backgroundSelection = parameters.getBackgroundSelection();
 
         // progress dialog
-        pDialog = new ProgressDialog(context);
-        pDialog.setMessage(context.getString(R.string.msg_loading));
-        pDialog.setCancelable(false);
-        pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        if (!pDialog.isShowing()) pDialog.show();
+        if (showProgress) {
+            pDialog = new ProgressDialog(context);
+            pDialog.setMessage(context.getString(R.string.msg_loading));
+            pDialog.setCancelable(false);
+            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            if (!pDialog.isShowing()) pDialog.show();
+        }
 
         final HashMap<String, PivResultData> resultData = new HashMap<>();
 
 
         //---------------------------------Using Threads--------------------------------------//
-        Thread thread = new Thread() {
+        pivRunningThread = new Thread() {
             @Override
             public void run() {
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +92,7 @@ public class PivRunner implements ProgressUpdateInterface {
                     setMessage("Subtracting frames");
                     backgroundSub = true;
                     pivFunctions.framesSubtraction(backgroundSelection, frame1File.getParentFile(),
-                            parameters.getFrame1Index(), parameters.getFrame2Index());
+                            parameters.getFrame1Index(), parameters.getFrame2Index(), index);
                 }
 
                 if (parameters.isNegativeFilter()) {
@@ -90,7 +101,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 }
 
                 // Save first frame for output base image
-                pivFunctions.saveBaseImage("Base");
+                pivFunctions.saveBaseImage("Base_" + index);
 
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -99,12 +110,12 @@ public class PivRunner implements ProgressUpdateInterface {
                 setMessage("Calculating PIV");
                 setMessage("Calculating single pass PIV");
                 PivResultData singlePassResult = pivFunctions.extendedSearchAreaPiv_update(PivResultData.SINGLE,
-                        parameters.isFFT(), PivRunner.this);
+                        parameters.isFFT(), progressUpdate);
                 singlePassResult.setBackgroundSubtracted(backgroundSub);
 
                 // save raw single pass
                 resultData.put(singlePassResult.getName(), singlePassResult);
-                pivFunctions.saveVectorsValues(singlePassResult, singlePassResult.getName());
+                pivFunctions.saveVectorsValues(singlePassResult, singlePassResult.getName()+ "_" + index);
 
                 PivResultData singlePassProcessed =
                         pivFunctions.vectorPostProcessing(singlePassResult, true,
@@ -115,7 +126,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
                 // save post-processed single pass
                 resultData.put(singlePassProcessed.getName(), singlePassProcessed);
-                pivFunctions.saveVectorsValues(singlePassProcessed, singlePassProcessed.getName());
+                pivFunctions.saveVectorsValues(singlePassProcessed, singlePassProcessed.getName()+ "_" + index);
 
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -123,10 +134,10 @@ public class PivRunner implements ProgressUpdateInterface {
                 ////////////////////////////////////////////////////////////////////////////////////
                 setMessage("Calculating Multi-Pass PIV");
                 PivResultData multipassResults = pivFunctions.calculateMultipass(singlePassProcessed,
-                        PivResultData.MULTI, parameters.isFFT(), PivRunner.this);
+                        PivResultData.MULTI, parameters.isFFT(), progressUpdate);
 
                 resultData.put(multipassResults.getName(), multipassResults);
-                pivFunctions.saveVectorsValues(multipassResults, multipassResults.getName());
+                pivFunctions.saveVectorsValues(multipassResults, multipassResults.getName()+ "_" + index);
 
                 PivResultData multiPassProcessed = pivFunctions.vectorPostProcessing(multipassResults,
                         parameters.isReplace(), PivResultData.MULTI+PivResultData.PROCESSED);
@@ -135,7 +146,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
                 // save multi pass post-processed
                 resultData.put(multiPassProcessed.getName(), multiPassProcessed);
-                pivFunctions.saveVectorsValues(multiPassProcessed, multiPassProcessed.getName());
+                pivFunctions.saveVectorsValues(multiPassProcessed, multiPassProcessed.getName()+ "_" + index);
 
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +154,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 ////////////////////////////////////////////////////////////////////////////////////
                 setMessage("Calculating vorticity");
                 PivFunctions.calculateVorticityMap(multipassResults);
-                pivFunctions.saveVorticityValues(multipassResults.getVorticityValues(), "Vorticity");
+                pivFunctions.saveVorticityValues(multipassResults.getVorticityValues(), "Vorticity_" + index);
 
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +169,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
                     pivFunctions.saveVectorCentimeters(singlePassResult,
                             parameters.getCameraCalibrationResult().ratio,
-                            "CENTIMETERS_" + singlePassResult.getName());
+                            "CENTIMETERS_" + singlePassResult.getName()+ "_" + index);
                     singlePassResult.setCalibrated(true);
 
                     // multipass
@@ -176,7 +187,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
                     pivFunctions.saveVectorCentimeters(multiPassProcessed,
                             parameters.getCameraCalibrationResult().ratio,
-                            "CENTIMETERS_" + multiPassProcessed.getName());
+                            "CENTIMETERS_" + multiPassProcessed.getName()+ "_" + index);
                     multiPassProcessed.setCalibrated(true);
                 }
 
@@ -184,18 +195,20 @@ public class PivRunner implements ProgressUpdateInterface {
                 //// SAVE DATA ////
                 ////////////////////////////////////////////////////////////////////////////////////
                 setMessage("Saving data...");
-                FileIO.writePIVData(resultData, parameters, context, userName, newExpTotal);
+                FileIO.writePIVData(resultData, parameters, context, userName, expTotal, index);
 
-                if (pDialog.isShowing()) pDialog.dismiss();
+                if (null != pDialog && pDialog.isShowing()) pDialog.dismiss();
             }
         };
         //-------------------------------Thread End-------------------------------------------//
-        thread.start();
+        pivRunningThread.start();
 
         return resultData;
     }
 
     private void setMessage(String msg) {
+        if (null == pDialog)
+            return;
         imageActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {

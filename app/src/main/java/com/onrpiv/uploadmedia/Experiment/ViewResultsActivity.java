@@ -14,6 +14,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -54,6 +55,7 @@ import com.onrpiv.uploadmedia.Utilities.ArrowDrawOptions;
 import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMapPicker;
+import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.FrameView;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
@@ -82,20 +84,21 @@ import petrov.kristiyan.colorpicker.ColorPicker;
 public class ViewResultsActivity extends AppCompatActivity implements PositionCallback {
     // Widgets
     private RangeSlider rangeSlider;
-    private ImageView baseImage, vectorFieldImage, vorticityImage;
+    protected ImageView baseImage;
+    private ImageView vectorFieldImage, vorticityImage;
     private Button arrowColor, vorticityColors, solidColor, applyButton, selectColor;
 
     // paths
-    private String imgFileToDisplay;
-    private File outputDirectory;
+    protected String imgFileToDisplay;
+    protected File outputDirectory;
 
     // maps and settings
-    private HashMap<String, PivResultData> correlationMaps;
+    protected HashMap<String, PivResultData> correlationMaps;
     private HashMap<View, LinearLayout> sectionMaps;
     private ArrayList<ColorMap> colorMaps;
-    private ResultSettings settings;
-    private int experimentNumber;
-    private int imageCounter = 0;
+    protected ResultSettings settings;
+    protected int experimentNumber;
+    protected int imageCounter = 0;
 
     // info section
     private ImageView selectionImage;
@@ -136,7 +139,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         colorMaps = ColorMap.loadColorMaps(this);
         settings = new ResultSettings(this);
         settings.setCalibrated(calibrated);
-        experimentNumber = PersistedData.getTotalExperiments(ViewResultsActivity.this, userName);
+        experimentNumber = (int) extras.get(PivResultData.EXP_NUM);
 
         // load params section
         TextView paramsText = findViewById(R.id.paramsText);
@@ -542,11 +545,11 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         vorticityImage.setVisibility(View.VISIBLE);
     }
 
-    private void displayBaseImage(String backgroundCode) {
+    protected void displayBaseImage(String backgroundCode) {
         Bitmap bmp;
         switch (backgroundCode) {
             case BACKGRND_IMG:
-                File pngFile = new File(outputDirectory, "Base_" + imgFileToDisplay);
+                File pngFile = new File(outputDirectory, "Base_0_" + imgFileToDisplay);
                 bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
                 break;
             case BACKGRND_SUB:
@@ -577,7 +580,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                 rows, cols);
     }
 
-    private Bitmap createSolidBaseImage() {
+    protected Bitmap createSolidBaseImage() {
         // TODO fix the hard code
         Rect rect = new Rect(0, 0, 2560, 1440);
         Bitmap bmp = Bitmap.createBitmap(rect.right, rect.bottom, Bitmap.Config.ARGB_8888);
@@ -596,7 +599,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         return result;
     }
 
-    private HashMap<String, PivResultData> loadCorrelationMaps(boolean replaced) {
+    protected HashMap<String, PivResultData> loadCorrelationMaps(boolean replaced) {
         HashMap<String, PivResultData> result = new HashMap<>();
         result.put(VEC_SINGLE, singlePass);
         result.put(VEC_MULTI, multiPass);
@@ -790,5 +793,22 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         pivY = Math.max(0, Math.min(pivY, pivHeight - 1));
 
         return new Point(pivX, pivY);
+    }
+
+    public static Class<?> loadFromFiles(Context context, String userName, int expNum) {
+        PivParameters params = (PivParameters) FileIO.read(context, userName, expNum, PivParameters.IO_FILENAME);
+
+        // filenames
+        String spFilename = PivResultData.SINGLE + PivResultData.PROCESSED;
+        spFilename += params.isReplace()? PivResultData.REPLACE : "";
+        String mpFilename = PivResultData.MULTI + PivResultData.PROCESSED;
+        String repFilename = PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE;
+
+        ViewResultsActivity.singlePass = (PivResultData) FileIO.read(context, userName, expNum, spFilename);
+        ViewResultsActivity.multiPass = (PivResultData) FileIO.read(context, userName, expNum, mpFilename);
+        if (params.isReplace()) {
+            ViewResultsActivity.replacedPass = (PivResultData) FileIO.read(context, userName, expNum, repFilename);
+        }
+        return ViewResultsActivity.class;
     }
 }

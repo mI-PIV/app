@@ -429,7 +429,25 @@ public class PathUtil {
     }
 
     private static boolean isGoogleDriveUri(Uri uri) {
-        return "com.google.android.apps.docs.storage".equals(uri.getAuthority()) || "com.google.android.apps.docs.storage.legacy".equals(uri.getAuthority());
+        return "com.google.android.apps.docs.storage".equals(uri.getAuthority()) ||
+                "com.google.android.apps.docs.storage.legacy".equals(uri.getAuthority());
+    }
+
+    public static boolean isMultipleResult(File experimentDir) {
+        if (!experimentDir.isDirectory()) return false;
+        File sp = new File(experimentDir, "singlepass_1.obj");
+        File mp = new File(experimentDir, "multipass_1.obj");
+        return sp.exists() && mp.exists();
+    }
+
+    public static File getObjectFile(Context context, String userName, int expNum, String pivType,
+                                     int index) {
+        File expDir = getExperimentNumberedDirectory(context, userName, expNum);
+        return getObjectFile(expDir, pivType, index);
+    }
+
+    public static File getObjectFile(File expDir, String pivType, int index) {
+        return new File(expDir, pivType + "_" + index + ".obj");
     }
 
     public static File getUserDirectory(Context context, String userName) {
@@ -457,6 +475,11 @@ public class PathUtil {
         return frameSetsList;
     }
 
+    public static File getNumberedExperimentFramesDirectory(Context context, String userName, int expDirNum) {
+        File result = new File(getExperimentNumberedDirectory(context, userName, expDirNum), "Frames");
+        return checkDir(result);
+    }
+
     public static File getExperimentsDirectory(Context context, String userName) {
         File result = new File(getUserDirectory(context, userName), "Experiments");
         return checkDir(result);
@@ -465,6 +488,12 @@ public class PathUtil {
     public static File getExperimentNumberedDirectory(Context context, String userName, int expDirNum) {
         File result = new File(getExperimentsDirectory(context, userName), "Experiment_"+expDirNum);
         return checkDir(result);
+    }
+
+    public static File createNewExperimentDirectory(Context context, String userName) {
+        int expTotal = PersistedData.getTotalExperiments(context, userName) + 1;
+        PersistedData.setTotalExperiments(context, userName, expTotal);
+        return PathUtil.getExperimentNumberedDirectory(context, userName, expTotal);
     }
 
     public static String getExperimentImageFileSuffix(int currentExperiment) {
@@ -481,7 +510,13 @@ public class PathUtil {
                 deleteRecursive(child);
             }
         }
-        fileOrDirectory.delete();
+
+        boolean deleted = fileOrDirectory.delete();
+        if (!deleted) {
+            Log.e("DELETE", "Unable to delete " + fileOrDirectory);
+        } else {
+            Log.d("DELETE", "Successfully deleted " + fileOrDirectory);
+        }
     }
 
     private static File checkDir(File dir) {
@@ -489,7 +524,7 @@ public class PathUtil {
             if (dir.mkdirs()) {
                 Log.d("MAKEDIRS", "Directory created successfully.");
             } else {
-                Log.d("MAKEDIRS", "Failed to create directory.");
+                Log.e("MAKEDIRS", "Failed to create directory.");
             }
         }
         return dir;

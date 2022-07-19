@@ -145,7 +145,8 @@ public class PivFunctions {
         return new int[]{nCols, nRows};
     }
 
-    public void framesSubtraction(int backgroundSubType, File frameDir, int frame1Idx, int frame2Idx) {
+    public void framesSubtraction(int backgroundSubType, File frameDir, int frame1Idx, int frame2Idx,
+                                  int expIndex) {
         Mat[] subtractedFrames;
 
         if (backgroundSubType == PivParameters.BACKGROUNDSUB_ALLFRAME) {
@@ -166,8 +167,8 @@ public class PivFunctions {
         grayFrame2 = subtractedFrames[1];
 
         // save frames for results page
-        saveImage(grayFrame1, BackgroundSub.SUB1_FILENAME);
-        saveImage(grayFrame2, BackgroundSub.SUB2_FILENAME);
+        saveImage(grayFrame1, BackgroundSub.SUB1_FILENAME + "_" + expIndex);
+        saveImage(grayFrame2, BackgroundSub.SUB2_FILENAME + "_" + expIndex);
     }
 
     public void applyNegativeFilter() {
@@ -210,6 +211,7 @@ public class PivFunctions {
     private static Mat fftPIV(Mat winA, Mat winB) {
 //        https://stackoverflow.com/questions/51347829/c-cross-correlation-of-2-shifted-images-with-opencv
 
+        // TODO throw this in a try and catch block
         // prepare Mats for fft
         int height = Core.getOptimalDFTSize(Math.max(winA.rows(), winB.rows()));
         int width = Core.getOptimalDFTSize(Math.max(winA.cols(), winB.cols()));
@@ -336,31 +338,33 @@ public class PivFunctions {
                 int c = (int) mmr.maxLoc.x;
                 int r = (int) mmr.maxLoc.y;
 
-                try {
-                    double bottomCenter = corr.get(r-1, c)[0];
-                    double topCenter = corr.get(r+1, c)[0];
+                double epsr;
+                double epsc;
+                if (r > 0 && r < windowSize-1 && c > 0 && c < windowSize-1) {
+                    double bottomCenter = corr.get(r - 1, c)[0];
+                    double topCenter = corr.get(r + 1, c)[0];
                     double center = corr.get(r, c)[0];
-                    double leftCenter = corr.get(r, c-1)[0];
-                    double rightCenter = corr.get(r, c+1)[0];
+                    double leftCenter = corr.get(r, c - 1)[0];
+                    double rightCenter = corr.get(r, c + 1)[0];
 
-                    double epsr = (Math.log(bottomCenter) - Math.log(topCenter)) / (2 * (Math.log(bottomCenter) - 2 * Math.log(center) + Math.log(topCenter)));
-                    double epsc = (Math.log(leftCenter) - Math.log(rightCenter)) / (2 * (Math.log(leftCenter) - 2 * Math.log(center) + Math.log(rightCenter)));
+                    epsr = (Math.log(bottomCenter) - Math.log(topCenter)) / (2 * (Math.log(bottomCenter) - 2 * Math.log(center) + Math.log(topCenter)));
+                    epsc = (Math.log(leftCenter) - Math.log(rightCenter)) / (2 * (Math.log(leftCenter) - 2 * Math.log(center) + Math.log(rightCenter)));
 
-                    epsr = Double.isNaN(epsr)? 0.0 : epsr;
-                    epsc = Double.isNaN(epsc)? 0.0 : epsc;
-
-                    if (fft) {
-                        dr1[i][j] = (windowSize / 2d) - (r + epsr);
-                        dc1[i][j] = (windowSize / 2d) - (c + epsc);
-                    } else {
-                        dr1[i][j] = (windowSize - 1) - (r + epsr);
-                        dc1[i][j] = (windowSize - 1) - (c + epsc);
-                    }
-
-                } catch (Exception e) {
-                    dr1[i][j] = 0.0;
-                    dc1[i][j] = 0.0;
+                    epsr = Double.isNaN(epsr) ? 0.0 : epsr;
+                    epsc = Double.isNaN(epsc) ? 0.0 : epsc;
+                } else {
+                epsr = 0.0;
+                epsc = 0.0;
                 }
+
+                if (fft) {
+                    dr1[i][j] = (windowSize / 2d) - (r + epsr);
+                    dc1[i][j] = (windowSize / 2d) - (c + epsc);
+                } else {
+                    dr1[i][j] = (windowSize - 1) - (r + epsr);
+                    dc1[i][j] = (windowSize - 1) - (c + epsc);
+                }
+
                 mag[i][j] = Math.sqrt(Math.pow(dr1[i][j], 2) + Math.pow(dc1[i][j], 2));
                 sig2noise[i][j] = sig2Noise_update(corr, mmr);
 
@@ -917,14 +921,8 @@ public class PivFunctions {
 
     public PivResultData calculateMultipass(PivResultData pivResultData, String resultName, boolean fft,
                                             ProgressUpdateInterface progressUpdate) {
-        double[][] dr_new = new double[fieldRows][fieldCols];
-        double[][] dc_new = new double[fieldRows][fieldCols];
-
         double[][] dr2 = new double[fieldRows][fieldCols];
         double[][] dc2 = new double[fieldRows][fieldCols];
-
-        double[][] eps_r_new = new double[fieldRows][fieldCols];
-        double[][] eps_c_new = new double[fieldRows][fieldCols];
 
         double[][] mag = new double[fieldRows][fieldCols];
         double[][] sig2noise = new double[fieldRows][fieldCols];
@@ -1002,35 +1000,41 @@ public class PivFunctions {
                     int c = (int) mmr.maxLoc.x;
                     int r = (int) mmr.maxLoc.y;
 
-                    try {
-                        double epsr_new = (Math.log(corr.get(r - 1, c)[0])
+                    double epsr_new;
+                    double epsc_new;
+                    if (r > 0 && r < windowSize-1 && c > 0 && c < windowSize-1) {
+                        epsr_new = (Math.log(corr.get(r - 1, c)[0])
                                 - Math.log(corr.get(r + 1, c)[0]))
                                 / (2 * (Math.log(corr.get(r - 1, c)[0])
                                 - 2 * Math.log(corr.get(r, c)[0])
                                 + Math.log(corr.get(r + 1, c)[0])));
 
-                        double epsc_new = (Math.log(corr.get(r, c - 1)[0])
+                        epsc_new = (Math.log(corr.get(r, c - 1)[0])
                                 - Math.log(corr.get(r, c + 1)[0]))
                                 / (2 * (Math.log(corr.get(r, c - 1)[0])
                                 - 2 * Math.log(corr.get(r, c)[0])
                                 + Math.log(corr.get(r, c + 1)[0])));
 
-                        eps_r_new[ii][jj] = Double.isNaN(epsr_new)? 0.0 : epsr_new;
-                        eps_c_new[ii][jj] = Double.isNaN(epsc_new)? 0.0 : epsc_new;
-
-                        if (fft) {
-                            dr_new[ii][jj] = (windowSize / 2d) - (r + eps_r_new[ii][jj]);
-                            dc_new[ii][jj] = (windowSize / 2d) - (c + eps_c_new[ii][jj]);
-                        } else {
-                            dr_new[ii][jj] = (windowSize - 1) - (r + eps_r_new[ii][jj]);
-                            dc_new[ii][jj] = (windowSize - 1) - (c + eps_c_new[ii][jj]);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        epsr_new = Double.isNaN(epsr_new) ? 0.0 : epsr_new;
+                        epsc_new = Double.isNaN(epsc_new) ? 0.0 : epsc_new;
+                    } else {
+                        epsc_new = 0d;
+                        epsr_new = 0d;
                     }
+
+                    double dr_new;
+                    double dc_new;
+                    if (fft) {
+                        dr_new = (windowSize / 2d) - (r + epsr_new);
+                        dc_new = (windowSize / 2d) - (c + epsc_new);
+                    } else {
+                        dr_new = (windowSize - 1) - (r + epsr_new);
+                        dc_new = (windowSize - 1) - (c + epsc_new);
+                    }
+
                     //Add new pixel displacement to pixel displacements from 1st pass
-                    dc2[ii][jj] = ushift*2 + dc_new[ii][jj];
-                    dr2[ii][jj] = vshift*2 + dr_new[ii][jj];
+                    dc2[ii][jj] = ushift*2 + dc_new;
+                    dr2[ii][jj] = vshift*2 + dr_new;
 
                     sig2noise[ii][jj] = sig2Noise_update(corr, mmr);
 

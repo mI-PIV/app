@@ -3,6 +3,7 @@ package com.onrpiv.uploadmedia.pivFunctions;
 import java.io.Serializable;
 
 public class PivResultData implements Serializable {
+    private static final long serialVersionUID = 43L;
     private final String name;
     private double[][] _u;
     private double[][] _v;
@@ -33,7 +34,9 @@ public class PivResultData implements Serializable {
             MULTI = "multipass",
             PROCESSED = "_processed",
             REPLACE = "_replaced",
-            USERNAME = "username";
+            USERNAME = "username",
+            FRAMESET = "frameset",
+            EXP_NUM = "experiment_num";
 
     public PivResultData(String name, double[][] u, double[][] v, double[][] mag,
                          double[][] sig2noise, double[][] interrCenters, int cols, int rows,
