@@ -324,15 +324,18 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
             PivResultData mp = multipassResults.get(i);
             if (null != sp) { indexResults.put(sp.getName(), sp); }
             else {
-                Log.e("MULTIPLE_RESULTS", "Single pass is null at i:" + i);
+                Log.e("MULTIPLE_RESULTS", "Single pass is null at i=" + i);
             }
             if (null != mp) { indexResults.put(mp.getName(), mp); }
             else {
-                Log.e("MULTIPLE_RESULTS", "Multi pass is null at i: " + i);
+                Log.e("MULTIPLE_RESULTS", "Multi pass is null at i=" + i);
             }
             if (params.isReplace()) {
                 PivResultData rp = repResults.get(i);
-                indexResults.put(rp.getName(), rp);
+                if (null != rp) {indexResults.put(rp.getName(), rp); }
+                else {
+                    Log.e("MULTIPLE_RESULTS", "Replacement is null at i=" + i);
+                }
             }
             multipleResultData.put(i, indexResults);
         }

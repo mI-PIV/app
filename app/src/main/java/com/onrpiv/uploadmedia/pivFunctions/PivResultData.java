@@ -3,6 +3,7 @@ package com.onrpiv.uploadmedia.pivFunctions;
 import java.io.Serializable;
 
 public class PivResultData implements Serializable {
+    private static final long serialVersionUID = 43L;
     private final String name;
     private double[][] _u;
     private double[][] _v;
