@@ -199,7 +199,8 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         changeData(newIdx);
         settings.vecFieldChanged = true;
         settings.vortMapChanged = true;
-        super.applyDisplay(null);
+        settings.backgroundChanged = true;
+        applyDisplay(null);
         frameText.setText(getFrameText(newIdx+1));
     }
 
