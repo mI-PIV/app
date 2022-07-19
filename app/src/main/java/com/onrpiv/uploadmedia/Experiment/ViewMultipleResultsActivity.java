@@ -204,12 +204,18 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
     }
 
     private void changeData(int newIdx) {
-        singlePass = data.get(newIdx).get(PivResultData.SINGLE);
-        multiPass = data.get(newIdx).get(PivResultData.MULTI);
+        String spName = PivResultData.SINGLE + PivResultData.PROCESSED;
+        String mpName = PivResultData.MULTI;
+
+
         if (pivParameters.isReplace()) {
+            spName += PivResultData.REPLACE;
             replacedPass = data.get(newIdx).get(PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE);
         }
-         correlationMaps = loadCorrelationMaps(pivParameters.isReplace());
+        singlePass = data.get(newIdx).get(spName);
+        multiPass = data.get(newIdx).get(mpName);
+
+        correlationMaps = loadCorrelationMaps(pivParameters.isReplace());
     }
 
     private RelativeLayout buildSliderLayout(int belowThisId, int aboveThisId) {
@@ -287,7 +293,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         // filenames
         String spFilename = PivResultData.SINGLE + PivResultData.PROCESSED;
         spFilename += params.isReplace()? PivResultData.REPLACE : "";
-        String mpFilename = PivResultData.MULTI + PivResultData.PROCESSED;
+        String mpFilename = PivResultData.MULTI;
         String repFilename = PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE;
 
         // multiple results
@@ -307,8 +313,14 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
             HashMap<String, PivResultData> indexResults = new HashMap<>();
             PivResultData sp = singlepassResults.get(i);
             PivResultData mp = multipassResults.get(i);
-            indexResults.put(sp.getName(), sp);
-            indexResults.put(mp.getName(), mp);
+            if (null != sp) { indexResults.put(sp.getName(), sp); }
+            else {
+                Log.e("MULTIPLE_RESULTS", "Single pass is null at i:" + i);
+            }
+            if (null != mp) { indexResults.put(mp.getName(), mp); }
+            else {
+                Log.e("MULTIPLE_RESULTS", "Multi pass is null at i: " + i);
+            }
             if (params.isReplace()) {
                 PivResultData rp = repResults.get(i);
                 indexResults.put(rp.getName(), rp);
@@ -316,7 +328,8 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
             multipleResultData.put(i, indexResults);
         }
         // pass to the multiple results activity
-        ViewMultipleResultsActivity.data = multipleResultData;
+        data = multipleResultData;
+        pivParameters = params;
         return ViewMultipleResultsActivity.class;
     }
 

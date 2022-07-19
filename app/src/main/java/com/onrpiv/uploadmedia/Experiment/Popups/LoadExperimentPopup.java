@@ -17,6 +17,7 @@ import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.Popup;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
+import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
 import java.util.HashMap;
 import java.util.List;
@@ -96,10 +97,13 @@ public class LoadExperimentPopup extends Popup {
         if (PathUtil.isMultipleResult(PathUtil.getExperimentNumberedDirectory(context, userName, experimentNum))) {
             Class<?> multipleIntentClass = ViewMultipleResultsActivity.loadFromFiles(context, userName, experimentNum);
             displayIntent = new Intent(context, multipleIntentClass);
+            displayIntent.putExtra(PivResultData.REPLACED_BOOL, ViewMultipleResultsActivity.pivParameters.isReplace());
         } else {
             Class<?> singleIntentClass = ViewResultsActivity.loadFromFiles(context, userName, experimentNum);
             displayIntent = new Intent(context, singleIntentClass);
+            displayIntent.putExtra(PivResultData.REPLACED_BOOL, ViewResultsActivity.pivParameters.isReplace());
         }
+
 
         // start the results activity
         context.startActivity(displayIntent);
