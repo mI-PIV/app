@@ -96,14 +96,15 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
                     // get results view
                     View imageStack = findViewById(R.id.img_frame);
                     imageStack.setDrawingCacheEnabled(true);
-                    Bitmap bmp = getDrawingCacheOnGuiThread(imageStack);
-                    // save results frame
-                    File framePath = new File(expFrames, String.format("%04d", i) + ".jpg");
-                    try (FileOutputStream output = new FileOutputStream(framePath)) {
-                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, output);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    saveResultsViewBitmap(imageStack, expFrames, i);
+//                    Bitmap bmp = saveResultsViewBitmap(imageStack);
+//                    // save results frame
+//                    File framePath = new File(expFrames, String.format("%04d", i) + ".jpg");
+//                    try (FileOutputStream output = new FileOutputStream(framePath)) {
+//                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, output);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
                 }
                 onIndexChange(currentIdx);
 
@@ -164,15 +165,19 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         saveImageButton.setBackgroundColor(Color.parseColor("#243EDF"));
     }
 
-    private Bitmap getDrawingCacheOnGuiThread(View imageStack) {
-        final Bitmap[] result = new Bitmap[1];
+    private void saveResultsViewBitmap(final View imageStack, final File framesDir, final int i) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                result[0] = imageStack.getDrawingCache();
+                Bitmap bmp = imageStack.getDrawingCache();
+                File framePath = new File(framesDir, String.format("%04d", i) + ".jpg");
+                try (FileOutputStream output = new FileOutputStream(framePath)) {
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, output);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
-        return result[0];
     }
 
     @Override
