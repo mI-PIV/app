@@ -38,19 +38,11 @@ public class PivParameters implements Serializable {
             NEG_FILTER = "negativeFilter";
 
     public PivParameters() {
-        setWindowSize(windowSize);
-        setOverlap(overlap);
-        setnMaxUpper(nMaxUpper);
-        setnMaxLower(nMaxLower);
-        setMaxDisplacement(maxDisplacement);
-        setqMin(qMin);
-        setDt(dt);
-        setE(E);
-        setFFT(fft);
+        // testing constructor
     }
 
-    public PivParameters(Context context, String userName, String frameSetName, int frameOne, int frameTwo)
-    {
+    public PivParameters(Context context, String userName, String frameSetName, int frameOne,
+                         int frameTwo) {
         this.frameSetName = frameSetName;
         this.frameOne = frameOne;
         this.frameTwo = frameTwo;
@@ -61,13 +53,12 @@ public class PivParameters implements Serializable {
         setMaxDisplacement(maxDisplacement);
         setqMin(qMin);
         int fps = PersistedData.getFrameDirFPS(context, userName, frameSetName);
-        setDt(1d / fps);
+        setDt(fps);
         setE(E);
         setFFT(fft);
     }
 
-    public PivParameters(ArrayMap<String, String> parameterDictionary)
-    {
+    public PivParameters(ArrayMap<String, String> parameterDictionary) {
         // Unload the dictionary
         for (String key: parameterDictionary.keySet())
         {
@@ -99,7 +90,8 @@ public class PivParameters implements Serializable {
                 qMin = Double.parseDouble(value);
                 break;
             case DT_KEY:
-                dt = Double.parseDouble(value);
+                // incoming 'value' is FPS
+                setDt((int) Double.parseDouble(value));
                 break;
             case E_KEY:
                 E = Double.parseDouble(value);
@@ -161,6 +153,14 @@ public class PivParameters implements Serializable {
 
     public void setDt(double dt) {
         this.dt = dt;
+    }
+
+    public void setDt(int fps) {
+        dt = 1d / fps;
+    }
+
+    public int getFPS() {
+        return (int) Math.round(1d / dt);
     }
 
     public double getE() {
