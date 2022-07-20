@@ -17,8 +17,12 @@ public class FpsExtractor {
             for (int i = 0; i < extractor.getTrackCount(); i++) {
                 MediaFormat format = extractor.getTrackFormat(i);
                 String mime = format.getString(MediaFormat.KEY_MIME);
-                if (mime.startsWith("video/") && format.containsKey(MediaFormat.KEY_CAPTURE_RATE)) {
-                    fps = format.getInteger(MediaFormat.KEY_FRAME_RATE);
+                if (mime.startsWith("video/")) {
+                    if (format.containsKey(MediaFormat.KEY_CAPTURE_RATE)) {
+                        fps = format.getInteger(MediaFormat.KEY_CAPTURE_RATE);
+                    } else if (format.containsKey(MediaFormat.KEY_FRAME_RATE)) {
+                        fps = format.getInteger(MediaFormat.KEY_FRAME_RATE);
+                    }
                 }
             }
 
