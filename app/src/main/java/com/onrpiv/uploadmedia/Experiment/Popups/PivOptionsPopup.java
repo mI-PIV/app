@@ -413,6 +413,7 @@ public class PivOptionsPopup extends AlertDialog {
         EText.setText(Double.toString(parameters.getE()));
         replaceRadioGroup.check(parameters.isReplace()? R.id.params_replace_yes : R.id.params_replace_no);
         corrMethodRadioGroup.check(parameters.isFFT()? R.id.params_method_fft : R.id.params_method_template);
+        negativeFilterGroup.check(parameters.isNegativeFilter()? R.id.params_negativef_yes : R.id.params_negativef_no);
         backSubRadioGroup.check(checkBackgroundSelection());
         savePIVDataButton.setEnabled(true);
     }
