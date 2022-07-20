@@ -99,7 +99,7 @@ public class PivParameters implements Serializable {
                 qMin = Double.parseDouble(value);
                 break;
             case DT_KEY:
-                dt = 1d / Double.parseDouble(value);
+                dt = Double.parseDouble(value);
                 break;
             case E_KEY:
                 E = Double.parseDouble(value);
