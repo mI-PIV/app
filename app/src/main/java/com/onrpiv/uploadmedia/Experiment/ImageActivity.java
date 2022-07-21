@@ -12,11 +12,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.onrpiv.uploadmedia.Experiment.Popups.DensityPreviewPopup;
 import com.onrpiv.uploadmedia.Experiment.Popups.PivFrameSelectionPopup;
-import com.onrpiv.uploadmedia.Experiment.Popups.PivOptionsPopup;
 import com.onrpiv.uploadmedia.Learn.PIVBasics3;
 import com.onrpiv.uploadmedia.Learn.PIVBasicsLayout;
 import com.onrpiv.uploadmedia.R;
@@ -53,6 +57,7 @@ public class ImageActivity extends AppCompatActivity {
     private HashMap<Integer, HashMap<String, PivResultData>> multipleResultData;
 
     private boolean wholeSetProcessing = false;
+    private ActivityResultLauncher<Intent> pivOptionsLauncher;
 
     private int step = 0;
     private static final String greenString = "#00CC00";
@@ -64,6 +69,38 @@ public class ImageActivity extends AppCompatActivity {
         setContentView(R.layout.image_layout);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // set up PivOptions activity
+        pivOptionsLauncher = registerForActivityResult(new ActivityResultContract<Intent, PivParameters>() {
+            @NonNull
+            @Override
+            public Intent createIntent(@NonNull Context context, Intent input) {
+                input.putExtra(PivOptionsActivity.FRAMEONE, frame1Num);
+                input.putExtra(PivOptionsActivity.FRAMETWO, frame2Num);
+                input.putExtra(PivOptionsActivity.FRAMESET, frameSetName);
+                input.putExtra("userName", userName);
+                return input;
+            }
+            @Override
+            public PivParameters parseResult(int resultCode, @Nullable Intent intent) {
+                PivParameters result = null;
+                if (resultCode == RESULT_OK) {
+                    assert intent != null;
+                    result = (PivParameters) intent.getSerializableExtra("params");
+                }
+                return result;
+            }
+        }, new ActivityResultCallback<PivParameters>() {
+            @Override
+            public void onActivityResult(PivParameters result) {
+                if (null == result) { return; }
+
+                pivParameters = result;
+                compute.setEnabled(true);
+                parameters.setBackgroundColor(Color.parseColor(greenString));
+                step = 3;
+            }
+        });
 
         multipleResultData = new HashMap<>();
 
@@ -164,23 +201,7 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     public void inputPivOptions(View view) {
-        final PivOptionsPopup parameterPopup = new PivOptionsPopup(ImageActivity.this,
-                userName, frameSetName, frame1Num, frame2Num);
-
-        // create listener for piv parameter save button
-        View.OnClickListener saveListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pivParameters = parameterPopup.parameters;
-                compute.setEnabled(true);
-                parameters.setBackgroundColor(Color.parseColor(greenString));
-                step = 3;
-                parameterPopup.dismiss();
-            }
-        };
-
-        parameterPopup.setSaveListener(saveListener);
-        parameterPopup.show();
+        pivOptionsLauncher.launch(new Intent(this, PivOptionsActivity.class));
     }
 
     public void displayResults(View view) {
