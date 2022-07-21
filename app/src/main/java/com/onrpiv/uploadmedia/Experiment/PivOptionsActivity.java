@@ -1,9 +1,12 @@
-package com.onrpiv.uploadmedia.Experiment.Popups;
+package com.onrpiv.uploadmedia.Experiment;
 
-import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -14,6 +17,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.ArrayMap;
 
 import com.onrpiv.uploadmedia.Learn.PIVBasics2;
@@ -34,49 +39,60 @@ import java.util.Arrays;
 import java.util.Objects;
 
 
-public class PivOptionsPopup extends AlertDialog {
-    private final EditText windowSizeText;
-    private final EditText overlapText;
-    private final EditText fpsText;
-    private final EditText qMinText;
-    private final EditText EText;
-    private final RadioGroup replaceRadioGroup;
-    private final RadioGroup backSubRadioGroup;
-    private final RadioGroup calibrationRadioGroup;
-    private final RadioGroup corrMethodRadioGroup;
-    private final RadioGroup negativeFilterGroup;
-    private final Button setAsDefaultButton;
-    private final Button resetDefaultButton;
-    private final Button savePIVDataButton;
-    private final Button cancelPIVDataButton;
-    private final CheckBox advancedCheckbox;
+public class PivOptionsActivity extends AppCompatActivity {
+    private EditText windowSizeText;
+    private EditText overlapText;
+    private EditText fpsText;
+    private EditText qMinText;
+    private EditText EText;
+    private RadioGroup replaceRadioGroup;
+    private RadioGroup backSubRadioGroup;
+    private RadioGroup calibrationRadioGroup;
+    private RadioGroup corrMethodRadioGroup;
+    private RadioGroup negativeFilterGroup;
+    private Button setAsDefaultButton;
+    private Button resetDefaultButton;
+    private Button savePIVDataButton;
+    private Button cancelPIVDataButton;
+    private CheckBox advancedCheckbox;
 
-    public PivParameters parameters;
-    private final ArrayList<View> hiddenViewList;
-    private final ArrayList<TextView> doubleTextViewList;
-    private final ArrayList<TextView> intTextViewList;
-    private final ArrayMap<Integer, String> idToKey;
+    private ArrayList<View> hiddenViewList;
+    private ArrayList<TextView> doubleTextViewList;
+    private ArrayList<TextView> intTextViewList;
+    private ArrayMap<Integer, String> idToKey;
 
+    private PivParameters parameters;
 
-    public PivOptionsPopup(final Context context, String userName, String frameSetName, int frameOne,
-                           int frameTwo) {
-        super(context);
-        if (FileIO.checkParametersFile(context, userName)) {
-            parameters = FileIO.readUserParametersFile(context, userName);
+    public static final String
+            FRAMESET = "frameSetName",
+            FRAMEONE = "frameOne",
+            FRAMETWO = "frameTwo";
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_piv_dialog);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // get data from Image activity
+        Intent thisIntent = getIntent();
+        String userName = thisIntent.getStringExtra("UserName");
+        String frameSetName = thisIntent.getStringExtra(FRAMESET);
+        int frameOne = thisIntent.getIntExtra(FRAMEONE, -1);
+        int frameTwo = thisIntent.getIntExtra(FRAMETWO, -1);
+
+        if (FileIO.checkParametersFile(this, userName)) {
+            parameters = FileIO.readUserParametersFile(this, userName);
             parameters.setFrameOne(frameOne);
             parameters.setFrameTwo(frameTwo);
             parameters.setFrameSetName(frameSetName);
         } else {
-            parameters = new PivParameters(context, userName, frameSetName, frameOne, frameTwo);
+            parameters = new PivParameters(this, userName, frameSetName, frameOne, frameTwo);
         }
 
         idToKey = new ArrayMap<>();
-
-        // build dialog
-        setTitle("PIV Parameters Dialog");
-        setCancelable(false);
-        setView(getLayoutInflater().inflate(R.layout.popup_piv_dialog, null));
-        create();
 
         // init texts
         TextView setEditTextPIV = (TextView) findViewById(R.id.piv_options_description);
@@ -108,7 +124,7 @@ public class PivOptionsPopup extends AlertDialog {
         TextView calibrationText = (TextView) findViewById(R.id.calibration_Text);
         calibrationRadioGroup = (RadioGroup) findViewById(R.id.calib_radio_group);
         RadioButton calibrationRadioBtn = (RadioButton) findViewById(R.id.calib_radio_calib);
-        String calibString = CameraCalibrationResult.getSavedCalibrationPrettyPrint(context, userName);
+        String calibString = CameraCalibrationResult.getSavedCalibrationPrettyPrint(this, userName);
         if (null == calibString) {
             calibrationRadioBtn.setVisibility(View.GONE);
         } else {
@@ -124,22 +140,22 @@ public class PivOptionsPopup extends AlertDialog {
 
         // lightbulbs
         final String linkText = "Learn More";
-        new LightBulb(context, windowSizeText).setLightBulbOnClick("Window Size",
+        new LightBulb(this, windowSizeText).setLightBulbOnClick("Window Size",
                 "Interrogation regions should contain at least five particles to result in a good correlation value.",
                 new PIVBasics3(), linkText, getWindow());
-        new LightBulb(context, overlapText).setLightBulbOnClick("Overlap",
+        new LightBulb(this, overlapText).setLightBulbOnClick("Overlap",
                 "Normally the overlap is set at 50% of the window size.",
                 new PIVBasics5(), linkText, getWindow());
-        LightBulb dtLB = new LightBulb(context, fpsText).setLightBulbOnClick("Time Interval",
+        LightBulb dtLB = new LightBulb(this, fpsText).setLightBulbOnClick("Time Interval",
                 "The time between images. If you selected sequential images, this is 1/framerate.",
                 getWindow());
-        LightBulb qMinLB = new LightBulb(context, qMinText).setLightBulbOnClick("Minimum Threshold",
+        LightBulb qMinLB = new LightBulb(this, qMinText).setLightBulbOnClick("Minimum Threshold",
                 "Set an initial Q value threshold of 1.3. Users can relax this standard by decreasing Q (minimum of one), or tighten this standard by increasing Q.",
                 new PIVBasics2(), linkText, getWindow());
-        LightBulb eTextLB = new LightBulb(context, EText).setLightBulbOnClick("Median",
+        LightBulb eTextLB = new LightBulb(this, EText).setLightBulbOnClick("Median",
                 "Set a median threshold value of two. Increasing the median threshold value will result in a less stringent comparison and decreasing the median parameter will result in a more stringent comparison.",
                 new PIVBasics4(), linkText, getWindow());
-        LightBulb radioGroupLB = new LightBulb(context, replaceRadioGroup).setLightBulbOnClick("Replace Missing Vectors",
+        LightBulb radioGroupLB = new LightBulb(this, replaceRadioGroup).setLightBulbOnClick("Replace Missing Vectors",
                 "When would you choose yes vs no? \n\nYes: qualitative image analysis.\nNo: if you're using the vector data for further analysis.",
                 getWindow());
 
@@ -164,14 +180,31 @@ public class PivOptionsPopup extends AlertDialog {
         loadIdToKey();
 
         // set all listeners except save
-        setListeners(context, userName);
+        setListeners(this, userName);
     }
 
-    public void setSaveListener(View.OnClickListener saveListener) {
-        savePIVDataButton.setOnClickListener(saveListener);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void setListeners(Context context, String userName) {
+        // save button
+        savePIVDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("params", parameters);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
+        });
+
         // Hide/Show advanced options
         advancedCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -299,7 +332,7 @@ public class PivOptionsPopup extends AlertDialog {
         cancelPIVDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cancel();
+                onBackPressed();
             }
         });
 

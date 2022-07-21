@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.text.LineBreaker;
 import android.os.Build;
 import android.util.TypedValue;
@@ -22,7 +21,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatImageButton;
 
-import com.onrpiv.uploadmedia.Experiment.Popups.PivOptionsPopup;
 import com.onrpiv.uploadmedia.R;
 
 /**
