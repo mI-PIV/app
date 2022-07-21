@@ -670,7 +670,9 @@ public class PivFunctions {
     public void saveImage(Mat image1, String stepName) {
         File pngFile = new File(outputDirectory, stepName + "_" + imageFileSaveName);
         Mat resized = resizeMat(image1);
-        Imgcodecs.imwrite(pngFile.getAbsolutePath(), resized);
+        if (!Imgcodecs.imwrite(pngFile.getAbsolutePath(), resized)) {
+            Log.e("IMAGE_WRITE", "Failed to write image to " + pngFile.getAbsolutePath());
+        }
 
         //clean up mats
         resized.release();
