@@ -434,13 +434,13 @@
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="right">
+                    android:gravity="end">
 
                     <Button
                         android:id="@+id/button_cancel_piv_data"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_gravity="right"
+                        android:layout_gravity="end"
                         android:layout_marginEnd="-5dp"
                         android:backgroundTint="#FFFFFF"
                         android:paddingTop="20dp"
@@ -455,7 +455,7 @@
                         android:id="@+id/button_save_piv_data"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_gravity="right"
+                        android:layout_gravity="end"
                         android:backgroundTint="#FFFFFF"
                         android:paddingTop="20dp"
                         android:stateListAnimator="@null"
