@@ -154,17 +154,8 @@ public class PivOptionsPopup extends AlertDialog {
         );
 
         // keep all input textviews in list for easy iteration
-        doubleTextViewList = new ArrayList<TextView>(
-                Arrays.asList(
-                        fpsText, EText, qMinText
-                )
-        );
-
-        intTextViewList = new ArrayList<TextView>(
-                Arrays.asList(
-                        windowSizeText, overlapText
-                )
-        );
+        doubleTextViewList = new ArrayList<TextView>(Arrays.asList(fpsText, EText, qMinText));
+        intTextViewList = new ArrayList<TextView>(Arrays.asList(windowSizeText, overlapText));
 
         // set texts
         setGUITexts();
@@ -390,7 +381,7 @@ public class PivOptionsPopup extends AlertDialog {
 
     private float calculateTimeDelta(int fps, int frame1Num, int frame2Num) {
         int deltaFrameNums = frame2Num - frame1Num;
-        return (float) deltaFrameNums/ (float) fps;
+        return (float) deltaFrameNums / (float) fps;
     }
 
     private void setGUITexts() {
@@ -406,6 +397,7 @@ public class PivOptionsPopup extends AlertDialog {
         backSubRadioGroup.check(checkBackgroundSelection());
         savePIVDataButton.setEnabled(true);
     }
+
     private int checkBackgroundSelection() {
         if (parameters.getBackgroundSelection() == -1) {
             return R.id.bs_none;
