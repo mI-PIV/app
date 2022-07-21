@@ -1076,7 +1076,7 @@ public class PivFunctions {
     private static double getCubicInterpolation_v(double[][] v, int ii, int jj) {
         List<Double> valueList = new ArrayList<>();
         for (int j = jj - 2; j <= jj +2; j++) {
-            if (j < 0 || j >= v.length) {
+            if (j < 0 || j >= v[0].length) {
                 valueList.add(0d);
             } else if (j == jj) {
                 continue;
