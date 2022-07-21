@@ -670,7 +670,9 @@ public class PivFunctions {
     public void saveImage(Mat image1, String stepName) {
         File pngFile = new File(outputDirectory, stepName + "_" + imageFileSaveName);
         Mat resized = resizeMat(image1);
-        Imgcodecs.imwrite(pngFile.getAbsolutePath(), resized);
+        if (!Imgcodecs.imwrite(pngFile.getAbsolutePath(), resized)) {
+            Log.e("IMAGE_WRITE", "Failed to write image to " + pngFile.getAbsolutePath());
+        }
 
         //clean up mats
         resized.release();
@@ -1076,7 +1078,7 @@ public class PivFunctions {
     private static double getCubicInterpolation_v(double[][] v, int ii, int jj) {
         List<Double> valueList = new ArrayList<>();
         for (int j = jj - 2; j <= jj +2; j++) {
-            if (j < 0 || j >= v.length) {
+            if (j < 0 || j >= v[0].length) {
                 valueList.add(0d);
             } else if (j == jj) {
                 continue;
