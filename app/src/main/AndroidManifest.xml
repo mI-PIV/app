@@ -96,6 +96,7 @@
         <activity android:name=".Experiment.CalibrationInputActivity" android:label="Experiment"/>
         <activity android:name=".Experiment.Account" android:label="User Settings"/>
         <activity android:name=".Experiment.ViewMultipleResultsActivity" android:label="Experiment"/>
+        <activity android:name=".Experiment.PivOptionsActivity" android:label="Experiment"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
