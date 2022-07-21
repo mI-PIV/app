@@ -20,7 +20,7 @@ public class PivRunner implements ProgressUpdateInterface {
     private final Context context;
     private final File frame1File;
     private final File frame2File;
-    private final File expDir;
+    private File expDir;
     private final String userName;
     private final int index;
 
@@ -45,7 +45,7 @@ public class PivRunner implements ProgressUpdateInterface {
 
     public HashMap<String, PivResultData> Run() {
         if (null == expDir) {
-            PathUtil.createNewExperimentDirectory(context, userName);
+            expDir = PathUtil.createNewExperimentDirectory(context, userName);
         }
         final int expTotal = PersistedData.getTotalExperiments(context, userName);
 
