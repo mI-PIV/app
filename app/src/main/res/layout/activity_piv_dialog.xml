@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
     android:layout_width="match_parent">
 
     <LinearLayout
@@ -11,7 +11,7 @@
         <TextView
             android:id="@+id/piv_options_description"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:gravity="center_horizontal"
             android:textSize="15dp" />
 
