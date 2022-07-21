@@ -122,14 +122,14 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/dt_text"
+                        android:id="@+id/params_fps_text"
                         android:gravity="end"
                         android:text="Frames/Second (FPS): "
                         android:visibility="gone"
                         tools:visibility="visible" />
 
                     <EditText
-                        android:id="@+id/dt"
+                        android:id="@+id/params_fps"
                         android:hint=""
                         android:inputType="numberDecimal"
                         android:visibility="gone"

@@ -165,7 +165,7 @@ public class ImageActivity extends AppCompatActivity {
 
     public void inputPivOptions(View view) {
         final PivOptionsPopup parameterPopup = new PivOptionsPopup(ImageActivity.this,
-                userName, frameSetName, frame1Num, frame2Num, getActivityResultRegistry());
+                userName, frameSetName, frame1Num, frame2Num);
 
         // create listener for piv parameter save button
         View.OnClickListener saveListener = new View.OnClickListener() {
@@ -180,7 +180,6 @@ public class ImageActivity extends AppCompatActivity {
         };
 
         parameterPopup.setSaveListener(saveListener);
-        parameterPopup.setFPSParameters(fps, frame1Num, frame2Num);
         parameterPopup.show();
     }
 

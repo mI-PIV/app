@@ -11,7 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,8 +55,7 @@ public class FileIO {
         File userDir = PathUtil.getUserDirectory(context, userName);
         File paramsFile = new File(userDir, PivParameters.IO_FILENAME + ".obj");
         Object fileObj = read(paramsFile);
-        PivParameters result = (PivParameters) fileObj;
-        return result;
+        return (PivParameters) fileObj;
     }
 
     public static List<Integer> getSavedExperimentsDict(Context context, String userName) {

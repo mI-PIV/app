@@ -14,7 +14,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultRegistry;
 import androidx.collection.ArrayMap;
 
 import com.onrpiv.uploadmedia.Learn.PIVBasics2;
@@ -38,7 +37,7 @@ import java.util.Objects;
 public class PivOptionsPopup extends AlertDialog {
     private final EditText windowSizeText;
     private final EditText overlapText;
-    private final EditText dtText;
+    private final EditText fpsText;
     private final EditText qMinText;
     private final EditText EText;
     private final RadioGroup replaceRadioGroup;
@@ -59,8 +58,8 @@ public class PivOptionsPopup extends AlertDialog {
     private final ArrayMap<Integer, String> idToKey;
 
 
-    public PivOptionsPopup(final Context context, String userName, String frameSetName, int frameOne, int frameTwo,
-                           ActivityResultRegistry resultRegistry) {
+    public PivOptionsPopup(final Context context, String userName, String frameSetName, int frameOne,
+                           int frameTwo) {
         super(context);
         if (FileIO.checkParametersFile(context, userName)) {
             parameters = FileIO.readUserParametersFile(context, userName);
@@ -86,8 +85,8 @@ public class PivOptionsPopup extends AlertDialog {
 
         windowSizeText = (EditText) findViewById(R.id.windowSize);
         overlapText = (EditText) findViewById(R.id.overlap);
-        dtText = (EditText) findViewById(R.id.dt);
-        TextView dt_text = (TextView) findViewById(R.id.dt_text);
+        fpsText = (EditText) findViewById(R.id.params_fps);
+        TextView fps_text = (TextView) findViewById(R.id.params_fps_text);
         qMinText = findViewById(R.id.qMin);
         TextView qMin_text = (TextView) findViewById(R.id.qMin_text);
 
@@ -131,7 +130,7 @@ public class PivOptionsPopup extends AlertDialog {
         new LightBulb(context, overlapText).setLightBulbOnClick("Overlap",
                 "Normally the overlap is set at 50% of the window size.",
                 new PIVBasics5(), linkText, getWindow());
-        LightBulb dtLB = new LightBulb(context, dtText).setLightBulbOnClick("Time Interval",
+        LightBulb dtLB = new LightBulb(context, fpsText).setLightBulbOnClick("Time Interval",
                 "The time between images. If you selected sequential images, this is 1/framerate.",
                 getWindow());
         LightBulb qMinLB = new LightBulb(context, qMinText).setLightBulbOnClick("Minimum Threshold",
@@ -147,7 +146,7 @@ public class PivOptionsPopup extends AlertDialog {
         // keep advanced views in list for easy iteration
         hiddenViewList = new ArrayList<View>(
                 Arrays.asList(
-                        dtText, dt_text, e_text, radioGroup_text, replaceRadioGroup, qMinText, qMin_text,
+                        fpsText, fps_text, e_text, radioGroup_text, replaceRadioGroup, qMinText, qMin_text,
                         EText, dtLB, qMinLB, eTextLB, radioGroupLB, backSubRadioGroup, bsRadioGroup_text,
                         calibrationText, calibrationRadioGroup, corrMethod_text, corrMethodRadioGroup,
                         negativeFilter_text, negativeFilterGroup
@@ -155,17 +154,8 @@ public class PivOptionsPopup extends AlertDialog {
         );
 
         // keep all input textviews in list for easy iteration
-        doubleTextViewList = new ArrayList<TextView>(
-                Arrays.asList(
-                        dtText, EText, qMinText
-                )
-        );
-
-        intTextViewList = new ArrayList<TextView>(
-                Arrays.asList(
-                        windowSizeText, overlapText
-                )
-        );
+        doubleTextViewList = new ArrayList<TextView>(Arrays.asList(fpsText, EText, qMinText));
+        intTextViewList = new ArrayList<TextView>(Arrays.asList(windowSizeText, overlapText));
 
         // set texts
         setGUITexts();
@@ -174,22 +164,14 @@ public class PivOptionsPopup extends AlertDialog {
         loadIdToKey();
 
         // set all listeners except save
-        setListeners(context, userName, resultRegistry);
+        setListeners(context, userName);
     }
 
     public void setSaveListener(View.OnClickListener saveListener) {
         savePIVDataButton.setOnClickListener(saveListener);
     }
 
-    public void setFPSParameters(int fps, int frame1Num, int frame2Num) {
-        float dt = calculateTimeDelta(fps, frame1Num, frame2Num);
-        parameters.setDt(dt);
-        dtText.setText(String.valueOf(fps));
-    }
-
-
-
-    private void setListeners(Context context, String userName, ActivityResultRegistry resultRegistry) {
+    private void setListeners(Context context, String userName) {
         // Hide/Show advanced options
         advancedCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -298,7 +280,6 @@ public class PivOptionsPopup extends AlertDialog {
             }
         });
 
-
         // reset to original default button
         resetDefaultButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -313,7 +294,6 @@ public class PivOptionsPopup extends AlertDialog {
                         Toast.LENGTH_SHORT).show();
             }
         });
-
 
         // cancel button
         cancelPIVDataButton.setOnClickListener(new View.OnClickListener() {
@@ -394,28 +374,30 @@ public class PivOptionsPopup extends AlertDialog {
     private void loadIdToKey() {
         idToKey.put(windowSizeText.getId(), PivParameters.WINDOW_SIZE_KEY);
         idToKey.put(overlapText.getId(), PivParameters.OVERLAP_KEY);
-        idToKey.put(dtText.getId(), PivParameters.DT_KEY);
+        idToKey.put(fpsText.getId(), PivParameters.DT_KEY);
         idToKey.put(EText.getId(), PivParameters.E_KEY);
         idToKey.put(qMinText.getId(), PivParameters.QMIN_KEY);
     }
 
     private float calculateTimeDelta(int fps, int frame1Num, int frame2Num) {
         int deltaFrameNums = frame2Num - frame1Num;
-        return (float) deltaFrameNums/ (float) fps;
+        return (float) deltaFrameNums / (float) fps;
     }
 
     private void setGUITexts() {
         // set default texts
         windowSizeText.setText(Integer.toString(parameters.getWindowSize()));
         overlapText.setText(Integer.toString(parameters.getOverlap()));
-        dtText.setText(Double.toString(Math.round(1d / parameters.getDt())));
+        fpsText.setText(Double.toString(parameters.getFPS()));
         qMinText.setText(Double.toString(parameters.getqMin()));
         EText.setText(Double.toString(parameters.getE()));
         replaceRadioGroup.check(parameters.isReplace()? R.id.params_replace_yes : R.id.params_replace_no);
         corrMethodRadioGroup.check(parameters.isFFT()? R.id.params_method_fft : R.id.params_method_template);
+        negativeFilterGroup.check(parameters.isNegativeFilter()? R.id.params_negativef_yes : R.id.params_negativef_no);
         backSubRadioGroup.check(checkBackgroundSelection());
         savePIVDataButton.setEnabled(true);
     }
+
     private int checkBackgroundSelection() {
         if (parameters.getBackgroundSelection() == -1) {
             return R.id.bs_none;
