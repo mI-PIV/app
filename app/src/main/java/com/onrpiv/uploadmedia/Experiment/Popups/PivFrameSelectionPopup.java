@@ -180,6 +180,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
         // gather all frame set names
         frameSetsList = PathUtil.getFrameSetNames(context, userName);
+        frameSetsList.sort(null);
         // spinner adapter
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.support_simple_spinner_dropdown_item, frameSetsList);
         assert frameSetSpinner != null;
