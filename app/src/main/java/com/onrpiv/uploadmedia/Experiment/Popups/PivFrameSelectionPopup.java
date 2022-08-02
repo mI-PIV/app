@@ -33,6 +33,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PivFrameSelectionPopup extends AlertDialog {
 
@@ -179,7 +180,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
         preview2 = (PhotoView) findViewById(R.id.frame_selection_preview2);
 
         // gather all frame set names
-        frameSetsList = PathUtil.getFrameSetNames(context, userName);
+        frameSetsList = PathUtil.getFrameSetNames(context, userName).stream().sorted().collect(Collectors.toList());
         // spinner adapter
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.support_simple_spinner_dropdown_item, frameSetsList);
         assert frameSetSpinner != null;
