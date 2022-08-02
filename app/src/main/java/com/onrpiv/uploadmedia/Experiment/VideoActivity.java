@@ -141,6 +141,7 @@ public class VideoActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (videoPath != null){
                     generateFrames(view);
+                    frameSetNameInput.setText("");
                 }else{
                     Toast.makeText(VideoActivity.this, "Please select a video", Toast.LENGTH_SHORT).show();
                 }
