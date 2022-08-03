@@ -1,6 +1,5 @@
 package com.onrpiv.uploadmedia.Experiment;
 
-import static com.onrpiv.uploadmedia.Experiment.MainActivity.userName;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_IMG;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_SOLID;
 import static com.onrpiv.uploadmedia.Utilities.ResultSettings.BACKGRND_SUB;
@@ -797,17 +796,19 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
     public static Class<?> loadFromFiles(Context context, String userName, int expNum) {
         PivParameters params = (PivParameters) FileIO.read(context, userName, expNum, PivParameters.IO_FILENAME);
+        pivParameters = params;
 
         // filenames
         String spFilename = PivResultData.SINGLE + PivResultData.PROCESSED;
         spFilename += params.isReplace()? PivResultData.REPLACE : "";
-        String mpFilename = PivResultData.MULTI + PivResultData.PROCESSED;
-        String repFilename = PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE;
+        spFilename += "_0";
+        String mpFilename = PivResultData.MULTI + PivResultData.PROCESSED + "_0";
+        String repFilename = PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE + "_0";
 
-        ViewResultsActivity.singlePass = (PivResultData) FileIO.read(context, userName, expNum, spFilename);
-        ViewResultsActivity.multiPass = (PivResultData) FileIO.read(context, userName, expNum, mpFilename);
+        singlePass = (PivResultData) FileIO.read(context, userName, expNum, spFilename);
+        multiPass = (PivResultData) FileIO.read(context, userName, expNum, mpFilename);
         if (params.isReplace()) {
-            ViewResultsActivity.replacedPass = (PivResultData) FileIO.read(context, userName, expNum, repFilename);
+            replacedPass = (PivResultData) FileIO.read(context, userName, expNum, repFilename);
         }
         return ViewResultsActivity.class;
     }
