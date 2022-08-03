@@ -42,6 +42,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -102,6 +104,19 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     // info section
     private ImageView selectionImage;
     private TextView infoText;
+    private TableLayout infoTextTable;
+    private TextView resultsVelocity;
+    private TextView resultsX;
+    private TextView resultsY;
+    private TextView resultsVort;
+    private TextView resultsU;
+    private TextView resultsV;
+    private TextView resultsXYConversion;
+    private TextView resultsUVConversion;
+    private TableRow resultsXYConversionRow;
+    private TableRow resultsUVConversionRow;
+
+
     private float currentX;
     private float currentY;
 
@@ -190,8 +205,20 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         vorticityImage = findViewById(R.id.vortView);
         selectionImage = findViewById(R.id.selectionView);
 
-        // text views
+        // text views for infomation results
         infoText = findViewById(R.id.infoText);
+        infoTextTable = findViewById(R.id.infoTextTable);
+        resultsVelocity = findViewById(R.id.resultsVelocity);
+        resultsX = findViewById(R.id.resultsX);
+        resultsY = findViewById(R.id.resultsY);
+        resultsVort = findViewById(R.id.resultsVort);
+        resultsU = findViewById(R.id.resultsU);
+        resultsV = findViewById(R.id.resultsV);
+        resultsXYConversion = findViewById(R.id.resultsXYConversion);
+        resultsUVConversion = findViewById(R.id.resultsUVConversion);
+        resultsXYConversionRow = findViewById(R.id.resultsXYConversionRow);
+        resultsUVConversionRow = findViewById(R.id.resultsUVConversionRow);
+
 
         // buttons
         applyButton = findViewById(R.id.apply);
@@ -749,8 +776,27 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             // Only multipass has vorticity values (design decision to only show one vorticity field)
             float vort = (float) multiPass.getCalibratedVorticity()[pivCoords.y][pivCoords.x];
             // because we're inverting the y axis, we also invert the v values
-            updatedText = settings.formatInfoString_physical((float) imgX, (float) dispY, u, -v, vort,
-                    (float) pivCorr.getPixelToPhysicalRatio(), (float) pivCorr.getUvConversion());
+
+            String velString = String.valueOf(pivCorr.getMag()[pivCoords.y][pivCoords.x]);
+            String xString = String.valueOf((int)((float) imgX));
+            String yString = String.valueOf((int)((float) dispY));
+            String vortString = String.valueOf(vort);
+            String uString = u + " cm/s";
+            String vString = -v + " cm/s";
+            String XYConversionString = String.valueOf((float) pivCorr.getPixelToPhysicalRatio());
+            String UVConversionString = String.valueOf((float) pivCorr.getUvConversion());
+
+            resultsVelocity.setText(velString);
+            resultsX.setText(xString);
+            resultsY.setText(yString);
+            resultsVort.setText(vortString);
+            resultsU.setText(uString);
+            resultsV.setText(vString);
+            resultsXYConversion.setText(XYConversionString);
+            resultsXYConversionRow.setVisibility(View.VISIBLE);
+            resultsUVConversion.setText(UVConversionString);
+            resultsUVConversionRow.setVisibility(View.VISIBLE);
+
         } else {
             // compile the data
             float u = (float)pivCorr.getU()[pivCoords.y][pivCoords.x];
@@ -758,9 +804,27 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             // Only multipass has vorticity values (design decision to only show one vorticity field)
             float vort = (float) multiPass.getVorticityValues()[pivCoords.y][pivCoords.x];
             // because we're inverting the y axis, we also invert the v values
-            updatedText = settings.formatInfoString_pixel((float)imgX, (float)dispY, u, -v, vort);
+
+            String velString = String.valueOf(pivCorr.getMag()[pivCoords.y][pivCoords.x]);
+            String xString = String.valueOf((int)((float) imgX));
+            String yString = String.valueOf((int)((float) dispY));
+            String vortString = String.valueOf(vort);
+            String uString = u + " px";
+            String vString = -v + " px";
+
+            resultsVelocity.setText(velString);
+            resultsX.setText(xString);
+            resultsY.setText(yString);
+            resultsVort.setText(vortString);
+            resultsU.setText(uString);
+            resultsV.setText(vString);
+            resultsXYConversionRow.setVisibility(View.GONE);
+            resultsUVConversionRow.setVisibility(View.GONE);
         }
-        infoText.setText(updatedText);
+        // here we need to set infoText as invisible and set make infoTextTable visible
+        infoText.setVisibility(View.INVISIBLE);
+        infoTextTable.setVisibility(View.VISIBLE);
+
     }
 
     private Point viewCoordsToPivCoords(ImageView view, int pivHeight, int pivWidth, float x, float y) {
