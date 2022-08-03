@@ -503,6 +503,143 @@
                     android:layout_height="wrap_content"
                     android:text="Please tap a point on the image to see information."
                     android:textAlignment="center" />
+
+                <TableLayout
+                    android:id="@+id/infoTextTable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="gone">
+                    <TableRow>
+                        <TextView
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/border"
+                            android:textStyle="bold"
+                            android:text="Velocity:"/>
+
+                        <TextView
+                            android:id="@+id/resultsVelocity"
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content"/>
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content"
+                            android:text="X: "/>
+                        <TextView
+                            android:id="@+id/resultsX"
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content"
+                            android:text="Y: "/>
+                        <TextView
+                            android:id="@+id/resultsY"
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+                    <TableRow
+                        android:padding="2dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:text="Details:" />
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content"
+                            android:text="Vorticity: "/>
+                        <TextView
+                            android:id="@+id/resultsVort"
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content"
+                            android:text="U: "/>
+                        <TextView
+                            android:id="@+id/resultsU"
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content"
+                            android:text="V: "/>
+                        <TextView
+                            android:id="@+id/resultsV"
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+                    <TableRow
+                        android:id="@+id/resultsXYConversionRow"
+                        android:visibility="gone">
+                        <TextView
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content"
+                            android:text="V: "/>
+                        <TextView
+                            android:id="@+id/resultsXYConversion"
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+                    <TableRow
+                        android:id="@+id/resultsUVConversionRow"
+                        android:visibility="gone">
+                        <TextView
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content"
+                            android:text="V: "/>
+                        <TextView
+                            android:id="@+id/resultsUVConversion"
+                            android:padding="2dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/border"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+
+                </TableLayout>
+
+
             </LinearLayout>
 
             <LinearLayout
