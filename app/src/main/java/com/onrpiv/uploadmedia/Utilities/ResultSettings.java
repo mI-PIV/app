@@ -179,21 +179,6 @@ public class ResultSettings {
         calibrated = bool;
     }
 
-    public String formatInfoString_pixel(float x, float y, float u, float v, float vort) {
-        return "x: " + ((int) x) + "\t\t\t" + "y: " + ((int) y) +
-                "\nU: " + u + " px\t\t\t" + "V: " + v + " px" +
-                "\nVorticity: " + vort;
-    }
-
-    public String formatInfoString_physical(float x, float y, float u, float v, float vort,
-                                            float xyconversion, float uvconversion) {
-        return  "x: " + ((int) x) + "\t\t\t" + "y: " + ((int) y) +
-                "\nU: " + u + " cm/s\t\t\t" + "V: " + v + " cm/s" +
-                "\nVorticity: " + vort +
-                "\nconversion factor xy (px/cm): " + xyconversion +
-                "\nconversion factor uv ((px/cm)/dt -> cm/s): " + uvconversion;
-    }
-
     public String debugString(int pivX, int pivY, double imgX, double imgY, float viewX, float viewY) {
         return "pivX: " + pivX + "\t\t\t" + "pivY: " + pivY + "\n" +
                 "viewX: " + viewX + "\t\t\t" + "viewY: " + viewY + "\n" +
