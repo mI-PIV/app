@@ -8,6 +8,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -275,6 +276,13 @@ public class ImageActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     int progressCounter = 0;
+
+                    // https://developer.android.com/training/scheduling/wakelock#cpu
+                    // wake lock
+                    PowerManager power = (PowerManager) getSystemService(POWER_SERVICE);
+                    PowerManager.WakeLock wakeLock = power.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "mI-PIV::WholeSetProcessingWakeTag");
+                    wakeLock.acquire(600000);
+
                     for(int i = 0; i < Objects.requireNonNull(allFrames).length-1; i++)
                     {
                         // run piv thread
@@ -293,6 +301,7 @@ public class ImageActivity extends AppCompatActivity {
 
                         updateProgress(wholeProgress, ++progressCounter);
                     }
+                    wakeLock.release();
                     if (wholeProgress.isShowing()) { wholeProgress.dismiss(); }
                 }
             });
