@@ -194,10 +194,9 @@ public class VideoActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -383,14 +382,21 @@ public class VideoActivity extends AppCompatActivity {
                 vidStart = Math.min(vals.get(0), vals.get(1));
                 vidEnd = Math.max(vals.get(0), vals.get(1));
 
-                mVideoView.seekTo((int) (value == vidStart? vidStart*1000 : vidEnd*1000));
+                // find if it was the right or left slider that was changed (min, max)
+                mCurrentPosition =(int) (value == vidStart? vidStart*1000 : vidEnd*1000);
+
+                //
+                if (mVideoView.isPlaying()) {
+                    mVideoView.pause();
+                }
+                mVideoView.seekTo(mCurrentPosition);
             }
         });
         ((ViewGroup) rangeSlider.getParent()).setVisibility(View.VISIBLE);
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
         outState.putString("username", userName);
