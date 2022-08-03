@@ -78,7 +78,7 @@ public class PivOptionsActivity extends AppCompatActivity {
 
         // get data from Image activity
         Intent thisIntent = getIntent();
-        String userName = thisIntent.getStringExtra("UserName");
+        String userName = thisIntent.getStringExtra("userName");
         String frameSetName = thisIntent.getStringExtra(FRAMESET);
         int frameOne = thisIntent.getIntExtra(FRAMEONE, -1);
         int frameTwo = thisIntent.getIntExtra(FRAMETWO, -1);
