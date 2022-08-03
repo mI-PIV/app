@@ -776,8 +776,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             // Only multipass has vorticity values (design decision to only show one vorticity field)
             float vort = (float) multiPass.getCalibratedVorticity()[pivCoords.y][pivCoords.x];
             // because we're inverting the y axis, we also invert the v values
-//            updatedText = settings.formatInfoString_physical((float) imgX, (float) dispY, u, -v, vort,
-//                    (float) pivCorr.getPixelToPhysicalRatio(), (float) pivCorr.getUvConversion());
 
             String velString = String.valueOf(pivCorr.getMag()[pivCoords.y][pivCoords.x]);
             String xString = String.valueOf((int)((float) imgX));
@@ -806,7 +804,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             // Only multipass has vorticity values (design decision to only show one vorticity field)
             float vort = (float) multiPass.getVorticityValues()[pivCoords.y][pivCoords.x];
             // because we're inverting the y axis, we also invert the v values
-//            updatedText = settings.formatInfoString_pixel((float)imgX, (float)dispY, u, -v, vort);
 
             String velString = String.valueOf(pivCorr.getMag()[pivCoords.y][pivCoords.x]);
             String xString = String.valueOf((int)((float) imgX));
