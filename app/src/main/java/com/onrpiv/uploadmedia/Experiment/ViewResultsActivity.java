@@ -779,7 +779,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             updatedText = settings.formatInfoString_physical((float) imgX, (float) dispY, u, -v, vort,
                     (float) pivCorr.getPixelToPhysicalRatio(), (float) pivCorr.getUvConversion());
 
-            String velString = String.valueOf(pivCorr.getMag());
+            String velString = String.valueOf(pivCorr.getMag()[pivCoords.y][pivCoords.x]);
             String xString = String.valueOf((int)((float) imgX));
             String yString = String.valueOf((int)((float) dispY));
             String vortString = String.valueOf(vort);
@@ -808,9 +808,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             // because we're inverting the y axis, we also invert the v values
             updatedText = settings.formatInfoString_pixel((float)imgX, (float)dispY, u, -v, vort);
 
-            System.out.println(pivCorr.getMag());
-
-            String velString = String.valueOf(pivCorr.getMag());
+            String velString = String.valueOf(pivCorr.getMag()[pivCoords.y][pivCoords.x]);
             String xString = String.valueOf((int)((float) imgX));
             String yString = String.valueOf((int)((float) dispY));
             String vortString = String.valueOf(vort);
