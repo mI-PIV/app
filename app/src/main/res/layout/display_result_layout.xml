@@ -612,7 +612,7 @@
                             android:layout_width="match_parent"
                             android:background="@drawable/border"
                             android:layout_height="wrap_content"
-                            android:text="V: "/>
+                            android:text="Conversion Factor xy (px/cm): "/>
                         <TextView
                             android:id="@+id/resultsXYConversion"
                             android:padding="2dp"
@@ -628,7 +628,7 @@
                             android:layout_width="match_parent"
                             android:background="@drawable/border"
                             android:layout_height="wrap_content"
-                            android:text="V: "/>
+                            android:text="Conversion Factor uv (px/cm): "/>
                         <TextView
                             android:id="@+id/resultsUVConversion"
                             android:padding="2dp"

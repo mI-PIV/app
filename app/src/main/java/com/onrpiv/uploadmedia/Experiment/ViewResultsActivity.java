@@ -776,8 +776,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             // Only multipass has vorticity values (design decision to only show one vorticity field)
             float vort = (float) multiPass.getCalibratedVorticity()[pivCoords.y][pivCoords.x];
             // because we're inverting the y axis, we also invert the v values
-            updatedText = settings.formatInfoString_physical((float) imgX, (float) dispY, u, -v, vort,
-                    (float) pivCorr.getPixelToPhysicalRatio(), (float) pivCorr.getUvConversion());
+//            updatedText = settings.formatInfoString_physical((float) imgX, (float) dispY, u, -v, vort,
+//                    (float) pivCorr.getPixelToPhysicalRatio(), (float) pivCorr.getUvConversion());
 
             String velString = String.valueOf(pivCorr.getMag()[pivCoords.y][pivCoords.x]);
             String xString = String.valueOf((int)((float) imgX));
@@ -785,8 +785,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             String vortString = String.valueOf(vort);
             String uString = u + " cm/s";
             String vString = -v + " cm/s";
-            String XYConversionString = "conversion factor xy (px/cm): " + (float) pivCorr.getPixelToPhysicalRatio();
-            String UVConversionString = "conversion factor uv ((px/cm)/dt -> cm/s): " + (float) pivCorr.getUvConversion();
+            String XYConversionString = String.valueOf((float) pivCorr.getPixelToPhysicalRatio());
+            String UVConversionString = String.valueOf((float) pivCorr.getUvConversion());
 
             resultsVelocity.setText(velString);
             resultsX.setText(xString);
@@ -806,7 +806,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             // Only multipass has vorticity values (design decision to only show one vorticity field)
             float vort = (float) multiPass.getVorticityValues()[pivCoords.y][pivCoords.x];
             // because we're inverting the y axis, we also invert the v values
-            updatedText = settings.formatInfoString_pixel((float)imgX, (float)dispY, u, -v, vort);
+//            updatedText = settings.formatInfoString_pixel((float)imgX, (float)dispY, u, -v, vort);
 
             String velString = String.valueOf(pivCorr.getMag()[pivCoords.y][pivCoords.x]);
             String xString = String.valueOf((int)((float) imgX));
@@ -824,7 +824,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             resultsXYConversionRow.setVisibility(View.GONE);
             resultsUVConversionRow.setVisibility(View.GONE);
         }
-        // here we need to set infoText to "" and set make tableviewinfotext visible
+        // here we need to set infoText as invisible and set make infoTextTable visible
         infoText.setVisibility(View.INVISIBLE);
         infoTextTable.setVisibility(View.VISIBLE);
 
