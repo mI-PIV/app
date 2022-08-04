@@ -75,6 +75,10 @@ public class VideoActivity extends AppCompatActivity {
     // Tag for the instance state bundle.
     private static final String PLAYBACK_TIME = "play_time";
 
+    // Play video thread
+    private Thread playVideoThread;
+    private boolean threadRunning;  // only use with the playVideoThread
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -354,6 +358,45 @@ public class VideoActivity extends AppCompatActivity {
         initializePlayer(video);
         fps = FpsExtractor.extractFps(videoPath);
         pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
+    }
+
+    private void playVideo(int start, int stop) {
+        // stop the thread if it is currently running
+        if (null != playVideoThread && playVideoThread.isAlive()) {
+            threadRunning = false;
+            try {
+                playVideoThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // get the video ready
+        threadRunning = true;
+        mVideoView.seekTo(start);
+        mVideoView.start();
+
+        // start the video playback thread
+        playVideoThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (threadRunning) {
+                    if (mVideoView.isPlaying()) {
+                        if (mVideoView.getCurrentPosition() >= stop) {
+                            mVideoView.pause();
+                            threadRunning = false;
+                        }
+
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+        playVideoThread.start();
     }
 
     protected void setupRangeSlider() {
