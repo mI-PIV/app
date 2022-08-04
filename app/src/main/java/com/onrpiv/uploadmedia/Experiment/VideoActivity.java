@@ -199,6 +199,8 @@ public class VideoActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            // cleanup this activity
+            cleanup();
             onBackPressed();
             return true;
         }
@@ -258,22 +260,7 @@ public class VideoActivity extends AppCompatActivity {
                         }
 
                         // Start playing!
-                        mVideoView.start();
-                    }
-                });
-
-        // Listener for onCompletion() event (runs after media has finished
-        // playing).
-        mVideoView.setOnCompletionListener(
-                new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        Toast.makeText(VideoActivity.this,
-                                R.string.toast_message,
-                                Toast.LENGTH_SHORT).show();
-
-                        // Return the video position to the start.
-                        mVideoView.seekTo(0);
+                        playVideo(1, 1000);
                     }
                 });
     }
@@ -320,6 +307,8 @@ public class VideoActivity extends AppCompatActivity {
                 frameFinishedPopup.setPositiveButton("Process new frames", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        // cleanup this activity
+                        cleanup();
                         Intent imageActivityIntent = new Intent(VideoActivity.this, ImageActivity.class);
                         imageActivityIntent.putExtra("UserName", userName);
                         startActivity(imageActivityIntent);
@@ -362,14 +351,7 @@ public class VideoActivity extends AppCompatActivity {
 
     private void playVideo(int start, int stop) {
         // stop the thread if it is currently running
-        if (null != playVideoThread && playVideoThread.isAlive()) {
-            threadRunning = false;
-            try {
-                playVideoThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        stopPlaybackThread();
 
         // get the video ready
         threadRunning = true;
@@ -385,12 +367,6 @@ public class VideoActivity extends AppCompatActivity {
                         if (mVideoView.getCurrentPosition() >= stop) {
                             mVideoView.pause();
                             threadRunning = false;
-                        }
-
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
                         }
                     }
                 }
@@ -428,14 +404,29 @@ public class VideoActivity extends AppCompatActivity {
                 // find if it was the right or left slider that was changed (min, max)
                 mCurrentPosition =(int) (value == vidStart? vidStart*1000 : vidEnd*1000);
 
-                //
-                if (mVideoView.isPlaying()) {
-                    mVideoView.pause();
-                }
-                mVideoView.seekTo(mCurrentPosition);
+                playVideo((int) vidStart*1000, (int) vidEnd*1000);
             }
         });
         ((ViewGroup) rangeSlider.getParent()).setVisibility(View.VISIBLE);
+    }
+
+    private void stopPlaybackThread() {
+        if (null != playVideoThread && playVideoThread.isAlive()) {
+            threadRunning = false;
+            try {
+                playVideoThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void cleanup() {
+        stopPlaybackThread();
+        mVideoView.stopPlayback();
+        mVideoView.clearAnimation();
+        mVideoView.suspend();
+        mVideoView.setVideoURI(null);
     }
 
     @Override
