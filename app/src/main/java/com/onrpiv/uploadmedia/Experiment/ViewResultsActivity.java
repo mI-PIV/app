@@ -866,7 +866,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         String spFilename = PivResultData.SINGLE + PivResultData.PROCESSED;
         spFilename += params.isReplace()? PivResultData.REPLACE : "";
         spFilename += "_0";
-        String mpFilename = PivResultData.MULTI + PivResultData.PROCESSED + "_0";
+        String mpFilename = PivResultData.MULTI + "_0";
         String repFilename = PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE + "_0";
 
         singlePass = (PivResultData) FileIO.read(context, userName, expNum, spFilename);
