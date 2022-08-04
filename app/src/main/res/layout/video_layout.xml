@@ -14,6 +14,7 @@
             android:id="@+id/videoview"
             android:layout_width="match_parent"
             android:layout_height="250dp"
+            android:layout_gravity="center"
             android:layout_margin="8dp" />
     </FrameLayout>
 
