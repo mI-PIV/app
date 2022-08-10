@@ -130,15 +130,6 @@ public class PivFunctions {
         fieldRows = fieldShape[1];
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        cleanupMat(frame1);
-        cleanupMat(frame2);
-        cleanupMat(grayFrame1);
-        cleanupMat(grayFrame2);
-        super.finalize();
-    }
-
     private int[] getFieldShape(int imgCols, int imgRows, int areaSize, int overlap) {
         int nRows = ((imgRows - areaSize) / (areaSize - overlap) + 1);
         int nCols = ((imgCols - areaSize) / (areaSize - overlap) + 1);
@@ -211,7 +202,6 @@ public class PivFunctions {
     private static Mat fftPIV(Mat winA, Mat winB) {
 //        https://stackoverflow.com/questions/51347829/c-cross-correlation-of-2-shifted-images-with-opencv
 
-        // TODO throw this in a try and catch block
         // prepare Mats for fft
         int height = Core.getOptimalDFTSize(Math.max(winA.rows(), winB.rows()));
         int width = Core.getOptimalDFTSize(Math.max(winA.cols(), winB.cols()));
@@ -1205,12 +1195,6 @@ public class PivFunctions {
 
     public int getFieldCols() {
         return fieldCols;
-    }
-
-    private static void cleanupMat(Mat mat) {
-        if (null != mat && 0L != mat.nativeObj && 0L != mat.dataAddr() && 0L != mat.getNativeObjAddr()) {
-            mat.release();
-        }
     }
 
     private static int clamp(int val, int min, int max) {
