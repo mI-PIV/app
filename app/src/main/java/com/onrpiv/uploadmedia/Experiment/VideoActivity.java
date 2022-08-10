@@ -75,6 +75,10 @@ public class VideoActivity extends AppCompatActivity {
     // Tag for the instance state bundle.
     private static final String PLAYBACK_TIME = "play_time";
 
+    // Play video thread
+    private Thread playVideoThread;
+    private boolean threadRunning;  // only use with the playVideoThread
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -194,10 +198,11 @@ public class VideoActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            // cleanup this activity
+            cleanup();
+            onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -255,22 +260,7 @@ public class VideoActivity extends AppCompatActivity {
                         }
 
                         // Start playing!
-                        mVideoView.start();
-                    }
-                });
-
-        // Listener for onCompletion() event (runs after media has finished
-        // playing).
-        mVideoView.setOnCompletionListener(
-                new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        Toast.makeText(VideoActivity.this,
-                                R.string.toast_message,
-                                Toast.LENGTH_SHORT).show();
-
-                        // Return the video position to the start.
-                        mVideoView.seekTo(0);
+                        playVideo(1, 1000);
                     }
                 });
     }
@@ -317,6 +307,8 @@ public class VideoActivity extends AppCompatActivity {
                 frameFinishedPopup.setPositiveButton("Process new frames", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        // cleanup this activity
+                        cleanup();
                         Intent imageActivityIntent = new Intent(VideoActivity.this, ImageActivity.class);
                         imageActivityIntent.putExtra("UserName", userName);
                         startActivity(imageActivityIntent);
@@ -357,6 +349,32 @@ public class VideoActivity extends AppCompatActivity {
         pickVideo.setBackgroundColor(Color.parseColor("#00CC00"));
     }
 
+    private void playVideo(int start, int stop) {
+        // stop the thread if it is currently running
+        stopPlaybackThread();
+
+        // get the video ready
+        threadRunning = true;
+        mVideoView.seekTo(start);
+        mVideoView.start();
+
+        // start the video playback thread
+        playVideoThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (threadRunning) {
+                    if (mVideoView.isPlaying()) {
+                        if (mVideoView.getCurrentPosition() >= stop) {
+                            mVideoView.pause();
+                            threadRunning = false;
+                        }
+                    }
+                }
+            }
+        });
+        playVideoThread.start();
+    }
+
     protected void setupRangeSlider() {
         MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
         float videoDuration = 0;
@@ -383,14 +401,36 @@ public class VideoActivity extends AppCompatActivity {
                 vidStart = Math.min(vals.get(0), vals.get(1));
                 vidEnd = Math.max(vals.get(0), vals.get(1));
 
-                mVideoView.seekTo((int) (value == vidStart? vidStart*1000 : vidEnd*1000));
+                // find if it was the right or left slider that was changed (min, max)
+                mCurrentPosition =(int) (value == vidStart? vidStart*1000 : vidEnd*1000);
+
+                playVideo((int) vidStart*1000, (int) vidEnd*1000);
             }
         });
         ((ViewGroup) rangeSlider.getParent()).setVisibility(View.VISIBLE);
     }
 
+    private void stopPlaybackThread() {
+        if (null != playVideoThread && playVideoThread.isAlive()) {
+            threadRunning = false;
+            try {
+                playVideoThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void cleanup() {
+        stopPlaybackThread();
+        mVideoView.stopPlayback();
+        mVideoView.clearAnimation();
+        mVideoView.suspend();
+        mVideoView.setVideoURI(null);
+    }
+
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
         outState.putString("username", userName);
