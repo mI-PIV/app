@@ -130,15 +130,6 @@ public class PivFunctions {
         fieldRows = fieldShape[1];
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        grayFrame1.release();
-        grayFrame2.release();
-        frame1.release();
-        frame2.release();
-    }
-
     private int[] getFieldShape(int imgCols, int imgRows, int areaSize, int overlap) {
         int nRows = ((imgRows - areaSize) / (areaSize - overlap) + 1);
         int nCols = ((imgCols - areaSize) / (areaSize - overlap) + 1);
@@ -187,7 +178,7 @@ public class PivFunctions {
         frame.put(0, 0, frameBuff);
     }
 
-    private static Mat openCvPIV(Mat image, Mat template) {
+    private static Mat templatePIV(Mat image, Mat template) {
         int P = template.rows();
         int Q = template.cols();
 
@@ -211,30 +202,51 @@ public class PivFunctions {
     private static Mat fftPIV(Mat winA, Mat winB) {
 //        https://stackoverflow.com/questions/51347829/c-cross-correlation-of-2-shifted-images-with-opencv
 
-        // TODO throw this in a try and catch block
         // prepare Mats for fft
         int height = Core.getOptimalDFTSize(Math.max(winA.rows(), winB.rows()));
         int width = Core.getOptimalDFTSize(Math.max(winA.cols(), winB.cols()));
-        Mat fft1 = new Mat();
-        Mat fft2 = new Mat();
-        // add padding to windows
-        Core.copyMakeBorder(winA, fft1, 0, height - winA.rows(), 0, width - winA.cols(), Core.BORDER_CONSTANT, Scalar.all(0d));
-        Core.copyMakeBorder(winB, fft2, 0, height - winB.rows(), 0, width - winB.cols(), Core.BORDER_CONSTANT, Scalar.all(0d));
+        Mat padWin1 = new Mat();
+        Mat padWin2 = new Mat();
 
-        fft1.convertTo(fft1, CvType.CV_32F);
-        fft2.convertTo(fft2, CvType.CV_32F);
+        // add padding to windows
+        Core.copyMakeBorder(winA, padWin1, 0, height - winA.rows(), 0, width - winA.cols(), Core.BORDER_CONSTANT, Scalar.all(0d));
+        Core.copyMakeBorder(winB, padWin2, 0, height - winB.rows(), 0, width - winB.cols(), Core.BORDER_CONSTANT, Scalar.all(0d));
+
+        // convert to floats
+        padWin1.convertTo(padWin1, CvType.CV_32F, 1.0/255.0);
+        padWin2.convertTo(padWin2, CvType.CV_32F, 1.0/255.0);
+
+        // check the conversion (we are getting type errors in opencv)
+        if (padWin1.type() != CvType.CV_32F || padWin2.type() != CvType.CV_32F) {
+            Log.e("PivFunctions", "fftPIV: window conversion to float failed.\nfft1: " + padWin1.type() +"\nfft2: " + padWin2.type());
+        }
 
         // fft
-        Core.dft(fft1, fft1, 0, winA.rows());
-        Core.dft(fft2, fft2, 0, winB.rows());
+        Mat fft1 = new Mat();
+        Mat fft2 = new Mat();
+        Core.dft(padWin1, fft1, 0, winA.rows());
+        Core.dft(padWin2, fft2, 0, winB.rows());
+
         // FFT(winA) * FFT(winB)
-        Core.mulSpectrums(fft1, fft2, fft1, 0, true);
+        Mat fftCombined = new Mat(fft1.size(), CvType.CV_32F);
+        Core.mulSpectrums(fft1, fft2, fftCombined, 0, true);
+
         // ifft
-        Core.idft(fft1, fft1, Core.DFT_SCALE | Core.DFT_REAL_OUTPUT);
+        Mat ifft = new Mat();
+        Core.idft(fftCombined, ifft, Core.DFT_SCALE | Core.DFT_REAL_OUTPUT);
+
         // fft shift
-        fftShift2D(fft1);
+        fftShift2D(ifft);
+
+        //cleanup
+        padWin1.release();
+        padWin2.release();
+        fft1.release();
         fft2.release();
-        return fft1;
+        fftCombined.release();
+        System.gc();
+
+        return ifft;
     }
 
     private static void fftShift2D(Mat ifft) {
@@ -255,6 +267,13 @@ public class PivFunctions {
         q1.copyTo(tmp);
         q2.copyTo(q1);
         tmp.copyTo(q2);
+
+        // cleanup
+        q0.release();
+        q1.release();
+        q2.release();
+        q3.release();
+        tmp.release();
     }
 
     private static double sig2Noise_update(Mat corr, Core.MinMaxLocResult mmr) {
@@ -331,7 +350,7 @@ public class PivFunctions {
                 if (fft) {
                     corr = fftPIV(window_a_1, window_b_1);
                 } else {
-                    corr = openCvPIV(window_a_1, window_b_1);
+                    corr = templatePIV(window_a_1, window_b_1);
                 }
                 Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
 
@@ -994,7 +1013,7 @@ public class PivFunctions {
                     if (fft) {
                         corr = fftPIV(window_a_1, window_b_1);
                     } else {
-                        corr = openCvPIV(window_a_1, window_b_1);
+                        corr = templatePIV(window_a_1, window_b_1);
                     }
 
                     Core.MinMaxLocResult mmr = Core.minMaxLoc(corr);
