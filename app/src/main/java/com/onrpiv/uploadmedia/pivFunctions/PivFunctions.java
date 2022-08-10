@@ -132,10 +132,10 @@ public class PivFunctions {
 
     @Override
     protected void finalize() throws Throwable {
-        grayFrame1.release();
-        grayFrame2.release();
-        frame1.release();
-        frame2.release();
+        cleanupMat(frame1);
+        cleanupMat(frame2);
+        cleanupMat(grayFrame1);
+        cleanupMat(grayFrame2);
         super.finalize();
     }
 
@@ -1205,6 +1205,12 @@ public class PivFunctions {
 
     public int getFieldCols() {
         return fieldCols;
+    }
+
+    private static void cleanupMat(Mat mat) {
+        if (null != mat && 0L != mat.nativeObj && 0L != mat.dataAddr() && 0L != mat.getNativeObjAddr()) {
+            mat.release();
+        }
     }
 
     private static int clamp(int val, int min, int max) {
