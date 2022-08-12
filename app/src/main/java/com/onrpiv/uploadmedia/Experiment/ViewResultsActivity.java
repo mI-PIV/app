@@ -24,6 +24,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -797,11 +798,12 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         infoTextTable.setVisibility(View.VISIBLE);
     }
 
-    private Point viewCoordsToPivCoords(ImageView view, int pivHeight, int pivWidth, float x, float y) {
+    private static Point viewCoordsToPivCoords(ImageView view, int pivHeight, int pivWidth, float x, float y) {
         int viewWidth = view.getWidth();
         int viewHeight = view.getHeight();
-        int bitmapHeight = view.getDrawable().getIntrinsicHeight();
-        int bitmapWidth = view.getDrawable().getIntrinsicWidth();
+        Bitmap bmp = ((BitmapDrawable)view.getDrawable()).getBitmap();
+        int bitmapHeight = bmp.getHeight();
+        int bitmapWidth = bmp.getWidth();
 
         // find the resized bitmap dimensions
         float resizeFactor = Math.min(viewHeight / (float)bitmapHeight, viewWidth / (float)bitmapWidth);
