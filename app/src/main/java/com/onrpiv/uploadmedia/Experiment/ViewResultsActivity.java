@@ -24,7 +24,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -798,10 +797,11 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         infoTextTable.setVisibility(View.VISIBLE);
     }
 
-    private static Point viewCoordsToPivCoords(ImageView view, int pivHeight, int pivWidth, float x, float y) {
+    private Point viewCoordsToPivCoords(ImageView view, int pivHeight, int pivWidth, float x, float y) {
         int viewWidth = view.getWidth();
         int viewHeight = view.getHeight();
-        Bitmap bmp = ((BitmapDrawable)view.getDrawable()).getBitmap();
+        // this will always give us the correct bmp dimensions
+        Bitmap bmp = BitmapFactory.decodeFile(new File(outputDirectory, "Base_0_" + imgFileToDisplay).getAbsolutePath());
         int bitmapHeight = bmp.getHeight();
         int bitmapWidth = bmp.getWidth();
 
