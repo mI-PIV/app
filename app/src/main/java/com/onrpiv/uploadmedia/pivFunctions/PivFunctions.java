@@ -718,9 +718,19 @@ public class PivFunctions {
     }
 
     private static Mat resizeMat(Mat mat) {
-        Mat resized = new Mat();
+        // get aspect ratio
+        double h = mat.size().height;
+        double w = mat.size().width;
+        double r;
         // TODO fix hard code
-        Size scaleSize = new Size(2560, 1440);
+        if (h > w) {
+            r = 1440 / h;
+        } else {
+            r = 2560 / w;
+        }
+
+        Mat resized = new Mat();
+        Size scaleSize = new Size(w * r, h * r);
         Imgproc.resize(mat, resized, scaleSize, 0, 0, INTER_CUBIC);
         return resized;
     }
