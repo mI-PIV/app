@@ -515,7 +515,6 @@
                             android:padding="2dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/border"
                             android:textStyle="bold"
                             android:text="Velocity:"/>
 
@@ -523,35 +522,30 @@
                             android:id="@+id/resultsVelocity"
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content"/>
                     </TableRow>
                     <TableRow>
                         <TextView
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content"
                             android:text="X: "/>
                         <TextView
                             android:id="@+id/resultsX"
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content" />
                     </TableRow>
                     <TableRow>
                         <TextView
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content"
                             android:text="Y: "/>
                         <TextView
                             android:id="@+id/resultsY"
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content" />
                     </TableRow>
                     <TableRow
@@ -566,42 +560,36 @@
                         <TextView
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content"
                             android:text="Vorticity: "/>
                         <TextView
                             android:id="@+id/resultsVort"
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content" />
                     </TableRow>
                     <TableRow>
                         <TextView
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content"
                             android:text="U: "/>
                         <TextView
                             android:id="@+id/resultsU"
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content" />
                     </TableRow>
                     <TableRow>
                         <TextView
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content"
                             android:text="V: "/>
                         <TextView
                             android:id="@+id/resultsV"
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content" />
                     </TableRow>
                     <TableRow
@@ -610,14 +598,12 @@
                         <TextView
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content"
                             android:text="Conversion Factor xy (px/cm): "/>
                         <TextView
                             android:id="@+id/resultsXYConversion"
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content" />
                     </TableRow>
                     <TableRow
@@ -626,14 +612,12 @@
                         <TextView
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content"
                             android:text="Conversion Factor uv (px/cm): "/>
                         <TextView
                             android:id="@+id/resultsUVConversion"
                             android:padding="2dp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/border"
                             android:layout_height="wrap_content" />
                     </TableRow>
 

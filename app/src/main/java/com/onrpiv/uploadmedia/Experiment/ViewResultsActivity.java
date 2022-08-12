@@ -205,7 +205,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         vorticityImage = findViewById(R.id.vortView);
         selectionImage = findViewById(R.id.selectionView);
 
-        // text views for infomation results
+        // text views for information results
         infoText = findViewById(R.id.infoText);
         infoTextTable = findViewById(R.id.infoTextTable);
         resultsVelocity = findViewById(R.id.resultsVelocity);
@@ -218,7 +218,10 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         resultsUVConversion = findViewById(R.id.resultsUVConversion);
         resultsXYConversionRow = findViewById(R.id.resultsXYConversionRow);
         resultsUVConversionRow = findViewById(R.id.resultsUVConversionRow);
-
+        if (calibrated) {
+            resultsUVConversionRow.setVisibility(View.VISIBLE);
+            resultsXYConversionRow.setVisibility(View.VISIBLE);
+        }
 
         // buttons
         applyButton = findViewById(R.id.apply);
@@ -768,63 +771,30 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         double dispY = imgY - pivCorr.getInterrY().length;
 
         // update the info text
-        String updatedText;
-        if (settings.getCalibrated()) {
-            // compile the data
-            float u = (float) pivCorr.getCalibratedU()[pivCoords.y][pivCoords.x];
-            float v = (float) pivCorr.getCalibratedV()[pivCoords.y][pivCoords.x];
+        if (calibrated) {
+            resultsVelocity.setText(pivCorr.getCalibratedMag()[pivCoords.y][pivCoords.x] + " cm/s");
+            resultsX.setText(String.valueOf((int)imgX));
+            resultsY.setText(String.valueOf((int)dispY));
             // Only multipass has vorticity values (design decision to only show one vorticity field)
-            float vort = (float) multiPass.getCalibratedVorticity()[pivCoords.y][pivCoords.x];
+            resultsVort.setText(String.valueOf((float) multiPass.getCalibratedVorticity()[pivCoords.y][pivCoords.x]));
+            resultsU.setText((float) pivCorr.getCalibratedU()[pivCoords.y][pivCoords.x] + " cm/s");
             // because we're inverting the y axis, we also invert the v values
-
-            String velString = String.valueOf(pivCorr.getMag()[pivCoords.y][pivCoords.x]);
-            String xString = String.valueOf((int)((float) imgX));
-            String yString = String.valueOf((int)((float) dispY));
-            String vortString = String.valueOf(vort);
-            String uString = u + " cm/s";
-            String vString = -v + " cm/s";
-            String XYConversionString = String.valueOf((float) pivCorr.getPixelToPhysicalRatio());
-            String UVConversionString = String.valueOf((float) pivCorr.getUvConversion());
-
-            resultsVelocity.setText(velString);
-            resultsX.setText(xString);
-            resultsY.setText(yString);
-            resultsVort.setText(vortString);
-            resultsU.setText(uString);
-            resultsV.setText(vString);
-            resultsXYConversion.setText(XYConversionString);
-            resultsXYConversionRow.setVisibility(View.VISIBLE);
-            resultsUVConversion.setText(UVConversionString);
-            resultsUVConversionRow.setVisibility(View.VISIBLE);
-
+            resultsV.setText(-((float) pivCorr.getCalibratedV()[pivCoords.y][pivCoords.x]) + " cm/s");
+            resultsXYConversion.setText(String.valueOf((float) pivCorr.getPixelToPhysicalRatio()));
+            resultsUVConversion.setText(String.valueOf((float) pivCorr.getUvConversion()));
         } else {
-            // compile the data
-            float u = (float)pivCorr.getU()[pivCoords.y][pivCoords.x];
-            float v = (float)pivCorr.getV()[pivCoords.y][pivCoords.x];
+            resultsVelocity.setText(pivCorr.getMag()[pivCoords.y][pivCoords.x] + " px/s");
+            resultsX.setText(String.valueOf((int)imgX));
+            resultsY.setText(String.valueOf((int)dispY));
             // Only multipass has vorticity values (design decision to only show one vorticity field)
-            float vort = (float) multiPass.getVorticityValues()[pivCoords.y][pivCoords.x];
+            resultsVort.setText(String.valueOf((float) multiPass.getVorticityValues()[pivCoords.y][pivCoords.x]));
+            resultsU.setText((float)pivCorr.getU()[pivCoords.y][pivCoords.x] + " px");
             // because we're inverting the y axis, we also invert the v values
-
-            String velString = String.valueOf(pivCorr.getMag()[pivCoords.y][pivCoords.x]);
-            String xString = String.valueOf((int)((float) imgX));
-            String yString = String.valueOf((int)((float) dispY));
-            String vortString = String.valueOf(vort);
-            String uString = u + " px";
-            String vString = -v + " px";
-
-            resultsVelocity.setText(velString);
-            resultsX.setText(xString);
-            resultsY.setText(yString);
-            resultsVort.setText(vortString);
-            resultsU.setText(uString);
-            resultsV.setText(vString);
-            resultsXYConversionRow.setVisibility(View.GONE);
-            resultsUVConversionRow.setVisibility(View.GONE);
+            resultsV.setText(-((float)pivCorr.getV()[pivCoords.y][pivCoords.x]) + " px");
         }
-        // here we need to set infoText as invisible and set make infoTextTable visible
+        // switch from info text ("please select...") to information table
         infoText.setVisibility(View.INVISIBLE);
         infoTextTable.setVisibility(View.VISIBLE);
-
     }
 
     private Point viewCoordsToPivCoords(ImageView view, int pivHeight, int pivWidth, float x, float y) {
