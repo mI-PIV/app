@@ -96,10 +96,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 int frameAddition = Integer.parseInt(rawText.substring(rawText.length() - 1));
                 frame2Num = frame1Num + frameAddition;
                 frame2IsReady = true;
-
-                frame2Path = setFrames.get(frame2Num - 1).getAbsoluteFile();
-                preview2.setImageBitmap(BitmapFactory.decodeFile(frame2Path.getAbsolutePath()));
-
+                updatePreview(preview2, frame2Num);
                 saveButton.setEnabled(checkAllSelections());
             }
         });
@@ -220,7 +217,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 }
 
                 setFrames.sort(null);
-                numFramesInSet = setFrames.size();
+                numFramesInSet = setFrames.size() - 1;  // last frame isn't an option for frame 1
 
                 setIsReady = true;
                 frame1Text.setText("", TextView.BufferType.EDITABLE);
@@ -258,10 +255,9 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     userInput = checkFrameSelections(userInput);
                     int userInt = userInput.getInt();
                     frame1Slider.setProgress(userInt);
-                    frame1Path = setFrames.get(userInt - 1).getAbsoluteFile();
                     frame1Num = userInt;
 
-                    preview1.setImageBitmap(BitmapFactory.decodeFile(frame1Path.getAbsolutePath()));
+                    updatePreview(preview1, frame1Num);
 
                     saveButton.setEnabled(checkAllSelections());
                     secondFrameTableRow.setVisibility(View.VISIBLE);
@@ -279,7 +275,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
         fullOptions.add(2);
         fullOptions.add(3);
         fullOptions.add(4);
-        fullOptions.removeIf(option -> frame1Num + option >= numFramesInSet);
+        fullOptions.removeIf(option -> frame1Num + option - 1 > numFramesInSet);
 
         // create radio buttons from options
         for (Integer option : fullOptions) {
@@ -290,8 +286,21 @@ public class PivFrameSelectionPopup extends AlertDialog {
             frame2RadioGroup.addView(newButton);
             if (option == 1) {
                 frame2RadioGroup.check(newButton.getId());
+                frame2Num = frame1Num + 1;
+                updatePreview(preview2, frame2Num);
             }
         }
+    }
+
+    private void updatePreview(PhotoView preview, int frameNum) {
+        File framePath = setFrames.get(frameNum - 1).getAbsoluteFile();
+
+        if (preview == preview1) {
+            frame1Path = framePath;
+        } else {
+            frame2Path = framePath;
+        }
+        preview.setImageBitmap(BitmapFactory.decodeFile(framePath.getAbsolutePath()));
     }
 
     private BoolIntStructure checkFrameSelections(BoolIntStructure input) {
