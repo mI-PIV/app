@@ -37,7 +37,7 @@ public class DensityPreviewPopup {
         this.context = activity;
 
         // whole set processing doesn't have density preview
-        if (frameSelection.wholeSetProcessing)
+        if (frameSelection.multipleFrames)
         {
             AlertDialog fakeDialog = new AlertDialog.Builder(context).create();
             yesListener.onClick(fakeDialog, DialogInterface.BUTTON_POSITIVE);

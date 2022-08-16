@@ -58,7 +58,7 @@ public class ImageActivity extends AppCompatActivity {
     private static HashMap<String, PivResultData> resultData;
     private HashMap<Integer, HashMap<String, PivResultData>> multipleResultData;
 
-    private boolean wholeSetProcessing = false;
+    private boolean multipleFrames = false;
     private ActivityResultLauncher<Intent> pivOptionsLauncher;
 
     private int step = 0;
@@ -156,15 +156,12 @@ public class ImageActivity extends AppCompatActivity {
                 DialogInterface.OnClickListener densityPreviewListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (frameSelectionPopup.wholeSetProcessing) {
-                            wholeSetProcessing = true;
-                        } else {
-                            frame1File = frameSelectionPopup.frame1Path;
-                            frame2File = frameSelectionPopup.frame2Path;
-                            frame1Num = frameSelectionPopup.frame1Num;
-                            frame2Num = frameSelectionPopup.frame2Num;
-                            review.setEnabled(true);
-                        }
+                        multipleFrames = frameSelectionPopup.multipleFrames;
+                        frame1File = frameSelectionPopup.frame1Path;
+                        frame2File = frameSelectionPopup.frame2Path;
+                        frame1Num = frameSelectionPopup.frame1Num;
+                        frame2Num = frameSelectionPopup.frame2Num;
+                        review.setEnabled(true);
 
                         frameSetName = frameSelectionPopup.frameSetName;
                         fps = PersistedData.getFrameDirFPS(ImageActivity.this, userName,
@@ -209,10 +206,9 @@ public class ImageActivity extends AppCompatActivity {
     public void displayResults(View view) {
         Intent displayIntent;
 
-        // whole set processing
-        if (wholeSetProcessing) {
+        if (multipleFrames) {
+            // multiple frames processing
             ViewMultipleResultsActivity.data = multipleResultData;
-
             ViewMultipleResultsActivity.pivParameters = pivParameters;
             ViewMultipleResultsActivity.calibrated = null != pivParameters.getCameraCalibrationResult();
             ViewMultipleResultsActivity.backgroundSubtracted = pivParameters.getBackgroundSelection() != PivParameters.BACKGROUNDSUB_NONE;
@@ -221,7 +217,6 @@ public class ImageActivity extends AppCompatActivity {
             // Pass PIV result data to ViewResultsActivity
             PivResultData singlePassResult = resultData.get(PivResultData.SINGLE);
             assert singlePassResult != null;
-
             ViewResultsActivity.pivParameters = pivParameters;
             ViewResultsActivity.singlePass = singlePassResult;
             ViewResultsActivity.multiPass = resultData.get(PivResultData.MULTI);
@@ -233,9 +228,8 @@ public class ImageActivity extends AppCompatActivity {
             ViewResultsActivity.calibrated = singlePassResult.isCalibrated() ||
                     ViewResultsActivity.multiPass.isCalibrated() ||
                     ViewResultsActivity.replacedPass.isCalibrated();
-
+            // back sub
             ViewResultsActivity.backgroundSubtracted = singlePassResult.isBackgroundSubtracted();
-
             displayIntent = new Intent(ImageActivity.this, ViewResultsActivity.class);
         }
 
@@ -255,7 +249,7 @@ public class ImageActivity extends AppCompatActivity {
     public void processPiv(View view) {
         compute.setEnabled(false);
 
-        if (wholeSetProcessing) {
+        if (multipleFrames) {
             Context context = ImageActivity.this;
 
             // retrieve the entire frameset
@@ -263,12 +257,17 @@ public class ImageActivity extends AppCompatActivity {
             File[] allFrames = framesDir.listFiles();
             Arrays.sort(Objects.requireNonNull(allFrames));
 
+            // filter the selected frames
+            int numFrames = frame2Num - frame1Num;
+            File[] selectedFrames = new File[numFrames];
+            System.arraycopy(allFrames, frame1Num - 1, selectedFrames, 0, numFrames);
+
             // progress dialog
             ProgressDialog wholeProgress = new ProgressDialog(context);
-            wholeProgress.setMessage("Processing PIV on whole frame set... This may take a while.");
+            wholeProgress.setMessage("Processing PIV on multiple frames... This may take a while.");
             wholeProgress.setCancelable(false);
             wholeProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            wholeProgress.setMax(Objects.requireNonNull(allFrames).length-1);
+            wholeProgress.setMax(Objects.requireNonNull(selectedFrames).length-1);
             wholeProgress.show();
 
             File expDir = PathUtil.createNewExperimentDirectory(this, userName);
@@ -285,12 +284,11 @@ public class ImageActivity extends AppCompatActivity {
                     PowerManager.WakeLock wakeLock = power.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "mI-PIV::WholeSetProcessingWakeTag");
                     wakeLock.acquire(600000);
 
-                    for(int i = 0; i < Objects.requireNonNull(allFrames).length-1; i++)
-                    {
+                    for(int i = 0; i < Objects.requireNonNull(selectedFrames).length-1; i++) {
                         // run piv thread
-                        File frame1 = allFrames[i];
-                        File frame2 = allFrames[i+1];
-                        PivRunner runner = processSinglePiv(context, userName, pivParameters,
+                        File frame1 = selectedFrames[i];
+                        File frame2 = selectedFrames[i+1];
+                        PivRunner runner = new PivRunner(context, userName, pivParameters,
                                 frame1, frame2, expDir, i, false);
                         multipleResultData.put(i, runner.Run());
 
@@ -308,9 +306,8 @@ public class ImageActivity extends AppCompatActivity {
                 }
             });
             thread.start();
-
         } else {
-            resultData = processSinglePiv(ImageActivity.this, userName, pivParameters,
+            resultData = new PivRunner(ImageActivity.this, userName, pivParameters,
                     frame1File, frame2File, null, 0, true).Run();
         }
 
@@ -318,13 +315,6 @@ public class ImageActivity extends AppCompatActivity {
         step = 4;
         compute.setEnabled(true);
         compute.setBackgroundColor(Color.parseColor(greenString));
-    }
-
-    private static PivRunner processSinglePiv(Context context, String userName,
-                                              PivParameters params, File frame1, File frame2,
-                                              File expDir, int idx, boolean showProgress)
-    {
-        return new PivRunner(context, userName, params, frame1, frame2, expDir, idx, showProgress);
     }
 
     private void updateProgress(ProgressDialog dialog, int iteration)
@@ -346,7 +336,7 @@ public class ImageActivity extends AppCompatActivity {
         outState.putString("username", userName);
 
         if (step >= 1) {
-            if (!wholeSetProcessing) {
+            if (!multipleFrames) {
                 outState.putString("frame1file_str", frame1File.getAbsolutePath());
                 outState.putString("frame2file_str", frame2File.getAbsolutePath());
                 outState.putInt("frame1num", frame1Num);
