@@ -31,8 +31,10 @@ import com.onrpiv.uploadmedia.Utilities.UserInput.UserInputUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class PivFrameSelectionPopup extends AlertDialog {
 
@@ -187,7 +189,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
         new LightBulb(context, frameSetSpinner).setLightBulbOnClick("Image Set",
                 "The image set numbers are in order (time-wise) for each users' frame generation",
                 getWindow());
-        new LightBulb(context, frame1Text).setLightBulbOnClick("Images",
+        new LightBulb(context, Objects.requireNonNull(frame1Text)).setLightBulbOnClick("Images",
                 "The PIV processing identifies the most likely displacements of each region " +
                         "of the image from the first image to the second image. For this reason, " +
                         "users should select images next to each other and in order (e.g., 1 & 2, " +
@@ -211,6 +213,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 frameSetPath = PathUtil.getFramesNamedDirectory(context, userName, frameSetName);
 
                 File[] frames = frameSetPath.listFiles();
+                Arrays.sort(Objects.requireNonNull(frames));
                 for (File frame : frames) {
                     if (!frame.getName().equals("BACKGROUND.jpg"))
                         setFrames.add(frame);
