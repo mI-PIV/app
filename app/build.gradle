@@ -23,6 +23,7 @@ android {
     }
 
     // firebase crashlytics
+    apply plugin: 'com.google.gms.google-services'
     apply plugin: 'com.google.firebase.crashlytics'
 
     useLibrary 'android.test.runner'
