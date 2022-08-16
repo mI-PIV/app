@@ -38,14 +38,18 @@
             android:layout_height="wrap_content"
             android:gravity="center">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Multiple Frames Processing:" />
+
             <CheckBox
                 android:id="@+id/whole_set_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:gravity="center"
-                android:layoutDirection="rtl"
-                android:text="Process Whole Set?" />
+                android:layoutDirection="ltr" />
         </TableRow>
 
         <TableRow
