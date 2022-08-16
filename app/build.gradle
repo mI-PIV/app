@@ -22,6 +22,10 @@ android {
         targetCompatibility 11
     }
 
+    // firebase crashlytics
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
+
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
@@ -42,6 +46,11 @@ dependencies {
     implementation 'org.jetbrains:annotations-java5:15.0'
     implementation 'androidx.fragment:fragment:1.3.0'
     implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
+
+    // firebase crashlytics
+    implementation platform('com.google.firebase:firebase-bom:30.3.2')
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
 
     implementation project(':openCVLibrary344')
 
