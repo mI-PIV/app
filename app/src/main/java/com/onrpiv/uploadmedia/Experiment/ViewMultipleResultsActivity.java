@@ -216,7 +216,6 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         String spName = PivResultData.SINGLE + PivResultData.PROCESSED;
         String mpName = PivResultData.MULTI;
 
-
         if (pivParameters.isReplace()) {
             spName += PivResultData.REPLACE;
             replacedPass = data.get(newIdx).get(PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE);

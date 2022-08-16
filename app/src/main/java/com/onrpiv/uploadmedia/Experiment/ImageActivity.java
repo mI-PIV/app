@@ -35,6 +35,7 @@ import com.onrpiv.uploadmedia.pivFunctions.PivRunner;
 import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -260,6 +261,7 @@ public class ImageActivity extends AppCompatActivity {
             // retrieve the entire frameset
             File framesDir = new File(PersistedData.getFrameDirPath(context, userName, frameSetName));
             File[] allFrames = framesDir.listFiles();
+            Arrays.sort(Objects.requireNonNull(allFrames));
 
             // progress dialog
             ProgressDialog wholeProgress = new ProgressDialog(context);
