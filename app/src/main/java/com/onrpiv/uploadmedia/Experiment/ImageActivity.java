@@ -156,15 +156,6 @@ public class ImageActivity extends AppCompatActivity {
                 DialogInterface.OnClickListener densityPreviewListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                        if (frameSelectionPopup.multipleFrames) {
-//                            multipleFrames = true;
-//                        } else {
-//                            frame1File = frameSelectionPopup.frame1Path;
-//                            frame2File = frameSelectionPopup.frame2Path;
-//                            frame1Num = frameSelectionPopup.frame1Num;
-//                            frame2Num = frameSelectionPopup.frame2Num;
-//                            review.setEnabled(true);
-//                        }
                         multipleFrames = frameSelectionPopup.multipleFrames;
                         frame1File = frameSelectionPopup.frame1Path;
                         frame2File = frameSelectionPopup.frame2Path;
