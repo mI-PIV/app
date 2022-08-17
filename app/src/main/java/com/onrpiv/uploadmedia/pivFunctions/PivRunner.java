@@ -10,6 +10,8 @@ import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.Utilities.ProgressUpdateInterface;
 
+import org.opencv.core.Mat;
+
 import java.io.File;
 import java.util.HashMap;
 
@@ -18,11 +20,10 @@ public class PivRunner implements ProgressUpdateInterface {
     public Thread pivRunningThread;
     private final PivParameters parameters;
     private final Context context;
-    private final File frame1File;
-    private final File frame2File;
-    private File expDir;
     private final String userName;
     private final int index;
+    private final PivFunctions pivFunctions;
+    private final int expNum;
 
     private Activity imageActivity;
     private ProgressDialog pDialog;
@@ -33,34 +34,58 @@ public class PivRunner implements ProgressUpdateInterface {
     public PivRunner(Context context, String userName, PivParameters parameters, File frame1File,
                      File frame2File, File expDir, int index, boolean showProgress) {
         this.parameters = parameters;
-        this.frame1File = frame1File;
-        this.frame2File = frame2File;
         this.context = context;
         this.userName = userName;
         progressUpdate = showProgress? this : null;
         this.showProgress = showProgress;
-        this.expDir = expDir;
         this.index = index;
-    }
 
-    public HashMap<String, PivResultData> Run() {
+        // setup output and piv functions
         if (null == expDir) {
             expDir = PathUtil.createNewExperimentDirectory(context, userName);
         }
-        final int expTotal = PersistedData.getTotalExperiments(context, userName);
+        expNum = PersistedData.getTotalExperiments(context, userName);
+        final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(expNum);
+        final String txtFileSaveName = PathUtil.getExperimentTextFileSuffix(expNum);
 
-        final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(expTotal);
-        final String txtFileSaveName = PathUtil.getExperimentTextFileSuffix(expTotal);
-
-        imageActivity = (Activity) context;
-
-        final PivFunctions pivFunctions = new PivFunctions(frame1File.getAbsolutePath(),
+        pivFunctions = new PivFunctions(
+                frame1File.getAbsolutePath(),
                 frame2File.getAbsolutePath(),
                 "peak2peak",
                 parameters,
                 expDir,
                 imgFileSaveName,
                 txtFileSaveName);
+    }
+
+    public PivRunner(Context context, String userName, PivParameters parameters, Mat grayFrame1,
+                     Mat grayFrame2, File expDir, int index, boolean showProgress) {
+        this.parameters = parameters;
+        this.context = context;
+        this.userName = userName;
+        progressUpdate = showProgress? this : null;
+        this.showProgress = showProgress;
+        this.index = index;
+
+        // setup output and piv functions
+        if (null == expDir) {
+            expDir = PathUtil.createNewExperimentDirectory(context, userName);
+        }
+        expNum = PersistedData.getTotalExperiments(context, userName);
+        final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(expNum);
+        final String txtFileSaveName = PathUtil.getExperimentTextFileSuffix(expNum);
+
+        pivFunctions = new PivFunctions(grayFrame1,
+                grayFrame2,
+                "peak2peak",
+                parameters,
+                expDir,
+                imgFileSaveName,
+                txtFileSaveName);
+    }
+
+    public HashMap<String, PivResultData> Run() {
+        imageActivity = (Activity) context;
 
         // save parameters plain text
         pivFunctions.saveParametersPlainText(parameters);
@@ -91,7 +116,9 @@ public class PivRunner implements ProgressUpdateInterface {
                 if (backgroundSelection >= 0) {
                     setMessage("Subtracting frames");
                     backgroundSub = true;
-                    pivFunctions.framesSubtraction(backgroundSelection, frame1File.getParentFile(),
+                    File framesDir = PathUtil.getFramesNamedDirectory(context, userName,
+                            parameters.getFrameSetName());
+                    pivFunctions.framesSubtraction(backgroundSelection, framesDir,
                             parameters.getFrame1Index(), parameters.getFrame2Index(), index);
                 }
 
@@ -195,7 +222,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 //// SAVE DATA ////
                 ////////////////////////////////////////////////////////////////////////////////////
                 setMessage("Saving data...");
-                FileIO.writePIVData(resultData, parameters, context, userName, expTotal, index);
+                FileIO.writePIVData(resultData, parameters, context, userName, expNum, index);
 
                 if (null != pDialog && pDialog.isShowing()) pDialog.dismiss();
             }
