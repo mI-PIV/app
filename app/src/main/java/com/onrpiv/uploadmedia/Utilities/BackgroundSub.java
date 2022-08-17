@@ -60,15 +60,12 @@ public class BackgroundSub {
     }
 
     public static Mat[] allFrameSubtraction(File framesDir, Mat frame1, Mat frame2) {
-        File[] frames = getFramesPaths(framesDir);
-        Mat background = calculateBackground(frames);
+        Mat background = getBackground(framesDir);
         return subtract(background, frame1, frame2);
     }
 
     public static void saveBackground(File framesDir) {
-        File[] frames = getFramesPaths(framesDir);
-        Mat background = calculateBackground(frames);
-        Imgcodecs.imwrite(new File(framesDir, BCKGRND_FILENAME+FILE_EXTENSION).getAbsolutePath(), background);
+        Mat background = getBackground(framesDir);
         background.release();
     }
 
@@ -90,7 +87,19 @@ public class BackgroundSub {
         return frames;
     }
 
-    private static Mat calculateBackground(File[] frames) {
+    private static Mat getBackground(File framesDir) {
+        File background = new File(framesDir, BCKGRND_FILENAME+FILE_EXTENSION);
+        if (background.exists()){
+            return Imgcodecs.imread(background.getAbsolutePath());
+        } else {
+            File[] frames = getFramesPaths(framesDir);
+            Mat backgroundMat = calculateBackground(frames, framesDir);
+            Imgcodecs.imwrite(background.getAbsolutePath(), backgroundMat);
+            return backgroundMat;
+        }
+    }
+
+    private static Mat calculateBackground(File[] frames, File framesDir) {
         OpenCVLoader.initDebug();
         BackgroundSubtractor backSub = Video.createBackgroundSubtractorMOG2();
         for (File frame : frames) {
@@ -108,6 +117,7 @@ public class BackgroundSub {
         // get the background model
         Mat background = new Mat();
         backSub.getBackgroundImage(background);
+        Imgcodecs.imwrite(new File(framesDir, BCKGRND_FILENAME+FILE_EXTENSION).getAbsolutePath(), background);
         return background;
     }
 
