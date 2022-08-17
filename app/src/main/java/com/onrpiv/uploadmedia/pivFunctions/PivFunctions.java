@@ -140,7 +140,7 @@ public class PivFunctions {
         Mat[] subtractedFrames;
 
         if (backgroundSubType == PivParameters.BACKGROUNDSUB_ALLFRAME) {
-            subtractedFrames = BackgroundSub.allFrameSubtraction(frameDir, grayFrame1, grayFrame2);
+            subtractedFrames = BackgroundSub.allFrameSubtraction(frameDir, frame1, frame2);
         } else if (backgroundSubType == PivParameters.BACKGROUNDSUB_TWOFRAME) {
             subtractedFrames = BackgroundSub.doubleFrameSubtraction(grayFrame1, grayFrame2);
         } else {
