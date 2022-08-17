@@ -121,6 +121,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     warning.setPositiveButton( "Okay", (OnClickListener) null);
                     warning.setNegativeButton("Nevermind", (dialog, which) -> wholeSetCheckBox.setChecked(false));
                     warning.create().show();
+
+                    frame1Text.setText("1");
                 }
             }
         });
