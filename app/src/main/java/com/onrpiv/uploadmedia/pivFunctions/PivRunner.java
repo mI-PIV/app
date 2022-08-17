@@ -117,8 +117,7 @@ public class PivRunner implements ProgressUpdateInterface {
                     backgroundSub = true;
                     File framesDir = PathUtil.getFramesNamedDirectory(context, userName,
                             parameters.getFrameSetName());
-                    pivFunctions.framesSubtraction(backgroundSelection, framesDir,
-                            parameters.getFrame1Index(), parameters.getFrame2Index(), index);
+                    pivFunctions.framesSubtraction(backgroundSelection, framesDir, index);
                 }
 
                 if (parameters.isNegativeFilter()) {

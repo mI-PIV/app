@@ -59,10 +59,10 @@ public class BackgroundSub {
         return new Mat[] {frame1New, frame2New};
     }
 
-    public static Mat[] allFrameSubtraction(File framesDir, int frame1Index, int frame2Index) {
+    public static Mat[] allFrameSubtraction(File framesDir, Mat frame1, Mat frame2) {
         File[] frames = getFramesPaths(framesDir);
         Mat background = calculateBackground(frames);
-        return subtract(frames, background, frame1Index, frame2Index);
+        return subtract(background, frame1, frame2);
     }
 
     public static void saveBackground(File framesDir) {
@@ -74,9 +74,6 @@ public class BackgroundSub {
 
     public static AlertDialog.Builder showLatestBackground(Context context, String userName,
                                                            String frameDirName) {
-//        int totalFrameDirs = (PersistedData.getTotalFrameDirectories(context, userName));
-//        File framesNumDir = PathUtil.getFramesNumberedDirectory(context,
-//                userName, totalFrameDirs);
         File framesNameDir = PathUtil.getFramesNamedDirectory(context, userName, frameDirName);
         Bitmap background = BitmapFactory.decodeFile(
                 new File(framesNameDir, BCKGRND_FILENAME+FILE_EXTENSION).getAbsolutePath());
@@ -114,16 +111,12 @@ public class BackgroundSub {
         return background;
     }
 
-    private static Mat[] subtract(File[] frames, Mat background, int frame1Index, int frame2Index) {
-        // read in frames
-        Mat frame1Mat = Imgcodecs.imread(frames[frame1Index].getAbsolutePath());
-        Mat frame2Mat = Imgcodecs.imread(frames[frame2Index].getAbsolutePath());
-
+    private static Mat[] subtract(Mat background, Mat frame1, Mat frame2) {
         // subtract frames from background
         Mat diff1 = new Mat();
         Mat diff2 = new Mat();
-        Core.subtract(frame1Mat, background, diff1);
-        Core.subtract(frame2Mat, background, diff2);
+        Core.subtract(frame1, background, diff1);
+        Core.subtract(frame2, background, diff2);
 
         // convert to grayscale
         Mat grayDiff1 = new Mat(), grayDiff2 = new Mat();
@@ -138,8 +131,6 @@ public class BackgroundSub {
         Mat[] backgroundSubtractedFrames = new Mat[]{grayDiff1, grayDiff2};
 
         // release mats
-        frame1Mat.release();
-        frame2Mat.release();
         diff1.release();
         diff2.release();
 
