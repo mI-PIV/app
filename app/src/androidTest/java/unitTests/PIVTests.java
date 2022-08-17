@@ -44,8 +44,6 @@ public class PIVTests {
                 e.printStackTrace();
             }
 
-//            defaultParameters.setBackgroundSelection(PivParameters.BACKGROUNDSUB_ALLFRAME);
-
             File outputDir = PathUtil.getUserDirectory(context, "Test");
             PivRunner runner = new PivRunner(
                     context,
