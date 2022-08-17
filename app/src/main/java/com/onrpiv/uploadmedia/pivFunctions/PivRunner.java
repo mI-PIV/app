@@ -39,6 +39,7 @@ public class PivRunner implements ProgressUpdateInterface {
         progressUpdate = showProgress? this : null;
         this.showProgress = showProgress;
         this.index = index;
+        imageActivity = (Activity) context;
 
         // setup output and piv functions
         if (null == expDir) {
@@ -85,8 +86,6 @@ public class PivRunner implements ProgressUpdateInterface {
     }
 
     public HashMap<String, PivResultData> Run() {
-        imageActivity = (Activity) context;
-
         // save parameters plain text
         pivFunctions.saveParametersPlainText(parameters);
 
