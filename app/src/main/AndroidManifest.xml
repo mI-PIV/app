@@ -91,7 +91,7 @@
         <activity android:name=".Learn.VideoTutorial" android:label="Video Tutorial"/>
         <activity android:name=".Experiment.VideoActivity" android:label="Experiment"/>
         <activity android:name=".Experiment.ViewResultsActivity" android:label="Experiment"/>
-        <activity android:name=".Experiment.ViewPagerActivity" android:label="Experiment"/>
+        <activity android:name=".Experiment.CheckCorrelationActivity" android:label="Experiment"/>
         <activity android:name=".Experiment.MainActivity" android:label="Experiment"/>
         <activity android:name=".Experiment.CalibrationActivity" android:label="Experiment"/>
         <activity android:name=".Experiment.CalibrationInputActivity" android:label="Experiment"/>

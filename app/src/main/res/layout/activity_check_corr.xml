@@ -4,6 +4,6 @@
     android:id="@+id/pager_adapter"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.onrpiv.uploadmedia.Experiment.ViewPagerActivity">
+    tools:context="com.onrpiv.uploadmedia.Experiment.CheckCorrelationActivity">
 
 </androidx.viewpager.widget.ViewPager>
