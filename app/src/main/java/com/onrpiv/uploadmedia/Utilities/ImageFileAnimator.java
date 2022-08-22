@@ -2,11 +2,8 @@ package com.onrpiv.uploadmedia.Utilities;
 
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 
 import java.io.File;
 
@@ -21,10 +18,6 @@ public class ImageFileAnimator {
                     BitmapFactory.decodeFile(frameFile.getAbsolutePath())),
                     500);
         }
-
-        // add a transparent frame so it's obvious when the animation restarts
-        Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
-        animator.addFrame(transparentDrawable, 100);
 
         animator.setOneShot(false);
         return animator;
