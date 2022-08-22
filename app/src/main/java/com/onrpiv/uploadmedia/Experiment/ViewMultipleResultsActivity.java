@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class ViewMultipleResultsActivity extends ViewResultsActivity {
 
@@ -218,10 +219,10 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
 
         if (pivParameters.isReplace()) {
             spName += PivResultData.REPLACE;
-            replacedPass = data.get(newIdx).get(PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE);
+            replacedPass = Objects.requireNonNull(data.get(newIdx)).get(PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE);
         }
-        singlePass = data.get(newIdx).get(spName);
-        multiPass = data.get(newIdx).get(mpName);
+        singlePass = Objects.requireNonNull(data.get(newIdx)).get(spName);
+        multiPass = Objects.requireNonNull(data.get(newIdx)).get(mpName);
 
         correlationMaps = loadCorrelationMaps(pivParameters.isReplace());
     }

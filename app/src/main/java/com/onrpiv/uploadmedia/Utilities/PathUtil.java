@@ -369,14 +369,12 @@ public class PathUtil {
             while ((read = inputStream.read(buffers)) != -1) {
                 outputStream.write(buffers, 0, read);
             }
-
             inputStream.close();
             outputStream.close();
-
         }
         catch (Exception e) {
-
-            Log.e("Exception", e.getMessage());
+            if (!Objects.requireNonNull(e.getMessage()).isEmpty())
+                Log.e("Exception", e.getMessage());
         }
         returnCursor.close();
         return output.getPath();
