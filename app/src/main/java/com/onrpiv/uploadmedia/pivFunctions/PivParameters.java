@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.collection.ArrayMap;
 
+import com.google.firebase.crashlytics.CustomKeysAndValues;
 import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibrationResult;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
@@ -263,10 +264,23 @@ public class PivParameters implements Serializable {
         return result;
     }
 
-    public String outputPrint()
-    {
+    public String outputPrint() {
         String output = "Piv Parameters\n";
         output += prettyPrintData_comprehensive();
         return output;
+    }
+
+    public CustomKeysAndValues getCrashlyticsKeyPairs() {
+        return new CustomKeysAndValues.Builder()
+                .putInt("windowSize", windowSize)
+                .putInt("overlap", overlap)
+                .putInt("frame1idx", frameOne)
+                .putInt("frame2idx", frameTwo)
+                .putInt("background", backgroundSelection)
+                .putBoolean("replace", replace)
+                .putBoolean("fft", fft)
+                .putBoolean("negFilter", negativeFilter)
+                // Add other parameters here if needed
+                .build();
     }
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
@@ -88,6 +89,9 @@ public class PivRunner implements ProgressUpdateInterface {
     public HashMap<String, PivResultData> Run() {
         // save parameters plain text
         pivFunctions.saveParametersPlainText(parameters);
+
+        // Update crashlytics with piv parameters
+        FirebaseCrashlytics.getInstance().setCustomKeys(parameters.getCrashlyticsKeyPairs());
 
         // background sub
         final int backgroundSelection = parameters.getBackgroundSelection();
