@@ -931,9 +931,9 @@ public class PivFunctions {
                     dc1_p[k][l] = passResult.getU()[k][l];
                     mag_p[k][l] = passResult.getMag()[k][l];
                 } else {
-                    dr1_p[k][l] = 0.0d;
-                    dc1_p[k][l] = 0.0d;
-                    mag_p[k][l] = 0.0d;
+                    dr1_p[k][l] = 0d;
+                    dc1_p[k][l] = 0d;
+                    mag_p[k][l] = 0d;
                 }
             }
         }
@@ -1089,9 +1089,34 @@ public class PivFunctions {
                 getCoordinates(), cols, rows, dt);
     }
 
+    private static void interpolationExtensionFilter(List<Double> extendedValues) {
+        int[] remove = new int[2];
+
+        // left/down side
+        if (extendedValues.get(1) == 0d) {
+            remove[0] = 1;
+        } else if (extendedValues.get(2) == 0d) {
+            remove[0] = 2;
+        } // else remove[0] is already 0
+
+        // right/up side
+        if (extendedValues.get(4) == 0d) {
+            remove[1] = 4;
+        } else if (extendedValues.get(3) == 0d) {
+            remove[1] = 3;
+        } else {
+            remove[1] = 5;
+        }
+
+        for (int i = 5; i >= 0; i--) {
+            if (i == remove[0] || i == remove[1])
+                extendedValues.remove(i);
+        }
+    }
+
     private static double getCubicInterpolation_u(double[][] u, int ii, int jj) {
         List<Double> valueList = new ArrayList<>();
-        for (int i = ii - 2; i <= ii +2; i++) {
+        for (int i = ii - 3; i <= ii + 3; i++) {
             if (i < 0 || i >= u.length) {
                 valueList.add(0d);
             } else if (i == ii) {
@@ -1100,12 +1125,13 @@ public class PivFunctions {
                 valueList.add(u[i][jj]);
             }
         }
+        interpolationExtensionFilter(valueList);
         return cubicInterpolator(valueList);
     }
 
     private static double getCubicInterpolation_v(double[][] v, int ii, int jj) {
         List<Double> valueList = new ArrayList<>();
-        for (int j = jj - 2; j <= jj +2; j++) {
+        for (int j = jj - 3; j <= jj + 3; j++) {
             if (j < 0 || j >= v[0].length) {
                 valueList.add(0d);
             } else if (j == jj) {
@@ -1114,6 +1140,7 @@ public class PivFunctions {
                 valueList.add(v[ii][j]);
             }
         }
+        interpolationExtensionFilter(valueList);
         return cubicInterpolator(valueList);
     }
 
