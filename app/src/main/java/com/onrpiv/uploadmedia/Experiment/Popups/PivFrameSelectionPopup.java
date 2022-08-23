@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class PivFrameSelectionPopup extends AlertDialog {
-
     private final EditText frame1Text;
     private final TableRow secondFrameTableRow;
     private final RadioGroup frame2RadioGroup;
@@ -44,6 +43,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
     private final Button saveButton;
     private final SeekBar frame1Slider;
     private final HashMap<SeekBar, EditText> seekBarToTextDict;
+    private final TextView secondLabel;
 
     private final String userName;
     private final Context context;
@@ -55,8 +55,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
     public int frame1Num;
     public int frame2Num;
 
-    public boolean multipleFrames = false;
-    private static final String ALL = "All";
+    public boolean wholeSetProc = false;
+    public int sampleRate = 1;
 
     private final List<File> setFrames = new ArrayList<>();
     final List<String> frameSetsList;
@@ -85,6 +85,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
         TextView descriptionText = (TextView) findViewById(R.id.frame_selection_description);
         frameSetSpinner = findViewById(R.id.frameset_spinner);
         frame1Text = (EditText) findViewById(R.id.img1);
+        secondLabel = findViewById(R.id.frame_popup_second_lbl);
 
         secondFrameTableRow = findViewById(R.id.second_frame_tablerow);
         secondFrameTableRow.setVisibility(View.GONE);
@@ -95,14 +96,16 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 int checkedId = radioGroup.getCheckedRadioButtonId();
                 RadioButton selectedButton = findViewById(checkedId);
                 String rawText = selectedButton.getText().toString();
-                if (rawText.equals(ALL)) {
-                    frame2Num = numFramesInSet + 1;  // zero-based idx to one-based idx
+                int numSelected = Integer.parseInt(rawText.substring(rawText.length() - 1));
+
+                if (wholeSetProc) {
+                    sampleRate = numSelected;
                 } else {
-                    int frameAddition = Integer.parseInt(rawText.substring(rawText.length() - 1));
-                    frame2Num = frame1Num + frameAddition;
+                    frame2Num = frame1Num + numSelected;
+                    updatePreview(preview2, frame2Num);
                 }
+
                 frame2IsReady = true;
-                updatePreview(preview2, frame2Num);
                 saveButton.setEnabled(checkAllSelections());
             }
         });
@@ -111,7 +114,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
         wholeSetCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                multipleFrames = isChecked;
+                wholeSetProc = isChecked;
                 saveButton.setEnabled(checkAllSelections() || isChecked);
 
                 if (isChecked) {
@@ -122,7 +125,11 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     warning.setNegativeButton("Nevermind", (dialog, which) -> wholeSetCheckBox.setChecked(false));
                     warning.create().show();
 
-                    frame1Text.setText("1");
+                    secondLabel.setText("Sample Rate: ");
+                    preview2.setVisibility(View.GONE);
+                } else {
+                    secondLabel.setText("Second Image: ");
+                    preview2.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -275,17 +282,13 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
         // create radio buttons from options
         for (Integer option : fullOptions) {
-            if (option == 4 && multipleFrames) {
-                RadioButton allFrames = new RadioButton(context);
-                allFrames.setText(ALL);
-                frame2RadioGroup.addView(allFrames);
-            } else {
-                RadioButton newButton = new RadioButton(context);
-                // ensure that the integer 'option' is always the last char
-                newButton.setText("+" + option);
-                frame2RadioGroup.addView(newButton);
-                if (option == 1) {
-                    frame2RadioGroup.check(newButton.getId());
+            RadioButton newButton = new RadioButton(context);
+            // ensure that the integer 'option' is always the last char
+            newButton.setText("+" + option);
+            frame2RadioGroup.addView(newButton);
+            if (option == 1) {
+                frame2RadioGroup.check(newButton.getId());
+                if (!wholeSetProc) {
                     frame2Num = frame1Num + 1;
                     updatePreview(preview2, frame2Num);
                 }
