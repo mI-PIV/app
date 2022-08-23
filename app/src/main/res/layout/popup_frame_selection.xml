@@ -41,7 +41,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Multiple Frames Processing:" />
+                android:text="Whole Set Processing:" />
 
             <CheckBox
                 android:id="@+id/whole_set_checkbox"

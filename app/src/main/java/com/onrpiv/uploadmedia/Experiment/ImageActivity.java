@@ -213,6 +213,7 @@ public class ImageActivity extends AppCompatActivity {
 
         if (wholeSetProcessing) {
             ViewMultipleResultsActivity.data = multipleResultData;
+            pivParameters.setSampleRate(sampleRate);
             ViewMultipleResultsActivity.pivParameters = pivParameters;
             ViewMultipleResultsActivity.calibrated = null != pivParameters.getCameraCalibrationResult();
             ViewMultipleResultsActivity.backgroundSubtracted = pivParameters.getBackgroundSelection() != PivParameters.BACKGROUNDSUB_NONE;

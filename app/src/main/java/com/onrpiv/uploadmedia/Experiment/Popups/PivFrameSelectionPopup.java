@@ -37,7 +37,7 @@ import java.util.Objects;
 
 public class PivFrameSelectionPopup extends AlertDialog {
     private final EditText frame1Text;
-    private final TableRow secondFrameTableRow;
+    private final TableRow secondFrameTableRow, firstFrameTableRow;
     private final RadioGroup frame2RadioGroup;
     private final Spinner frameSetSpinner;
     private final Button saveButton;
@@ -87,8 +87,10 @@ public class PivFrameSelectionPopup extends AlertDialog {
         frame1Text = (EditText) findViewById(R.id.img1);
         secondLabel = findViewById(R.id.frame_popup_second_lbl);
 
+        firstFrameTableRow = findViewById(R.id.frame_selection_first_frame_row);
         secondFrameTableRow = findViewById(R.id.second_frame_tablerow);
         secondFrameTableRow.setVisibility(View.GONE);
+
         frame2RadioGroup = findViewById(R.id.second_radio_group);
         frame2RadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -125,11 +127,26 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     warning.setNegativeButton("Nevermind", (dialog, which) -> wholeSetCheckBox.setChecked(false));
                     warning.create().show();
 
+                    frame2RadioGroup.removeAllViews();
+                    populateSecondFrameRadioButtons();
+                    secondFrameTableRow.setVisibility(View.VISIBLE);
+
+                    firstFrameTableRow.setVisibility(View.GONE);
+                    frame1Slider.setVisibility(View.GONE);
+
                     secondLabel.setText("Sample Rate: ");
                     preview2.setVisibility(View.GONE);
+                    preview1.setVisibility(View.GONE);
                 } else {
+                    firstFrameTableRow.setVisibility(View.VISIBLE);
+                    frame1Slider.setVisibility(View.VISIBLE);
+
+                    frame2RadioGroup.removeAllViews();
+                    populateSecondFrameRadioButtons();
+
                     secondLabel.setText("Second Image: ");
                     preview2.setVisibility(View.VISIBLE);
+                    preview1.setVisibility(View.VISIBLE);
                 }
             }
         });
