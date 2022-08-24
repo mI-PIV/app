@@ -91,8 +91,7 @@ public class FileIO {
             f.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-            FirebaseCrashlytics.getInstance().log("Exception reading File: " + inputFile.getName() +
-                    e.getMessage());
+            FirebaseCrashlytics.getInstance().recordException(e);
         }
 
         return object;
@@ -118,8 +117,7 @@ public class FileIO {
             f.close();
         } catch (IOException e) {
             e.printStackTrace();
-            FirebaseCrashlytics.getInstance().log("Exception writing File: " + outputFile.getName() +
-                    e.getMessage());
+            FirebaseCrashlytics.getInstance().recordException(e);
         }
     }
 }
