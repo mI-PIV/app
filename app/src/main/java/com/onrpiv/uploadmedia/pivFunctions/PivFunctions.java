@@ -157,8 +157,8 @@ public class PivFunctions {
         grayFrame2 = subtractedFrames[1];
 
         // save frames for results page
-        saveImage(grayFrame1, BackgroundSub.SUB1_FILENAME + "_" + expIndex);
-        saveImage(grayFrame2, BackgroundSub.SUB2_FILENAME + "_" + expIndex);
+        saveImage(grayFrame1, BackgroundSub.SUB1_FILENAME + "_" + String.format("%04d", expIndex));
+        saveImage(grayFrame2, BackgroundSub.SUB2_FILENAME + "_" + String.format("%04d", expIndex));
     }
 
     public void applyNegativeFilter() {

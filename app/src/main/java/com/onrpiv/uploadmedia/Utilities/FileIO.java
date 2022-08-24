@@ -27,7 +27,7 @@ public class FileIO {
         // loop through our result data hashmap and write data
         for (String key : resultData.keySet()) {
             PivResultData data = resultData.get(key);
-            write(data, context, userName, newExpTotal, key + "_" + index);
+            write(data, context, userName, newExpTotal, key + "_" + String.format("%04d", index));
         }
 
         // write our parameter file
