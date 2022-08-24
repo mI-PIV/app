@@ -2,6 +2,7 @@ package com.onrpiv.uploadmedia.Utilities;
 
 import android.content.Context;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.onrpiv.uploadmedia.pivFunctions.PivParameters;
 import com.onrpiv.uploadmedia.pivFunctions.PivResultData;
 
@@ -27,7 +28,7 @@ public class FileIO {
         // loop through our result data hashmap and write data
         for (String key : resultData.keySet()) {
             PivResultData data = resultData.get(key);
-            write(data, context, userName, newExpTotal, key + "_" + index);
+            write(data, context, userName, newExpTotal, key + "_" + String.format("%04d", index));
         }
 
         // write our parameter file
@@ -90,6 +91,7 @@ public class FileIO {
             f.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            FirebaseCrashlytics.getInstance().recordException(e);
         }
 
         return object;
@@ -115,6 +117,7 @@ public class FileIO {
             f.close();
         } catch (IOException e) {
             e.printStackTrace();
+            FirebaseCrashlytics.getInstance().recordException(e);
         }
     }
 }
