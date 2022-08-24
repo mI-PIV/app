@@ -447,7 +447,7 @@ public class PathUtil {
     }
 
     public static File getObjectFile(File expDir, String pivType, int index) {
-        return new File(expDir, pivType + "_" + index + ".obj");
+        return new File(expDir, pivType + "_" + String.format("%04d", index) + ".obj");
     }
 
     public static File getUserDirectory(Context context, String userName) {
