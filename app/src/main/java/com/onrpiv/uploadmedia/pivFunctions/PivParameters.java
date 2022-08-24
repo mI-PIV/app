@@ -271,8 +271,7 @@ public class PivParameters implements Serializable {
         return result;
     }
 
-    public String outputPrint()
-    {
+    public String outputPrint() {
         String output = "Piv Parameters\n";
         output += prettyPrintData_comprehensive();
         return output;
