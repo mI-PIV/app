@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TableRow;
@@ -73,6 +74,12 @@ public class LightBulb extends AppCompatImageButton {
                     dpToPixels(dpHeight)
             );
             setLayoutParams(params);
+        } else if (baseParent instanceof LinearLayout) {
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    dpToPixels(dpWidth),
+                    dpToPixels(dpHeight)
+            );
+            setLayoutParams(params);
         } else {
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                     dpToPixels(dpWidth),
@@ -81,10 +88,7 @@ public class LightBulb extends AppCompatImageButton {
             params.addRule(RelativeLayout.ALIGN_TOP, baseView.getId());
             setLayoutParams(params);
         }
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            setElevation(dpToPixels(50));
-        }
+        setElevation(dpToPixels(50));
         requestLayout();
     }
 
@@ -155,19 +159,19 @@ public class LightBulb extends AppCompatImageButton {
                 windowTitle.setText(title);
 
                 TextView windowMessage = (TextView) customView.findViewById(R.id.popupWindowMessage);
-                windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    windowMessage.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
+                }
                 windowMessage.setText(message);
 
                 // New instance of popup window
                 final PopupWindow popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
                 // Setting an elevation value for popup window, it requires API level 21
-                if (Build.VERSION.SDK_INT >= 21) {
-                    popupWindow.setElevation(5.0f);
-                }
+                popupWindow.setElevation(5.0f);
 
                 Button closeButton = (Button) customView.findViewById(R.id.button_close);
-                closeButton.setOnClickListener(new View.OnClickListener() {
+                closeButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         popupWindow.dismiss();

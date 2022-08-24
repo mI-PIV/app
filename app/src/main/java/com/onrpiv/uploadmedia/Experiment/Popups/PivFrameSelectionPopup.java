@@ -11,11 +11,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,7 +37,7 @@ import java.util.Objects;
 
 public class PivFrameSelectionPopup extends AlertDialog {
     private final EditText frame1Text;
-    private final TableRow secondFrameTableRow, firstFrameTableRow;
+    private final LinearLayout secondFrameTableRow, firstFrameTableRow;
     private final RadioGroup frame2RadioGroup;
     private final Spinner frameSetSpinner;
     private final Button saveButton;
@@ -82,7 +82,6 @@ public class PivFrameSelectionPopup extends AlertDialog {
         this.context = context;
 
         //init buttons
-        TextView descriptionText = (TextView) findViewById(R.id.frame_selection_description);
         frameSetSpinner = findViewById(R.id.frameset_spinner);
         frame1Text = (EditText) findViewById(R.id.img1);
         secondLabel = findViewById(R.id.frame_popup_second_lbl);
