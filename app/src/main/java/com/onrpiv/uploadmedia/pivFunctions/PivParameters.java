@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.collection.ArrayMap;
 
+import com.google.firebase.crashlytics.CustomKeysAndValues;
 import com.onrpiv.uploadmedia.Utilities.Camera.Calibration.CameraCalibrationResult;
 import com.onrpiv.uploadmedia.Utilities.PersistedData;
 
@@ -11,7 +12,7 @@ import java.io.Serializable;
 
 public class PivParameters implements Serializable {
     private static final long serialVersionUID = 42L;
-    private int windowSize = 64, overlap = 32, frameOne, frameTwo;
+    private int windowSize = 64, overlap = 32, frameOne, frameTwo, sampleRate;
     private String frameSetName;
     private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.0, dt = 1.0, E = 2.0;
     private boolean replace = true, fft = true, negativeFilter = false;
@@ -156,11 +157,13 @@ public class PivParameters implements Serializable {
     }
 
     public void setDt(int fps) {
-        dt = 1d / fps;
+        int deltaFrameNums = frameTwo - frameOne;
+        dt = (double) deltaFrameNums / (double) fps;
     }
 
     public int getFPS() {
-        return (int) Math.round(1d / dt);
+        int deltaFrameNums = frameTwo - frameOne;
+        return (int) Math.round(deltaFrameNums / dt);
     }
 
     public double getE() {
@@ -207,6 +210,10 @@ public class PivParameters implements Serializable {
         return frameTwo;
     }
 
+    public int getSampleRate() {
+        return sampleRate;
+    }
+
     public boolean isFFT() {
         return fft;
     }
@@ -221,6 +228,10 @@ public class PivParameters implements Serializable {
 
     public void setFrameTwo(int frameTwoIndex) {
         frameTwo = frameTwoIndex;
+    }
+
+    public void setSampleRate(int sampleRate) {
+        this.sampleRate = sampleRate;
     }
 
     public void setFrameSetName(String frameSetName) {
@@ -263,10 +274,23 @@ public class PivParameters implements Serializable {
         return result;
     }
 
-    public String outputPrint()
-    {
+    public String outputPrint() {
         String output = "Piv Parameters\n";
         output += prettyPrintData_comprehensive();
         return output;
+    }
+
+    public CustomKeysAndValues getCrashlyticsKeyPairs() {
+        return new CustomKeysAndValues.Builder()
+                .putInt("windowSize", windowSize)
+                .putInt("overlap", overlap)
+                .putInt("frame1idx", frameOne)
+                .putInt("frame2idx", frameTwo)
+                .putInt("background", backgroundSelection)
+                .putBoolean("replace", replace)
+                .putBoolean("fft", fft)
+                .putBoolean("negFilter", negativeFilter)
+                // Add other parameters here if needed
+                .build();
     }
 }

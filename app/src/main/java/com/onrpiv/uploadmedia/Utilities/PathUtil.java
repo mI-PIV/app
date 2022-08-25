@@ -369,14 +369,12 @@ public class PathUtil {
             while ((read = inputStream.read(buffers)) != -1) {
                 outputStream.write(buffers, 0, read);
             }
-
             inputStream.close();
             outputStream.close();
-
         }
         catch (Exception e) {
-
-            Log.e("Exception", e.getMessage());
+            if (!Objects.requireNonNull(e.getMessage()).isEmpty())
+                Log.e("Exception", e.getMessage());
         }
         returnCursor.close();
         return output.getPath();
@@ -447,7 +445,7 @@ public class PathUtil {
     }
 
     public static File getObjectFile(File expDir, String pivType, int index) {
-        return new File(expDir, pivType + "_" + index + ".obj");
+        return new File(expDir, pivType + "_" + String.format("%04d", index) + ".obj");
     }
 
     public static File getUserDirectory(Context context, String userName) {

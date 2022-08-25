@@ -141,7 +141,8 @@ public class PivOptionsActivity extends AppCompatActivity {
         // lightbulbs
         final String linkText = "Learn More";
         new LightBulb(this, windowSizeText).setLightBulbOnClick("Window Size",
-                "Interrogation regions should contain at least five particles to result in a good correlation value.",
+                "Interrogation regions should contain at least five particles to result in a" +
+                        " good correlation value.",
                 new PIVBasics3(), linkText, getWindow());
         new LightBulb(this, overlapText).setLightBulbOnClick("Overlap",
                 "Normally the overlap is set at 50% of the window size.",
@@ -150,13 +151,17 @@ public class PivOptionsActivity extends AppCompatActivity {
                 "The time between images. If you selected sequential images, this is 1/framerate.",
                 getWindow());
         LightBulb qMinLB = new LightBulb(this, qMinText).setLightBulbOnClick("Minimum Threshold",
-                "Set an initial Q value threshold of 1.3. Users can relax this standard by decreasing Q (minimum of one), or tighten this standard by increasing Q.",
+                "Set an initial Q value threshold of 1.3. Users can relax this standard by " +
+                        "decreasing Q (minimum of one), or tighten this standard by increasing Q.",
                 new PIVBasics2(), linkText, getWindow());
         LightBulb eTextLB = new LightBulb(this, EText).setLightBulbOnClick("Median",
-                "Set a median threshold value of two. Increasing the median threshold value will result in a less stringent comparison and decreasing the median parameter will result in a more stringent comparison.",
+                "Set a median threshold value of two. Increasing the median threshold value " +
+                        "will result in a less stringent comparison and decreasing the median " +
+                        "parameter will result in a more stringent comparison.",
                 new PIVBasics4(), linkText, getWindow());
         LightBulb radioGroupLB = new LightBulb(this, replaceRadioGroup).setLightBulbOnClick("Replace Missing Vectors",
-                "When would you choose yes vs no? \n\nYes: qualitative image analysis.\nNo: if you're using the vector data for further analysis.",
+                "When would you choose yes vs no? \n\nYes: qualitative image analysis.\nNo: " +
+                        "if you're using the vector data for further analysis.",
                 getWindow());
 
         // keep advanced views in list for easy iteration
@@ -410,11 +415,6 @@ public class PivOptionsActivity extends AppCompatActivity {
         idToKey.put(fpsText.getId(), PivParameters.DT_KEY);
         idToKey.put(EText.getId(), PivParameters.E_KEY);
         idToKey.put(qMinText.getId(), PivParameters.QMIN_KEY);
-    }
-
-    private float calculateTimeDelta(int fps, int frame1Num, int frame2Num) {
-        int deltaFrameNums = frame2Num - frame1Num;
-        return (float) deltaFrameNums / (float) fps;
     }
 
     private void setGUITexts() {
