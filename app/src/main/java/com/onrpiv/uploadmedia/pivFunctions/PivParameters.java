@@ -156,11 +156,13 @@ public class PivParameters implements Serializable {
     }
 
     public void setDt(int fps) {
-        dt = 1d / fps;
+        int deltaFrameNums = frameTwo - frameOne;
+        dt = (double) deltaFrameNums / (double) fps;
     }
 
     public int getFPS() {
-        return (int) Math.round(1d / dt);
+        int deltaFrameNums = frameTwo - frameOne;
+        return (int) Math.round(deltaFrameNums / dt);
     }
 
     public double getE() {
