@@ -417,11 +417,6 @@ public class PivOptionsActivity extends AppCompatActivity {
         idToKey.put(qMinText.getId(), PivParameters.QMIN_KEY);
     }
 
-    private float calculateTimeDelta(int fps, int frame1Num, int frame2Num) {
-        int deltaFrameNums = frame2Num - frame1Num;
-        return (float) deltaFrameNums / (float) fps;
-    }
-
     private void setGUITexts() {
         // set default texts
         windowSizeText.setText(Integer.toString(parameters.getWindowSize()));
