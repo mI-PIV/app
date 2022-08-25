@@ -49,7 +49,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
     private TextView frameText;
     private String userName;
     private SeekBar temporalSlider;
-    private int currIdx;
+    private int currIdx, sampleRate;
 
     protected void onCreate(Bundle savedInstanceState) {
         changeData(0);  // need to load the data before showing the results
@@ -57,6 +57,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
 
         Bundle extras = getIntent().getExtras();
         userName = (String) extras.get(PivResultData.USERNAME);
+        sampleRate = pivParameters.getSampleRate();
 
         // add temporal seekbar to the results layout
         RelativeLayout base = findViewById(R.id.base_layout);
@@ -204,7 +205,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
     }
 
     private void onIndexChange(int newIdx) {
-        currIdx = newIdx;
+        currIdx = newIdx * sampleRate;
         changeData(newIdx);
         settings.vecFieldChanged = true;
         settings.vortMapChanged = true;
@@ -219,7 +220,8 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
 
         if (pivParameters.isReplace()) {
             spName += PivResultData.REPLACE;
-            replacedPass = Objects.requireNonNull(data.get(newIdx)).get(PivResultData.MULTI + PivResultData.PROCESSED + PivResultData.REPLACE);
+            replacedPass = Objects.requireNonNull(data.get(newIdx)).get(PivResultData.MULTI +
+                    PivResultData.PROCESSED + PivResultData.REPLACE);
         }
         singlePass = Objects.requireNonNull(data.get(newIdx)).get(spName);
         multiPass = Objects.requireNonNull(data.get(newIdx)).get(mpName);
@@ -275,7 +277,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         return new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                onIndexChange(progress);
+                onIndexChange(progress * sampleRate);
             }
 
             @Override
@@ -290,9 +292,8 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         };
     }
 
-    private static String getFrameText(int idx)
-    {
-        return "Frames: " + idx + " & " + (idx + 1);
+    private String getFrameText(int idx) {
+        return "Frames: " + idx + " & " + (idx + sampleRate);
     }
 
     public static Class<?> loadFromFiles(Context context, String userName, int expNum) {

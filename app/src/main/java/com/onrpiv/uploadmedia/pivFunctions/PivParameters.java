@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 public class PivParameters implements Serializable {
     private static final long serialVersionUID = 42L;
-    private int windowSize = 64, overlap = 32, frameOne, frameTwo;
+    private int windowSize = 64, overlap = 32, frameOne, frameTwo, sampleRate;
     private String frameSetName;
     private double nMaxUpper, nMaxLower, maxDisplacement = 0.0, qMin = 1.0, dt = 1.0, E = 2.0;
     private boolean replace = true, fft = true, negativeFilter = false;
@@ -157,11 +157,13 @@ public class PivParameters implements Serializable {
     }
 
     public void setDt(int fps) {
-        dt = 1d / fps;
+        int deltaFrameNums = frameTwo - frameOne;
+        dt = (double) deltaFrameNums / (double) fps;
     }
 
     public int getFPS() {
-        return (int) Math.round(1d / dt);
+        int deltaFrameNums = frameTwo - frameOne;
+        return (int) Math.round(deltaFrameNums / dt);
     }
 
     public double getE() {
@@ -208,6 +210,10 @@ public class PivParameters implements Serializable {
         return frameTwo;
     }
 
+    public int getSampleRate() {
+        return sampleRate;
+    }
+
     public boolean isFFT() {
         return fft;
     }
@@ -222,6 +228,10 @@ public class PivParameters implements Serializable {
 
     public void setFrameTwo(int frameTwoIndex) {
         frameTwo = frameTwoIndex;
+    }
+
+    public void setSampleRate(int sampleRate) {
+        this.sampleRate = sampleRate;
     }
 
     public void setFrameSetName(String frameSetName) {
