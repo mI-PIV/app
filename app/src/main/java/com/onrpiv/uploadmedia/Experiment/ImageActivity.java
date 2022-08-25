@@ -198,11 +198,8 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     private void reviewImageFromUrl() {
-        String[] urls = new String[2];
-        urls[0] = frame1File.getAbsolutePath();
-        urls[1] = frame2File.getAbsolutePath();
-
-        Intent intent = new Intent(this, ViewPagerActivity.class).putExtra("string-array-urls", urls);
+        File[] frames = new File[] {frame1File, frame2File};
+        Intent intent = new Intent(this, CheckCorrelationActivity.class).putExtra("frames", frames);
         startActivity(intent);
     }
 

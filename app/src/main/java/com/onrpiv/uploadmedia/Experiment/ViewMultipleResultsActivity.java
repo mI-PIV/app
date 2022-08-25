@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.arthenica.mobileffmpeg.Config;
 import com.arthenica.mobileffmpeg.FFmpeg;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
 import com.onrpiv.uploadmedia.Utilities.FileIO;
@@ -325,17 +326,23 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
             PivResultData mp = multipassResults.get(i);
             if (null != sp) { indexResults.put(sp.getName(), sp); }
             else {
-                Log.e("MULTIPLE_RESULTS", "Single pass is null at i=" + i);
+                String err = "Single pass is null at i=" + i;
+                Log.e("MULTIPLE_RESULTS", err);
+                FirebaseCrashlytics.getInstance().log(err);
             }
             if (null != mp) { indexResults.put(mp.getName(), mp); }
             else {
-                Log.e("MULTIPLE_RESULTS", "Multi pass is null at i=" + i);
+                String err = "Multi pass is null at i=" + i;
+                Log.e("MULTIPLE_RESULTS", err);
+                FirebaseCrashlytics.getInstance().log(err);
             }
             if (params.isReplace()) {
                 PivResultData rp = repResults.get(i);
                 if (null != rp) {indexResults.put(rp.getName(), rp); }
                 else {
-                    Log.e("MULTIPLE_RESULTS", "Replacement is null at i=" + i);
+                    String err = "Replacement is null at i=" + i;
+                    Log.e("MULTIPLE_RESULTS", err);
+                    FirebaseCrashlytics.getInstance().log(err);
                 }
             }
             multipleResultData.put(i, indexResults);
