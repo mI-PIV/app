@@ -20,6 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.onrpiv.uploadmedia.Experiment.Popups.DensityPreviewPopup;
 import com.onrpiv.uploadmedia.Experiment.Popups.PivFrameSelectionPopup;
 import com.onrpiv.uploadmedia.Learn.PIVBasics3;
@@ -253,6 +255,8 @@ public class ImageActivity extends AppCompatActivity {
     // Process Images
     public void processPiv(View view) {
         compute.setEnabled(false);
+        // crashlytics
+        FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
 
         if (wholeSetProcessing) {
             Context context = ImageActivity.this;
@@ -277,6 +281,8 @@ public class ImageActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     int progressCounter = 0;
+
+                    crashlytics.setCustomKey("ProcessingType", "Multiple Frames");
 
                     // https://developer.android.com/training/scheduling/wakelock#cpu
                     // wake lock
@@ -307,6 +313,7 @@ public class ImageActivity extends AppCompatActivity {
             });
             thread.start();
         } else {
+            crashlytics.setCustomKey("ProcessingType", "Two Frame");
             resultData = new PivRunner(ImageActivity.this, userName, pivParameters,
                     frame1File, frame2File, null, 0, true).Run();
         }
@@ -317,8 +324,7 @@ public class ImageActivity extends AppCompatActivity {
         compute.setBackgroundColor(Color.parseColor(greenString));
     }
 
-    private void updateProgress(ProgressDialog dialog, int iteration)
-    {
+    private void updateProgress(ProgressDialog dialog, int iteration) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
