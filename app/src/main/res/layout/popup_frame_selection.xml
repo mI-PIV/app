@@ -1,153 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/frame_selection_description"
+    <LinearLayout
+        android:id="@+id/frame_selection_img_set_row"
         android:layout_width="match_parent"
-        android:layout_height="77dp"
-        android:gravity="center_horizontal"
-        android:textSize="15dp" />
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="10dp">
-
-        <TableRow
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:gravity="start|center_vertical"
+            android:text="Image Set : " />
 
-            <TextView
-                android:gravity="end"
-                android:text="Image Set : " />
-
-            <Spinner
-                android:id="@+id/frameset_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </TableRow>
-
-        <TableRow
+        <Spinner
+            android:id="@+id/frameset_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center">
+            android:layout_gravity="start" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Whole Set Processing:" />
+    </LinearLayout>
 
-            <CheckBox
-                android:id="@+id/whole_set_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:gravity="center"
-                android:layoutDirection="ltr" />
-        </TableRow>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
 
-        <TableRow
-            android:id="@+id/frame_selection_first_frame_row"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:gravity="start|center_vertical"
+            android:text="Whole Set Processing:" />
 
-            <TextView
-                android:gravity="end"
-                android:text="First Image : " />
-
-            <EditText
-                android:id="@+id/img1"
-                android:inputType="number" />
-
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/frame_selection_first_frame_slider_row"
-            android:layout_width="match_parent"
+        <CheckBox
+            android:id="@+id/whole_set_checkbox"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal">
+            android:checked="false"
+            android:gravity="start"
+            android:layoutDirection="ltr" />
+    </LinearLayout>
 
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+    <LinearLayout
+        android:id="@+id/frame_selection_first_frame_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
 
-            <SeekBar
-                android:id="@+id/first_frame_slider"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="2" />
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/second_frame_tablerow"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal">
+            android:gravity="start|center_vertical"
+            android:text="First Image : " />
 
-            <TextView
-                android:id="@+id/frame_popup_second_lbl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:text="Second Image : " />
+        <EditText
+            android:id="@+id/img1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:inputType="number" />
 
-            <RadioGroup
-                android:id="@+id/second_radio_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:gravity="center"
-                android:orientation="horizontal" />
+    </LinearLayout>
 
-        </TableRow>
+    <LinearLayout
+        android:id="@+id/frame_selection_first_frame_slider_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
 
-        <TableRow android:gravity="right">
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
-            <Button
-                android:id="@+id/button_cancel_frame_selection"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingTop="20dp"
-                android:layout_marginEnd="-5dp"
-                android:backgroundTint="#FFFFFF"
-                android:stateListAnimator="@null"
-                android:text="Cancel"
-                android:layout_gravity="right"
-                android:textAllCaps="true"
-                android:textColor="@color/colorAccent"
-                android:textSize="14sp" />
+        <SeekBar
+            android:id="@+id/first_frame_slider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/second_frame_tablerow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <TextView
+            android:id="@+id/frame_popup_second_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="start|center_vertical"
+            android:text="Second Image : " />
+
+        <RadioGroup
+            android:id="@+id/second_radio_group"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:gravity="start|center_vertical"
+            android:orientation="horizontal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right">
+
+        <Button
+            android:id="@+id/button_cancel_frame_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:layout_marginEnd="-5dp"
+            android:backgroundTint="#FFFFFF"
+            android:paddingTop="20dp"
+            android:stateListAnimator="@null"
+            android:text="Cancel"
+            android:textAllCaps="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="14sp" />
 
 
-            <Button
-                android:id="@+id/button_save_frame_selection"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingTop="20dp"
-                android:backgroundTint="#FFFFFF"
-                android:stateListAnimator="@null"
-                android:text="Select Images"
-                android:layout_gravity="right"
-                android:textAllCaps="true"
-                android:textColor="@color/colorAccent"
-                android:textSize="14sp" />
+        <Button
+            android:id="@+id/button_save_frame_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:backgroundTint="#FFFFFF"
+            android:paddingTop="20dp"
+            android:stateListAnimator="@null"
+            android:text="Select Images"
+            android:textAllCaps="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="14sp" />
 
-        </TableRow>
-    </TableLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/frame_selection_preview_layout"

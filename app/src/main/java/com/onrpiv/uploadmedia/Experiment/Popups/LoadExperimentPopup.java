@@ -5,9 +5,8 @@ import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.onrpiv.uploadmedia.Experiment.ViewMultipleResultsActivity;
@@ -47,12 +46,12 @@ public class LoadExperimentPopup extends Popup {
         };
 
         // load our table with data
-        TableLayout tableLayout = popupView.findViewById(R.id.load_popup_table);
+        LinearLayout layout = popupView.findViewById(R.id.load_popup_table);
         List<Integer> savedExperimentsNumList = FileIO.getSavedExperimentsDict(context, userName);
 
         if (savedExperimentsNumList.isEmpty()) {
             // No experiments found
-            tableLayout.addView(createTextView("No previous experiments found.\nGo back to start a new experiment."), 0);
+            layout.addView(createTextView("No previous experiments found.\nGo back to start a new experiment."), 0);
         } else {
             // experiments found
             loadBtn.setEnabled(true);
@@ -63,12 +62,12 @@ public class LoadExperimentPopup extends Popup {
 
                 // create a string that contains the piv parameter data
                 String paramString = params.prettyPrintData_small();
-                // create a table row with the param data string and add it to our table
-                tableLayout.addView(createDataRow(i, paramString), 0);
+                // create a row with the param data string and add it to our layout
+                layout.addView(createDataRow(i, paramString), 0);
             }
 
             // get the most recent experiment radio button and set it as the currently selected
-            currentlySelected = (RadioButton) ((TableRow) tableLayout.getChildAt(0)).getChildAt(0);
+            currentlySelected = (RadioButton) ((LinearLayout) layout.getChildAt(0)).getChildAt(0);
             currentlySelected.toggle();
         }
     }
@@ -112,8 +111,8 @@ public class LoadExperimentPopup extends Popup {
         closePopup();
     }
 
-    private TableRow createDataRow(int expNum, String dataString) {
-        TableRow dataRow = createTableRow();
+    private LinearLayout createDataRow(int expNum, String dataString) {
+        LinearLayout dataRow = createRow();
 
         // radio select
         RadioButton radioSelect = createRadioButton(expNum);
@@ -155,13 +154,14 @@ public class LoadExperimentPopup extends Popup {
         return radioButton;
     }
 
-    private TableRow createTableRow() {
-        TableRow newRow = new TableRow(context);
+    private LinearLayout createRow() {
+        LinearLayout newRow = new LinearLayout(context);
         newRow.setGravity(Gravity.CENTER_HORIZONTAL);
 
-        TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
-        layoutParams.width = TableRow.LayoutParams.MATCH_PARENT;
-        layoutParams.height = TableRow.LayoutParams.WRAP_CONTENT;
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
         layoutParams.gravity = Gravity.CENTER;
         newRow.setLayoutParams(layoutParams);
 
