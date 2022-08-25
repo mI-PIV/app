@@ -24,7 +24,6 @@ import java.io.File;
 public class CheckCorrelationActivity extends AppCompatActivity {
     Button startAnimation, stopAnimation;
     ImageView imageAnim;
-    File[] frames;
     AnimationDrawable animation;
 
     @Override
@@ -38,8 +37,6 @@ public class CheckCorrelationActivity extends AppCompatActivity {
         stopAnimation = (Button) findViewById(R.id.stopAnim);
         stopAnimation.setEnabled(false);
 
-        frames = (File[]) getIntent().getExtras().get("frames");
-
         new LightBulb(this, startAnimation).setLightBulbOnClick("Start Animation",
                 "View the animation and consider if you can tell where the particles " +
                         "move between the first and second frame. If you can't correlate the " +
@@ -47,7 +44,7 @@ public class CheckCorrelationActivity extends AppCompatActivity {
                         "do so.", getWindow());
 
         imageAnim =  (ImageView) findViewById(R.id.reviewView);
-        animation = ImageFileAnimator.getAnimator(getResources(), frames);
+        animation = ImageFileAnimator.getAnimator(getResources(), (File[]) getIntent().getExtras().get("frames"));
     }
 
     @Override

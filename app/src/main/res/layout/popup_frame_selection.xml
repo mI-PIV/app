@@ -164,13 +164,7 @@
         android:orientation="horizontal">
 
         <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/frame_selection_preview1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5" />
-
-        <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/frame_selection_preview2"
+            android:id="@+id/frame_selection_anim"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.5" />

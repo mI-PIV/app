@@ -1,7 +1,7 @@
 package com.onrpiv.uploadmedia.Experiment.Popups;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -23,6 +23,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.onrpiv.uploadmedia.R;
+import com.onrpiv.uploadmedia.Utilities.ImageFileAnimator;
 import com.onrpiv.uploadmedia.Utilities.LightBulb;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
 import com.onrpiv.uploadmedia.Utilities.UserInput.BoolIntStructure;
@@ -62,8 +63,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
     final List<String> frameSetsList;
     private int numFramesInSet;
 
-    private final PhotoView preview1;
-    private final PhotoView preview2;
+    private AnimationDrawable currAnim;
+    private final PhotoView previewAnim;
 
     private boolean setIsReady = false;
     private boolean frame1IsReady = false;
@@ -103,7 +104,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     sampleRate = numSelected;
                 } else {
                     frame2Num = frame1Num + numSelected;
-                    updatePreview(preview2, frame2Num);
+                    updateFrameSelection();
                 }
 
                 frame2IsReady = true;
@@ -134,8 +135,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     frame1Slider.setVisibility(View.GONE);
 
                     secondLabel.setText("Sample Rate: ");
-                    preview2.setVisibility(View.GONE);
-                    preview1.setVisibility(View.GONE);
+                    previewAnim.setVisibility(View.GONE);
                 } else {
                     firstFrameTableRow.setVisibility(View.VISIBLE);
                     frame1Slider.setVisibility(View.VISIBLE);
@@ -144,8 +144,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     populateSecondFrameRadioButtons();
 
                     secondLabel.setText("Second Image: ");
-                    preview2.setVisibility(View.VISIBLE);
-                    preview1.setVisibility(View.VISIBLE);
+                    previewAnim.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -190,8 +189,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
         frame1Slider.setMax(1);
 
         //init frame previews
-        preview1 = (PhotoView) findViewById(R.id.frame_selection_preview1);
-        preview2 = (PhotoView) findViewById(R.id.frame_selection_preview2);
+        previewAnim = (PhotoView) findViewById(R.id.frame_selection_anim);
 
         // gather all frame set names
         frameSetsList = PathUtil.getFrameSetNames(context, userName);
@@ -242,8 +240,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 frame1Text.setText("", TextView.BufferType.EDITABLE);
                 frame1Text.setHint("Frame 1 - " + numFramesInSet);
                 frame1Slider.setMax(numFramesInSet);
-                preview1.setImageResource(android.R.color.transparent);
-                preview2.setImageResource(android.R.color.transparent);
+                previewAnim.setImageResource(android.R.color.transparent);
             }
 
             @Override
@@ -276,8 +273,6 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     frame1Slider.setProgress(userInt);
                     frame1Num = userInt;
 
-                    updatePreview(preview1, frame1Num);
-
                     saveButton.setEnabled(checkAllSelections());
                     secondFrameTableRow.setVisibility(View.VISIBLE);
                     frame2RadioGroup.removeAllViews();
@@ -306,20 +301,24 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 frame2RadioGroup.check(newButton.getId());
                 if (!wholeSetProc) {
                     frame2Num = frame1Num + 1;
-                    updatePreview(preview2, frame2Num);
+                    updateFrameSelection();
                 }
             }
         }
     }
 
-    private void updatePreview(PhotoView preview, int frameNum) {
-        File framePath = setFrames.get(frameNum - 1).getAbsoluteFile();
-        if (preview == preview1) {
-            frame1Path = framePath;
-        } else {
-            frame2Path = framePath;
+    private void updateFrameSelection() {
+        // set the new paths
+        frame1Path = setFrames.get(frame1Num - 1).getAbsoluteFile();
+        frame2Path = setFrames.get(frame2Num - 1).getAbsoluteFile();
+
+        // preview animation
+        if (null != currAnim && currAnim.isRunning()) {
+            currAnim.stop();
         }
-        preview.setImageBitmap(BitmapFactory.decodeFile(framePath.getAbsolutePath()));
+        currAnim = ImageFileAnimator.getAnimator(context.getResources(), new File[] {frame1Path, frame2Path});
+        previewAnim.setImageDrawable(currAnim);
+        currAnim.start();
     }
 
     private BoolIntStructure checkFrameSelections(BoolIntStructure input) {
