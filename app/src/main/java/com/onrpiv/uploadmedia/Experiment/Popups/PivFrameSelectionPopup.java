@@ -117,7 +117,6 @@ public class PivFrameSelectionPopup extends AlertDialog {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 wholeSetProc = isChecked;
-                saveButton.setEnabled(checkAllSelections() || isChecked);
 
                 if (isChecked) {
                     AlertDialog.Builder warning = new AlertDialog.Builder(context);
@@ -146,6 +145,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     secondLabel.setText("Second Image: ");
                     previewAnim.setVisibility(View.VISIBLE);
                 }
+                saveButton.setEnabled(checkAllSelections() || isChecked);
             }
         });
 
@@ -309,8 +309,8 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
     private void updateFrameSelection() {
         // set the new paths
-        frame1Path = setFrames.get(frame1Num - 1).getAbsoluteFile();
-        frame2Path = setFrames.get(frame2Num - 1).getAbsoluteFile();
+        frame1Path = setFrames.get(frame1Num).getAbsoluteFile();
+        frame2Path = setFrames.get(frame2Num).getAbsoluteFile();
 
         // preview animation
         if (null != currAnim && currAnim.isRunning()) {
