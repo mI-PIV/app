@@ -178,15 +178,16 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
     @Override
     protected void displayBaseImage(String backgroundCode) {
         Bitmap bmp;
+        String idx = String.format("%04d", currIdx);
         switch (backgroundCode) {
             case BACKGRND_IMG:
                 File pngFile = new File(outputDirectory,
-                        "Base_"+ currIdx + "_" + imgFileToDisplay);
+                        "Base_"+ idx + "_" + imgFileToDisplay);
                 bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
                 break;
             case BACKGRND_SUB:
                 File backsubFile = new File(outputDirectory,
-                        BackgroundSub.SUB1_FILENAME + "_" + currIdx + "_" + imgFileToDisplay);
+                        BackgroundSub.SUB1_FILENAME + "_" + idx + "_" + imgFileToDisplay);
                 bmp = BitmapFactory.decodeFile(backsubFile.getAbsolutePath());
                 break;
             default:

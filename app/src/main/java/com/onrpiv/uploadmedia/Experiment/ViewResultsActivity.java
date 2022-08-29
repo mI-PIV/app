@@ -578,7 +578,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         Bitmap bmp;
         switch (backgroundCode) {
             case BACKGRND_IMG:
-                File pngFile = new File(outputDirectory, "Base_0_" + imgFileToDisplay);
+                File pngFile = new File(outputDirectory, "Base_0000_" + imgFileToDisplay);
                 bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
                 break;
             case BACKGRND_SUB:
