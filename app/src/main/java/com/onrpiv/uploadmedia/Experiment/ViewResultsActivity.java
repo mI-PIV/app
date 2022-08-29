@@ -578,7 +578,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         Bitmap bmp;
         switch (backgroundCode) {
             case BACKGRND_IMG:
-                File pngFile = new File(outputDirectory, "Base_0_" + imgFileToDisplay);
+                File pngFile = new File(outputDirectory, "Base_0000_" + imgFileToDisplay);
                 bmp = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
                 break;
             case BACKGRND_SUB:
@@ -801,7 +801,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         int viewWidth = view.getWidth();
         int viewHeight = view.getHeight();
         // this will always give us the correct bmp dimensions
-        Bitmap bmp = BitmapFactory.decodeFile(new File(outputDirectory, "Base_0_" + imgFileToDisplay).getAbsolutePath());
+        Bitmap bmp = BitmapFactory.decodeFile(new File(outputDirectory, "Base_0000_" + imgFileToDisplay).getAbsolutePath());
         int bitmapHeight = bmp.getHeight();
         int bitmapWidth = bmp.getWidth();
 
