@@ -801,7 +801,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         int viewWidth = view.getWidth();
         int viewHeight = view.getHeight();
         // this will always give us the correct bmp dimensions
-        Bitmap bmp = BitmapFactory.decodeFile(new File(outputDirectory, "Base_0_" + imgFileToDisplay).getAbsolutePath());
+        Bitmap bmp = BitmapFactory.decodeFile(new File(outputDirectory, "Base_0000_" + imgFileToDisplay).getAbsolutePath());
         int bitmapHeight = bmp.getHeight();
         int bitmapWidth = bmp.getWidth();
 
