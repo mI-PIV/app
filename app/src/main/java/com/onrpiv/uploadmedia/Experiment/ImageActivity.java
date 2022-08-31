@@ -100,6 +100,7 @@ public class ImageActivity extends AppCompatActivity {
                 if (null == result) { return; }
 
                 pivParameters = result;
+                pivParameters.setSampleRate(sampleRate);
                 compute.setEnabled(true);
                 parameters.setBackgroundColor(Color.parseColor(greenString));
                 step = 3;
@@ -161,7 +162,6 @@ public class ImageActivity extends AppCompatActivity {
                         wholeSetProcessing = frameSelectionPopup.wholeSetProc;
                         if (wholeSetProcessing) {
                             sampleRate = frameSelectionPopup.sampleRate;
-                            pivParameters.setSampleRate(sampleRate);
                         } else {
                             frame1File = frameSelectionPopup.frame1Path;
                             frame2File = frameSelectionPopup.frame2Path;

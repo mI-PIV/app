@@ -107,6 +107,9 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
 
                 // video creation
                 String tempVidPath = getExternalFilesDir(null).getPath() + "/temp.mp4";
+                // delete if any old videos are deleted
+                PathUtil.deleteRecursive(new File(tempVidPath));
+
                 String input = expFrames + "/%04d.jpg";
                 if (FFmpeg.execute("-framerate " + fps + " -i " + input + " " + tempVidPath) == Config.RETURN_CODE_SUCCESS) {
                     // cleanup results frames
