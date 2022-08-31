@@ -433,8 +433,8 @@ public class PathUtil {
 
     public static boolean isMultipleResult(File experimentDir) {
         if (!experimentDir.isDirectory()) return false;
-        File sp = new File(experimentDir, "singlepass_1.obj");
-        File mp = new File(experimentDir, "multipass_1.obj");
+        File sp = new File(experimentDir, "singlepass_0001.obj");
+        File mp = new File(experimentDir, "multipass_0001.obj");
         return sp.exists() && mp.exists();
     }
 
