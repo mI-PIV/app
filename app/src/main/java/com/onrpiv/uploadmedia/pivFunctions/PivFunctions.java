@@ -136,13 +136,13 @@ public class PivFunctions {
         return new int[]{nCols, nRows};
     }
 
-    public void framesSubtraction(int backgroundSubType, File frameDir, int expIndex) {
+    public void framesSubtraction(int backgroundSubType, File frameDir, int expIndex, ProgressUpdateInterface progress) {
         Mat[] subtractedFrames;
 
         if (backgroundSubType == PivParameters.BACKGROUNDSUB_ALLFRAME) {
-            subtractedFrames = BackgroundSub.allFrameSubtraction(frameDir, frame1, frame2);
+            subtractedFrames = BackgroundSub.allFrameSubtraction(frameDir, frame1, frame2, progress);
         } else if (backgroundSubType == PivParameters.BACKGROUNDSUB_TWOFRAME) {
-            subtractedFrames = BackgroundSub.doubleFrameSubtraction(grayFrame1, grayFrame2);
+            subtractedFrames = BackgroundSub.doubleFrameSubtraction(grayFrame1, grayFrame2, progress);
         } else {
             // if we reach this then something bad happened, keep original gray frames
             return;

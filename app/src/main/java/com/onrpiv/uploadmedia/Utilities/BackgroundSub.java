@@ -26,7 +26,7 @@ public class BackgroundSub {
     SUB1_FILENAME = "BACKSUB1", SUB2_FILENAME = "BACKSUB2",
     FILE_EXTENSION = ".jpg";
 
-    public static Mat[] doubleFrameSubtraction(Mat grayFrame1, Mat grayFrame2) {
+    public static Mat[] doubleFrameSubtraction(Mat grayFrame1, Mat grayFrame2, ProgressUpdateInterface progress) {
         // M. Honkanen, H. Nobach; "Background extraction from double-frame PIV images"; 2005
 
         // subtract
@@ -40,6 +40,10 @@ public class BackgroundSub {
         // all positive values go to frame1 and all negative go to frame2
         Mat frame1New = Mat.zeros(diffMat.size(), grayFrame1.type());
         Mat frame2New = Mat.zeros(diffMat.size(), grayFrame2.type());
+
+        if (null != progress) {
+            progress.setProgressMax(diffMat.rows());
+        }
         for (int row = 0; row < diffMat.rows(); row++) {
             for (int col = 0; col < diffMat.cols(); col++) {
                 double intensity = diffMat.get(row, col)[0];
@@ -48,6 +52,9 @@ public class BackgroundSub {
                 } else if (intensity < 0) {
                     frame2New.put(row, col, -intensity);
                 }
+            }
+            if (null != progress) {
+                progress.updateProgressIteration(row);
             }
         }
 
@@ -59,13 +66,13 @@ public class BackgroundSub {
         return new Mat[] {frame1New, frame2New};
     }
 
-    public static Mat[] allFrameSubtraction(File framesDir, Mat frame1, Mat frame2) {
-        Mat background = getBackground(framesDir);
+    public static Mat[] allFrameSubtraction(File framesDir, Mat frame1, Mat frame2, ProgressUpdateInterface progress) {
+        Mat background = getBackground(framesDir, progress);
         return subtract(background, frame1, frame2);
     }
 
     public static void saveBackground(File framesDir) {
-        Mat background = getBackground(framesDir);
+        Mat background = getBackground(framesDir, null);
         background.release();
     }
 
@@ -87,21 +94,25 @@ public class BackgroundSub {
         return frames;
     }
 
-    private static Mat getBackground(File framesDir) {
+    private static Mat getBackground(File framesDir, ProgressUpdateInterface progress) {
         File background = new File(framesDir, BCKGRND_FILENAME+FILE_EXTENSION);
         if (background.exists()){
             return Imgcodecs.imread(background.getAbsolutePath());
         } else {
             File[] frames = getFramesPaths(framesDir);
-            Mat backgroundMat = calculateBackground(frames, framesDir);
+            Mat backgroundMat = calculateBackground(frames, framesDir, progress);
             Imgcodecs.imwrite(background.getAbsolutePath(), backgroundMat);
             return backgroundMat;
         }
     }
 
-    private static Mat calculateBackground(File[] frames, File framesDir) {
+    private static Mat calculateBackground(File[] frames, File framesDir, ProgressUpdateInterface progress) {
         OpenCVLoader.initDebug();
         BackgroundSubtractor backSub = Video.createBackgroundSubtractorMOG2();
+        if (null != progress) {
+            progress.setProgressMax(frames.length);
+        }
+        int i = 1;
         for (File frame : frames) {
             // read frame
             Mat frameMat = Imgcodecs.imread(frame.getAbsolutePath());
@@ -109,6 +120,11 @@ public class BackgroundSub {
             // apply the frame to the background subtractor
             Mat fg = new Mat();
             backSub.apply(frameMat, fg);
+
+            // update progress
+            if (null != progress) {
+                progress.updateProgressIteration(i++);
+            }
 
             // release the mats
             fg.release();
