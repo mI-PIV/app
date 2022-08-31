@@ -87,7 +87,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private RangeSlider rangeSlider;
     protected ImageView baseImage;
     private ImageView vectorFieldImage, vorticityImage;
-    private Button arrowColor, vorticityColors, solidColor, applyButton, selectColor;
+    private Button arrowColor, vorticityColors, solidColor, selectColor;
 
     // paths
     protected String imgFileToDisplay;
@@ -113,10 +113,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private TextView resultsV;
     private TextView resultsXYConversion;
     private TextView resultsUVConversion;
-    private TableRow resultsXYConversionRow;
-    private TableRow resultsUVConversionRow;
-
-
     private float currentX;
     private float currentY;
 
@@ -173,7 +169,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                 List<Float> vals = rangeSlider.getValues();
                 settings.setVortTransVals_min(Math.min(vals.get(0), vals.get(1)));
                 settings.setVortTransVals_max(Math.max(vals.get(0), vals.get(1)));
-                applyButton.setEnabled(true);
+                applyDisplay();
             }
         });
 
@@ -183,7 +179,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 settings.setArrowScale(progress);
-                applyButton.setEnabled(true);
+                applyDisplay();
             }
 
             @Override
@@ -216,17 +212,14 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         resultsV = findViewById(R.id.resultsV);
         resultsXYConversion = findViewById(R.id.resultsXYConversion);
         resultsUVConversion = findViewById(R.id.resultsUVConversion);
-        resultsXYConversionRow = findViewById(R.id.resultsXYConversionRow);
-        resultsUVConversionRow = findViewById(R.id.resultsUVConversionRow);
+        TableRow resultsXYConversionRow = findViewById(R.id.resultsXYConversionRow);
+        TableRow resultsUVConversionRow = findViewById(R.id.resultsUVConversionRow);
         if (calibrated) {
             resultsUVConversionRow.setVisibility(View.VISIBLE);
             resultsXYConversionRow.setVisibility(View.VISIBLE);
         }
 
         // buttons
-        applyButton = findViewById(R.id.apply);
-        applyButton.setEnabled(false);
-
         arrowColor = findViewById(R.id.vect_color);
         arrowColor.setBackgroundColor(settings.getArrowColor());
 
@@ -271,7 +264,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                         settings.setBackground(BACKGRND_SOLID);
                         backgroundColorPicker.setVisibility(View.VISIBLE);
                 }
-                applyButton.setEnabled(true);
+                applyDisplay();
             }
 
             @Override
@@ -290,7 +283,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 settings.setVecDisplay(isChecked);
-                applyButton.setEnabled(true);
+                applyDisplay();
             }
         });
 
@@ -299,7 +292,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 settings.setVortDisplay(isChecked);
-                applyButton.setEnabled(true);
+                applyDisplay();
             }
         });
 
@@ -320,7 +313,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                         value = VEC_SINGLE;
                 }
                 settings.setVecOption(value);
-                applyButton.setEnabled(true);
+                applyDisplay();
             }
         });
 
@@ -342,7 +335,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         // Defaults
         displayBaseImage(BACKGRND_SOLID);
         displayVectorImage(correlationMaps.get(settings.getVecOption()));
-        applyDisplay(applyButton);
+        applyDisplay();
 
         // popups
 //        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
@@ -395,7 +388,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         settings.vortMapChanged = true;
         settings.selectionChanged = true;
         settings.backgroundChanged = true;
-        applyDisplay(applyButton);
+        applyDisplay();
     }
 
     @Override
@@ -407,7 +400,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         return super.onOptionsItemSelected(item);
     }
 
-    public void applyDisplay(View view) {
+    public void applyDisplay() {
         // Vector Field
         if (settings.vecFieldChanged && settings.getVecDisplay()) {
             displayVectorImage(correlationMaps.get(settings.getVecOption()));
@@ -435,7 +428,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // reset detected changes
         settings.resetBools();
-        applyButton.setEnabled(false);
     }
 
     public void OnClick_ArrowColor(View view) {
@@ -446,7 +438,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             public void setOnFastChooseColorListener(int position, int color) {
                 settings.setArrowColor(color);
                 arrowColor.setBackgroundColor(color);
-                applyButton.setEnabled(true);
+                applyDisplay();
             }
 
             @Override
@@ -467,7 +459,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                     if (colorMap.getDrawable() == color) {
                         settings.setVortColorMap(colorMap);
                         vorticityColors.setBackground(colorMap.getDrawable());
-                        applyButton.setEnabled(true);
+                        applyDisplay();
                         return;
                     }
                 }
@@ -488,7 +480,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             public void setOnFastChooseColorListener(int position, int color) {
                 settings.setBackgroundColor(color);
                 solidColor.setBackgroundColor(color);
-                applyButton.setEnabled(true);
+                applyDisplay();
             }
 
             @Override
@@ -506,7 +498,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             public void setOnFastChooseColorListener(int position, int color) {
                 settings.setSelectColor(color);
                 selectColor.setBackgroundColor(color);
-                applyButton.setEnabled(true);
+                applyDisplay();
             }
 
             @Override
@@ -531,8 +523,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         if (Build.VERSION.SDK_INT >= 29) {
             imageCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-        }
-        else {
+        } else {
             imageCollection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         }
 
@@ -660,8 +651,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
                 // change arrow image to down/up
                 ImageButton arrow = (ImageButton) v;
-                arrow.setImageResource(visible?
-                        R.drawable.drop_down : R.drawable.drop_up);
+                arrow.setImageResource(visible? R.drawable.drop_down : R.drawable.drop_up);
             }
         };
 
