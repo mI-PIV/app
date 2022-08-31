@@ -363,7 +363,9 @@ public class VideoActivity extends AppCompatActivity {
             @Override
             public void run() {
                 while (threadRunning) {
-                    if (mVideoView.isPlaying()) {
+                    if (null == mVideoView) {
+                        threadRunning = false;
+                    } else if (mVideoView.isPlaying()) {
                         if (mVideoView.getCurrentPosition() >= stop) {
                             mVideoView.pause();
                             threadRunning = false;
