@@ -212,7 +212,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         settings.vecFieldChanged = true;
         settings.vortMapChanged = true;
         settings.backgroundChanged = true;
-        applyDisplay(null);
+        applyDisplay();
         frameText.setText(getFrameText(newIdx+1));
     }
 
