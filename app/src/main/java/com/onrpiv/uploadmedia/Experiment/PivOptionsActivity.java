@@ -438,11 +438,9 @@ public class PivOptionsActivity extends AppCompatActivity {
     private int checkBackgroundSelection() {
         if (parameters.getBackgroundSelection() == -1) {
             return R.id.bs_none;
-        }
-        else if (parameters.getBackgroundSelection() == 0) {
+        } else if (parameters.getBackgroundSelection() == 0) {
             return R.id.bs_twoframe;
-        }
-        else {
+        } else {
             return R.id.bs_frameset;
         }
     }
