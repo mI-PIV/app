@@ -21,7 +21,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.onrpiv.uploadmedia.Experiment.Popups.DensityPreviewPopup;
 import com.onrpiv.uploadmedia.Experiment.Popups.PivFrameSelectionPopup;
 import com.onrpiv.uploadmedia.Learn.PIVBasics3;
@@ -162,6 +161,7 @@ public class ImageActivity extends AppCompatActivity {
                         wholeSetProcessing = frameSelectionPopup.wholeSetProc;
                         if (wholeSetProcessing) {
                             sampleRate = frameSelectionPopup.sampleRate;
+                            pivParameters.setSampleRate(sampleRate);
                         } else {
                             frame1File = frameSelectionPopup.frame1Path;
                             frame2File = frameSelectionPopup.frame2Path;
