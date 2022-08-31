@@ -574,7 +574,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                 break;
             case BACKGRND_SUB:
                 File backsubFile = new File(outputDirectory,
-                        BackgroundSub.SUB1_FILENAME + "_" + imgFileToDisplay);
+                        BackgroundSub.SUB1_FILENAME + "_0000_" + imgFileToDisplay);
                 bmp = BitmapFactory.decodeFile(backsubFile.getAbsolutePath());
                 break;
             default:
