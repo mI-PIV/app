@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -15,10 +16,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -67,8 +70,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         onIndexChange(0);
     }
 
-    @Override
-    public void OnClick_SaveImage(View view) {
+    private void saveResultsVideo(int fps) {
         ImageButton saveImageButton = findViewById(R.id.imageSaveButton);
         saveImageButton.setEnabled(false);
         saveImageButton.setBackgroundColor(Color.parseColor("#576674"));
@@ -106,7 +108,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
                 // video creation
                 String tempVidPath = getExternalFilesDir(null).getPath() + "/temp.mp4";
                 String input = expFrames + "/%04d.jpg";
-                if (FFmpeg.execute("-framerate 2 -i " + input + " " + tempVidPath) == Config.RETURN_CODE_SUCCESS) {
+                if (FFmpeg.execute("-framerate " + fps + " -i " + input + " " + tempVidPath) == Config.RETURN_CODE_SUCCESS) {
                     // cleanup results frames
                     PathUtil.deleteRecursive(expFrames);
                     Log.d("VID_CREATE", "Created vid at: " + tempVidPath);
@@ -173,6 +175,39 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
                 }
             }
         });
+    }
+
+    public void OnClick_SaveImage(View view) {
+        LinearLayout base = new LinearLayout(this);
+        base.setOrientation(LinearLayout.HORIZONTAL);
+        base.setGravity(Gravity.CENTER);
+
+        TextView fpsLabel = new TextView(this);
+        fpsLabel.setText("FPS: ");
+
+        EditText fpsInput = new EditText(this);
+        fpsInput.setText("30");
+        fpsInput.setEms(3);
+        fpsInput.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        fpsInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        base.addView(fpsLabel);
+        base.addView(fpsInput);
+
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle("Save Results Video Options")
+                .setView(base)
+                .setMessage("Select desired options to save the result video.")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int fps = Integer.parseInt(String.valueOf(fpsInput.getText()));
+                        saveResultsVideo(fps);
+                    }
+                })
+                .create().show();
     }
 
     @Override
