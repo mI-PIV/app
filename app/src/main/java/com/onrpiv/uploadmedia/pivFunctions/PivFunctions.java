@@ -136,7 +136,7 @@ public class PivFunctions {
         return new int[]{nCols, nRows};
     }
 
-    public void framesSubtraction(int backgroundSubType, File frameDir, int expIndex, ProgressUpdateInterface progress) {
+    public void framesSubtraction(int backgroundSubType, File frameDir, String idxStr, ProgressUpdateInterface progress) {
         Mat[] subtractedFrames;
 
         if (backgroundSubType == PivParameters.BACKGROUNDSUB_ALLFRAME) {
@@ -157,8 +157,8 @@ public class PivFunctions {
         grayFrame2 = subtractedFrames[1];
 
         // save frames for results page
-        saveImage(grayFrame1, BackgroundSub.SUB1_FILENAME + "_" + String.format("%04d", expIndex));
-        saveImage(grayFrame2, BackgroundSub.SUB2_FILENAME + "_" + String.format("%04d", expIndex));
+        saveImage(grayFrame1, BackgroundSub.SUB1_FILENAME + "_" + idxStr);
+        saveImage(grayFrame2, BackgroundSub.SUB2_FILENAME + "_" + idxStr);
     }
 
     public void applyNegativeFilter() {

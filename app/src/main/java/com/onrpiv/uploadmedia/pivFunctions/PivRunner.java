@@ -22,7 +22,7 @@ public class PivRunner implements ProgressUpdateInterface {
     private final PivParameters parameters;
     private final Context context;
     private final String userName;
-    private final int index;
+    private final String idxString;
     private final PivFunctions pivFunctions;
     private final int expNum;
 
@@ -39,7 +39,7 @@ public class PivRunner implements ProgressUpdateInterface {
         this.userName = userName;
         progressUpdate = showProgress? this : null;
         this.showProgress = showProgress;
-        this.index = index;
+        idxString = String.format("%04d", index);
         imageActivity = (Activity) context;
 
         // setup output and piv functions
@@ -67,7 +67,7 @@ public class PivRunner implements ProgressUpdateInterface {
         this.userName = userName;
         progressUpdate = showProgress? this : null;
         this.showProgress = showProgress;
-        this.index = index;
+        idxString = String.format("%04d", index);
 
         // setup output and piv functions
         if (null == expDir) {
@@ -106,7 +106,6 @@ public class PivRunner implements ProgressUpdateInterface {
         }
 
         final HashMap<String, PivResultData> resultData = new HashMap<>();
-        final String idxString = String.format("%04d", index);
 
         //---------------------------------Using Threads--------------------------------------//
         pivRunningThread = new Thread() {
@@ -121,7 +120,7 @@ public class PivRunner implements ProgressUpdateInterface {
                     backgroundSub = true;
                     File framesDir = PathUtil.getFramesNamedDirectory(context, userName,
                             parameters.getFrameSetName());
-                    pivFunctions.framesSubtraction(backgroundSelection, framesDir, index, progressUpdate);
+                    pivFunctions.framesSubtraction(backgroundSelection, framesDir, idxString, progressUpdate);
                 }
 
                 if (parameters.isNegativeFilter()) {
@@ -224,7 +223,7 @@ public class PivRunner implements ProgressUpdateInterface {
                 //// SAVE DATA ////
                 ////////////////////////////////////////////////////////////////////////////////////
                 setMessage("Saving data...");
-                FileIO.writePIVData(resultData, parameters, context, userName, expNum, index);
+                FileIO.writePIVData(resultData, parameters, context, userName, expNum, idxString);
 
                 if (null != pDialog && pDialog.isShowing()) pDialog.dismiss();
             }
