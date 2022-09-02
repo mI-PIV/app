@@ -19,11 +19,11 @@ import org.opencv.video.Video;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Objects;
 
 
 public class BackgroundSub {
-    public final static String BCKGRND_FILENAME = "BACKGROUND",
-    SUB1_FILENAME = "BACKSUB1", SUB2_FILENAME = "BACKSUB2",
+    public final static String BCKGRND_FILENAME = "BACKGROUND", SUB1_FILENAME = "BACKSUB1",
     FILE_EXTENSION = ".jpg";
 
     public static Mat[] doubleFrameSubtraction(Mat grayFrame1, Mat grayFrame2, ProgressUpdateInterface progress) {
@@ -88,18 +88,13 @@ public class BackgroundSub {
                 .setView(backgroundImage);
     }
 
-    private static File[] getFramesPaths(File framesDir) {
-        File[] frames = framesDir.listFiles();
-        Arrays.sort(frames);
-        return frames;
-    }
-
     private static Mat getBackground(File framesDir, ProgressUpdateInterface progress) {
         File background = new File(framesDir, BCKGRND_FILENAME+FILE_EXTENSION);
         if (background.exists()){
             return Imgcodecs.imread(background.getAbsolutePath());
         } else {
-            File[] frames = getFramesPaths(framesDir);
+            File[] frames = framesDir.listFiles();
+            Arrays.sort(Objects.requireNonNull(frames));
             Mat backgroundMat = calculateBackground(frames, framesDir, progress);
             Imgcodecs.imwrite(background.getAbsolutePath(), backgroundMat);
             return backgroundMat;

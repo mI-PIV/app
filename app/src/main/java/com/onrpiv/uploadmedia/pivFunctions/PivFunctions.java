@@ -158,7 +158,6 @@ public class PivFunctions {
 
         // save frames for results page
         saveImage(grayFrame1, BackgroundSub.SUB1_FILENAME + "_" + idxStr);
-        saveImage(grayFrame2, BackgroundSub.SUB2_FILENAME + "_" + idxStr);
     }
 
     public void applyNegativeFilter() {
