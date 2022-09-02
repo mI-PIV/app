@@ -22,13 +22,11 @@ public class FrameExtractor {
                                       final String frameSetName, final String fps, float videoStart,
                                       float videoEnd, final Callable<Void> successCallback,
                                       final boolean backSub){
-        String fileExtn = ".jpg";
-
         // create and retrieve the new frames directory
         final File framesNameDir = PathUtil.getFramesNamedDirectory(context, userName,
                 frameSetName);
 
-        File jpegFile = new File(framesNameDir, "frame%04d" + fileExtn);
+        File jpegFile = new File(framesNameDir, "frame%04d.jpg");
 
         // Callback on frame extraction completion that checks if the directory is empty.
         final Callable<Void> thisCallback = new Callable<Void>() {
