@@ -10,8 +10,6 @@ import com.arthenica.mobileffmpeg.ExecuteCallback;
 import com.arthenica.mobileffmpeg.FFmpeg;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
@@ -26,14 +24,11 @@ public class FrameExtractor {
                                       final boolean backSub){
         String fileExtn = ".jpg";
 
-        String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
-        String filePrefix = "EXTRACT_" + timeStamp + "_";
-
         // create and retrieve the new frames directory
         final File framesNameDir = PathUtil.getFramesNamedDirectory(context, userName,
                 frameSetName);
 
-        File jpegFile = new File(framesNameDir, filePrefix + "%03d" + fileExtn);
+        File jpegFile = new File(framesNameDir, "frame%04d" + fileExtn);
 
         // Callback on frame extraction completion that checks if the directory is empty.
         final Callable<Void> thisCallback = new Callable<Void>() {
