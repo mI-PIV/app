@@ -126,6 +126,9 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private int rows;
     private int cols;
 
+    // utility
+    private static boolean popupShown = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -341,7 +344,10 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 //        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
 //        double maxDisplacement = displayIntent.getDoubleExtra("max-displacement", 0);
 //        popups(nMaxLower, maxDisplacement);
-        saveLocationPopup();
+        if (!popupShown) {
+            popupShown = true;
+            saveLocationPopup();
+        }
     }
 
     @Override
