@@ -98,7 +98,6 @@ public class ImageActivity extends AppCompatActivity {
             @Override
             public void onActivityResult(PivParameters result) {
                 if (null == result) { return; }
-
                 pivParameters = result;
                 pivParameters.setSampleRate(sampleRate);
                 compute.setEnabled(true);
@@ -119,6 +118,7 @@ public class ImageActivity extends AppCompatActivity {
         // Get the transferred data from source activity.
         Intent userNameIntent = getIntent();
         userName = userNameIntent.getStringExtra("UserName");
+        frameSetName = userNameIntent.getStringExtra("frameset");
 
         OpenCVLoader.initDebug();
 
@@ -150,6 +150,9 @@ public class ImageActivity extends AppCompatActivity {
     public void onClick_MultipleImages(View view) {
         final PivFrameSelectionPopup frameSelectionPopup = new PivFrameSelectionPopup(ImageActivity.this,
                 userName);
+        if (null != frameSetName) {
+            frameSelectionPopup.setFrameSetSpinner(frameSetName);
+        }
 
         // create listener for frame selection save button
         View.OnClickListener saveListener = new View.OnClickListener() {

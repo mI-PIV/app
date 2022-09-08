@@ -311,6 +311,7 @@ public class VideoActivity extends AppCompatActivity {
                         cleanup();
                         Intent imageActivityIntent = new Intent(VideoActivity.this, ImageActivity.class);
                         imageActivityIntent.putExtra("UserName", userName);
+                        imageActivityIntent.putExtra("frameset", frameSetName);
                         startActivity(imageActivityIntent);
                     }
                 }).setNegativeButton("Continue extracting", null).create().show();

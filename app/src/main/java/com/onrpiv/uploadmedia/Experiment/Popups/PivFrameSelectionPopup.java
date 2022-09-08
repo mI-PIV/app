@@ -214,6 +214,10 @@ public class PivFrameSelectionPopup extends AlertDialog {
         setTextListeners();
     }
 
+    public void setFrameSetSpinner(String frameSetName) {
+        frameSetSpinner.setSelection(frameSetsList.indexOf(frameSetName));
+    }
+
     public void setSaveListener(View.OnClickListener saveListener) {
         saveButton.setOnClickListener(saveListener);
     }
