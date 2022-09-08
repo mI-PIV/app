@@ -204,7 +204,6 @@ public class ResultSettings {
     public Bundle saveInstanceBundle(Bundle outState) {
         outState.putBoolean("vecDisplay_rs", vecDisplay);
         outState.putString("vecOption_rs", vecOption);
-        outState.putInt("arrowColor_rs", arrowDrawOptions.color);
         outState.putBoolean("vortDisplay_rs", vortDisplay);
         outState.putInt("vortTransVals_min_rs", vortTransVals_min);
         outState.putInt("vortTransVals_max_rs", vortTransVals_max);
@@ -213,6 +212,7 @@ public class ResultSettings {
         outState.putInt("selectColor_rs", selectColor);
 
         outState = vortColorMap.saveInstanceBundle(outState);
+        outState = arrowDrawOptions.saveInstanceBundle(outState);
 
         return outState;
     }
@@ -225,7 +225,6 @@ public class ResultSettings {
     public ResultSettings loadInstanceBundle(Bundle inState) {
         vecDisplay = inState.getBoolean("vecDisplay_rs");
         vecOption = inState.getString("vecOption_rs");
-        arrowDrawOptions = new ArrowDrawOptions(inState.getInt("arrowColor_rs"));
         vortDisplay = inState.getBoolean("vortDisplay_rs");
         vortTransVals_min = inState.getInt("vortTransVals_min_rs");
         vortTransVals_max = inState.getInt("vortTransVals_max_rs");
@@ -233,6 +232,7 @@ public class ResultSettings {
         backgroundColor = inState.getInt("backgroundColor_rs");
         selectColor = inState.getInt("selectColor_rs");
         vortColorMap = new ColorMap().loadInstanceBundle(inState, context);
+        arrowDrawOptions = new ArrowDrawOptions().loadInstanceBundle(inState);
         return this;
     }
 }

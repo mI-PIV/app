@@ -2,6 +2,7 @@ package com.onrpiv.uploadmedia.Utilities;
 
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.util.Size;
 
 public class ArrowDrawOptions
@@ -39,6 +40,24 @@ public class ArrowDrawOptions
     public ArrowDrawOptions(int color, double scale) {
         this.color = color;
         this.scale = lengthRatio * getScreenSize().getWidth() * scale;
+    }
+
+    public Bundle saveInstanceBundle(Bundle outState) {
+        outState.putInt("color", color);
+        outState.putInt("lineType", lineType);
+        outState.putInt("thickness", thickness);
+        outState.putDouble("tipLength", tipLength);
+        outState.putDouble("scale", scale);
+        return outState;
+    }
+
+    public ArrowDrawOptions loadInstanceBundle(Bundle inState) {
+        color = inState.getInt("color");
+        lineType = inState.getInt("lineType");
+        thickness = inState.getInt("thickness");
+        tipLength = inState.getDouble("tipLength");
+        scale = inState.getDouble("scale");
+        return this;
     }
 
     private static Size getScreenSize() {
