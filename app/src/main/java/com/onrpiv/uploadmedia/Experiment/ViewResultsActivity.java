@@ -96,6 +96,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     // maps and settings
     protected HashMap<String, PivResultData> correlationMaps;
     private HashMap<View, LinearLayout> sectionMaps;
+    private HashMap<String, Integer> postProcMaps;
     private ArrayList<ColorMap> colorMaps;
     protected ResultSettings settings;
     protected int experimentNumber;
@@ -126,15 +127,28 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private int rows;
     private int cols;
 
-    // utility
-    private static boolean popupShown = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Intent displayIntent = getIntent();
         setContentView(R.layout.display_result_layout);
+
+        // Setup images and paths
+        String userName = displayIntent.getStringExtra(PivResultData.USERNAME);
+        int currentExpDir = PersistedData.getTotalExperiments(this, userName);
+        imgFileToDisplay = PathUtil.getExperimentImageFileSuffix(currentExpDir);
+        outputDirectory = PathUtil.getExperimentNumberedDirectory(this, userName, currentExpDir);
+
+        // resumed
+        if (null != savedInstanceState) {
+            onRestoreInstanceState(savedInstanceState);
+        } else {  //brand new
+            settings = new ResultSettings(this);
+            settings.setCalibrated(calibrated);
+            saveLocationPopup();
+        }
 
         OpenCVLoader.initDebug();
 
@@ -150,9 +164,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         // load our maps and settings
         correlationMaps = loadCorrelationMaps(replaced);
         colorMaps = ColorMap.loadColorMaps(this);
-        settings = new ResultSettings(this);
-        settings.setCalibrated(calibrated);
         experimentNumber = (int) extras.get(PivResultData.EXP_NUM);
+        postProcMaps = loadPostProcMaps();
 
         // load params section
         TextView paramsText = findViewById(R.id.paramsText);
@@ -177,7 +190,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         });
 
         SeekBar arrowScale = findViewById(R.id.arrow_scale);
-        settings.setArrowScale(arrowScale.getProgress());
+        arrowScale.setProgress((int)settings.getArrowScale());
         arrowScale.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -248,6 +261,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 R.layout.support_simple_spinner_dropdown_item, bgOptionsList);
         backgroundSpinner.setAdapter(adapter);
+        backgroundSpinner.setSelection(bgOptionsList.indexOf(settings.getBackgroundPretty()));
         backgroundSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -291,6 +305,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         });
 
         SwitchCompat displayVorticity = findViewById(R.id.vort_display);
+        displayVorticity.setChecked(settings.getVortDisplay());
         displayVorticity.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -301,6 +316,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // radio groups
         RadioGroup vectorRadioGroup = findViewById(R.id.postp_rgroup);
+        vectorRadioGroup.check(postProcMaps.get(settings.getVecOption()));
         vectorRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -329,33 +345,25 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Setup images and paths
-        String userName = displayIntent.getStringExtra(PivResultData.USERNAME);
-        int currentExpDir = PersistedData.getTotalExperiments(this, userName);
-        imgFileToDisplay = PathUtil.getExperimentImageFileSuffix(currentExpDir);
-        outputDirectory = PathUtil.getExperimentNumberedDirectory(this, userName, currentExpDir);
-
         // Defaults
         displayBaseImage(BACKGRND_SOLID);
         displayVectorImage(correlationMaps.get(settings.getVecOption()));
-        applyDisplay();
 
         // popups
 //        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
 //        double maxDisplacement = displayIntent.getDoubleExtra("max-displacement", 0);
 //        popups(nMaxLower, maxDisplacement);
-        if (!popupShown) {
-            popupShown = true;
-            saveLocationPopup();
-        }
+
+        // reload the display
+        settings.vecFieldChanged = true;
+        settings.vortMapChanged = true;
+        settings.selectionChanged = true;
+        settings.backgroundChanged = true;
+        applyDisplay();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        // paths
-        outState.putString("imgFileToDisplay", imgFileToDisplay);
-        outState.putString("outputDirectory", outputDirectory.getAbsolutePath());
-
         // maps and settings
         outState = settings.saveInstanceBundle(outState);
         outState.putInt("imageCounter", imageCounter);
@@ -373,10 +381,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        // paths
-        imgFileToDisplay = savedInstanceState.getString("imgFileToDisplay");
-        outputDirectory = new File(savedInstanceState.getString("outputDirectory"));
-
         // maps and settings
         settings = new ResultSettings(this).loadInstanceBundle(savedInstanceState);
         imageCounter = savedInstanceState.getInt("imageCounter");
@@ -388,13 +392,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         // from image activity
         rows = savedInstanceState.getInt("rows");
         cols = savedInstanceState.getInt("cols");
-
-        // reload the display
-        settings.vecFieldChanged = true;
-        settings.vortMapChanged = true;
-        settings.selectionChanged = true;
-        settings.backgroundChanged = true;
-        applyDisplay();
     }
 
     @Override
@@ -631,6 +628,14 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         result.put(VEC_MULTI, multiPass);
         if (replaced)
             result.put(VEC_REPLACED, replacedPass);
+        return result;
+    }
+
+    private HashMap<String, Integer> loadPostProcMaps() {
+        HashMap<String, Integer> result = new HashMap<>();
+        result.put(VEC_MULTI, R.id.multipass);
+        result.put(VEC_REPLACED, R.id.replace);
+        result.put(VEC_SINGLE, R.id.singlepass);
         return result;
     }
 

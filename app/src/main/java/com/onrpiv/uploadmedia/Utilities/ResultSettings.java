@@ -157,6 +157,17 @@ public class ResultSettings {
         return background;
     }
 
+    public String getBackgroundPretty() {
+        switch (background) {
+            case BACKGRND_IMG:
+                return BCKGRND_FRAME_PRETTY;
+            case BACKGRND_SUB:
+                return BCKGRND_SUB_PRETTY;
+            default:
+                return BCKGRND_SOLID_PRETTY;
+        }
+    }
+
     public void setBackground(String background) {
         this.background = background;
         backgroundChanged = true;

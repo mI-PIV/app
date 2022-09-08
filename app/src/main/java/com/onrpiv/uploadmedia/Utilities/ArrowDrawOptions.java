@@ -10,18 +10,16 @@ public class ArrowDrawOptions
     public int lineType = 8;
     public int thickness = 2;
     public double tipLength = 0.2d;
-    public double scale;
+    public double scale = 1d;
     public int color = Color.RED;
 
     private final double lengthRatio = 0.0025;
 
-    public ArrowDrawOptions()
-    {
-        scale = lengthRatio * getScreenSize().getWidth();
+    public ArrowDrawOptions() {
+        // EMPTY
     }
 
-    public ArrowDrawOptions(int lineType, int thickness, double tipLength, double scale)
-    {
+    public ArrowDrawOptions(int lineType, int thickness, double tipLength, double scale) {
         this.lineType = lineType;
         this.thickness = thickness;
         this.tipLength = tipLength;
