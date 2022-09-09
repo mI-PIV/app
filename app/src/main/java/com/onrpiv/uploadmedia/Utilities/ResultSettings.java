@@ -8,6 +8,7 @@ import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class ResultSettings {
     public final static String
@@ -33,6 +34,7 @@ public class ResultSettings {
     private String vecOption = VEC_REPLACED;
 
     private ArrowDrawOptions arrowDrawOptions;
+    private HashMap<Integer, Boolean> dropDownVisMap;
 
     private boolean calibrated = false;
 
@@ -51,6 +53,7 @@ public class ResultSettings {
         this.context = context;
         vortColorMap = vortColorMap.getColorMap("redblue", context);
         arrowDrawOptions = new ArrowDrawOptions();
+        dropDownVisMap = new HashMap<>();
     }
 
     public static int[] getColors() {
@@ -131,6 +134,14 @@ public class ResultSettings {
         vecFieldChanged = true;
     }
 
+    public boolean getDropDownVisible(int id) {
+        return dropDownVisMap.getOrDefault(id, false);
+    }
+
+    public void setDropDownVisible(int id, boolean visible) {
+        dropDownVisMap.put(id, visible);
+    }
+
     public boolean getVortDisplay() {
         return vortDisplay;
     }
@@ -155,6 +166,17 @@ public class ResultSettings {
 
     public String getBackground() {
         return background;
+    }
+
+    public String getBackgroundPretty() {
+        switch (background) {
+            case BACKGRND_IMG:
+                return BCKGRND_FRAME_PRETTY;
+            case BACKGRND_SUB:
+                return BCKGRND_SUB_PRETTY;
+            default:
+                return BCKGRND_SOLID_PRETTY;
+        }
     }
 
     public void setBackground(String background) {
@@ -204,15 +226,16 @@ public class ResultSettings {
     public Bundle saveInstanceBundle(Bundle outState) {
         outState.putBoolean("vecDisplay_rs", vecDisplay);
         outState.putString("vecOption_rs", vecOption);
-        outState.putInt("arrowColor_rs", arrowDrawOptions.color);
         outState.putBoolean("vortDisplay_rs", vortDisplay);
         outState.putInt("vortTransVals_min_rs", vortTransVals_min);
         outState.putInt("vortTransVals_max_rs", vortTransVals_max);
         outState.putString("background_rs", background);
         outState.putInt("backgroundColor_rs", backgroundColor);
         outState.putInt("selectColor_rs", selectColor);
+        outState.putSerializable("dropDowns", dropDownVisMap);
 
         outState = vortColorMap.saveInstanceBundle(outState);
+        outState = arrowDrawOptions.saveInstanceBundle(outState);
 
         return outState;
     }
@@ -225,14 +248,16 @@ public class ResultSettings {
     public ResultSettings loadInstanceBundle(Bundle inState) {
         vecDisplay = inState.getBoolean("vecDisplay_rs");
         vecOption = inState.getString("vecOption_rs");
-        arrowDrawOptions = new ArrowDrawOptions(inState.getInt("arrowColor_rs"));
         vortDisplay = inState.getBoolean("vortDisplay_rs");
         vortTransVals_min = inState.getInt("vortTransVals_min_rs");
         vortTransVals_max = inState.getInt("vortTransVals_max_rs");
         background = inState.getString("background_rs");
         backgroundColor = inState.getInt("backgroundColor_rs");
         selectColor = inState.getInt("selectColor_rs");
+        dropDownVisMap = (HashMap<Integer, Boolean>) inState.getSerializable("dropDowns");
+
         vortColorMap = new ColorMap().loadInstanceBundle(inState, context);
+        arrowDrawOptions = new ArrowDrawOptions().loadInstanceBundle(inState);
         return this;
     }
 }

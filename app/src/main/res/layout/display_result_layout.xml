@@ -92,7 +92,7 @@
                     android:layout_gravity="right"
                     android:backgroundTint="#4CAF50"
                     android:scaleType="center"
-                    app:srcCompat="@drawable/drop_up" />
+                    app:srcCompat="@drawable/drop_down" />
             </LinearLayout>
 
             <View
@@ -106,7 +106,8 @@
                 android:layout_height="match_parent"
                 android:background="#404CAF50"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <TextView
                     android:layout_width="match_parent"

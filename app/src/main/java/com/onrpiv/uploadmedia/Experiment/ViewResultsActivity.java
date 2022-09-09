@@ -71,6 +71,7 @@ import org.opencv.android.OpenCVLoader;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -95,7 +96,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
     // maps and settings
     protected HashMap<String, PivResultData> correlationMaps;
-    private HashMap<View, LinearLayout> sectionMaps;
+    private HashMap<Integer, LinearLayout> sectionMaps;
     private ArrayList<ColorMap> colorMaps;
     protected ResultSettings settings;
     protected int experimentNumber;
@@ -130,8 +131,25 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Intent displayIntent = getIntent();
         setContentView(R.layout.display_result_layout);
+
+        // Setup images and paths
+        String userName = displayIntent.getStringExtra(PivResultData.USERNAME);
+        int currentExpDir = PersistedData.getTotalExperiments(this, userName);
+        imgFileToDisplay = PathUtil.getExperimentImageFileSuffix(currentExpDir);
+        outputDirectory = PathUtil.getExperimentNumberedDirectory(this, userName, currentExpDir);
+
+        // resumed
+        if (null != savedInstanceState) {
+            onRestoreInstanceState(savedInstanceState);
+        } else {  //brand new
+            settings = new ResultSettings(this);
+            settings.setCalibrated(calibrated);
+            settings.setDropDownVisible(R.id.vecDropDown, true);
+            saveLocationPopup();
+        }
 
         OpenCVLoader.initDebug();
 
@@ -147,8 +165,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         // load our maps and settings
         correlationMaps = loadCorrelationMaps(replaced);
         colorMaps = ColorMap.loadColorMaps(this);
-        settings = new ResultSettings(this);
-        settings.setCalibrated(calibrated);
         experimentNumber = (int) extras.get(PivResultData.EXP_NUM);
 
         // load params section
@@ -174,7 +190,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         });
 
         SeekBar arrowScale = findViewById(R.id.arrow_scale);
-        settings.setArrowScale(arrowScale.getProgress());
+        arrowScale.setProgress((int)settings.getArrowScale());
         arrowScale.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -245,6 +261,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 R.layout.support_simple_spinner_dropdown_item, bgOptionsList);
         backgroundSpinner.setAdapter(adapter);
+        backgroundSpinner.setSelection(bgOptionsList.indexOf(settings.getBackgroundPretty()));
         backgroundSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -274,7 +291,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         });
 
         // drop-downs
-        sectionMaps = loadDropDownMaps();
+        loadDropDownMaps();
 
         // switches
         SwitchCompat displayVectors = findViewById(R.id.vec_display);
@@ -288,6 +305,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         });
 
         SwitchCompat displayVorticity = findViewById(R.id.vort_display);
+        displayVorticity.setChecked(settings.getVortDisplay());
         displayVorticity.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -298,6 +316,10 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // radio groups
         RadioGroup vectorRadioGroup = findViewById(R.id.postp_rgroup);
+        int checkedId = settings.getVecOption().equals(VEC_MULTI)? R.id.multipass
+                : settings.getVecOption().equals(VEC_REPLACED)? R.id.replace
+                : R.id.singlepass;
+        vectorRadioGroup.check(checkedId);
         vectorRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -326,30 +348,25 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Setup images and paths
-        String userName = displayIntent.getStringExtra(PivResultData.USERNAME);
-        int currentExpDir = PersistedData.getTotalExperiments(this, userName);
-        imgFileToDisplay = PathUtil.getExperimentImageFileSuffix(currentExpDir);
-        outputDirectory = PathUtil.getExperimentNumberedDirectory(this, userName, currentExpDir);
-
         // Defaults
         displayBaseImage(BACKGRND_SOLID);
         displayVectorImage(correlationMaps.get(settings.getVecOption()));
-        applyDisplay();
 
         // popups
 //        double nMaxLower = displayIntent.getDoubleExtra("n-max-lower", 0);
 //        double maxDisplacement = displayIntent.getDoubleExtra("max-displacement", 0);
 //        popups(nMaxLower, maxDisplacement);
-        saveLocationPopup();
+
+        // reload the display
+        settings.vecFieldChanged = true;
+        settings.vortMapChanged = true;
+        settings.selectionChanged = true;
+        settings.backgroundChanged = true;
+        applyDisplay();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        // paths
-        outState.putString("imgFileToDisplay", imgFileToDisplay);
-        outState.putString("outputDirectory", outputDirectory.getAbsolutePath());
-
         // maps and settings
         outState = settings.saveInstanceBundle(outState);
         outState.putInt("imageCounter", imageCounter);
@@ -367,10 +384,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        // paths
-        imgFileToDisplay = savedInstanceState.getString("imgFileToDisplay");
-        outputDirectory = new File(savedInstanceState.getString("outputDirectory"));
-
         // maps and settings
         settings = new ResultSettings(this).loadInstanceBundle(savedInstanceState);
         imageCounter = savedInstanceState.getInt("imageCounter");
@@ -382,13 +395,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         // from image activity
         rows = savedInstanceState.getInt("rows");
         cols = savedInstanceState.getInt("cols");
-
-        // reload the display
-        settings.vecFieldChanged = true;
-        settings.vortMapChanged = true;
-        settings.selectionChanged = true;
-        settings.backgroundChanged = true;
-        applyDisplay();
     }
 
     @Override
@@ -628,8 +634,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         return result;
     }
 
-    private HashMap<View, LinearLayout> loadDropDownMaps() {
-        HashMap<View, LinearLayout> dropDownMap = new HashMap<>();
+    private void loadDropDownMaps() {
+        sectionMaps = new HashMap<>();
         ImageButton vectDropDown = findViewById(R.id.vecDropDown);
         ImageButton postpDropDown = findViewById(R.id.postpDropDown);
         ImageButton vortDropDown = findViewById(R.id.vortDropDown);
@@ -641,13 +647,15 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             @Override
             public void onClick(View v) {
                 // make section layout visible/gone
-                LinearLayout sectionLayout = sectionMaps.get(v);
+                LinearLayout sectionLayout = sectionMaps.getOrDefault(v.getId(), null);
 
                 if (null == sectionLayout)
                     return;
 
+                // switch visibility
                 boolean visible = sectionLayout.getVisibility() == View.VISIBLE;
                 sectionLayout.setVisibility(visible? View.GONE : View.VISIBLE);
+                settings.setDropDownVisible(v.getId(), !visible);
 
                 // change arrow image to down/up
                 ImageButton arrow = (ImageButton) v;
@@ -662,13 +670,22 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         infoDropDown.setOnClickListener(dropDownListener);
         paramsDropDown.setOnClickListener(dropDownListener);
 
-        dropDownMap.put((View) findViewById(R.id.vecDropDown), (LinearLayout)findViewById(R.id.vecFieldLayout));
-        dropDownMap.put((View) findViewById(R.id.postpDropDown), (LinearLayout)findViewById(R.id.postpLayout));
-        dropDownMap.put((View) findViewById(R.id.vortDropDown), (LinearLayout)findViewById(R.id.vortLayout));
-        dropDownMap.put((View) findViewById(R.id.backgroundDropDown), (LinearLayout)findViewById(R.id.backgroundLayout));
-        dropDownMap.put((View) findViewById(R.id.infoDropDown), (LinearLayout)findViewById(R.id.infoSection));
-        dropDownMap.put((View) findViewById(R.id.paramsDropDown), (LinearLayout) findViewById(R.id.paramsSection));
-        return dropDownMap;
+        sectionMaps.put(vectDropDown.getId(), (LinearLayout)findViewById(R.id.vecFieldLayout));
+        sectionMaps.put(postpDropDown.getId(), (LinearLayout)findViewById(R.id.postpLayout));
+        sectionMaps.put(vortDropDown.getId(), (LinearLayout)findViewById(R.id.vortLayout));
+        sectionMaps.put(backgroundDropDown.getId(), (LinearLayout)findViewById(R.id.backgroundLayout));
+        sectionMaps.put(infoDropDown.getId(), (LinearLayout)findViewById(R.id.infoSection));
+        sectionMaps.put(paramsDropDown.getId(), (LinearLayout) findViewById(R.id.paramsSection));
+
+        // if the dropdowns are already 'visible' (aka dropped down) then we drop them down on resume
+        List<ImageButton> dropdowns = new ArrayList<>(Arrays.asList(
+                vectDropDown, postpDropDown, vortDropDown, backgroundDropDown, infoDropDown, paramsDropDown
+        ));
+        for (ImageButton dd : dropdowns) {
+            if (settings.getDropDownVisible(dd.getId())) {
+                dd.callOnClick();
+            }
+        }
     }
 
     private void saveLocationPopup() {
