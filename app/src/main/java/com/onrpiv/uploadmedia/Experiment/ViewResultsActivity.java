@@ -71,6 +71,7 @@ import org.opencv.android.OpenCVLoader;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -95,8 +96,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
     // maps and settings
     protected HashMap<String, PivResultData> correlationMaps;
-    private HashMap<View, LinearLayout> sectionMaps;
-    private HashMap<String, Integer> postProcMaps;
+    private HashMap<Integer, LinearLayout> sectionMaps;
     private ArrayList<ColorMap> colorMaps;
     protected ResultSettings settings;
     protected int experimentNumber;
@@ -147,6 +147,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         } else {  //brand new
             settings = new ResultSettings(this);
             settings.setCalibrated(calibrated);
+            settings.setDropDownVisible(R.id.vecDropDown, true);
             saveLocationPopup();
         }
 
@@ -165,7 +166,6 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         correlationMaps = loadCorrelationMaps(replaced);
         colorMaps = ColorMap.loadColorMaps(this);
         experimentNumber = (int) extras.get(PivResultData.EXP_NUM);
-        postProcMaps = loadPostProcMaps();
 
         // load params section
         TextView paramsText = findViewById(R.id.paramsText);
@@ -291,7 +291,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         });
 
         // drop-downs
-        sectionMaps = loadDropDownMaps();
+        loadDropDownMaps();
 
         // switches
         SwitchCompat displayVectors = findViewById(R.id.vec_display);
@@ -316,7 +316,10 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // radio groups
         RadioGroup vectorRadioGroup = findViewById(R.id.postp_rgroup);
-        vectorRadioGroup.check(postProcMaps.get(settings.getVecOption()));
+        int checkedId = settings.getVecOption().equals(VEC_MULTI)? R.id.multipass
+                : settings.getVecOption().equals(VEC_REPLACED)? R.id.replace
+                : R.id.singlepass;
+        vectorRadioGroup.check(checkedId);
         vectorRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -631,16 +634,8 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         return result;
     }
 
-    private HashMap<String, Integer> loadPostProcMaps() {
-        HashMap<String, Integer> result = new HashMap<>();
-        result.put(VEC_MULTI, R.id.multipass);
-        result.put(VEC_REPLACED, R.id.replace);
-        result.put(VEC_SINGLE, R.id.singlepass);
-        return result;
-    }
-
-    private HashMap<View, LinearLayout> loadDropDownMaps() {
-        HashMap<View, LinearLayout> dropDownMap = new HashMap<>();
+    private void loadDropDownMaps() {
+        sectionMaps = new HashMap<>();
         ImageButton vectDropDown = findViewById(R.id.vecDropDown);
         ImageButton postpDropDown = findViewById(R.id.postpDropDown);
         ImageButton vortDropDown = findViewById(R.id.vortDropDown);
@@ -652,13 +647,15 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             @Override
             public void onClick(View v) {
                 // make section layout visible/gone
-                LinearLayout sectionLayout = sectionMaps.get(v);
+                LinearLayout sectionLayout = sectionMaps.getOrDefault(v.getId(), null);
 
                 if (null == sectionLayout)
                     return;
 
+                // switch visibility
                 boolean visible = sectionLayout.getVisibility() == View.VISIBLE;
                 sectionLayout.setVisibility(visible? View.GONE : View.VISIBLE);
+                settings.setDropDownVisible(v.getId(), !visible);
 
                 // change arrow image to down/up
                 ImageButton arrow = (ImageButton) v;
@@ -673,13 +670,22 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         infoDropDown.setOnClickListener(dropDownListener);
         paramsDropDown.setOnClickListener(dropDownListener);
 
-        dropDownMap.put((View) findViewById(R.id.vecDropDown), (LinearLayout)findViewById(R.id.vecFieldLayout));
-        dropDownMap.put((View) findViewById(R.id.postpDropDown), (LinearLayout)findViewById(R.id.postpLayout));
-        dropDownMap.put((View) findViewById(R.id.vortDropDown), (LinearLayout)findViewById(R.id.vortLayout));
-        dropDownMap.put((View) findViewById(R.id.backgroundDropDown), (LinearLayout)findViewById(R.id.backgroundLayout));
-        dropDownMap.put((View) findViewById(R.id.infoDropDown), (LinearLayout)findViewById(R.id.infoSection));
-        dropDownMap.put((View) findViewById(R.id.paramsDropDown), (LinearLayout) findViewById(R.id.paramsSection));
-        return dropDownMap;
+        sectionMaps.put(vectDropDown.getId(), (LinearLayout)findViewById(R.id.vecFieldLayout));
+        sectionMaps.put(postpDropDown.getId(), (LinearLayout)findViewById(R.id.postpLayout));
+        sectionMaps.put(vortDropDown.getId(), (LinearLayout)findViewById(R.id.vortLayout));
+        sectionMaps.put(backgroundDropDown.getId(), (LinearLayout)findViewById(R.id.backgroundLayout));
+        sectionMaps.put(infoDropDown.getId(), (LinearLayout)findViewById(R.id.infoSection));
+        sectionMaps.put(paramsDropDown.getId(), (LinearLayout) findViewById(R.id.paramsSection));
+
+        // if the dropdowns are already 'visible' (aka dropped down) then we drop them down on resume
+        List<ImageButton> dropdowns = new ArrayList<>(Arrays.asList(
+                vectDropDown, postpDropDown, vortDropDown, backgroundDropDown, infoDropDown, paramsDropDown
+        ));
+        for (ImageButton dd : dropdowns) {
+            if (settings.getDropDownVisible(dd.getId())) {
+                dd.callOnClick();
+            }
+        }
     }
 
     private void saveLocationPopup() {
