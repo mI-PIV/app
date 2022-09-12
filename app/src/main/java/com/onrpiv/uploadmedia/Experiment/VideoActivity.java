@@ -62,7 +62,7 @@ public class VideoActivity extends AppCompatActivity {
     protected Uri videoUri;
     protected String userName;
     protected String frameSetName;
-    private String fps = "20";
+    private String fps = "30";
     private float vidStart = 0f;
     private float vidEnd = 1f;
 
@@ -184,6 +184,12 @@ public class VideoActivity extends AppCompatActivity {
         });
 
         mVideoView = (VideoView) findViewById(R.id.videoview);
+        mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                threadRunning = false;
+            }
+        });
         mBufferingTextView = (TextView) findViewById(R.id.buffering_textview);
 
         if (savedInstanceState != null) {
@@ -424,12 +430,9 @@ public class VideoActivity extends AppCompatActivity {
         }
     }
 
-    private void cleanup() {
+    protected void cleanup() {
         stopPlaybackThread();
         mVideoView.stopPlayback();
-        mVideoView.clearAnimation();
-        mVideoView.suspend();
-        mVideoView.setVideoURI(null);
     }
 
     @Override
