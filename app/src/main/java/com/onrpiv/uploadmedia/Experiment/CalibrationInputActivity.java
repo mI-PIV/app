@@ -153,11 +153,14 @@ public class CalibrationInputActivity extends FragmentActivity implements Positi
             @Override
             public void afterTextChanged(Editable editable) {
                 String input = editable.toString();
-                if (input.startsWith("."))
+                if (input.startsWith(".")) {
                     input = "0" + input;
-                measureInput = Double.parseDouble(input);
-                measureInputted = true;
-                calibrateButton.setEnabled(checkInputs());
+                }
+                if (!input.isEmpty()) {
+                    measureInput = Double.parseDouble(input);
+                    measureInputted = true;
+                    calibrateButton.setEnabled(checkInputs());
+                }
             }
         });
     }
