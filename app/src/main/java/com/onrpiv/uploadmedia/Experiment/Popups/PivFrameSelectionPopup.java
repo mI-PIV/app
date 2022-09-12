@@ -101,6 +101,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 int numSelected = Integer.parseInt(rawText.substring(rawText.length() - 1));
 
                 if (wholeSetProc) {
+                    frame1IsReady = true;
                     sampleRate = numSelected;
                 } else {
                     frame2Num = frame1Num + numSelected;
