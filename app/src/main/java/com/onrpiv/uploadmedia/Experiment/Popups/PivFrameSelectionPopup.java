@@ -101,6 +101,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 int numSelected = Integer.parseInt(rawText.substring(rawText.length() - 1));
 
                 if (wholeSetProc) {
+                    frame1IsReady = true;
                     sampleRate = numSelected;
                 } else {
                     frame2Num = frame1Num + numSelected;
@@ -275,7 +276,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
                     userInput = checkFrameSelections(userInput);
                     int userInt = userInput.getInt();
                     frame1Slider.setProgress(userInt);
-                    frame1Num = userInt;
+                    frame1Num = userInt - 1;
 
                     saveButton.setEnabled(checkAllSelections());
                     secondFrameTableRow.setVisibility(View.VISIBLE);

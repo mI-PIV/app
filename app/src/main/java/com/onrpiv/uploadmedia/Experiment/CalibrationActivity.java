@@ -152,6 +152,7 @@ public class CalibrationActivity extends VideoActivity {
                         .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                cleanup();
                                 finish();
                             }
                         })

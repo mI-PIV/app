@@ -488,10 +488,14 @@ public class PathUtil {
         return checkDir(result);
     }
 
-    public static File createNewExperimentDirectory(Context context, String userName) {
+    public static int createNewExperimentNumber(Context context, String userName) {
         int expTotal = PersistedData.getTotalExperiments(context, userName) + 1;
         PersistedData.setTotalExperiments(context, userName, expTotal);
-        return PathUtil.getExperimentNumberedDirectory(context, userName, expTotal);
+        return expTotal;
+    }
+
+    public static File createNewExperimentDirectory(Context context, String userName, int expNum) {
+        return PathUtil.getExperimentNumberedDirectory(context, userName, expNum);
     }
 
     public static String getExperimentImageFileSuffix(int currentExperiment) {

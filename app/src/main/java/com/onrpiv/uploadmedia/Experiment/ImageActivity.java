@@ -274,7 +274,9 @@ public class ImageActivity extends AppCompatActivity {
             wholeProgress.setMax((Objects.requireNonNull(allFrames).length-1) / sampleRate);
             wholeProgress.show();
 
-            File expDir = PathUtil.createNewExperimentDirectory(this, userName);
+            int newExpNum = PathUtil.createNewExperimentNumber(this, userName);
+            File expDir = PathUtil.createNewExperimentDirectory(this, userName, newExpNum);
+            pivParameters.setExperimentNumber(newExpNum);
 
             // process frames
             Thread thread = new Thread(new Runnable() {

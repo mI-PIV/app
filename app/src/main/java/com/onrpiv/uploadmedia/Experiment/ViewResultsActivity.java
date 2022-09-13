@@ -59,7 +59,6 @@ import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMapPicker;
 import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.FrameView;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
-import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.Utilities.PositionCallback;
 import com.onrpiv.uploadmedia.Utilities.ResultSettings;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
@@ -137,7 +136,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // Setup images and paths
         String userName = displayIntent.getStringExtra(PivResultData.USERNAME);
-        int currentExpDir = PersistedData.getTotalExperiments(this, userName);
+        int currentExpDir = pivParameters.getExperimentNumber();
         imgFileToDisplay = PathUtil.getExperimentImageFileSuffix(currentExpDir);
         outputDirectory = PathUtil.getExperimentNumberedDirectory(this, userName, currentExpDir);
 
@@ -697,52 +696,21 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     }
 
     private void popups(double nMaxLower, double maxDisplacement) {
+        AlertDialog.Builder alertDialogParametersBuilder = new AlertDialog.Builder(ViewResultsActivity.this)
+                .setTitle("Alert!")
+                .setCancelable(false)
+                .setNegativeButton("I Understand", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }});
+
         if (maxDisplacement < nMaxLower) {
-            AlertDialog.Builder alertDialogParametersBuilder = new AlertDialog.Builder(ViewResultsActivity.this);
-            alertDialogParametersBuilder.setTitle("Alert !");
             alertDialogParametersBuilder.setMessage(R.string.move_forward);
-            alertDialogParametersBuilder.setCancelable(false);
-
-            alertDialogParametersBuilder
-                    .setNegativeButton(
-                            "I Understand",
-                            new DialogInterface
-                                    .OnClickListener() {
-
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                                    int which)
-                                {
-                                    dialog.cancel();
-                                }
-                            });
-
-            final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
-            alertDialogParameters.show();
-
         } else {
-            AlertDialog.Builder alertDialogParametersBuilder = new AlertDialog.Builder(ViewResultsActivity.this);
-            alertDialogParametersBuilder.setTitle("Alert !");
             alertDialogParametersBuilder.setMessage(R.string.final_display);
-            alertDialogParametersBuilder.setCancelable(false);
-
-            alertDialogParametersBuilder
-                    .setNegativeButton(
-                            "I Understand",
-                            new DialogInterface
-                                    .OnClickListener() {
-
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                                    int which)
-                                {
-                                    dialog.cancel();
-                                }
-                            });
-
-            final AlertDialog alertDialogParameters = alertDialogParametersBuilder.create();
-            alertDialogParameters.show();
         }
+        alertDialogParametersBuilder.create().show();
     }
 
     @Override

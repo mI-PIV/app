@@ -42,11 +42,15 @@ public class PivRunner implements ProgressUpdateInterface {
         idxString = String.format("%04d", index);
         imageActivity = (Activity) context;
 
+
         // setup output and piv functions
         if (null == expDir) {
-            expDir = PathUtil.createNewExperimentDirectory(context, userName);
+            expNum = PathUtil.createNewExperimentNumber(context, userName);
+            expDir = PathUtil.createNewExperimentDirectory(context, userName, expNum);
+            parameters.setExperimentNumber(expNum);
+        } else {
+            expNum = PersistedData.getTotalExperiments(context, userName);
         }
-        expNum = PersistedData.getTotalExperiments(context, userName);
         final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(expNum);
         final String txtFileSaveName = PathUtil.getExperimentTextFileSuffix(expNum);
 
@@ -71,9 +75,12 @@ public class PivRunner implements ProgressUpdateInterface {
 
         // setup output and piv functions
         if (null == expDir) {
-            expDir = PathUtil.createNewExperimentDirectory(context, userName);
+            expNum = PathUtil.createNewExperimentNumber(context, userName);
+            expDir = PathUtil.createNewExperimentDirectory(context, userName, expNum);
+            parameters.setExperimentNumber(expNum);
+        } else {
+            expNum = PersistedData.getTotalExperiments(context, userName);
         }
-        expNum = PersistedData.getTotalExperiments(context, userName);
         final String imgFileSaveName = PathUtil.getExperimentImageFileSuffix(expNum);
         final String txtFileSaveName = PathUtil.getExperimentTextFileSuffix(expNum);
 
