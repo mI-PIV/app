@@ -342,6 +342,7 @@ public class ImageActivity extends AppCompatActivity {
         outState.putInt("step", step);
         outState.putParcelable("file_uri", fileUri);
         outState.putString("username", userName);
+        outState.putBoolean("wholeSetProcessing", wholeSetProcessing);
 
         if (step >= 1) {
             if (!wholeSetProcessing) {
@@ -366,13 +367,16 @@ public class ImageActivity extends AppCompatActivity {
         step = savedInstanceState.getInt("step");
         fileUri = savedInstanceState.getParcelable("file_uri");
         userName = savedInstanceState.getString("username");
+        wholeSetProcessing = savedInstanceState.getBoolean("wholeSetProcessing");
 
         if (step >= 1) {
-            frame1File = new File(savedInstanceState.getString("frame1file_str"));
-            frame2File = new File(savedInstanceState.getString("frame2file_str"));
+            if (!wholeSetProcessing) {
+                frame1File = new File(savedInstanceState.getString("frame1file_str"));
+                frame2File = new File(savedInstanceState.getString("frame2file_str"));
+                frame1Num = savedInstanceState.getInt("frame1num");
+                frame2Num = savedInstanceState.getInt("frame2num");
+            }
             frameSetName = savedInstanceState.getString("frameset");
-            frame1Num = savedInstanceState.getInt("frame1num");
-            frame2Num = savedInstanceState.getInt("frame2num");
             fps = savedInstanceState.getInt("fps");
 
             // change buttons to reflect step
