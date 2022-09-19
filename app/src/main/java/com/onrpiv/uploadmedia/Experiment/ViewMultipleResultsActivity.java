@@ -170,6 +170,15 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
             @Override
             public void run() {
                 Bitmap bmp = imageStack.getDrawingCache();
+                // TODO test shape: 1024 x 497
+                // TODO right here we can crop the bitmap to the original frame size
+                // TODO ViewResultsActivity lines 779 - 790
+                 Bitmap origBmp = BitmapFactory.decodeFile(new File(outputDirectory, "Base_0000_" + imgFileToDisplay).getAbsolutePath());
+                 int bitmapHeight = origBmp.getHeight();
+                 int bitmapWidth = origBmp.getWidth();
+                 // TODO what is the current size compared to original?
+                // TODO do we need to do any resizing?
+
                 File framePath = new File(framesDir, String.format("%04d", i) + ".jpg");
                 try (FileOutputStream output = new FileOutputStream(framePath)) {
                     bmp.compress(Bitmap.CompressFormat.JPEG, 100, output);
