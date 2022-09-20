@@ -25,7 +25,6 @@ public class PivResultData implements Serializable {
     private boolean backgroundSubtracted = false;
     private double pixelToPhysicalRatio = 1d;
     private double uvConversion = 1d;
-    private String physicalMetric = "cm/s";
 
     // intent/io keys
     public static final String
@@ -122,10 +121,6 @@ public class PivResultData implements Serializable {
         calibrated = true;
     }
 
-    public String getPhysicalMetric() {
-        return physicalMetric;
-    }
-
     public double[] getInterrX() {
         return _interrX;
     }
@@ -203,6 +198,10 @@ public class PivResultData implements Serializable {
 
     public double getUvConversion() {
         return uvConversion;
+    }
+
+    public float convertXYPhysical(double val) {
+        return (float) (val * (1d / pixelToPhysicalRatio));
     }
 
     private void calculatePhysicalVectors(int fieldRows, int fieldCols) {
