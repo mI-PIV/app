@@ -763,14 +763,14 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             resultsTimeConversion.setText(String.format("%.4f", pivParameters.getDt()) + "  s");
             resultsUVConversion.setText(String.format("%.1f", (float) pivCorr.getUvConversion()) + "  cm/(s*pixels)");
         } else {
-            resultsVelocity.setText(String.format("%.1f", pivCorr.getMag()[pivCoords.y][pivCoords.x]) + "  pixels/framerate");
+            resultsVelocity.setText(String.format("%.1f", pivCorr.getMag()[pivCoords.y][pivCoords.x]) + "  pixels/frame");
             resultsX.setText((int) imgX + "  pixels");
             resultsY.setText((int) dispY + "  pixels");
             // Only multipass has vorticity values (design decision to only show one vorticity field)
-            resultsVort.setText(String.format("%.1f", (float) multiPass.getVorticityValues()[pivCoords.y][pivCoords.x]) + "  1/framerate");
-            resultsU.setText(String.format("%.1f", (float)pivCorr.getU()[pivCoords.y][pivCoords.x]) + "  pixels/framerate");
+            resultsVort.setText(String.format("%.1f", (float) multiPass.getVorticityValues()[pivCoords.y][pivCoords.x]) + "  1/frame");
+            resultsU.setText(String.format("%.1f", (float)pivCorr.getU()[pivCoords.y][pivCoords.x]) + "  pixels/frame");
             // because we're inverting the y axis, we also invert the v values
-            resultsV.setText(String.format("%.1f", -((float)pivCorr.getV()[pivCoords.y][pivCoords.x])) + "  pixels/framerate");
+            resultsV.setText(String.format("%.1f", -((float)pivCorr.getV()[pivCoords.y][pivCoords.x])) + "  pixels/frame");
         }
         // switch from info text ("please select...") to information table
         infoText.setVisibility(View.INVISIBLE);
