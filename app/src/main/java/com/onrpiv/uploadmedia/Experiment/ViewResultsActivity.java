@@ -760,7 +760,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
             // because we're inverting the y axis, we also invert the v values
             resultsV.setText(String.format("%.1f", -((float) pivCorr.getCalibratedV()[pivCoords.y][pivCoords.x])) + "  cm/s");
             resultsXYConversion.setText(String.format("%.1f", (float) pivCorr.getPixelToPhysicalRatio()) + "  pixels/cm");
-            resultsTimeConversion.setText(String.format("%.4f", pivParameters.getDt()) + "  s");
+            resultsTimeConversion.setText(String.format("%.4f", pivParameters.getDt()) + "  s/frame");
             resultsUVConversion.setText(String.format("%.1f", (float) pivCorr.getUvConversion()) + "  cm/(s*pixels)");
         } else {
             resultsVelocity.setText(String.format("%.1f", pivCorr.getMag()[pivCoords.y][pivCoords.x]) + "  pixels/frame");
