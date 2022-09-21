@@ -107,7 +107,7 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
 
                 // video creation
                 String tempVidPath = getExternalFilesDir(null).getPath() + "/temp.mp4";
-                // delete if any old videos are deleted
+                // delete if any old videos are still present
                 PathUtil.deleteRecursive(new File(tempVidPath));
 
                 String input = expFrames + "/%04d.jpg";
@@ -169,10 +169,35 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                // get the results view cache as a bitmap
                 Bitmap bmp = imageStack.getDrawingCache();
+                // load the original frame (to get the dimensions)
+                File frameSetDir = PathUtil.getFramesNamedDirectory(ViewMultipleResultsActivity.this, userName, pivParameters.getFrameSetName());
+                Bitmap origBmp = BitmapFactory.decodeFile(frameSetDir.listFiles()[0].getAbsolutePath());
+                // get current dims of cache bmp and original bmp
+                int cacheHeight = bmp.getHeight();
+                int cacheWidth = bmp.getWidth();
+                int origHeight = origBmp.getHeight();
+                int origWidth = origBmp.getWidth();
+
+                // find the resize ratio between cache bmp and original bmp
+                float resizeFactor = Math.min((float)cacheHeight / (float)origHeight,
+                        (float)cacheWidth / (float)origWidth);
+                float resizedBmpHeight = origHeight * resizeFactor;
+                float resizedBmpWidth = origWidth * resizeFactor;
+
+                // find the size of the added padding
+                float xDiff = (cacheWidth - resizedBmpWidth) / 2;
+                float yDiff = (cacheHeight - resizedBmpHeight) / 2;
+
+                // crop out the added padding
+                Bitmap cropped = Bitmap.createBitmap(bmp, (int)xDiff, (int)yDiff, (int)resizedBmpWidth, (int)resizedBmpHeight);
+                // resize to original size
+                Bitmap outputFrame = Bitmap.createScaledBitmap(cropped, origWidth, origHeight, true);
+
                 File framePath = new File(framesDir, String.format("%04d", i) + ".jpg");
                 try (FileOutputStream output = new FileOutputStream(framePath)) {
-                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, output);
+                    outputFrame.compress(Bitmap.CompressFormat.JPEG, 100, output);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
