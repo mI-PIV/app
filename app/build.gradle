@@ -42,7 +42,6 @@ dependencies {
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
     implementation "androidx.annotation:annotation:1.3.0"
     implementation 'petrov.kristiyan:colorpicker-library:1.1.10'
-    implementation group: 'net.imglib2', name: 'imglib2', version: '5.11.1'
     implementation 'org.jetbrains:annotations-java5:15.0'
     implementation 'androidx.fragment:fragment:1.3.0'
     implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
