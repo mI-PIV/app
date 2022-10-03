@@ -31,7 +31,7 @@ Office of Naval Research, United States Department of the Navy
 The app is now available on Google Play Store! You can install it [here](https://play.google.com/store/apps/details?id=com.onrpiv.uploadmedia).
 
 ### Manual Installation
-A video walk-through is available to download [here](https://github.com/mI-PIV/app/blob/main/resources/installGithubAPK.mp4).
+A video walk-through is available to download [here](https://github.com/mI-PIV/app/raw/main/resources/installGithubAPK.mp4).
 
 The easiest method of installing the APK package is to use the installation target-phone's browser:
 
