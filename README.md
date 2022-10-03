@@ -27,8 +27,11 @@ Kevin Roberts
 Office of Naval Research, United States Department of the Navy
 
 ## APK Installation
+# Google Play Store
+The app is now available on Google Play Store! You can install it [here](https://play.google.com/store/apps/details?id=com.onrpiv.uploadmedia).
 
-A video walk-through is available to download [here](https://github.com/mI-PIV/app/raw/readme/resources/installGithubAPK.mp4).
+# Manual Installation
+A video walk-through is available to download [here](https://github.com/mI-PIV/app/blob/main/resources/installGithubAPK.mp4).
 
 The easiest method of installing the APK package is to use the installation target-phone's browser:
 
