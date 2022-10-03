@@ -33,14 +33,16 @@ The app is now available on Google Play Store! You can install it [here](https:/
 ### Manual Installation
 A video walk-through is available to download [here](https://github.com/mI-PIV/app/raw/main/resources/installGithubAPK.mp4).
 
-The easiest method of installing the APK package is to use the installation target-phone's browser:
+The easiest method of manually installing the APK package is to use the phone's browser:
 
 - Go to github.com/mI-PIV/app/releases
 - Click the Assets drop-down menu from the top (most recent) release
 - Click on the file that ends with *{filename}*.apk (example *mIPIV_0.03.apk*)
 - "Do you want to keep *{filename}*.apk anyway?" Select OK
 - When the APK is done downloading, click "Open"
-- If you see "Your phone is not allowed to install unknown apps..."
+
+Older versions of the app may not be signed and you may see:
+- "Your phone is not allowed to install unknown apps..."
   
     - Click "Settings"
     - Toggle "Allow from this source"
