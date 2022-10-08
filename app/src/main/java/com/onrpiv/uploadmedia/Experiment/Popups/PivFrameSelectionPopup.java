@@ -294,7 +294,7 @@ public class PivFrameSelectionPopup extends AlertDialog {
         fullOptions.add(2);
         fullOptions.add(3);
         fullOptions.add(4);
-        fullOptions.removeIf(option -> frame1Num + option - 1 > numFramesInSet);
+        fullOptions.removeIf(option -> frame1Num + option - 1 >= numFramesInSet);
 
         // create radio buttons from options
         for (Integer option : fullOptions) {
