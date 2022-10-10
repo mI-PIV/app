@@ -138,11 +138,11 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // Setup images and paths
         String userName = displayIntent.getStringExtra(PivResultData.USERNAME);
-        int currExpNum;
         if (null == pivParameters) {
-            currExpNum = PersistedData.getTotalExperiments(this, userName);
+            int currExpNum = PersistedData.getTotalExperiments(this, userName);
+            pivParameters = (PivParameters) FileIO.read(this, userName, currExpNum, PivParameters.IO_FILENAME);
         } else {
-            currExpNum = pivParameters.getExperimentNumber();
+            int currExpNum = pivParameters.getExperimentNumber();
             imgFileToDisplay = PathUtil.getExperimentImageFileSuffix(currExpNum);
             outputDirectory = PathUtil.getExperimentNumberedDirectory(this, userName, currExpNum);
         }
