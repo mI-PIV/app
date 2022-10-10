@@ -59,6 +59,7 @@ import com.onrpiv.uploadmedia.Utilities.ColorMap.ColorMapPicker;
 import com.onrpiv.uploadmedia.Utilities.FileIO;
 import com.onrpiv.uploadmedia.Utilities.FrameView;
 import com.onrpiv.uploadmedia.Utilities.PathUtil;
+import com.onrpiv.uploadmedia.Utilities.PersistedData;
 import com.onrpiv.uploadmedia.Utilities.PositionCallback;
 import com.onrpiv.uploadmedia.Utilities.ResultSettings;
 import com.onrpiv.uploadmedia.pivFunctions.PivFunctions;
@@ -137,9 +138,14 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // Setup images and paths
         String userName = displayIntent.getStringExtra(PivResultData.USERNAME);
-        int currentExpDir = pivParameters.getExperimentNumber();
-        imgFileToDisplay = PathUtil.getExperimentImageFileSuffix(currentExpDir);
-        outputDirectory = PathUtil.getExperimentNumberedDirectory(this, userName, currentExpDir);
+        int currExpNum;
+        if (null == pivParameters) {
+            currExpNum = PersistedData.getTotalExperiments(this, userName);
+        } else {
+            currExpNum = pivParameters.getExperimentNumber();
+            imgFileToDisplay = PathUtil.getExperimentImageFileSuffix(currExpNum);
+            outputDirectory = PathUtil.getExperimentNumberedDirectory(this, userName, currExpNum);
+        }
 
         // resumed
         if (null != savedInstanceState) {
