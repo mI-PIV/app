@@ -246,6 +246,10 @@ public class PivFrameSelectionPopup extends AlertDialog {
                 frame1Text.setHint("Frame 1 - " + numFramesInSet);
                 frame1Slider.setMax(numFramesInSet);
                 previewAnim.setImageResource(android.R.color.transparent);
+                if (wholeSetProc) {
+                    populateSecondFrameRadioButtons();
+                    secondFrameTableRow.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
