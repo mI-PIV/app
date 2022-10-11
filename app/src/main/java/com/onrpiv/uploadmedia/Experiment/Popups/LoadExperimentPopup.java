@@ -156,7 +156,7 @@ public class LoadExperimentPopup extends Popup {
 
     private LinearLayout createRow() {
         LinearLayout newRow = new LinearLayout(context);
-        newRow.setGravity(Gravity.CENTER_HORIZONTAL);
+        newRow.setGravity(Gravity.START);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
