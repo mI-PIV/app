@@ -272,16 +272,27 @@ public class PivFrameSelectionPopup extends AlertDialog {
 
             @Override
             public void afterTextChanged(Editable s) {
+                // check user input and clamp it to the number of frames available
                 BoolIntStructure userInput = UserInputUtils.checkUserInputIntClamp(s.toString(),
                         1, numFramesInSet);
 
                 if (s.length() > 0 && userInput.getBool() && setFrames.size() > 0) {
+                    // if the value was outside of available frames; set to the clamped value
+                    if (frame1Text.hasFocus()) {
+                        frame1Text.removeTextChangedListener(this);
+                        String newVal = String.valueOf(userInput.getInt());
+                        s.replace(0, newVal.length(), newVal);
+                        frame1Text.addTextChangedListener(this);
+                    }
+
+                    // distribute user selection to data structures
                     frame1IsReady = true;
                     userInput = checkFrameSelections(userInput);
                     int userInt = userInput.getInt();
                     frame1Slider.setProgress(userInt);
                     frame1Num = userInt - 1;
 
+                    // second frame radio buttons
                     saveButton.setEnabled(checkAllSelections());
                     secondFrameTableRow.setVisibility(View.VISIBLE);
                     frame2RadioGroup.removeAllViews();
