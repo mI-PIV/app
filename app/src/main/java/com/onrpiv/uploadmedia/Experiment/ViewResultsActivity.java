@@ -616,8 +616,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     }
 
     protected Bitmap createSolidBaseImage() {
-        // TODO fix the hard code
-        Rect rect = new Rect(0, 0, 2560, 1440);
+        Rect rect = new Rect(0, 0, cols, rows);
         Bitmap bmp = Bitmap.createBitmap(rect.right, rect.bottom, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
         Paint paint = new Paint();
