@@ -7,7 +7,6 @@ import static org.opencv.core.CvType.CV_8UC4;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGRA;
-import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
 import android.graphics.Bitmap;
@@ -26,7 +25,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
@@ -550,28 +548,26 @@ public class PivFunctions {
             prevP = p;
         }
 
-        Mat resized = resizeMat(transparentBackground);
-        Bitmap bmp = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
+        Bitmap bmp = Bitmap.createBitmap(transparentBackground.cols(), transparentBackground.rows(),
+                Bitmap.Config.ARGB_8888);
         bmp.setHasAlpha(true);
-        Utils.matToBitmap(resized, bmp, true);
+        Utils.matToBitmap(transparentBackground, bmp, true);
 
         //clean up mats
         transparentBackground.release();
-        resized.release();
         System.gc();
         return bmp;
     }
 
     public static Bitmap createTransparentBitmap(int rows, int cols) {
         Mat transparentBackground = new Mat(rows, cols, CV_8UC4, new Scalar(255, 255, 255, 0));
-        Mat resized = resizeMat(transparentBackground);
-        Bitmap bmp = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
+        Bitmap bmp = Bitmap.createBitmap(transparentBackground.cols(), transparentBackground.rows(),
+                Bitmap.Config.ARGB_8888);
         bmp.setHasAlpha(true);
-        Utils.matToBitmap(resized, bmp, true);
+        Utils.matToBitmap(transparentBackground, bmp, true);
 
         //clean up mats
         transparentBackground.release();
-        resized.release();
         System.gc();
         return bmp;
     }
@@ -640,14 +636,13 @@ public class PivFunctions {
             }
         }
 
-        Mat resized = resizeMat(transparentBackground);
-        Bitmap bmp = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
+        Bitmap bmp = Bitmap.createBitmap(transparentBackground.cols(), transparentBackground.rows(),
+                Bitmap.Config.ARGB_8888);
         bmp.setHasAlpha(true);
-        Utils.matToBitmap(resized, bmp, true);
+        Utils.matToBitmap(transparentBackground, bmp, true);
 
         //clean up mats
         transparentBackground.release();
-        resized.release();
         System.gc();
         return bmp;
     }
@@ -672,27 +667,24 @@ public class PivFunctions {
         Imgproc.rectangle(transparentBackground, origin, end, new Scalar(red, green, blue, 255), 5);
 
         // Mat to bitmap
-        Mat resized = resizeMat(transparentBackground);
-        Bitmap bmp = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
+        Bitmap bmp = Bitmap.createBitmap(transparentBackground.cols(), transparentBackground.rows(),
+                Bitmap.Config.ARGB_8888);
         bmp.setHasAlpha(true);
-        Utils.matToBitmap(resized, bmp, true);
+        Utils.matToBitmap(transparentBackground, bmp, true);
 
         // cleanup
         transparentBackground.release();
-        resized.release();
         System.gc();
         return bmp;
     }
 
     public void saveImage(Mat image1, String stepName) {
         File pngFile = new File(outputDirectory, stepName + "_" + imageFileSaveName);
-        Mat resized = resizeMat(image1);
-        if (!Imgcodecs.imwrite(pngFile.getAbsolutePath(), resized)) {
+        if (!Imgcodecs.imwrite(pngFile.getAbsolutePath(), image1)) {
             Log.e("IMAGE_WRITE", "Failed to write image to " + pngFile.getAbsolutePath());
         }
 
         //clean up mats
-        resized.release();
         System.gc();
     }
 
@@ -715,24 +707,6 @@ public class PivFunctions {
         return newBmp;
     }
 
-    private static Mat resizeMat(Mat mat) {
-        // get aspect ratio
-        double h = mat.size().height;
-        double w = mat.size().width;
-        double r;
-        // TODO fix hard code
-        if (h > w) {
-            r = 1440 / h;
-        } else {
-            r = 2560 / w;
-        }
-
-        Mat resized = new Mat();
-        Size scaleSize = new Size(w * r, h * r);
-        Imgproc.resize(mat, resized, scaleSize, 0, 0, INTER_CUBIC);
-        return resized;
-    }
-
     public static Bitmap createColorMapBitmap(double[][] mapValues, int threshMin, int threshMax,
                                               Integer openCVColorMapCode) {
         Mat mapValuesMat = new Mat(mapValues.length, mapValues[0].length, CV_8UC1);
@@ -747,15 +721,13 @@ public class PivFunctions {
             colorMap = createRedBlueColorMap(mapValuesMat, transparentCoords);
         }
 
-        Mat resized = resizeMat(colorMap);
-        Bitmap result = Bitmap.createBitmap(resized.cols(), resized.rows(), Bitmap.Config.ARGB_8888);
+        Bitmap result = Bitmap.createBitmap(colorMap.cols(), colorMap.rows(), Bitmap.Config.ARGB_8888);
         result.setHasAlpha(true);
-        Utils.matToBitmap(resized, result, true);
+        Utils.matToBitmap(colorMap, result, true);
 
         //clean up mats
         mapValuesMat.release();
         colorMap.release();
-        resized.release();
         System.gc();
 
         return result;
