@@ -101,6 +101,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     protected ResultSettings settings;
     protected int experimentNumber;
     protected int imageCounter = 0;
+    protected double vortZeroPoint;
 
     // info section
     private ImageView selectionImage;
@@ -179,18 +180,27 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // sliders
         rangeSlider = findViewById(R.id.rangeSeekBar);
-        float[] rangeVals = settings.getVortTransVals();
-        rangeSlider.setValues(rangeVals[0], rangeVals[1]);
-        rangeSlider.setMinSeparation(1f);
-        rangeSlider.setStepSize(1f);
-        // https://developer.android.com/reference/com/google/android/material/slider/RangeSlider
+        float maxVort = (float) multiPass.getMaxVort();
+        float minVort = (float) multiPass.getMinVort();
+        vortZeroPoint = normalizeTo8bit(0d);
+        rangeSlider.setValueFrom(minVort);
+        rangeSlider.setValueTo(maxVort);
+
+        float maxSliderDefault = (maxVort - minVort) * 0.55f + minVort;
+        float minSliderDefault = (maxVort - minVort) * 0.45f + minVort;
+        settings.setVortTransVals_max(maxSliderDefault);
+        settings.setVortTransVals_min(minSliderDefault);
+        rangeSlider.setValues(minSliderDefault, maxSliderDefault);
+
         rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
             @SuppressLint("RestrictedApi")
             @Override
             public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
                 List<Float> vals = rangeSlider.getValues();
-                settings.setVortTransVals_min(Math.min(vals.get(0), vals.get(1)));
-                settings.setVortTransVals_max(Math.max(vals.get(0), vals.get(1)));
+                int mapVal0 = normalizeTo8bit(vals.get(0));
+                int mapVal1 = normalizeTo8bit(vals.get(1));
+                settings.setVortTransVals_min((float)Math.min(mapVal0, mapVal1));
+                settings.setVortTransVals_max((float)Math.max(mapVal0, mapVal1));
                 applyDisplay();
             }
         });
@@ -605,8 +615,13 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
                 rows, cols,
                 settings.getVortTransVals_min(),
                 settings.getVortTransVals_max(),
+                vortZeroPoint,
                 settings.getVortColorMap().getOpenCVCode()
         );
+    }
+
+    private int normalizeTo8bit(double val) {
+        return (int) ((val - multiPass.getMinVort()) / (multiPass.getMaxVort() - multiPass.getMinVort())*255d);
     }
 
     private Bitmap createVectorFieldBitmap(PivResultData pivResultData) {

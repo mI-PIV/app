@@ -25,6 +25,8 @@ public class PivResultData implements Serializable {
     private boolean backgroundSubtracted = false;
     private double pixelToPhysicalRatio = 1d;
     private double uvConversion = 1d;
+    private double maxVort = Double.MIN_VALUE;
+    private double minVort = Double.MAX_VALUE;
 
     // intent/io keys
     public static final String
@@ -198,6 +200,22 @@ public class PivResultData implements Serializable {
 
     public double getUvConversion() {
         return uvConversion;
+    }
+
+    public double getMinVort() {
+        return minVort;
+    }
+
+    public void setMinVort(double min) {
+        minVort = min;
+    }
+
+    public double getMaxVort() {
+        return maxVort;
+    }
+
+    public void setMaxVort(double max) {
+        maxVort = max;
     }
 
     public float convertXYPhysical(double val) {

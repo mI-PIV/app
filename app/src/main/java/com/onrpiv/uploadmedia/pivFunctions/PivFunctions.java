@@ -710,7 +710,7 @@ public class PivFunctions {
     }
 
     public static Bitmap createColorMapBitmap(double[][] mapValues, int rows, int cols,
-                                              int threshMin, int threshMax,
+                                              int threshMin, int threshMax, double zeroPoint,
                                               Integer openCVColorMapCode) {
         Mat mapValuesMat = new Mat(mapValues.length, mapValues[0].length, CV_8UC1);
         double[] minMax = findMinMax2D(mapValues);
@@ -721,7 +721,7 @@ public class PivFunctions {
         if (null != openCVColorMapCode) {
             colorMap = createOpenCVColorMap(mapValuesMat, transparentCoords, openCVColorMapCode);
         } else {
-            colorMap = createRedBlueColorMap(mapValuesMat, transparentCoords);
+            colorMap = createRedBlueColorMap(mapValuesMat, transparentCoords, zeroPoint);
         }
 
         // resize the colormap
@@ -780,7 +780,8 @@ public class PivFunctions {
         return colorMapImage;
     }
 
-    private static Mat createRedBlueColorMap(Mat normalizedValues, List<int[]> transparentCoords) {
+    private static Mat createRedBlueColorMap(Mat normalizedValues, List<int[]> transparentCoords,
+                                             double zeroPoint) {
         // create colormap
         Mat colorMapImage = new Mat(normalizedValues.rows(), normalizedValues.cols(),
                 normalizedValues.type());
@@ -788,15 +789,14 @@ public class PivFunctions {
         // convert to four channels
         cvtColor(colorMapImage, colorMapImage, COLOR_GRAY2BGRA);
 
-        int midpoint = 127;
         for (int row = 0; row < normalizedValues.rows(); row++) {
             for (int col = 0; col < normalizedValues.cols(); col++) {
                 double value = normalizedValues.get(row, col)[0];
 
-                if (value < midpoint) {
+                if (value < zeroPoint) {
                     // blue with normalized value assigned to alpha
                     colorMapImage.put(row, col, new byte[]{(byte)0, (byte)0, (byte)255, (byte)value});
-                } else if (value > midpoint) {
+                } else if (value > zeroPoint) {
                     // red with normalized value assigned to alpha
                     colorMapImage.put(row, col, new byte[]{(byte)255, (byte)0, (byte)0, (byte)value});
                 } else {  // value == midpoint
@@ -1192,6 +1192,8 @@ public class PivFunctions {
         int nc = u[0].length;
         int nr = u.length;
         int gap = (int) (pivCorrelation.getInterrX()[1] - pivCorrelation.getInterrX()[0]);
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
 
         // Don't divide by zero
         if (gap == 0) { return; }
@@ -1199,10 +1201,15 @@ public class PivFunctions {
         double[][] vortMap = new double[nr][nc];
         for (int r = 1; r < nr - 1; r++) {
             for (int c = 1; c < nc - 1; c++) {
-                vortMap[r][c] = (((v[r][c + 1] - v[r][c - 1]) - (u[r + 1][c] - u[r - 1][c]))) / gap;
+                double vort = (((v[r][c + 1] - v[r][c - 1]) - (u[r + 1][c] - u[r - 1][c]))) / gap;
+                if (vort > max) { max = vort; }
+                if (vort < min) { min = vort; }
+                vortMap[r][c] = vort;
             }
         }
         pivCorrelation.setVorticity(vortMap);
+        pivCorrelation.setMinVort(min);
+        pivCorrelation.setMaxVort(max);
     }
 
     public int getFieldRows() {
