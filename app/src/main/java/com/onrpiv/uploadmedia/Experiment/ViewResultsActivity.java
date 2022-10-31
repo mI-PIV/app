@@ -602,6 +602,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     private Bitmap createVorticityBitmap(PivResultData pivResultData) {
         return PivFunctions.createColorMapBitmap(
                 pivResultData.getVorticityValues(),
+                rows, cols,
                 settings.getVortTransVals_min(),
                 settings.getVortTransVals_max(),
                 settings.getVortColorMap().getOpenCVCode()

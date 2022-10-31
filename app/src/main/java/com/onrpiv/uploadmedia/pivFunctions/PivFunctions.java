@@ -7,6 +7,7 @@ import static org.opencv.core.CvType.CV_8UC4;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2BGRA;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGRA;
+import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
 import android.graphics.Bitmap;
@@ -25,6 +26,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
@@ -707,7 +709,8 @@ public class PivFunctions {
         return newBmp;
     }
 
-    public static Bitmap createColorMapBitmap(double[][] mapValues, int threshMin, int threshMax,
+    public static Bitmap createColorMapBitmap(double[][] mapValues, int rows, int cols,
+                                              int threshMin, int threshMax,
                                               Integer openCVColorMapCode) {
         Mat mapValuesMat = new Mat(mapValues.length, mapValues[0].length, CV_8UC1);
         double[] minMax = findMinMax2D(mapValues);
@@ -721,13 +724,19 @@ public class PivFunctions {
             colorMap = createRedBlueColorMap(mapValuesMat, transparentCoords);
         }
 
-        Bitmap result = Bitmap.createBitmap(colorMap.cols(), colorMap.rows(), Bitmap.Config.ARGB_8888);
+        // resize the colormap
+        Mat resized = new Mat();
+        Imgproc.resize(colorMap, resized, new Size(cols, rows), 0, 0, INTER_CUBIC);
+
+        // convert to bitmap
+        Bitmap result = Bitmap.createBitmap(cols, rows, Bitmap.Config.ARGB_8888);
         result.setHasAlpha(true);
-        Utils.matToBitmap(colorMap, result, true);
+        Utils.matToBitmap(resized, result, true);
 
         //clean up mats
         mapValuesMat.release();
         colorMap.release();
+        resized.release();
         System.gc();
 
         return result;
