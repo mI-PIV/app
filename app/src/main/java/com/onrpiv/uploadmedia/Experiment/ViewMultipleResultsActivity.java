@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.arthenica.mobileffmpeg.Config;
 import com.arthenica.mobileffmpeg.FFmpeg;
+import com.google.android.material.slider.RangeSlider;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.onrpiv.uploadmedia.R;
 import com.onrpiv.uploadmedia.Utilities.BackgroundSub;
@@ -355,6 +356,39 @@ public class ViewMultipleResultsActivity extends ViewResultsActivity {
                 // EMPTY
             }
         };
+    }
+
+    private void getVorticityMinMax() {
+        float min = Float.MAX_VALUE;
+        float max = Float.MIN_VALUE;
+        for (int i = 0; i < data.size(); i++) {
+            PivResultData results = Objects.requireNonNull(data.get(i)).get(PivResultData.MULTI);
+            float resultMin = (float) results.getMinVort();
+            float resultMax = (float) results.getMaxVort();
+
+            if (resultMin < min) {
+                min = resultMin;
+            }
+            if (resultMax > max) {
+                max = resultMax;
+            }
+            maxVort = max;
+            minVort = min;
+        }
+    }
+
+    @Override
+    protected void setupRangeSlider(RangeSlider slider) {
+        getVorticityMinMax();
+        vortZeroPoint = normalizeTo8bit(0d);
+        slider.setValueFrom(minVort);
+        slider.setValueTo(maxVort);
+
+        float maxSliderDefault = (maxVort - minVort) * 0.55f + minVort;
+        float minSliderDefault = (maxVort - minVort) * 0.45f + minVort;
+        settings.setVortTransVals_max(maxSliderDefault);
+        settings.setVortTransVals_min(minSliderDefault);
+        slider.setValues(minSliderDefault, maxSliderDefault);
     }
 
     private String getFrameText(int idx) {
