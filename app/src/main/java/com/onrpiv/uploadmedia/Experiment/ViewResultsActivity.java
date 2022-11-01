@@ -101,7 +101,11 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
     protected ResultSettings settings;
     protected int experimentNumber;
     protected int imageCounter = 0;
+
+    // vorticity calcs
     protected double vortZeroPoint;
+    protected float maxVort;
+    protected float minVort;
 
     // info section
     private ImageView selectionImage;
@@ -180,18 +184,7 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
 
         // sliders
         rangeSlider = findViewById(R.id.rangeSeekBar);
-        float maxVort = (float) multiPass.getMaxVort();
-        float minVort = (float) multiPass.getMinVort();
-        vortZeroPoint = normalizeTo8bit(0d);
-        rangeSlider.setValueFrom(minVort);
-        rangeSlider.setValueTo(maxVort);
-
-        float maxSliderDefault = (maxVort - minVort) * 0.55f + minVort;
-        float minSliderDefault = (maxVort - minVort) * 0.45f + minVort;
-        settings.setVortTransVals_max(maxSliderDefault);
-        settings.setVortTransVals_min(minSliderDefault);
-        rangeSlider.setValues(minSliderDefault, maxSliderDefault);
-
+        setupRangeSlider(rangeSlider);
         rangeSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
             @SuppressLint("RestrictedApi")
             @Override
@@ -620,8 +613,22 @@ public class ViewResultsActivity extends AppCompatActivity implements PositionCa
         );
     }
 
-    private int normalizeTo8bit(double val) {
-        return (int) ((val - multiPass.getMinVort()) / (multiPass.getMaxVort() - multiPass.getMinVort())*255d);
+    protected void setupRangeSlider(RangeSlider slider) {
+        maxVort = (float) multiPass.getMaxVort();
+        minVort = (float) multiPass.getMinVort();
+        vortZeroPoint = normalizeTo8bit(0d);
+        slider.setValueFrom(minVort);
+        slider.setValueTo(maxVort);
+
+        float maxSliderDefault = (maxVort - minVort) * 0.55f + minVort;
+        float minSliderDefault = (maxVort - minVort) * 0.45f + minVort;
+        settings.setVortTransVals_max(maxSliderDefault);
+        settings.setVortTransVals_min(minSliderDefault);
+        slider.setValues(minSliderDefault, maxSliderDefault);
+    }
+
+    protected int normalizeTo8bit(double val) {
+        return (int) ((val - minVort) / (maxVort - minVort)*255d);
     }
 
     private Bitmap createVectorFieldBitmap(PivResultData pivResultData) {
