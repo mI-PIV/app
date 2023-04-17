@@ -23,4 +23,8 @@ android {
     lint {
         abortOnError false
     }
+    namespace 'org.opencv'
+    buildFeatures {
+        aidl true
+    }
 }

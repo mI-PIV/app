@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 31
+    compileSdk 33
     buildToolsVersion '30.0.3'
     defaultConfig {
         applicationId "com.onrpiv.uploadmedia"
         minSdkVersion 25
-        targetSdkVersion 31
-        versionCode 103
-        versionName "1.0.3"
+        targetSdkVersion 33
+        versionCode 104
+        versionName "1.0.4"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
@@ -32,6 +32,7 @@ android {
     lint {
         abortOnError false
     }
+    namespace 'com.onrpiv.uploadmedia'
 }
 
 dependencies {
